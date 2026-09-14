@@ -1,0 +1,48 @@
+# LYA dependency manifest
+#
+# LYA does NOT run without these. Verified 2026-09-10: on a clean check only
+# `cryptography` and `numpy` were importable, and `security/vault.py` imports
+# `win32crypt` at module scope, so almost every module failed at import.
+#
+#   python -m pip install -r requirements.txt
+#
+# Python: 3.11 or 3.12.
+#   NOT 3.13+ — security/liveness.py:voice_liveness() uses the `audioop` module,
+#   which was removed in Python 3.13. See finding N6.
+
+# ---------------------------------------------------------------- core
+# Required for the assistant to start at all.
+cryptography>=42.0        # security/vault.py — Fernet AES-256
+pywin32>=306              # win32crypt — Windows DPAPI key protection  [Windows only]
+numpy>=1.26               # vision/identity.py cosine math, audio buffers
+
+# ---------------------------------------------------------------- voice
+# Required for `python main.py` (voice mode). Not needed for build/text mode.
+sounddevice>=0.4.6        # audio/voice.py — microphone capture
+SpeechRecognition>=3.10   # audio/voice.py — default cloud transcription
+pyttsx3>=2.90             # audio/voice.py — local speech output
+pyautogui>=0.9.54         # skills/device.py — volume keys, screenshots
+
+# ---------------------------------------------------------------- vision / biometrics
+# Required for face identification and phone approval. Large downloads:
+# InsightFace fetches the buffalo_l model (~300 MB) on first use.
+opencv-python>=4.9        # camera capture, JPEG decode, orphan vision/face_auth.py
+insightface>=0.7.3        # vision/identity.py — ArcFace 512-d embeddings
+onnxruntime>=1.17         # insightface inference backend (CPU)
+
+# ---------------------------------------------------------------- optional
+# Offline voice transcription. Also requires a downloaded model directory;
+# point LYA_VOSK_MODEL at it.
+# vosk>=0.3.45
+
+# Voiceprint matching (security/auth_wall.AuthWall). Not called by main.py today.
+# resemblyzer>=0.1.3
+
+# Face anti-spoofing for phone approval. Two extra steps:
+#   1. pip install torch
+#   2. clone minivision-ai/Silent-Face-Anti-Spoofing into
+#      security/Silent-Face-Anti-Spoofing AND download its
+#      resources/anti_spoof_models/ weights.
+# Without both, security/liveness.py fails CLOSED and every phone approval is
+# denied. See the BLOCKER note in LYA_ARCHITECTURE.md section 3.
+# torch>=2.2

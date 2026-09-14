@@ -1,0 +1,23 @@
+R01 - saving a private fact must not echo it into speech
+  PASS  R01 remembered the fact  (1 write(s))
+  PASS  R01 private_output is now True  (private_output=True)
+  PASS  R01 spoken reply contains no fact words  (leaked=[])
+  PASS  R01 reply does not contain the derived key  (key='my bank password is hunter2')
+  PASS  R01 worker would NOT speak this reply
+  PASS  R01 protected variant also marked private
+  PASS  R01 protected reply contains no fact words  (leaked=[])
+
+R05 - set_tone must reach the real TTS attribute and not hide errors
+  PASS  R05 voice.py exposes a public set_rate()
+  PASS  R05 voice.py really uses the _engine attribute
+  PASS  R05 mind.py no longer references voice.engine  (old attribute name still present)
+  PASS  R05 set_rate(200) reports success
+  PASS  R05 set_rate(200) set rate=200  (rate=200)
+  PASS  R05 absurd rate falls back to 175  (rate=175)
+  PASS  R05 non-numeric rate falls back to 175  (rate=175)
+  PASS  R05 real set_tone drives TTS for excited/sad/neutral
+[LYA] tone 'sad' not applied (TTS unavailable)
+  PASS  R05 set_tone surfaces a failure instead of silently passing  (returned None)
+
+16 passed, 0 failed
+R01 and R05 regression checks PASSED

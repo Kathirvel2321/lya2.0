@@ -1,0 +1,53 @@
+%% LYA — STATUS MAP: WORKING / PARTIAL / BROKEN / NOT MINE
+%% Verified 2026-09-10 by reading source and testing imports.
+%% "WORKS" = the code path is complete AND its dependencies are present.
+flowchart TD
+  classDef works fill:#1a7f37,color:#fff,stroke:#0d3f1c
+  classDef partial fill:#9a6700,color:#fff,stroke:#5c3d00
+  classDef broken fill:#b62324,color:#fff,stroke:#6b1415
+  classDef legacy fill:#6e7781,color:#fff,stroke-dasharray:6
+  classDef missing fill:#4a1d1d,color:#fff,stroke:#2a0f0f
+
+  T["LYA STATUS as of 2026-09-10"]
+
+  T --> W["✅ WORKS — logic complete, deps present"]
+  T --> P["🟡 PARTIAL — code complete, dependency or hardware missing"]
+  T --> B["🔴 BROKEN — confirmed defect or hard blocker"]
+  T --> L["⚪ LEGACY — present but unreachable"]
+
+  W --> W1["Permission policy PUBLIC/TRUSTED/OWNER<br/>deny-by-default"]:::works
+  W --> W2["Encrypted memory save/recall/forget<br/>atomic + serialized + tested"]:::works
+  W --> W3["Escalation nonce & one-time grant<br/>cross-process via disk, self-tested"]:::works
+  W --> W4["Brute-force lockout, fails CLOSED"]:::works
+  W --> W5["PBKDF2 security phrase, per-install salt<br/>self-test passes"]:::works
+  W --> W6["Queue + worker + cancellation skeleton"]:::works
+  W --> W7["Folder browser scoping + paging"]:::works
+  W --> W8["Theme preview/apply/undo"]:::works
+  W --> W9["Build mode — synthetic, no disk"]:::works
+  W --> W10["R01 FIXED 2026-09-10 — private fact no<br/>longer spoken; 7 regression checks pass"]:::works
+  W --> W11["R05 FIXED 2026-09-10 — set_tone now uses<br/>voice.set_rate(); 9 regression checks pass"]:::works
+
+  P --> P1["LLM chat — code fine,<br/>needs GROQ_API_KEY or Ollama"]:::partial
+  P --> P2["Voice — needs sounddevice/pyttsx3/pyautogui"]:::partial
+  P --> P3["App launch + volume — needs pyautogui<br/>and a recognised admin role"]:::partial
+  P --> P4["Phone gateway — code fine,<br/>needs TLS cert + pairing"]:::partial
+  P --> P5["Council — needs Groq key"]:::partial
+  P --> P6["Skill forge — draft works,<br/>activation intentionally disabled"]:::partial
+  P --> P7["Face identity — ArcFace code fine,<br/>needs insightface + enrollment"]:::partial
+
+  B --> B1["win32crypt (DPAPI) NOT INSTALLED<br/>→ vault.py fails at import"]:::broken
+  B --> B2["insightface / onnxruntime / cv2 NOT INSTALLED<br/>→ no face at all"]:::broken
+  B --> B3["torch + MiniFASNet NOT INSTALLED<br/>→ liveness always False → phone approval denies"]:::broken
+  B --> B4["R02 reminder dates wrong<br/>next monday / in 2 hrs / 5 june"]:::broken
+  B --> B5["R03 text mode claims 'no model calls'<br/>while it can call a model"]:::broken
+  B --> B6["R04 voice stop unreliable<br/>outside 45s window"]:::broken
+  B --> B7["R07 reminders sorted by encrypted<br/>blob, warn only while app runs"]:::broken
+  B --> B10["R08 no requirements.txt / no lockfile<br/>clean install not reproducible"]:::broken
+  B --> B11["Nothing delivered at process level:<br/>no off-device reminders"]:::broken
+
+  L --> L1["skills/allskills router + 15 skill modules<br/>main.py does NOT call it"]:::legacy
+  L --> L2["vision/face_auth.py orphan OpenCV face<br/>second, weaker Face ID"]:::legacy
+  L --> L3["audio/voice_auth.py Resemblyzer voiceprint<br/>only inside AuthWall"]:::legacy
+  L --> L4["ui/jarvis_server.py browser HUD"]:::legacy
+  L --> L5["cloud/lya_cloud.py POST disabled 503"]:::legacy
+  L --> L6["brain/knowledge.py + brain/sync.py"]:::legacy

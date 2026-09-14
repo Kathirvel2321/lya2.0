@@ -1,0 +1,32 @@
+erDiagram
+    PEOPLE ||--o{ MEMORIES : owns
+    PEOPLE ||--o{ FACE_TEMPLATES : identifies
+    MEMORIES ||--o{ MEMORY_LINKS : source
+    MEMORIES ||--o{ MEMORY_LINKS : target
+    PEOPLE {
+        string person_id PK
+        string display_name
+        string role
+        boolean active
+    }
+    MEMORIES {
+        integer id PK
+        string person_id FK
+        string kind
+        string key_enc
+        string value_enc
+        string source
+        string retention
+        float expires_at
+        integer revision
+    }
+    MEMORY_LINKS {
+        integer src FK
+        integer dst FK
+        string relation
+    }
+    FACE_TEMPLATES {
+        integer id PK
+        string person_id FK
+        string embedding_enc
+    }

@@ -1,0 +1,53 @@
+%% LYA — PERMISSION DECISION + PHONE APPROVAL
+%% This is the real gate. Everything private passes through here.
+flowchart TD
+  classDef works fill:#1a7f37,color:#fff,stroke:#0d3f1c
+  classDef partial fill:#9a6700,color:#fff,stroke:#5c3d00
+  classDef broken fill:#b62324,color:#fff,stroke:#6b1415
+  classDef entry fill:#0b4f6c,color:#fff,stroke:#062f40
+
+  CMD["command text"]:::entry --> BUILD{"build mode?"}
+  BUILD -->|yes| SYN["synthetic data only, no disk"]:::works
+  BUILD -->|no| IDENT["identify() → Session(role, person)"]:::partial
+  IDENT --> ACT{"which action?"}
+
+  ACT -->|chat / help / time / ui| PUB["PUBLIC → allowed immediately"]:::works
+  ACT -->|open_app / volume| TRU["TRUSTED → role in admin/friend/secondary"]:::partial
+  ACT -->|files, memory, theme, reminders,<br/>screenshot, learn, council, skill_draft| OWN["OWNER → role MUST be admin<br/>AND phone_approved"]:::works
+  ACT -->|anything not in the policy| DENY["denied by default<br/>new capabilities must be added deliberately"]:::works
+
+  OWN --> PERMIT["Assistant.permit(action, task)"]:::works
+  PERMIT --> ROLECHK{"session.role == admin?"}
+  ROLECHK -->|no| REFUSE["denied - guest or friend<br/>never reaches phone"]:::works
+  ROLECHK -->|yes| REQ["escalation.request_phone(task, cancelled)"]:::works
+
+  REQ --> NONCE["_NONCE = secrets.token_hex(16)<br/>written to escalation_challenge.lya"]:::works
+  NONCE --> POLL["poll every 0.2s for up to 120s<br/>threading lock: one request only"]:::works
+  POLL --> PHONEQ{"phone POSTs /escalate?"}
+
+  PHONEQ -->|yes| TLSCK{"connection is SSL?"}
+  TLSCK -->|no| P403["403 require HTTPS"]:::works
+  TLSCK -->|yes| LOCK{"_locked_out()?"}
+  LOCK -->|yes| P429["429 locked"]:::works
+  LOCK -->|no| NONCECK{"nonce matches challenge?"}
+  NONCECK -->|no| P403b["403 task expired or changed"]:::works
+  NONCECK -->|yes| PHRASE["check_security_word(phrase) == ok?"]
+  PHRASE -->|no| FAIL["_record_failure + 403"]:::works
+  PHRASE -->|yes| OWNER["identity.verify_owner(frame)"]:::broken
+  OWNER --> LIVE["face_liveness MiniFASNet"]:::broken
+  LIVE --> GRANT["escalation.phone_approve(nonce)"]:::partial
+
+  GRANT --> CONSUME{"_consume_phone_grant()<br/>fresh? unused? nonce match?"}:::works
+  CONSUME -->|yes, burns it| OK["granted ONCE"]:::works
+  CONSUME -->|no| POLL
+  POLL -->|120s timeout| TIMEOUT["no approval → task cancelled<br/>cancelled.is_set() also aborts"]:::works
+
+  OK --> RUN["action executes"]:::works
+
+  Note1["BLOCKER today: verify_owner needs MiniFASNet + torch,<br/>neither installed → liveness returns False → approval always denies."]:::broken
+  OWNER -.-> Note1
+
+  WORDFILE["security_word.lya<br/>PBKDF2 200k, per-install salt"]:::works
+  PHRASE -.-> WORDFILE
+  ATT["escalation_attempts.lya<br/>5 fails → 10 min lockout<br/>corrupt file = LOCKED (fails closed)"]:::works
+  FAIL -.-> ATT

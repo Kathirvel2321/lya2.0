@@ -1,0 +1,11 @@
+[LYA] Bob enrolled as friend (1 face samples).
+[LYA] Alice enrolled as admin (1 face samples).
+[LYA] Bob enrolled as friend (1 face samples).
+[LYA] Stranger face_zncXHVBX07U is now registered as Charlie (friend).
+[LYA] Alice enrolled as admin (1 face samples).
+[liveness] face anti-spoof unavailable: No module named 'src'
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.532s
+
+OK

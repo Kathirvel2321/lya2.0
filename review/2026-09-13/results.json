@@ -1,0 +1,32 @@
+[
+  {
+    "suite": "test_storage.py",
+    "exit_code": 0,
+    "log": "test_storage.py.txt"
+  },
+  {
+    "suite": "test_identity.py",
+    "exit_code": 0,
+    "log": "test_identity.py.txt"
+  },
+  {
+    "suite": "test_mind.py",
+    "exit_code": 0,
+    "log": "test_mind.py.txt"
+  },
+  {
+    "suite": "test_voice.py",
+    "exit_code": 0,
+    "log": "test_voice.py.txt"
+  },
+  {
+    "suite": "desktop/check_ui.py",
+    "exit_code": 0,
+    "log": "desktop-check_ui.py.txt"
+  },
+  {
+    "suite": "review_probes.py",
+    "exit_code": 0,
+    "log": "review_probes.py.txt"
+  }
+]

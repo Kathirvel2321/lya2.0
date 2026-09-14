@@ -1,0 +1,22 @@
+flowchart TD
+    A["Your typed request"] --> B["Identify session - never use orb color as identity"]
+    B --> C{"Personal operation?"}
+    C -->|yes| D["Verify active profile and exact-request approval"]
+    D -->|missing or expired| X["Explain what is missing - reveal no personal data"]
+    D -->|allowed| E["Retrieve own active notes and linked context"]
+    C -->|no| F["Public context only"]
+    E --> G{"Explicit save or correction?"}
+    G -->|yes| H["Commit note with source, revision and lifetime"]
+    G -->|no| I{"Important decision?"}
+    F --> I
+    I -->|ordinary| J["One configured local model call"]
+    I -->|council authorized| K["Evidence reviewer - planner - critic - synthesis"]
+    K --> L["Recheck identity, expiry and cancellation"]
+    J --> L
+    L --> M["Answer with context references and uncertainty"]
+    H --> M
+    M --> N["Do not automatically save generated claims"]
+    classDef implemented fill:#173f45,color:#e9fbff,stroke:#6acbd7
+    classDef boundary fill:#493e26,color:#fff6dd,stroke:#e9b65c
+    class A,B,C,D,E,F,G,H,I,J,K,L,M,N implemented
+    class X boundary

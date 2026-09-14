@@ -1,0 +1,41 @@
+%% LYA — COMMAND LIFECYCLE AND THREADING
+%% Shows how the UI stays responsive, where cancellation works, and the R01 bug site.
+flowchart TD
+  classDef works fill:#1a7f37,color:#fff,stroke:#0d3f1c
+  classDef bug fill:#b62324,color:#fff,stroke:#6b1415
+  classDef entry fill:#0b4f6c,color:#fff,stroke:#062f40
+
+  IN["voice wake_loop OR orb Entry return OR panel button"]:::entry
+  IN --> SUB["Assistant.submit(text)"]:::works
+
+  SUB --> STOPCHK{"text in stop/cancel/<br/>sleep/close panel?"}
+  STOPCHK -->|yes| CANCEL["cancelled.set()<br/>generation += 1<br/>drain queue<br/>close panel"]:::works
+  STOPCHK -->|no| BUSY{"busy.is_set()?"}
+  BUSY -->|yes| REJ["A task is running. Say stop."]:::works
+  BUSY -->|no| PUT["queue.put_nowait((generation, text))<br/>maxsize 8"]:::works
+  PUT --> FULL{"queue full?"}
+  FULL -->|yes| QFULL["Command queue is full."]:::works
+
+  PUT --> WORKER["_worker() — single daemon thread"]:::works
+  WORKER --> GENCHK{"generation matches?"}
+  GENCHK -->|no, stale| DROP["drop silently"]:::works
+  GENCHK -->|yes| STATE["cancelled.clear<br/>busy.set<br/>face.wake<br/>face.set_state thinking"]:::works
+  STATE --> HANDLE["handle(text)"]:::works
+  HANDLE --> REPLY{"reply and not cancelled?"}
+  REPLY -->|yes| SHOW["face.show_reply(reply)<br/>queued to Tk event loop"]:::works
+  SHOW --> SPEECHCHK{"voice_enabled AND<br/>NOT private_output?"}
+  SPEECHCHK -->|yes| SPEAK["voice.speak(reply)"]:::works
+  REPLY -->|no| SKIP["discard reply - cancelled"]:::works
+  SPEAK --> FIN["busy.clear<br/>face.set_state idle"]:::works
+  SKIP --> FIN
+  CANCEL --> FIN
+
+  R01["R01 FIXED 2026-09-10: remember branch now sets<br/>private_output=True and returns a reply with no<br/>fact-derived words, so the worker will not speak it."]:::works
+  HANDLE -.-> R01
+
+  UI["main thread = ONLY Tk event loop"]:::works
+  WORKER -.->|_post: direct if same thread, else queue| UI
+  UI -.->|_drain every 40ms| UI
+
+  NOTE["Cancellation truth: stop clears the queue and browser authority,<br/>but cannot interrupt an in-flight network or approval call.<br/>Voice stop only routes while the 45s conversation window is open (R04)."]:::bug
+  CANCEL -.-> NOTE

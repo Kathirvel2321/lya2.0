@@ -1,0 +1,42 @@
+%% LYA — FACE ID / BIOMETRIC CHAIN, technology by technology
+%% Answers: "what tech is used for face id, and is it working?"
+sequenceDiagram
+  autonumber
+  participant Owner as Owner (laptop)
+  participant Main as main.py<br/>Assistant.identify()
+  participant Id as vision/identity.py
+  participant AW as security/auth_wall.py
+  participant IF as InsightFace<br/>ArcFace buffalo_l
+  participant Vault as security/vault.py
+  participant Cam as cv2 webcam<br/>(snapshot_jpg)
+
+  Note over Owner,Cam: CURRENT REAL PATH — what main.py actually calls
+  Owner->>Main: says "hey LYA" / types a command
+  Main->>Id: identify(snapshot_jpg())
+  Id->>Cam: cv2.VideoCapture(0) x6 warmup
+  Cam-->>Id: JPEG bytes
+  Id->>AW: face_embedding(jpeg)
+  AW->>IF: FaceAnalysis(buffalo_l).get(rgb)
+  IF-->>AW: 512-d normed_embedding
+  AW-->>Id: embedding
+  Id->>Vault: decrypt known_faces.lya
+  Vault-->>Id: enrolled people + embeddings
+  Id->>Id: max cosine similarity
+  alt score >= 0.45 (admin) / 0.50 (friend)
+    Id-->>Main: status=admin/friend, who=name
+    Main->>Main: Session(role, who)
+  else below threshold
+    Id->>Vault: append to pending[] (max 10)
+    Id-->>Main: status=unknown, role=unknown
+    Main->>Main: Session(role=stranger, person=guest)
+  end
+
+  Note over AW,LIVENESS: NOT on the live path — reachable only via phone verify_owner()
+  Main-->>Owner: (guest mode, no camera enrolled)
+
+%% ---- BLOCKER: why none of the above can run on this machine today ----
+  Note over IF,Vault: BLOCKER — insightface + onnxruntime are NOT installed.<br/>face_embedding() raises ImportError, so identify() returns "no_face".
+  Note over Id,Vault: BLOCKER — Windows DPAPI (win32crypt) is NOT installed,<br/>so security/vault.py fails at import before any of this runs.
+
+%% ---- The stored enrollment is empty ----
+  Note over Vault: known_faces.lya does not exist → _load() returns empty →<br/>every face is "unknown" regardless of camera working.

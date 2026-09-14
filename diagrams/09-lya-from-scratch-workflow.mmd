@@ -1,0 +1,39 @@
+flowchart TD
+    A["Preserve current prototype as reference"] --> B["Stage 0: reproducible runtime and readiness"]
+    B --> G0{"Baseline gate passes?"}
+    G0 -- "No" --> B
+    G0 -- "Yes" --> C["Stage 1: deterministic text core"]
+    C --> G1{"Core gate passes?"}
+    G1 -- "No" --> C
+    G1 -- "Yes" --> D["Stage 2: read-only folder journey"]
+    D --> G2{"Folder gate passes?"}
+    G2 -- "No" --> D
+    G2 -- "Yes" --> E["Stage 3: native accessible UI"]
+    E --> F["Stage 4: explicit private memory"]
+    F --> G["Stage 5: voice input and output"]
+    G --> H["Stage 6: one device capability at a time"]
+    H --> I["Stage 7: camera room check"]
+    I --> J["Stage 8: reference-driven UI preview"]
+    J --> K["Stage 9: isolated versioned skill creation"]
+    K --> L["Stage 10: phone identity and remote features"]
+
+    X["New feature request"] --> Y["Define observable result, risk and dependencies"]
+    Y --> Z{"Already supported?"}
+    Z -- "Yes" --> R["Reuse registered capability"]
+    Z -- "No" --> P["Build the smallest testable addition"]
+    R --> V["Execute and verify outcome"]
+    P --> T["Automated check and target-device check"]
+    T --> Q{"Acceptance gate passes?"}
+    Q -- "No" --> W["Keep inactive; record failure or blocker"]
+    Q -- "Yes" --> U["Register version and rollback target"]
+    U --> V
+    V --> O["Present honest result and update project brain"]
+
+    classDef kept fill:#334155,color:#fff
+    classDef now fill:#166534,color:#fff
+    classDef later fill:#92400e,color:#fff
+    classDef gate fill:#1d4ed8,color:#fff
+    class A kept
+    class B,C,D now
+    class E,F,G,H,I,J,K,L,P,R,T,U,V,W,O,Y,X,Z later
+    class G0,G1,G2,Q gate

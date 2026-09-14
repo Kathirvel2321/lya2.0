@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-14T17:27:34.822980+00:00",
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "elapsed_ms": 8297,
+      "error": "provider_unavailable",
+      "answer": "",
+      "pass": null,
+      "review_notes": ""
+    }
+  ],
+  "completed": false
+}

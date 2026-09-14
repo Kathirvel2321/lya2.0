@@ -1,0 +1,24 @@
+{
+  "duration_seconds": 2.516,
+  "process_cpu_seconds": 0.828,
+  "paint_count": 174,
+  "paint_median_ms": 2.643,
+  "paint_max_ms": 3.873,
+  "event_gap_max_ms": 25.692,
+  "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance."
+}
+test_deterministic_commands (__main__.InterfaceChecks.test_deterministic_commands) ... ok
+test_file_rows_are_readable_and_enter_loads_actual_document (__main__.InterfaceChecks.test_file_rows_are_readable_and_enter_loads_actual_document) ... ok
+test_keyboard_submission_and_escape (__main__.InterfaceChecks.test_keyboard_submission_and_escape) ... ok
+test_motion_stops_on_hide_and_reduced_motion (__main__.InterfaceChecks.test_motion_stops_on_hide_and_reduced_motion) ... ok
+test_only_small_native_windows_and_alpha_artwork (__main__.InterfaceChecks.test_only_small_native_windows_and_alpha_artwork) ... ok
+test_palette_is_presentation_only_and_task_takes_priority (__main__.InterfaceChecks.test_palette_is_presentation_only_and_task_takes_priority) ... ok
+test_panel_stays_on_available_monitor_for_edges_and_negative_coordinates (__main__.InterfaceChecks.test_panel_stays_on_available_monitor_for_edges_and_negative_coordinates) ... ok
+test_project_file_read_is_allowlisted_and_real (__main__.InterfaceChecks.test_project_file_read_is_allowlisted_and_real) ... ok
+test_stop_rejects_stale_worker_result_and_clears_panel (__main__.InterfaceChecks.test_stop_rejects_stale_worker_result_and_clears_panel) ... ok
+test_voice_wake_signal_dispatch (__main__.InterfaceChecks.test_voice_wake_signal_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.758s
+
+OK

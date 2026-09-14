@@ -1,0 +1,2 @@
+# Native UI only; no biometric, microphone or model dependencies.
+PySide6-Essentials==6.11.2

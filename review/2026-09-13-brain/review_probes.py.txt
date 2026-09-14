@@ -1,0 +1,7 @@
+{
+  "missing_person_selects_first_profile": false,
+  "credential_kind_included_in_model_context": false,
+  "scoped_store_failure_falls_back_to_legacy_memory": false,
+  "expired_pending_face_can_be_promoted": false,
+  "legacy_file_gate_prevents_new_registry_lookup": false
+}

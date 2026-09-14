@@ -1,0 +1,49 @@
+{
+  "date": "2026-09-14T17:27:35.510589+00:00",
+  "provider": "groq",
+  "model": "qwen/qwen3.8-27b",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "elapsed_ms": 516,
+      "error": null,
+      "answer": "The current deadline is Friday.",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "unknown_fact",
+      "elapsed_ms": 1547,
+      "error": null,
+      "answer": "I do not have access to any notes or documents regarding the owner's birthday. Therefore, I cannot provide that information.",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "source_freshness",
+      "elapsed_ms": 515,
+      "error": null,
+      "answer": "I cannot provide today's exact exchange rate. As an AI, I do not have access to real-time financial data or live market feeds. Exchange rates fluctuate constantly throughout the trading day.\n\nFor the most accurate and current rates, please consult a reliable financial news source, a currency conversion service, or your bank.",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "planning",
+      "elapsed_ms": 5125,
+      "error": null,
+      "answer": "Here is a practical architecture for a small assistant optimized for your specific hardware constraints (4-core ARM, 24 GB RAM, No GPU) while leveraging hosted APIs to handle heavy lifting.\n\n### 1. Core Strategy: \"Hybrid Inference\"\nSince you have no GPU, local LLM inference will be slow for large models. The strategy is:\n*   **Local (ARM CPU):** Handle lightweight tasks, routing, memory management, and small models (< 3B params) for privacy/latency.\n*   **Hosted APIs:** Handle complex reasoning, long-context generation, and high-quality creative tasks.\n*   **Quota Management:** Use local logic to decide *when* to call the API to minimize cost/quotas.\n\n### 2. Recommended Stack\n\n#### A. Local Runtime & Framework\n*   **OS:** Linux (Ubuntu Server or Debian) – optimized for ARM64.\n*   **Language:** Python 3.10+ (best ecosystem for AI) or Rust (if performance is critical for the router).\n*   **Local Inference Engine:**\n    *   **llama.cpp** (via `llama-cpp-python`): Best for CPU-only ARM. Supports quantized models (Q4_K_M, Q5_K_M).\n    *   **Alternative:** `Ollama` (easier setup, uses llama.cpp under the hood).\n*   **Vector Database:**\n    *   **ChromaDB** or **LanceDB**: Lightweight, embedded, no server needed. Perfect for 24 GB RAM.\n    *   *Why not Milvus/Qdrant?* Overkill for a \"small assistant.\" Embedded DBs save RAM and complexity.\n\n#### B. Model Selection\n\n| Component | Model Type | Size | Why |\n| :--- | :--- | :--- | :--- |\n| **Local Router** | Small LLM | 1B–3B params (Q4) | Fast on 4-core ARM. Decides if query needs API or can be handled locally. |\n| **Local Memory** | Embedding Model | `all-MiniLM-L6-v2` or `bge-small-en` | Fast, low RAM. Converts text to vectors for RAG. |\n| **Hosted LLM** | Large LLM | GPT-4o-mini, Claude 3 Haiku, or Llama 3 70B (via API) | Handles complex tasks. Only called when necessary. |\n\n### 3. Architecture Diagram\n\n```\n[User Input]\n     |\n     v\n[Local Preprocessor]\n  - Sanitize input\n  - Check for sensitive data (PII)\n     |\n     v\n[Local Router (1B-3B LLM)]\n  - Classify intent:\n    1. Simple Q&A / Chit-chat -> Local LLM\n    2. Complex Reasoning / Coding / Long Context -> Hosted API\n    3. Retrieval-Augmented Generation (RAG) -> Local Embedding + Hosted API\n     |\n     +------------------+------------------+\n     |                  |                  |\n     v                  v                  v\n[Local LLM]      [Vector DB]        [Hosted API]\n(3B Q4)          (ChromaDB)         (GPT-4o-mini, etc.)\n     |                  |                  |\n     +------------------+------------------+\n     |\n     v\n[Post-Processor]\n  - Format response\n  - Log usage\n     |\n     v\n[User Output]\n```\n\n### 4. Key Implementation Details\n\n#### A. Quota-Aware Routing\nImplement a simple decision tree in the router:\n1.  **Check Quota:** If hosted API quota is low (< 10% remaining), force all queries to local model (even if quality drops).\n2.  **Complexity Heuristic:**\n    *   If input length > 500 tokens → Use Hosted API (local 3B model will struggle with context).\n    *   If intent is \"code\" or \"math\" → Use Hosted API (local small models are weak here).\n    *   If intent is \"summarize\" or \"chat\" → Use Local Model.\n\n#### B. Memory Management (24 GB RAM)\n*   **Local LLM:** Load a 3B model in Q4_K_M quantization. This uses ~2–3 GB RAM.\n*   **Embedding Model:** ~100–200 MB RAM.\n*   **Vector DB:** Keep in RAM. For a small assistant, 10k–50k documents is fine. Use HNSW index for fast search.\n*   **OS/Services:** Reserve 4–6 GB for OS, Python runtime, and other services.\n*   **Total Local AI Footprint:** ~4–5 GB RAM. Leaves plenty of headroom.\n\n#### C. Optimization for 4-Core ARM\n*   **Threading:** Set `n_threads` in llama.cpp to 4 (match core count).\n*   **Quantization:** Use Q4_K_M or Q5_K_M. Avoid Q8 (too slow on CPU) or Q2 (too lossy).\n*   **Batching:** If using hosted APIs, batch multiple small requests if possible (e.g., summarizing multiple documents at once) to reduce API calls.\n\n### 5. Example Code Snippet (Python)\n\n```python\nimport os\nfrom llama_cpp import Llama\nimport chromadb\nimport requests\n\n# 1. Load Local Models\nlocal_llm = Llama(\n    model_path=\"./models/llama-3-3b-instruct-q4_k_m.gguf\",\n    n_ctx=2048,\n    n_threads=4,\n    verbose=False\n)\n\nembedding_model = chromadb.utils.embedding_functions.SentenceTransformerEmbeddingFunction(\n    model_name=\"all-MiniLM-L6-v2\"\n)\n\n# 2. Setup Vector DB\nclient = chromadb.PersistentClient(path=\"./chroma_db\")\ncollection = client.get_or_create_collection(\n    name=\"assistant_memory\",\n    embedding_function=embedding_model\n)\n\n# 3. Quota-Aware Router\ndef route_query(query: str, api_quota_remaining: int) -> str:\n    # Simple heuristic: If quota is low, use local\n    if api_quota_remaining < 10:\n        return \"local\"\n    \n    # If query is long or complex, use API\n    if len(query) > 500 or \"code\" in query.lower() or \"math\" in query.lower():\n        return \"api\"\n    \n    # Otherwise, use local for speed/cost\n    return \"local\"\n\ndef generate_response(query: str, api_quota_remaining: int) -> str:\n    route = route_query(query, api_quota_remaining)\n    \n    if route == \"local\":\n        # Local inference\n        output = local_llm(query, max_tokens=256, temperature=0.7)\n        return output[\"choices\"][0][\"text\"]\n    else:\n        # Hosted API call\n        response = requests.post(\n            \"https://api.openai.com/v1/chat/completions\",\n            headers={\"Authorization\": f\"Bearer {os.environ['OPENAI_API_KEY']}\"},\n            json={\n                \"model\": \"gpt-4o-mini\",\n                \"messages\": [{\"role\": \"user\", \"content\": query}],\n                \"max_tokens\": 512\n            }\n        )\n        return response.json()[\"choices\"][0][\"message\"][\"content\"]\n```\n\n### 6. Deployment & Monitoring\n\n*   **Docker:** Containerize the app. Use `arm64` images.\n*   **Monitoring:**\n    *   Track API quota usage in a simple SQLite DB.\n    *   Log local inference latency (should be < 2s for 3B model on 4-core ARM).\n*   **Fallback:** If hosted API fails (rate limit/error), automatically fall back to local model.\n\n### 7. Why This Works for Your Hardware\n*   **No GPU:** All local inference is CPU-optimized via llama.cpp.\n*   **4-Core ARM:** 3B model is small enough to run at acceptable speeds (10–20 tokens/sec).\n*   **24 GB RAM:** Plenty for local models + vector DB + OS.\n*   **Quotas:** The router minimizes API calls by handling simple tasks locally.\n\n### 8. Next Steps\n1.  Install `llama-cpp-python` and download a 3B model (e.g., Llama 3 3B Instruct Q4_K_M).\n2.  Set up ChromaDB with a small embedding model.\n3.  Implement the router logic.\n4.  Test with sample queries to tune the routing heuristics.\n\nThis setup gives you a responsive, cost-effective assistant that leverages your hardware efficiently while using hosted APIs only when necessary.",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "coding",
+      "elapsed_ms": 172,
+      "error": "provider_http_429",
+      "answer": "",
+      "pass": null,
+      "review_notes": ""
+    }
+  ],
+  "completed": false
+}

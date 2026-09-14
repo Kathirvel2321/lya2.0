@@ -1,0 +1,22 @@
+flowchart TD
+    A["Desktop request"] --> B["Identity and permission checks"]
+    B --> C["Scoped memory and task classification"]
+    C --> D["SSH to Oracle - opt-in"]
+    D --> E["Eligible routes: task, privacy, pinned upstream"]
+    E --> F["Atomic daily budget and provider cooldown"]
+    F --> G["Primary model - bounded call"]
+    G -->|"Success"| H["Answer and route disclosure"]
+    G -->|"Timeout, 429 or selected 5xx"| I["Cool down failed upstream"]
+    I --> J["Approved independent backup within two-attempt budget"]
+    J --> H
+    G -->|"Auth, input, refusal or malformed output"| K["Stop and report error"]
+    F -->|"No budget or eligible route"| K
+    H --> L["Recheck identity, expiry and cancellation"]
+    L --> M["Glass panel response"]
+    N["Public Groq route live; NVIDIA backups disabled after failed checks"] -.-> E
+    O["Model accuracy and dependable independent backup still pending"] -.-> G
+    classDef implemented fill:#173e4b,color:#ffffff
+    classDef pending fill:#755d22,color:#ffffff
+    class A,B,C,D,E,F,G,H,I,J,K,L,M implemented
+    class N implemented
+    class O pending

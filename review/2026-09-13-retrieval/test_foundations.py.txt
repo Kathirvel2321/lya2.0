@@ -1,0 +1,19 @@
+test_build_mode_never_accesses_device_or_memory (__main__.Foundations.test_build_mode_never_accesses_device_or_memory) ... ok
+test_cancel_discards_queued_actions_and_browse_authority (__main__.Foundations.test_cancel_discards_queued_actions_and_browse_authority) ... ok
+test_denied_theme_does_not_write_settings (__main__.Foundations.test_denied_theme_does_not_write_settings) ... ok
+test_face_template_decodes_saved_float32 (__main__.Foundations.test_face_template_decodes_saved_float32) ... ok
+test_folder_paging_and_scope (__main__.Foundations.test_folder_paging_and_scope) ... ok
+test_gateway_blocks_token_only_enrollment (__main__.Foundations.test_gateway_blocks_token_only_enrollment) ... ok
+test_generated_code_activation_never_imports (__main__.Foundations.test_generated_code_activation_never_imports) ... ok
+test_guest_context_never_reads_private_memory_or_owner_history (__main__.Foundations.test_guest_context_never_reads_private_memory_or_owner_history) ... ok
+test_memory_parallel_roundtrip_and_corrupt_store_preserved (__main__.Foundations.test_memory_parallel_roundtrip_and_corrupt_store_preserved) ... ok
+test_missing_liveness_model_denies (__main__.Foundations.test_missing_liveness_model_denies) ... ok
+test_phone_approval_is_bound_to_displayed_task_and_cannot_replay (__main__.Foundations.test_phone_approval_is_bound_to_displayed_task_and_cannot_replay) ... ok
+test_plain_http_cannot_issue_phone_approval (__main__.Foundations.test_plain_http_cannot_issue_phone_approval) ... ok
+test_policy_denies_unknown_roles_and_actions (__main__.Foundations.test_policy_denies_unknown_roles_and_actions) ... ok
+test_themes_validate_and_undo_without_code (__main__.Foundations.test_themes_validate_and_undo_without_code) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.169s
+
+OK

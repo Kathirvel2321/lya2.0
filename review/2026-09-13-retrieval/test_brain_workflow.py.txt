@@ -1,0 +1,24 @@
+test_correction_preserves_expiry_and_graph_forget_cascades (__main__.BrainChecks.test_correction_preserves_expiry_and_graph_forget_cascades) ... ok
+test_correction_rebuilds_search_without_stale_terms (__main__.BrainChecks.test_correction_rebuilds_search_without_stale_terms) ... ok
+test_council_failure_does_not_invent_verdict (__main__.BrainChecks.test_council_failure_does_not_invent_verdict) ... ok
+test_council_uses_four_calls_without_executing_or_saving (__main__.BrainChecks.test_council_uses_four_calls_without_executing_or_saving) ... ok
+test_encrypted_file_and_restart_recall (__main__.BrainChecks.test_encrypted_file_and_restart_recall) ... ok
+test_expired_pending_cannot_be_promoted (__main__.BrainChecks.test_expired_pending_cannot_be_promoted) ... ok
+test_full_ranked_results_keep_linked_contradiction (__main__.BrainChecks.test_full_ranked_results_keep_linked_contradiction) ... ok
+test_graph_rejects_other_owner_and_expired_endpoints (__main__.BrainChecks.test_graph_rejects_other_owner_and_expired_endpoints) ... ok
+test_guest_and_denied_approval_cannot_touch_private_memory (__main__.BrainChecks.test_guest_and_denied_approval_cannot_touch_private_memory) ... ok
+test_identity_switch_and_cancellation_discard_answer (__main__.BrainChecks.test_identity_switch_and_cancellation_discard_answer) ... ok
+test_legacy_memory_fallback_closed (__main__.BrainChecks.test_legacy_memory_fallback_closed) ... ok
+test_note_expiry_during_inference_hides_stale_answer (__main__.BrainChecks.test_note_expiry_during_inference_hides_stale_answer) ... ok
+test_old_encrypted_schema_migrates_without_losing_note (__main__.BrainChecks.test_old_encrypted_schema_migrates_without_losing_note) ... ok
+test_ranked_search_avoids_substrings_and_fts_operators (__main__.BrainChecks.test_ranked_search_avoids_substrings_and_fts_operators) ... ok
+test_revocation_during_inference_hides_answer (__main__.BrainChecks.test_revocation_during_inference_hides_answer) ... ok
+test_scoped_retrieval_credentials_and_model_not_auto_saved (__main__.BrainChecks.test_scoped_retrieval_credentials_and_model_not_auto_saved) ... ok
+test_session_notes_clear_on_identity_change_sleep_and_idle (__main__.BrainChecks.test_session_notes_clear_on_identity_change_sleep_and_idle) ... ok
+test_short_long_deadline_and_permanent_expiry (__main__.BrainChecks.test_short_long_deadline_and_permanent_expiry) ... ok
+test_timezone_and_nonfinite_deadlines_rejected (__main__.BrainChecks.test_timezone_and_nonfinite_deadlines_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.865s
+
+OK

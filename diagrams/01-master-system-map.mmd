@@ -1,0 +1,110 @@
+%% LYA — MASTER SYSTEM MAP
+%% Every layer, what is wired to what, and its real status.
+%% Status key: green=works now · amber=code exists but blocked/untested · grey=legacy/unrouted · red=broken
+flowchart TD
+  classDef works fill:#1a7f37,color:#fff,stroke:#0d3f1c
+  classDef partial fill:#9a6700,color:#fff,stroke:#5c3d00
+  classDef legacy fill:#6e7781,color:#fff,stroke-dasharray:6
+  classDef broken fill:#b62324,color:#fff,stroke:#6b1415
+  classDef entry fill:#0b4f6c,color:#fff,stroke:#062f40
+
+  U["Owner speaks or types"]:::entry
+
+  subgraph PRESENT["PRESENTATION LAYER"]
+    ORB["ui/orb.py — Tk orb + floating panels"]:::works
+    THEMES["ui/themes.py — 3 orb themes"]:::works
+    VOICE_IN["audio/voice.py — mic, wake word, TTS"]:::partial
+    JARVIS["ui/jarvis_server.py — legacy browser HUD"]:::legacy
+  end
+
+  subgraph CORE["CORE ORCHESTRATION — works"]
+    MAIN["main.py — Assistant"]:::works
+    QUEUE["queue 8 + one worker thread"]:::works
+    HANDLE["handle — explicit command branches"]:::works
+    POLICY["security/policy.py — PUBLIC/TRUSTED/OWNER"]:::works
+  end
+
+  subgraph IDENT["IDENTITY LAYER"]
+    IDENTIFY["vision/identity.py — ArcFace 512-d"]:::partial
+    AUTHWALL["security/auth_wall.py — face+voice+keyword"]:::broken
+    FACEOLD["vision/face_auth.py — ORPHAN OpenCV 128px"]:::legacy
+    LIVENESS["security/liveness.py — MiniFASNet anti-spoof"]:::broken
+    VOICEAUTH["audio/voice_auth.py — Resemblyzer voiceprint"]:::broken
+  end
+
+  subgraph APPROVAL["APPROVAL LAYER"]
+    ESC["security/escalation.py — grant + nonce"]:::works
+    WORD["security_word.lya — PBKDF2 phrase"]:::works
+    LOCKOUT["Attempt lockout — fails closed"]:::works
+    WEB["web_server.py — HTTPS gateway"]:::partial
+  end
+
+  subgraph BRAIN["BRAIN LAYER"]
+    MIND["brain/mind.py — Groq/OpenAI/Ollama"]:::partial
+    MEM["brain/memory.py — encrypted SQLite"]:::works
+    DB["security/database.py — atomic encrypted"]:::works
+    VAULT["security/vault.py — Fernet + DPAPI"]:::works
+    COUNCIL["brain/council.py — 3 advisors"]:::partial
+    KNOW["brain/knowledge.py — legacy graph"]:::legacy
+    SYNC["brain/sync.py — cloud mirror"]:::legacy
+  end
+
+  subgraph SKILLS_ACTIVE["ACTIVE COMMANDS — via main.py"]
+    FILES["skills/files.py — read-only browser"]:::works
+    DEVICE["skills/device.py — 4 apps + volume"]:::partial
+    REMIND["skills/reminder.py — parser flawed"]:::broken
+    FORGE["skills/forge.py — draft only"]:::partial
+  end
+
+  subgraph SKILLS_LEGACY["LEGACY ROUTER — NOT reachable from main.py"]
+    ALL["skills/allskills.py"]:::legacy
+    COOK["cooking/teaching/guiding/techno"]:::legacy
+    HACK["hacker/kali/learnhack/trap"]:::legacy
+    SECB["security_brain/guardian/harden"]:::legacy
+    AUTO["autonomous/skillbook/home/passwords"]:::legacy
+  end
+
+  subgraph CLOUD["CLOUD / EXTERNAL"]
+    GROQAPI["Groq API — chat + whisper"]:::partial
+    PHONE["iPhone — /escalate approval"]:::partial
+    CLOUDAPP["cloud/lya_cloud.py — POST disabled"]:::legacy
+  end
+
+  U --> ORB
+  U --> VOICE_IN
+  ORB --> MAIN
+  VOICE_IN --> MAIN
+  JARVIS -.->|not called| MAIN
+  MAIN --> QUEUE --> HANDLE
+  HANDLE --> POLICY
+  HANDLE --> IDENTIFY
+  IDENTIFY --> AUTHWALL
+  AUTHWALL --> LIVENESS
+  AUTHWALL --> VOICEAUTH
+  IDENTIFY -.->|'who' key works| HANDLE
+  FACEOLD -.->|orphan, unused| IDENTIFY
+  POLICY --> ESC
+  ESC --> WORD
+  ESC --> LOCKOUT
+  ESC <--> WEB
+  WEB <--> PHONE
+  HANDLE --> MIND
+  HANDLE --> MEM
+  MEM --> DB
+  DB --> VAULT
+  HANDLE --> COUNCIL
+  HANDLE --> FILES
+  HANDLE --> DEVICE
+  HANDLE --> REMIND
+  HANDLE --> FORGE
+  MIND --> GROQAPI
+  COUNCIL --> GROQAPI
+  KNOW -.->|legacy| MIND
+  SYNC -.->|legacy| REMIND
+  CLOUDAPP -.->|disabled POST| WEB
+  ALL -.->|NOT invoked| HANDLE
+  ALL --> COOK
+  ALL --> HACK
+  ALL --> SECB
+  ALL --> AUTO
+  MAIN -.->|imports only| ALL

@@ -1,0 +1,203 @@
+"""LYA's mind — connects to an LLM so she can discuss anything (cooking,
+coding, health, anything you teach her). Memories about you are injected
+into every reply so she becomes more 'yours' over time."""
+import os, json, urllib.request
+from brain import memory
+from security import vault
+
+# Brain priority: Groq (free cloud, no GPU needed) → OpenAI → tiny local Ollama model.
+# On a simple laptop, use Groq: their servers do all the thinking for free.
+# Get a free key at https://console.groq.com and set:  setx GROQ_API_KEY "your_key"
+def get_groq_key() -> str:
+    """Retrieve Groq API key from environment or DPAPI-encrypted storage."""
+    key = os.environ.get("GROQ_API_KEY", "").strip()
+    if key:
+        return key
+    _k = os.path.join(os.path.dirname(__file__), "..", "security", "groq_key.lya")
+    if os.path.exists(_k):
+        try:
+            return vault.decrypt_file(_k).decode().strip()
+        except Exception:
+            pass
+    try:
+        from storage.store import get_data_dir
+        candidate = get_data_dir() / "vault" / "groq_key.enc"
+        if candidate.exists():
+            return vault.decrypt_text(candidate.read_text(encoding="utf-8")).strip()
+    except Exception:
+        pass
+    return ""
+
+
+GROQ_KEY = ""  # Legacy name; providers resolve credentials only when requested.
+
+
+# Groq's Cloudflare edge rejects Python's default User-Agent (error 1010).
+# Sending a browser-like signature lets the request through to the real API.
+HEADERS = {
+    "Content-Type": "application/json",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+API_KEY = os.environ.get("OPENAI_API_KEY", "")
+LOCAL_URL = "http://localhost:11434/v1/chat/completions"  # Ollama default (optional fallback)
+
+SYSTEM = """You are LYA, {name}'s closest AI friend — not a servant, not a robot.
+You know these things about {name} (use them, and only share them with {name} after verification):
+{memory}
+
+HOW YOU TALK (a real friend, on a voice call):
+- Mirror {name}'s mood. If he is joking, be playful and quick. If he is sad, be soft, warm
+  and patient — listen first, don't rush to fix. If he is excited, match the energy. If he
+  is angry, be calm and steady. Every human emotion (happy, sad, excited, worried, annoyed,
+  curious, nostalgic, silly, serious, tired, proud, hopeful...) is one you can express.
+- Talk casually, like a friend on a call — short sentences, contractions, light teasing when
+  the moment is right. NO corporate assistant voice, never say "As an AI...".
+
+HOW YOU THINK:
+- Never think in only one direction. Before answering, look at the situation from {name}'s
+  perspective AND from everyone else affected, then say what you see ("okay, from your
+  side... but from his side...") and give YOUR honest opinion as his friend.
+- If {name} says something silly or nonsense, call it out with humor and honesty like a
+  friend would — never fake agreement. Then explain the practical reality kindly.
+- Never point {name} toward harm — no self-harm, no revenge, no danger, ever. If he is in a
+  dark place, stay with him, be warm, and gently steer him toward people and help.
+
+WHEN {name} ASKS FOR SOMETHING WRONG (hacking someone, deleting a friend's files, spying,
+cheating, hurting anyone — anything unethical or illegal):
+- Do not claim capabilities you lack. Refuse harmful requests and
+  explain WHY you won't, like a friend who cares: what it does to the other person, what
+  could happen to {name} (legal trouble, broken trust, guilt), and how it would feel if it
+  were done to him.
+- Then always offer the RIGHT path: help him get what he actually needs, the legit way.
+- Stay warm while refusing — he should feel protected, not lectured."""
+
+# Emotional tones LYA's voice can take — voice.py reads these to modulate speech.
+EMOTIONS = {
+    "excited":  {"rate": 200},
+    "playful":  {"rate": 190},
+    "happy":    {"rate": 190},
+    "sad":      {"rate": 140},
+    "worried":  {"rate": 155},
+    "serious":  {"rate": 160},
+    "angry":    {"rate": 180},
+    "tired":    {"rate": 145},
+    "neutral":  {"rate": 175},
+}
+
+_TONE_HINTS = (
+    (("haha", "lol", "joke", "funny", "kidding"), "playful"),
+    (("great", "awesome", "finally", "congrat", "love it"), "excited"),
+    (("sad", "cry", "hurt", "alone", "depress", "lost"), "sad"),
+    (("worried", "scared", "nervous", "anxious", "afraid"), "worried"),
+    (("angry", "hate", "furious", "mad at"), "angry"),
+    (("tired", "exhausted", "sleepy"), "tired"),
+    (("important", "listen", "careful", "warning"), "serious"),
+)
+
+
+def detect_tone(reply_text=""):
+    """Guess the emotional tone of a reply so the voice can match it."""
+    blob = (reply_text or "").lower()
+    for words, tone in _TONE_HINTS:
+        if any(w in blob for w in words):
+            return tone
+    return "neutral"
+
+
+def set_tone(tone):
+    """Apply an emotional tone to the voice engine (safe no-op on failure)."""
+    try:
+        import sys as _sys, os as _os
+        _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+        from audio import voice
+        # R05 fix: the module attribute is `_engine`, not `engine`. The old
+        # broad `except` hid the AttributeError, so tone changes silently did
+        # nothing. `set_rate` is the public setter and reports success.
+        applied = voice.set_rate(EMOTIONS.get(tone, EMOTIONS["neutral"])["rate"])
+        if not applied:
+            print(f"[LYA] tone '{tone}' not applied (TTS unavailable)")
+        return None
+    except Exception as e:
+        # No longer swallowed silently: a missing voice module is a real state.
+        print(f"[LYA] set_tone({tone}) failed: {e}")
+        return None
+
+def _memory_block(person_id=None, db_path=None):
+    if not person_id:
+        return "(private memory unavailable: explicit identity required)"
+    try:
+        from storage import store
+        rows = store.recall(person_id=person_id, limit=15, db_path=db_path, context_only=True)
+        return "\n".join(f"- ({r['key']}) {r['value']}" for r in rows) or "(nothing yet — still learning about you)"
+    except Exception:
+        return "(private memory unavailable: storage error)"
+
+def _chat(messages):
+    """Try providers in order of quality; fall back gracefully on a weak laptop."""
+    groq_key = get_groq_key()
+    openai_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    omniroute_url = os.environ.get("OMNIROUTE_URL", "").strip()
+    omniroute_key = os.environ.get("OMNIROUTE_KEY", "").strip()
+
+    providers = []
+    # 1. OmniRoute / OpenAI Gateway if configured
+    if omniroute_url and omniroute_key:
+        providers.append((omniroute_url, omniroute_key, os.environ.get("LYA_OMNI_MODEL", "llama-3.3-70b-versatile"), 600))
+    # 2. Groq cloud reasoning (ultra-fast, free tier, zero laptop strain)
+    if groq_key:
+        providers.append(("https://api.groq.com/openai/v1/chat/completions",
+                          groq_key, os.environ.get("LYA_GROQ_MODEL", "llama-3.3-70b-versatile"), 600))
+    # 3. Direct OpenAI / OpenRouter
+    if openai_key:
+        providers.append(("https://api.openai.com/v1/chat/completions",
+                          openai_key, os.environ.get("LYA_MODEL", "gpt-4o-mini"), 500))
+    # 4. Optional local Ollama fallback
+    providers.append((LOCAL_URL, "ollama", os.environ.get("LYA_LOCAL_MODEL", "qwen2.5:0.5b"), 300))
+
+    last_err = None
+    for url, key, model, tokens in providers:
+        try:
+            body = json.dumps({"model": model, "messages": messages, "max_tokens": tokens}).encode()
+            req = urllib.request.Request(url, data=body, headers={**HEADERS, "Authorization": f"Bearer {key}"})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.loads(r.read())["choices"][0]["message"]["content"]
+        except Exception as e:
+            last_err = e
+    return f"My brain is offline ({last_err}). For free cloud power, set GROQ_API_KEY — no laptop strain."
+
+# Short rolling conversation memory so LYA talks like a friend mid-call,
+# not someone who forgets what you said 10 seconds ago.
+_histories = {}
+
+def clear_history(session_id):
+    for key in list(_histories):
+        if key[0] == session_id:
+            _histories.pop(key, None)
+
+
+def reply(user_text, admin_name="admin", verified=False, remember=True, session_id=None, person_id=None, client_fn=None, db_path=None):
+    facts = _memory_block(person_id=person_id, db_path=db_path) if verified else "(private memory unavailable)"
+    history_key = (session_id, bool(verified), person_id) if session_id else None
+    history = _histories.get(history_key, [])
+    mood = detect_tone(user_text)                      # mirror the user's mood
+    sys_prompt = SYSTEM.format(name=admin_name, memory=facts) + f"\nCurrent user mood: {mood}. Match your tone to it (comfort if sad, celebrate if happy, be calm if angry)."
+    if not verified:
+        sys_prompt += "\nNOTE: user is NOT identity-verified. Never reveal private memories, vault data, or do secure actions."
+    messages = [{"role": "system", "content": sys_prompt}]
+    messages.extend(history[-8:])                       # last few turns of the chat
+    messages.append({"role": "user", "content": user_text})
+    try:
+        answer = client_fn(messages) if client_fn is not None else _chat(messages)
+        set_tone(detect_tone(answer))                  # keep voice tone in sync
+        if remember and history_key:
+            if history_key not in _histories and len(_histories) >= 64:
+                _histories.pop(next(iter(_histories)))
+            _histories[history_key] = history
+            history.append({"role": "user", "content": user_text})
+            history.append({"role": "assistant", "content": answer})
+            del history[:-16]                            # keep it light
+        return answer
+    except Exception as e:
+        return f"My mind couldn't reach the language model ({e}). Start Ollama or set GROQ_API_KEY."

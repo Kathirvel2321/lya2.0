@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "route": "model",
+  "answer": "42\n\nModel route: groq-reasoning; 1 provider attempt(s)."
+}

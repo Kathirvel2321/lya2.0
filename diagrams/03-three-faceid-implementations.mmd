@@ -1,0 +1,53 @@
+%% LYA — THERE ARE THREE SEPARATE "FACE ID" IMPLEMENTATIONS
+%% Only one is linked into the running program. This is the single most
+%% confusing thing in the codebase, so it gets its own diagram.
+flowchart LR
+  classDef used fill:#1a7f37,color:#fff,stroke:#0d3f1c
+  classDef orphan fill:#9a6700,color:#fff,stroke:#5c3d00
+  classDef dead fill:#6e7781,color:#fff,stroke-dasharray:6
+
+  subgraph A["1 — vision/identity.py  ◀ THE ONE ACTUALLY WIRED IN"]
+    A1["InsightFace ArcFace buffalo_l"]:::used
+    A2["512-d embedding, cosine match"]:::used
+    A3["threshold 0.45 admin / 0.50 friend"]:::used
+    A4["known_faces.lya encrypted store"]:::used
+    A5["roles: admin / secondary / friend / unknown"]:::used
+    A6["pending-stranger queue (10 max)"]:::used
+    A7["name_person() promotes stranger to friend"]:::used
+    A1 --> A2 --> A3 --> A4
+    A4 --> A5
+    A4 --> A6 --> A7
+  end
+
+  subgraph B["2 — vision/face_auth.py  ◀ ORPHANED, never imported by main.py"]
+    B1["OpenCV Haar cascade"]:::orphan
+    B2["128x128 greyscale, mean abs diff"]:::orphan
+    B3["threshold 0.12 — far weaker than ArcFace"]:::orphan
+    B4["admin_face.npy.lya"]:::orphan
+    B5["verify() needs 5 matched frames"]:::orphan
+    B1 --> B2 --> B3 --> B4 --> B5
+  end
+
+  subgraph C["3 — security/liveness.py  ◀ ANTI-SPOOF, separate concern"]
+    C1["MiniFASNet ensemble (torch)"]:::dead
+    C2["Detects printed photo / screen replay"]:::dead
+    C3["Called only from identity.verify_owner()"]:::dead
+    C4["Fails CLOSED if model missing"]:::dead
+    C1 --> C2 --> C3
+    C3 --> C4
+  end
+
+  subgraph D["Voiceprint — audio/voice_auth.py"]
+    D1["Resemblyzer VoiceEncoder"]:::orphan
+    D2["256-d speaker embedding"]:::orphan
+    D3["threshold 0.75 — is it YOUR voice"]:::orphan
+    D1 --> D2 --> D3
+  end
+
+  ID["vision/identity.identify()"]:::used
+  A4 --> ID
+  ID -->|role set here| MAIN["main.py Session"]:::used
+
+  B5 -.->|"NOT reached: main.py imports identity, not face_auth"| ID
+  D3 -.->|"only inside AuthWall.verify(), never called by main"| ID
+  C3 -.->|"only on phone /escalate path"| PH["web_server /escalate"]:::orphan

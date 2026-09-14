@@ -1,0 +1,68 @@
+%% LYA — DATA FLOW AND ENCRYPTION AT REST
+%% What is stored where, and what protects it.
+flowchart LR
+  classDef works fill:#1a7f37,color:#fff,stroke:#0d3f1c
+  classDef partial fill:#9a6700,color:#fff,stroke:#5c3d00
+  classDef broken fill:#b62324,color:#fff,stroke:#6b1415
+  classDef plain fill:#8b2f00,color:#fff,stroke:#4d1a00
+
+  subgraph KEY["KEY ROOT"]
+    DPAPI["win32crypt CryptProtectData<br/>bound to Windows user account"]:::broken
+    ENT["entropy b'LYA-ultron-project-2026'"]:::works
+    FERNET["Fernet AES-256 key"]:::works
+    DPAPI --> FERNET
+    ENT --> DPAPI
+  end
+
+  subgraph PRIV["ENCRYPTED PRIVATE STORES"]
+    KEYF["security/.lya_key<br/>DPAPI blob"]:::partial
+    FACES["vision/known_faces.lya<br/>embeddings + roles + pending"]:::partial
+    BRAINDB["brain/lya_brain.db.lya<br/>memory + admin rows"]:::partial
+    WORD["security/security_word.lya<br/>PBKDF2 hash + salt"]:::partial
+    GRANT["security/escalation_grant.lya"]:::partial
+    CHAL["security/escalation_challenge.lya"]:::partial
+    ATT["security/escalation_attempts.lya"]:::partial
+    TOKEN["security/phone_token.lya"]:::partial
+    DRAFTS["skills/forge_draft.py + forge_meta.json"]:::plain
+  end
+
+  FERNET --> KEYF
+  FERNET -->|encrypt/decrypt| FACES
+  FERNET --> BRAINDB
+  FERNET --> WORD
+  FERNET --> GRANT
+  FERNET --> CHAL
+  FERNET --> ATT
+  FERNET --> TOKEN
+
+  subgraph WRITE["BRAIN MEMORY WRITE PATH"]
+    REM["remember(kind, key, value)"]:::works
+    ENCK["encrypt_text(key)"]:::works
+    ENCV["encrypt_text(value)"]:::works
+    RAM["sqlite3 :memory:"]:::works
+    SER["db.serialize() → vault.encrypt()"]:::works
+    TMP[".lya.tmp + fsync"]:::works
+    REPL["os.replace — atomic"]:::works
+    LOCK["thread RLock + msvcrt file lock"]:::works
+    REM --> ENCK --> RAM
+    REM --> ENCV --> RAM
+    RAM --> SER --> TMP --> REPL
+    LOCK -.-> RAM
+  end
+  BRAINDB --> RAM
+
+  subgraph SEPARATE["DIFFERENT, WEAKER PATH — reminders"]
+    RDB["data/reminders.db<br/>PLAIN sqlite file"]:::plain
+    RSAVE["what + when encrypted as TEXT"]:::works
+    RORDER["ORDER BY when_iso<br/>on ENCRYPTED tokens → sort is random (R07)"]:::broken
+    RDB --> RSAVE --> RORDER
+  end
+
+  subgraph PLAIN2["PLAINTEXT ON DISK"]
+    SHOTS["shots/*.png screenshots"]:::plain
+    APPEAR["data/appearance.json theme"]:::plain
+    LOCKF[".lock files"]:::plain
+  end
+
+  NOTE["Honest summary: the memory DB, face store and security word are genuinely<br/>encrypted. Reminder table contents are encrypted but the file itself is a<br/>normal SQLite DB, and screenshots + themes are plaintext."]:::partial
+  RDB -.-> NOTE

@@ -1,0 +1,27 @@
+{
+  "duration_seconds": 2.512,
+  "process_cpu_seconds": 0.438,
+  "paint_count": 170,
+  "paint_median_ms": 1.6,
+  "paint_max_ms": 4.051,
+  "event_gap_max_ms": 25.82,
+  "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance."
+}
+test_brain_cancel_during_worker_does_not_reopen_panel (__main__.InterfaceChecks.test_brain_cancel_during_worker_does_not_reopen_panel) ... ok
+test_deterministic_commands (__main__.InterfaceChecks.test_deterministic_commands) ... ok
+test_file_rows_are_readable_and_enter_loads_actual_document (__main__.InterfaceChecks.test_file_rows_are_readable_and_enter_loads_actual_document) ... ok
+test_isolated_demo_runs_from_native_command (__main__.InterfaceChecks.test_isolated_demo_runs_from_native_command) ... ok
+test_keyboard_submission_and_escape (__main__.InterfaceChecks.test_keyboard_submission_and_escape) ... ok
+test_motion_stops_on_hide_and_reduced_motion (__main__.InterfaceChecks.test_motion_stops_on_hide_and_reduced_motion) ... ok
+test_native_brain_dispatch_and_cosmetic_role_stays_locked (__main__.InterfaceChecks.test_native_brain_dispatch_and_cosmetic_role_stays_locked) ... ok
+test_only_small_native_windows_and_alpha_artwork (__main__.InterfaceChecks.test_only_small_native_windows_and_alpha_artwork) ... ok
+test_palette_is_presentation_only_and_task_takes_priority (__main__.InterfaceChecks.test_palette_is_presentation_only_and_task_takes_priority) ... ok
+test_panel_stays_on_available_monitor_for_edges_and_negative_coordinates (__main__.InterfaceChecks.test_panel_stays_on_available_monitor_for_edges_and_negative_coordinates) ... ok
+test_project_file_read_is_allowlisted_and_real (__main__.InterfaceChecks.test_project_file_read_is_allowlisted_and_real) ... ok
+test_stop_rejects_stale_worker_result_and_clears_panel (__main__.InterfaceChecks.test_stop_rejects_stale_worker_result_and_clears_panel) ... ok
+test_voice_wake_signal_dispatch (__main__.InterfaceChecks.test_voice_wake_signal_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 3.429s
+
+OK

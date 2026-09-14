@@ -1,0 +1,9 @@
+{
+  "duration_seconds": 2.516,
+  "process_cpu_seconds": 0.828,
+  "paint_count": 174,
+  "paint_median_ms": 2.643,
+  "paint_max_ms": 3.873,
+  "event_gap_max_ms": 25.692,
+  "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance."
+}

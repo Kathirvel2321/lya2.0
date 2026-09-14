@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1120" viewBox="0 0 1500 1120" role="img" aria-labelledby="title desc">
+  <title id="title">LYA native wake, identity, storage and mobile-access architecture</title>
+  <desc id="desc">A flow diagram from offline wake phrase to native interface, face recognition, person-specific sessions, encrypted local storage and optional encrypted phone cache.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#101827"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="7" stdDeviation="8" flood-opacity=".28"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#91a4bb"/></marker>
+    <style>
+      .box{rx:16;stroke-width:2;filter:url(#shadow)} .local{fill:#123f31;stroke:#36c98b}.decision{fill:#173f77;stroke:#60a5fa}.private{fill:#442070;stroke:#b794f4}.limit{fill:#63242a;stroke:#fb7185}.title{font:700 32px 'Segoe UI',sans-serif;fill:#eff6ff}.sub{font:16px 'Segoe UI',sans-serif;fill:#9fb3c8}.txt{font:600 17px 'Segoe UI',sans-serif;fill:#fff;text-anchor:middle}.small{font:14px 'Segoe UI',sans-serif;fill:#d9e4ef;text-anchor:middle}.line{stroke:#91a4bb;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.dash{stroke-dasharray:8 7}.label{font:600 13px 'Segoe UI',sans-serif;fill:#c8d5e3;text-anchor:middle}.lane{fill:#ffffff08;stroke:#ffffff18;rx:22}
+    </style>
+  </defs>
+  <rect width="1500" height="1120" fill="url(#bg)"/>
+  <text x="60" y="58" class="title">LYA: native wake → identity → private data → mobile cache</text>
+  <text x="60" y="90" class="sub">Green runs locally · blue is a decision · purple contains private encrypted data · red is a physical limit</text>
+
+  <rect x="40" y="120" width="1420" height="320" class="lane"/><text x="70" y="153" class="sub">NATIVE OFFLINE WAKE AND IDENTITY</text>
+  <rect x="75" y="185" width="210" height="80" class="box local"/><text x="180" y="220" class="txt">Say “wake up LYA”</text><text x="180" y="245" class="small">microphone listening locally</text>
+  <rect x="335" y="185" width="210" height="80" class="box local"/><text x="440" y="220" class="txt">Vosk detects wake</text><text x="440" y="245" class="small">no internet required</text>
+  <rect x="595" y="185" width="210" height="80" class="box local"/><text x="700" y="220" class="txt">Native orb appears</text><text x="700" y="245" class="small">PySide6, no website</text>
+  <rect x="855" y="185" width="230" height="80" class="box local"/><text x="970" y="214" class="txt">Camera indicator +</text><text x="970" y="237" class="txt">one-frame capture</text><text x="970" y="257" class="small">camera then closes</text>
+  <rect x="1135" y="185" width="270" height="80" class="box local"/><text x="1270" y="214" class="txt">Local face embedding</text><text x="1270" y="239" class="small">InsightFace + ONNX Runtime</text>
+  <path d="M285 225H335M545 225H595M805 225H855M1085 225H1135" class="line"/>
+
+  <polygon points="1270,305 1370,365 1270,425 1170,365" class="box decision"/><text x="1270" y="357" class="txt">Known face?</text><text x="1270" y="381" class="small">confidence required</text>
+  <path d="M1270 265V305" class="line"/>
+  <rect x="730" y="330" width="270" height="76" class="box local"/><text x="865" y="362" class="txt">Admin session</text><text x="865" y="385" class="small">own namespace; sensitive actions later</text>
+  <rect x="405" y="330" width="270" height="72" class="box local"/><text x="540" y="360" class="txt">Named family/friend</text><text x="540" y="383" class="small">own namespace + allowed actions</text>
+  <rect x="75" y="330" width="270" height="72" class="box local"/><text x="210" y="360" class="txt">Guest session</text><text x="210" y="383" class="small">no private data</text>
+  <path d="M1170 365H1000" class="line"/><text x="1085" y="350" class="label">admin</text>
+  <path d="M1170 375H675" class="line"/><text x="835" y="421" class="label">known person</text>
+  <path d="M1170 386H345" class="line dash"/><text x="565" y="421" class="label">unknown / uncertain</text>
+
+  <rect x="40" y="470" width="1420" height="270" class="lane"/><text x="70" y="503" class="sub">UNKNOWN-PERSON REVIEW AND PER-PERSON STORAGE</text>
+  <rect x="75" y="540" width="270" height="90" class="box private"/><text x="210" y="572" class="txt">Pending face record</text><text x="210" y="596" class="small">one encrypted thumbnail</text><text x="210" y="616" class="small">deduplicated · expires in 7 days</text>
+  <rect x="405" y="540" width="250" height="90" class="box private"/><text x="530" y="573" class="txt">Admin reviews later</text><text x="530" y="598" class="small">label · ignore · delete</text>
+  <polygon points="775,530 875,585 775,640 675,585" class="box decision"/><text x="775" y="578" class="txt">Label person?</text><text x="775" y="600" class="small">admin decision</text>
+  <rect x="925" y="540" width="230" height="90" class="box private"/><text x="1040" y="572" class="txt">Person profile</text><text x="1040" y="596" class="small">random person_id</text><text x="1040" y="616" class="small">name + role + template</text>
+  <rect x="1205" y="540" width="200" height="90" class="box private"/><text x="1305" y="572" class="txt">Encrypted SQLite</text><text x="1305" y="596" class="small">every query scoped</text><text x="1305" y="616" class="small">by person_id</text>
+  <path d="M210 402V540" class="line"/><path d="M345 585H405M655 585H675M875 585H925M1155 585H1205" class="line"/>
+  <text x="896" y="566" class="label">yes</text><text x="774" y="671" class="label">no → delete or expire</text><path d="M775 640V694H530V630" class="line dash"/>
+  <path d="M865 418V490H1305V540" class="line"/><path d="M540 402V465H1260V540" class="line"/>
+
+  <rect x="40" y="770" width="1420" height="300" class="lane"/><text x="70" y="803" class="sub">IMPORTANT FILES AND MOBILE ACCESS</text>
+  <rect x="75" y="850" width="255" height="90" class="box private"/><text x="202" y="883" class="txt">Important Vault</text><text x="202" y="907" class="small">encrypted files on laptop</text><text x="202" y="927" class="small">local-only by default</text>
+  <polygon points="485,840 590,895 485,950 380,895" class="box decision"/><text x="485" y="888" class="txt">Pin to phone?</text><text x="485" y="910" class="small">explicit owner choice</text>
+  <rect x="650" y="850" width="250" height="90" class="box private"/><text x="775" y="883" class="txt">Encrypted sync</text><text x="775" y="907" class="small">only when connection exists</text><text x="775" y="927" class="small">server sees ciphertext</text>
+  <rect x="960" y="850" width="230" height="90" class="box private"/><text x="1075" y="883" class="txt">iPhone cache</text><text x="1075" y="907" class="small">already-synced files remain</text><text x="1075" y="927" class="small">available offline</text>
+  <rect x="1240" y="850" width="175" height="90" class="box limit"/><text x="1327" y="878" class="txt">No connection</text><text x="1327" y="902" class="small">far from laptop:</text><text x="1327" y="923" class="small">uncached file unavailable</text>
+  <path d="M1305 630V710H202V850" class="line"/><path d="M330 895H380M590 895H650M900 895H960" class="line"/>
+  <path d="M590 920H1240" class="line dash"/><text x="1110" y="974" class="label">no connection and not cached</text>
+  <text x="615" y="878" class="label">yes</text><text x="486" y="990" class="label">no → stays laptop-only</text>
+
+  <text x="60" y="1100" class="sub">Face recognition selects a likely profile; stronger approval is required later for sensitive or remote actions.</text>
+</svg>

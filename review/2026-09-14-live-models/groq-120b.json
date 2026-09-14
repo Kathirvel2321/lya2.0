@@ -1,0 +1,41 @@
+{
+  "date": "2026-09-14T17:23:38.800426+00:00",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "elapsed_ms": 688,
+      "error": null,
+      "answer": "The current deadline is **Friday**.",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "unknown_fact",
+      "elapsed_ms": 594,
+      "error": null,
+      "answer": "I’m sorry, but there isn’t enough information provided to determine the owner’s birthday.",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "source_freshness",
+      "elapsed_ms": 703,
+      "error": null,
+      "answer": "I’m sorry, but I can’t provide that information.",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "planning",
+      "elapsed_ms": 4969,
+      "error": "provider_output_length",
+      "answer": "",
+      "pass": null,
+      "review_notes": ""
+    }
+  ],
+  "completed": false
+}

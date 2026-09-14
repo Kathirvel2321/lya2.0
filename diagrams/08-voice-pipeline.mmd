@@ -1,0 +1,38 @@
+%% LYA — VOICE PIPELINE AND REMINDER STATE MACHINE
+sequenceDiagram
+  autonumber
+  participant Owner as Owner
+  participant VL as audio/voice.wake_loop
+  participant REC as _record_stream
+  participant TR as transcribe
+  participant GO as Google STT<br/>OR Vosk
+  participant AS as Assistant.submit
+  participant TTS as pyttsx3 speak
+
+  Note over VL,REC: wake_loop runs once, in a daemon thread started by main.py
+  loop forever
+    VL->>REC: _record_stream(25s, silence 0.8s)
+    REC-->>VL: WAV or None
+    alt no speech energy detected
+      VL->>VL: continue (no command)
+    else captured
+      VL->>TR: transcribe(wav)
+      alt LYA_VOSK_MODEL set
+        TR->>GO: local Vosk model
+      else
+        TR->>GO: recognize_google(en-IN)
+      end
+      GO-->>TR: text
+      TR-->>VL: text
+    end
+    alt text matches hey LYA / wake up LYA
+      VL->>AS: submit(command after wake word)
+    else within 45s conversation window
+      VL->>AS: submit(full text)
+    else bare stop/cancel while window open
+      VL->>AS: submit("stop")
+    end
+  end
+
+  AS->>TTS: speak(reply) if voice mode and not private
+  Note over VL,TTS: R04 — after the 45s window closes an unprefixed "stop" is ignored,<br/>even though the UI tells the owner to "say stop".<br/>Persistent mic errors are swallowed and retried, never surfaced.<br/>_SPEAKING guard suppresses mic input while TTS talks.
