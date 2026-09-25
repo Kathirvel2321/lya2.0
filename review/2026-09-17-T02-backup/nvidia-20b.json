@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-17T17:41:11.948434+00:00",
+  "provider": "nvidia",
+  "model": "openai/gpt-oss-20b",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "elapsed_ms": 15515,
+      "error": "provider_unavailable",
+      "answer": "",
+      "pass": null,
+      "review_notes": ""
+    }
+  ],
+  "completed": false
+}

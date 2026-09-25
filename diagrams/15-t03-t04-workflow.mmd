@@ -1,0 +1,23 @@
+flowchart TD
+    Q["Native typed request"] --> B["Brain: classify and check session"]
+    B --> C["Arithmetic: bounded local evaluator"]
+    B --> P["Private text: local model only"]
+    B --> R["Public research: You.com; critical Tavily opt-in"]
+    R --> E["Bounded snippets and known source IDs"]
+    E --> H["Lexical citation screen - NOT semantic proof"]
+    B --> K["Code: proposed and untested label"]
+    C --> A["Return answer; suppress stale or cancelled output"]
+    P --> A
+    H --> A
+    K --> A
+    B --> M["Private memory: active profile + approval"]
+    M --> G["Step 4: exact challenge and expiry"]
+    G --> V["Trusted phone or OS verifier - NOT connected"]
+    V --> D["Recheck identity, role and revocation"]
+    D --> O["Authorized operation"]
+    classDef done fill:#174d3a,color:#fff,stroke:#53d6a0
+    classDef partial fill:#584421,color:#fff,stroke:#e6b35a
+    classDef pending fill:#343e54,color:#fff,stroke:#a2b0d3,stroke-dasharray:5
+    class Q,B,C,P,R,E,K,A,M done
+    class H,G,D partial
+    class V,O pending

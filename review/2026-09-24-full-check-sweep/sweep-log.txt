@@ -1,0 +1,403 @@
+﻿LYA review sweep 
+LYA T01 safe offline baseline
+No live provider, camera, microphone, enrollment, or real memory is used.
+..............
+----------------------------------------------------------------------
+Ran 14 tests in 0.679s
+
+OK
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.709s
+
+OK
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.020s
+
+OK
+test_calculation_is_verified_without_model_call (__main__.BrainChecks.test_calculation_is_verified_without_model_call) ... ok
+test_cancel_during_pending_model_discards_late_answer (__main__.BrainChecks.test_cancel_during_pending_model_discards_late_answer) ... ok
+test_coding_answer_is_proposed_until_trusted_tests_exist (__main__.BrainChecks.test_coding_answer_is_proposed_until_trusted_tests_exist) ... ok
+test_coding_classifier_covers_functions_http_patches_and_sql (__main__.BrainChecks.test_coding_classifier_covers_functions_http_patches_and_sql) ... ok
+test_correction_preserves_expiry_and_graph_forget_cascades (__main__.BrainChecks.test_correction_preserves_expiry_and_graph_forget_cascades) ... ok
+test_correction_rebuilds_search_without_stale_terms (__main__.BrainChecks.test_correction_rebuilds_search_without_stale_terms) ... ok
+test_council_failure_does_not_invent_verdict (__main__.BrainChecks.test_council_failure_does_not_invent_verdict) ... ok
+test_council_uses_four_calls_without_executing_or_saving (__main__.BrainChecks.test_council_uses_four_calls_without_executing_or_saving) ... ok
+test_encrypted_file_and_restart_recall (__main__.BrainChecks.test_encrypted_file_and_restart_recall) ... ok
+test_expired_pending_cannot_be_promoted (__main__.BrainChecks.test_expired_pending_cannot_be_promoted) ... ok
+test_full_ranked_results_keep_linked_contradiction (__main__.BrainChecks.test_full_ranked_results_keep_linked_contradiction) ... ok
+test_graph_rejects_other_owner_and_expired_endpoints (__main__.BrainChecks.test_graph_rejects_other_owner_and_expired_endpoints) ... ok
+test_guest_and_denied_approval_cannot_touch_private_memory (__main__.BrainChecks.test_guest_and_denied_approval_cannot_touch_private_memory) ... ok
+test_identity_switch_and_cancellation_discard_answer (__main__.BrainChecks.test_identity_switch_and_cancellation_discard_answer) ... ok
+test_known_hardware_and_zero_spend_plans_are_bounded_locally (__main__.BrainChecks.test_known_hardware_and_zero_spend_plans_are_bounded_locally) ... ok
+test_legacy_memory_fallback_closed (__main__.BrainChecks.test_legacy_memory_fallback_closed) ... ok
+test_local_transport_disables_proxy_and_redirects (__main__.BrainChecks.test_local_transport_disables_proxy_and_redirects) ... ok
+test_nonliteral_approval_cannot_save_notes (__main__.BrainChecks.test_nonliteral_approval_cannot_save_notes) ... ok
+test_note_expiry_during_inference_hides_stale_answer (__main__.BrainChecks.test_note_expiry_during_inference_hides_stale_answer) ... ok
+test_old_encrypted_schema_migrates_without_losing_note (__main__.BrainChecks.test_old_encrypted_schema_migrates_without_losing_note) ... ok
+test_planning_prompt_forbids_invented_resources_and_paid_fallback (__main__.BrainChecks.test_planning_prompt_forbids_invented_resources_and_paid_fallback) ... ok
+test_private_mode_uses_only_local_client_and_fails_closed (__main__.BrainChecks.test_private_mode_uses_only_local_client_and_fails_closed) ... ok
+test_ranked_search_avoids_substrings_and_fts_operators (__main__.BrainChecks.test_ranked_search_avoids_substrings_and_fts_operators) ... ok
+test_research_fails_closed_without_sources_or_with_bad_citation (__main__.BrainChecks.test_research_fails_closed_without_sources_or_with_bad_citation) ... ok
+test_revocation_during_inference_hides_answer (__main__.BrainChecks.test_revocation_during_inference_hides_answer) ... ok
+test_router_receives_task_and_private_context_classification (__main__.BrainChecks.test_router_receives_task_and_private_context_classification) ... ok
+test_saved_fact_answers_without_model_and_missing_fact_abstains (__main__.BrainChecks.test_saved_fact_answers_without_model_and_missing_fact_abstains) ... ok
+test_scoped_retrieval_credentials_and_model_not_auto_saved (__main__.BrainChecks.test_scoped_retrieval_credentials_and_model_not_auto_saved) ... ok
+test_sensitive_and_cross_person_requests_never_reach_cloud (__main__.BrainChecks.test_sensitive_and_cross_person_requests_never_reach_cloud) ... ok
+test_session_notes_clear_on_identity_change_sleep_and_idle (__main__.BrainChecks.test_session_notes_clear_on_identity_change_sleep_and_idle) ... ok
+test_short_long_deadline_and_permanent_expiry (__main__.BrainChecks.test_short_long_deadline_and_permanent_expiry) ... ok
+test_t04_exact_gate_and_session_switch_during_approval (__main__.BrainChecks.test_t04_exact_gate_and_session_switch_during_approval) ... ok
+test_t04_revocation_during_approval_denies_operation (__main__.BrainChecks.test_t04_revocation_during_approval_denies_operation) ... ok
+test_time_and_capability_help_do_not_call_model (__main__.BrainChecks.test_time_and_capability_help_do_not_call_model) ... ok
+test_timezone_and_nonfinite_deadlines_rejected (__main__.BrainChecks.test_timezone_and_nonfinite_deadlines_rejected) ... ok
+test_unconnected_actions_and_secret_requests_never_use_model (__main__.BrainChecks.test_unconnected_actions_and_secret_requests_never_use_model) ... ok
+test_verified_personal_context_never_reaches_cloud_callable (__main__.BrainChecks.test_verified_personal_context_never_reaches_cloud_callable) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 3.537s
+
+OK
+.
+----------------------------------------------------------------------
+Ran 16 tests in 13.972s
+
+OK
+.
+----------------------------------------------------------------------
+Ran 22 tests in 17.077s
+
+OK
+
+PASS: LYA offline baseline and compact interface checks completed.
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 1.673s
+
+OK
+PASS: offline T02 checks. Live independent backup is a separate acceptance gate.
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.003s
+
+OK
+test_default_adapter_requires_both_explicit_safety_flags (__main__.ResearchAdapterChecks.test_default_adapter_requires_both_explicit_safety_flags) ... ok
+test_default_prefers_free_hybrid_without_a_key (__main__.ResearchAdapterChecks.test_default_prefers_free_hybrid_without_a_key) ... ok
+test_hybrid_spends_tavily_only_for_explicit_critical_research (__main__.ResearchAdapterChecks.test_hybrid_spends_tavily_only_for_explicit_critical_research) ... ok
+test_keyless_you_mcp_returns_bounded_sources (__main__.ResearchAdapterChecks.test_keyless_you_mcp_returns_bounded_sources) ... ok
+test_rejects_missing_results_and_non_https_source (__main__.ResearchAdapterChecks.test_rejects_missing_results_and_non_https_source) ... ok
+test_rejects_oversize_query_and_unsafe_limits (__main__.ResearchAdapterChecks.test_rejects_oversize_query_and_unsafe_limits) ... ok
+test_returns_bounded_result_with_key_only_in_header (__main__.ResearchAdapterChecks.test_returns_bounded_result_with_key_only_in_header) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.133s
+
+OK
+PASS: offline T03 verification and research-adapter checks.
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.235s
+
+OK
+................
+----------------------------------------------------------------------
+Ran 16 tests in 2.784s
+
+OK
+PASS: T04 policy and registration foundation. Real device verification remains pending.
+[check-t04 chain: T01+T02+T03+T04] EXIT=0 
+............
+----------------------------------------------------------------------
+Ran 12 tests in 1.127s
+
+OK
+test_calculation_is_verified_without_model_call (__main__.BrainChecks.test_calculation_is_verified_without_model_call) ... ok
+test_cancel_during_pending_model_discards_late_answer (__main__.BrainChecks.test_cancel_during_pending_model_discards_late_answer) ... ok
+test_coding_answer_is_proposed_until_trusted_tests_exist (__main__.BrainChecks.test_coding_answer_is_proposed_until_trusted_tests_exist) ... ok
+test_coding_classifier_covers_functions_http_patches_and_sql (__main__.BrainChecks.test_coding_classifier_covers_functions_http_patches_and_sql) ... ok
+test_correction_preserves_expiry_and_graph_forget_cascades (__main__.BrainChecks.test_correction_preserves_expiry_and_graph_forget_cascades) ... ok
+test_correction_rebuilds_search_without_stale_terms (__main__.BrainChecks.test_correction_rebuilds_search_without_stale_terms) ... ok
+test_council_failure_does_not_invent_verdict (__main__.BrainChecks.test_council_failure_does_not_invent_verdict) ... ok
+test_council_uses_four_calls_without_executing_or_saving (__main__.BrainChecks.test_council_uses_four_calls_without_executing_or_saving) ... ok
+test_encrypted_file_and_restart_recall (__main__.BrainChecks.test_encrypted_file_and_restart_recall) ... ok
+test_expired_pending_cannot_be_promoted (__main__.BrainChecks.test_expired_pending_cannot_be_promoted) ... ok
+test_full_ranked_results_keep_linked_contradiction (__main__.BrainChecks.test_full_ranked_results_keep_linked_contradiction) ... ok
+test_graph_rejects_other_owner_and_expired_endpoints (__main__.BrainChecks.test_graph_rejects_other_owner_and_expired_endpoints) ... ok
+test_guest_and_denied_approval_cannot_touch_private_memory (__main__.BrainChecks.test_guest_and_denied_approval_cannot_touch_private_memory) ... ok
+test_identity_switch_and_cancellation_discard_answer (__main__.BrainChecks.test_identity_switch_and_cancellation_discard_answer) ... ok
+test_known_hardware_and_zero_spend_plans_are_bounded_locally (__main__.BrainChecks.test_known_hardware_and_zero_spend_plans_are_bounded_locally) ... ok
+test_legacy_memory_fallback_closed (__main__.BrainChecks.test_legacy_memory_fallback_closed) ... ok
+test_local_transport_disables_proxy_and_redirects (__main__.BrainChecks.test_local_transport_disables_proxy_and_redirects) ... ok
+test_nonliteral_approval_cannot_save_notes (__main__.BrainChecks.test_nonliteral_approval_cannot_save_notes) ... ok
+test_note_expiry_during_inference_hides_stale_answer (__main__.BrainChecks.test_note_expiry_during_inference_hides_stale_answer) ... ok
+test_old_encrypted_schema_migrates_without_losing_note (__main__.BrainChecks.test_old_encrypted_schema_migrates_without_losing_note) ... ok
+test_planning_prompt_forbids_invented_resources_and_paid_fallback (__main__.BrainChecks.test_planning_prompt_forbids_invented_resources_and_paid_fallback) ... ok
+test_private_mode_uses_only_local_client_and_fails_closed (__main__.BrainChecks.test_private_mode_uses_only_local_client_and_fails_closed) ... ok
+test_ranked_search_avoids_substrings_and_fts_operators (__main__.BrainChecks.test_ranked_search_avoids_substrings_and_fts_operators) ... ok
+test_research_fails_closed_without_sources_or_with_bad_citation (__main__.BrainChecks.test_research_fails_closed_without_sources_or_with_bad_citation) ... ok
+test_revocation_during_inference_hides_answer (__main__.BrainChecks.test_revocation_during_inference_hides_answer) ... ok
+test_router_receives_task_and_private_context_classification (__main__.BrainChecks.test_router_receives_task_and_private_context_classification) ... ok
+test_saved_fact_answers_without_model_and_missing_fact_abstains (__main__.BrainChecks.test_saved_fact_answers_without_model_and_missing_fact_abstains) ... ok
+test_scoped_retrieval_credentials_and_model_not_auto_saved (__main__.BrainChecks.test_scoped_retrieval_credentials_and_model_not_auto_saved) ... ok
+test_sensitive_and_cross_person_requests_never_reach_cloud (__main__.BrainChecks.test_sensitive_and_cross_person_requests_never_reach_cloud) ... ok
+test_session_notes_clear_on_identity_change_sleep_and_idle (__main__.BrainChecks.test_session_notes_clear_on_identity_change_sleep_and_idle) ... ok
+test_short_long_deadline_and_permanent_expiry (__main__.BrainChecks.test_short_long_deadline_and_permanent_expiry) ... ok
+test_t04_exact_gate_and_session_switch_during_approval (__main__.BrainChecks.test_t04_exact_gate_and_session_switch_during_approval) ... ok
+test_t04_revocation_during_approval_denies_operation (__main__.BrainChecks.test_t04_revocation_during_approval_denies_operation) ... ok
+test_time_and_capability_help_do_not_call_model (__main__.BrainChecks.test_time_and_capability_help_do_not_call_model) ... ok
+test_timezone_and_nonfinite_deadlines_rejected (__main__.BrainChecks.test_timezone_and_nonfinite_deadlines_rejected) ... ok
+test_unconnected_actions_and_secret_requests_never_use_model (__main__.BrainChecks.test_unconnected_actions_and_secret_requests_never_use_model) ... ok
+test_verified_personal_context_never_reaches_cloud_callable (__main__.BrainChecks.test_verified_personal_context_never_reaches_cloud_callable) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 3.115s
+
+OK
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.003s
+
+OK
+.
+----------------------------------------------------------------------
+Ran 10 tests in 12.347s
+
+OK
+PASS: isolated recovery core, file and native UI checks. Real owner verification and cloud sync remain pending.
+[check-storage-recovery] EXIT=0 
+---- test_foundations ---- 
+test_build_mode_never_accesses_device_or_memory (__main__.Foundations.test_build_mode_never_accesses_device_or_memory) ... ok
+test_cancel_discards_queued_actions_and_browse_authority (__main__.Foundations.test_cancel_discards_queued_actions_and_browse_authority) ... ok
+test_denied_theme_does_not_write_settings (__main__.Foundations.test_denied_theme_does_not_write_settings) ... ok
+test_face_template_decodes_saved_float32 (__main__.Foundations.test_face_template_decodes_saved_float32) ... ok
+test_folder_paging_and_scope (__main__.Foundations.test_folder_paging_and_scope) ... ok
+test_gateway_blocks_token_only_enrollment (__main__.Foundations.test_gateway_blocks_token_only_enrollment) ... ok
+test_generated_code_activation_never_imports (__main__.Foundations.test_generated_code_activation_never_imports) ... ok
+test_guest_context_never_reads_private_memory_or_owner_history (__main__.Foundations.test_guest_context_never_reads_private_memory_or_owner_history) ... ok
+test_memory_parallel_roundtrip_and_corrupt_store_preserved (__main__.Foundations.test_memory_parallel_roundtrip_and_corrupt_store_preserved) ... ok
+test_missing_liveness_model_denies (__main__.Foundations.test_missing_liveness_model_denies) ... ok
+test_phone_approval_is_bound_to_displayed_task_and_cannot_replay (__main__.Foundations.test_phone_approval_is_bound_to_displayed_task_and_cannot_replay) ... ok
+test_plain_http_cannot_issue_phone_approval (__main__.Foundations.test_plain_http_cannot_issue_phone_approval) ... ok
+test_policy_denies_unknown_roles_and_actions (__main__.Foundations.test_policy_denies_unknown_roles_and_actions) ... ok
+test_themes_validate_and_undo_without_code (__main__.Foundations.test_themes_validate_and_undo_without_code) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.750s
+
+OK
+[test_foundations] EXIT=0 
+---- test_guardian_governor ---- 
+test_dangerous_command_blocked_in_assistant (__main__.AssistantSafetyRoutingTests.test_dangerous_command_blocked_in_assistant) ... ok
+test_kill_switch_command_flow (__main__.AssistantSafetyRoutingTests.test_kill_switch_command_flow) ... ok
+test_security_audit_routing (__main__.AssistantSafetyRoutingTests.test_security_audit_routing) ... ok
+test_system_health_and_battery_routing (__main__.AssistantSafetyRoutingTests.test_system_health_and_battery_routing) ... ok
+test_emergency_kill_switch_lifecycle (__main__.GovernorHealthTests.test_emergency_kill_switch_lifecycle)
+Kill switch freezes execution when engaged and restores when released. ... ok
+test_resource_governor_metrics (__main__.GovernorHealthTests.test_resource_governor_metrics)
+Governor returns process memory, disk free, and battery status. ... ok
+test_action_audit_logging (__main__.GuardianSafetyTests.test_action_audit_logging)
+Actions are logged to encrypted log file and readable via get_audit_log. ... ok
+test_correct_user_proactive_warnings (__main__.GuardianSafetyTests.test_correct_user_proactive_warnings)
+correct_user returns helpful pushback on destructive user intents. ... ok
+test_dangerous_command_detection (__main__.GuardianSafetyTests.test_dangerous_command_detection)
+Dangerous commands are correctly flagged; benign commands pass. ... ok
+test_guard_execution_gate (__main__.GuardianSafetyTests.test_guard_execution_gate)
+Dangerous commands require verified identity; unverified calls are blocked. ... ok
+test_silent_duress_subsystem (__main__.GuardianSafetyTests.test_silent_duress_subsystem)
+Duress flag is created encrypted, detected silently, fails closed on tamper, and resets cleanly. ... ok
+test_self_audit (__main__.HardenAuditTests.test_self_audit)
+harden.audit checks security locks and flags anomalies. ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.188s
+
+OK
+[test_guardian_governor] EXIT=0 
+---- test_skills ---- 
+test_open_app_routing (__main__.AssistantSkillsIntegrationTests.test_open_app_routing) ... ok
+test_reminders_routing (__main__.AssistantSkillsIntegrationTests.test_reminders_routing) ... ok
+test_screenshot_routing (__main__.AssistantSkillsIntegrationTests.test_screenshot_routing) ... ok
+test_skill_forge_routing (__main__.AssistantSkillsIntegrationTests.test_skill_forge_routing) ... ok
+test_volume_routing (__main__.AssistantSkillsIntegrationTests.test_volume_routing) ... ok
+test_what_time_is_it_routing (__main__.AssistantSkillsIntegrationTests.test_what_time_is_it_routing) ... ok
+test_open_app_allowlist_and_safety (__main__.DeviceSkillsTests.test_open_app_allowlist_and_safety)
+open_app only allows fixed allowlisted executables and never runs arbitrary commands. ... ok
+test_screenshot_sandboxed (__main__.DeviceSkillsTests.test_screenshot_sandboxed)
+screenshot creates the output directory and saves timestamped image. ... ok
+test_volume_actions (__main__.DeviceSkillsTests.test_volume_actions)
+volume only accepts up, down, mute and handles execution gracefully. ... ok
+test_boundary_enforcement (__main__.FolderBrowserTests.test_boundary_enforcement)
+FolderBrowser strictly forbids directory traversal outside root. ... ok
+test_listing_and_paging (__main__.FolderBrowserTests.test_listing_and_paging)
+Listing returns page sliced entries with accurate pagination metadata. ... ok
+test_open_folder_and_file_inspection (__main__.FolderBrowserTests.test_open_folder_and_file_inspection)
+Opening a folder enters it; opening a file returns metadata without executing. ... ok
+test_encrypted_crud_and_chronological_ordering (__main__.ReminderSkillsTests.test_encrypted_crud_and_chronological_ordering)
+Reminders are stored encrypted in SQLite and list_all orders chronologically. ... ok
+test_time_hint_natural_language_parsing (__main__.ReminderSkillsTests.test_time_hint_natural_language_parsing)
+_time_hint parses relative, weekday, and explicit calendar dates. ... ok
+test_activation_disabled_and_discard (__main__.SkillForgeTests.test_activation_disabled_and_discard)
+activate returns safety block statement; discard deletes draft. ... ok
+test_create_rejects_missing_functions_or_syntax_error (__main__.SkillForgeTests.test_create_rejects_missing_functions_or_syntax_error)
+create rejects code missing match/reply or containing syntax errors. ... ok
+test_create_valid_skill_draft (__main__.SkillForgeTests.test_create_valid_skill_draft)
+create writes draft and metadata when match and reply are present. ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.438s
+
+OK
+[test_skills] EXIT=0 
+---- test_identity ---- 
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 2.232s
+
+OK
+[LYA] Bob enrolled as friend (1 face samples).
+[LYA] Alice enrolled as admin (1 face samples).
+[LYA] Bob enrolled as friend (1 face samples).
+[LYA] Stranger face_lrv_KukyP0A is now registered as Charlie (friend).
+[LYA] Alice enrolled as admin (1 face samples).
+[liveness] face anti-spoof unavailable: No module named 'src'
+[test_identity] EXIT=0 
+---- test_mind ---- 
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.196s
+
+OK
+[test_mind] EXIT=0 
+---- test_synthesis ---- 
+....F.F
+======================================================================
+FAIL: test_missing_english_model_uses_local_female_fallback (__main__.SynthesisTests.test_missing_english_model_uses_local_female_fallback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_synthesis.py", line 29, in test_missing_english_model_uses_local_female_fallback
+    sapi.assert_called_once_with('Hello','warm')
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 960, in assert_called_once_with
+    raise AssertionError(msg)
+AssertionError: Expected 'sapi' to be called once. Called 0 times.
+
+======================================================================
+FAIL: test_partial_failure_never_repeats_audio (__main__.SynthesisTests.test_partial_failure_never_repeats_audio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_synthesis.py", line 37, in test_partial_failure_never_repeats_audio
+    with self.assertRaises(RuntimeError): speak('Hello')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: RuntimeError not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.408s
+
+FAILED (failures=2)
+[test_synthesis] EXIT=1 
+---- test_storage ---- 
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.933s
+
+OK
+[test_storage] EXIT=0 
+---- test_search_index ---- 
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.352s
+
+OK
+[test_search_index] EXIT=0 
+---- test_vision ---- 
+...[ WARN:0@0.169] global net_impl_backend.cpp:345 cv::dnn::dnn5_v20260605::Net::Impl::setPreferableTarget Targets are not supported by the new graph engine for now
+..
+----------------------------------------------------------------------
+Ran 5 tests in 0.510s
+
+OK
+[test_vision] EXIT=0 
+---- test_camera_preview ---- 
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.143s
+
+OK
+[test_camera_preview] EXIT=0 
+---- test_voice ---- 
+.s.........
+----------------------------------------------------------------------
+Ran 11 tests in 0.658s
+
+OK (skipped=1)
+[test_voice] EXIT=0 
+---- test_setup_speech ---- 
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.436s
+
+OK
+[test_setup_speech] EXIT=0 
+---- test_vault_recovery ---- 
+....
+----------------------------------------------------------------------
+Ran 4 tests in 3.354s
+
+OK
+[test_vault_recovery] EXIT=0 
+---- test_liveness ---- 
+[liveness] face anti-spoof unavailable: No module named 'src'
+TEST1 synthetic no-face: (False, 0.0, 'liveness model unavailable; verification denied')
+TEST2 tiny image: (False, 0.0, 'liveness model unavailable; verification denied')
+TEST3 short voice: (False, 'clip too short (0.2s) — speak naturally')
+TEST4 flat replay tone: (False, 'energy too flat — replay suspected')
+ALL LIVENESS TESTS PASS
+[test_liveness] EXIT=0 
+---- test_escalation ---- 
+test_brute_force_lockout_and_fail_closed (__main__.EscalationTests.test_brute_force_lockout_and_fail_closed)
+Test 5-attempt rate-limiting lockout and fail-closed behavior on corrupted counters. ... ok
+test_challenge_nonce_mismatch_and_missing_challenge (__main__.EscalationTests.test_challenge_nonce_mismatch_and_missing_challenge)
+Test that grants for mismatched nonces or issued without active challenge fail closed. ... ok
+test_duress_phrase_detection (__main__.EscalationTests.test_duress_phrase_detection)
+Test duress phrase detection and silent alarm handling. ... ok
+test_grant_single_use_and_replay_prevention (__main__.EscalationTests.test_grant_single_use_and_replay_prevention)
+Test that a phone grant is single-use and burns immediately upon consumption. ... ok
+test_nonce_and_challenge_lifecycle (__main__.EscalationTests.test_nonce_and_challenge_lifecycle)
+Test nonce writing, reading across processes, expiration TTL, and cleanup. ... ok
+test_request_phone_cancellation_and_concurrency (__main__.EscalationTests.test_request_phone_cancellation_and_concurrency)
+Test request_phone responds to cancellation and enforces mutex locking. ... ok
+test_spoken_security_word_and_sliding_window (__main__.EscalationTests.test_spoken_security_word_and_sliding_window)
+Test salted PBKDF2 hashing, normalization, and sliding window phrase detection. ... ok
+test_web_gateway_enrollment_deferred (__main__.WebGatewayTests.test_web_gateway_enrollment_deferred)
+Test that enrollment endpoints on phone gateway return 403. ... ok
+test_web_gateway_plain_http_rejection (__main__.WebGatewayTests.test_web_gateway_plain_http_rejection)
+Test that plain HTTP connections cannot approve escalations. ... ok
+test_web_gateway_private_memory_gating (__main__.WebGatewayTests.test_web_gateway_private_memory_gating)
+Test that phone chat refuses private memory operations when unverified. ... ok
+test_web_gateway_tls_escalate_and_approval_flow (__main__.WebGatewayTests.test_web_gateway_tls_escalate_and_approval_flow)
+End-to-end integration: run local HTTPS server, approve escalation via TLS, consume grant. ... ok
+test_web_gateway_token_authentication (__main__.WebGatewayTests.test_web_gateway_token_authentication)
+Test token validation rejects unauthorized requests with 403. ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 3.375s
+
+OK
+[LYA][SECURITY] attempt counter unreadable () - assuming LOCKED OUT. Re-set your security word to reset it.
+[test_escalation] EXIT=0 
+---- test_auth_wall ---- 
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.037s
+
+OK
+[test_auth_wall] EXIT=0 
+---- test_native_ui ---- 
+PASS: native widgets, theme previews, scoped folder rows, worker delivery, hidden animation stopped; 28 event-loop ticks
+Smoke measurement only: wall=1.391s CPU=0.406s
+[test_native_ui] EXIT=0 
+SWEEP-DONE 

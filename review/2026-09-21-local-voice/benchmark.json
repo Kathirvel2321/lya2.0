@@ -1,0 +1,18 @@
+[
+  {
+    "cpu_seconds": 4.266,
+    "language": "english",
+    "first_audio_seconds": 3.212,
+    "synthesis_seconds": 3.704,
+    "audio_seconds": 4.725,
+    "rtf": 0.784
+  },
+  {
+    "cpu_seconds": 4.484,
+    "language": "tamil",
+    "first_audio_seconds": 3.765,
+    "synthesis_seconds": 4.214,
+    "audio_seconds": 3.994,
+    "rtf": 1.055
+  }
+]

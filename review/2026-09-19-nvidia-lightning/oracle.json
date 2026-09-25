@@ -1,0 +1,12 @@
+{
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "elapsed_ms": 8001,
+      "error": "provider_unavailable"
+    }
+  ],
+  "completed": false
+}

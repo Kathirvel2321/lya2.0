@@ -1,0 +1,11 @@
+{
+  "source_sha256": "e1bc93ea1ecd7ed48a64e9c70ea8ee327198ad0ba374f1dd2636aa0283c7c4ab",
+  "triangles": 95428,
+  "materials": 7,
+  "output_pixels": [
+    288,
+    408
+  ],
+  "runtime_3d_renderer": false,
+  "shading": "approximate metallic/emissive; no physical refraction"
+}

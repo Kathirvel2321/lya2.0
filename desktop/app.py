@@ -11,7 +11,7 @@ from pathlib import Path
 
 from PySide6.QtCore import (Qt, QPoint, QRect, QRectF, QSize, QTimer, Signal, Property,
                             QEasingCurve, QPropertyAnimation, QObject, QRunnable, QThreadPool)
-from PySide6.QtGui import (QAction, QColor, QFont, QIcon, QImage, QKeySequence, QLinearGradient,
+from PySide6.QtGui import (QAction, QColor, QFont, QIcon, QImage, QImageReader, QKeySequence, QLinearGradient,
                            QPainter, QPainterPath, QPen, QPixmap, QPolygonF, QRadialGradient,
                            QShortcut, QRegion)
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
@@ -81,6 +81,8 @@ class Crystal(QWidget):
     activated = Signal()
     relocated = Signal()
     menu_requested = Signal(QPoint)
+    artwork_changed = Signal(bool)
+    motion_changed = Signal(bool)
 
     def __init__(self, parent=None):
         super().__init__(parent, WINDOW_FLAGS if parent is None else Qt.WindowType.Widget)
@@ -90,7 +92,14 @@ class Crystal(QWidget):
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFixedSize(184, 252)
-        self.base = crystal_pixmap(HERE / "assets" / "crystal-original.png")
+        self.original = crystal_pixmap(HERE / "assets" / "crystal-original.png")
+        self.model_art = QPixmap()
+        baked = HERE / "assets" / "obsidian-baked.png"
+        reader = QImageReader(str(baked))
+        if baked.is_file() and baked.stat().st_size <= 1_000_000 and reader.size() == QSize(288, 408):
+            self.model_art = QPixmap.fromImage(reader.read())
+        self.using_model = False  # Keep the measured lower-CPU original as the default.
+        self.base = self.model_art if self.using_model else self.original
         self.frames = {c: tinted(self.base, c) for c in set(PERSON_COLORS.values()) | set(filter(None, TASK_COLORS.values()))}
         self.person, self.task = "guest", "idle"
         self.color = QColor(accent(self.person, self.task))
@@ -101,6 +110,7 @@ class Crystal(QWidget):
         self.mix = 1.0
         self.reduced_motion = False
         self.started = time.monotonic()
+        self.motion_until = self.started + 3.0
         self.phase = 0.0
         self._press = None
         self._dragged = False
@@ -110,10 +120,38 @@ class Crystal(QWidget):
         self.animation.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.timer = QTimer(self)
         self.timer.setTimerType(Qt.TimerType.PreciseTimer)
-        self.timer.setInterval(33)  # restrained 30Hz idle motion; no full-screen redraw
+        self.timer.setInterval(33)  # 30Hz only during a three-second interaction burst
         self.timer.timeout.connect(self.tick)
         mask = QRegion(15, 4, 154, 216, QRegion.RegionType.Ellipse) | QRegion(10, 209, 164, 38)
         self.setMask(mask)
+
+    def set_artwork(self, enabled):
+        self.using_model = bool(enabled and not self.model_art.isNull())
+        self.base = self.model_art if self.using_model else self.original
+        self.frames = {c: tinted(self.base, c) for c in set(PERSON_COLORS.values()) | set(filter(None, TASK_COLORS.values()))}
+        self.animation.stop()
+        self.previous = self.current = self.frames[accent(self.person, self.task)]
+        self.start_color = self.target_color = QColor(accent(self.person, self.task))
+        self.set_blend(1.0)
+        self.paint_samples.clear()
+        self.artwork_changed.emit(self.using_model)
+        self.animate_briefly()
+
+    def animate_briefly(self):
+        if not self.reduced_motion and self.isVisible() and not self.timer.isActive():
+            self.started = time.monotonic()
+            self.phase = 0.0
+            self.motion_until = self.started + 3.0
+            self.timer.start()
+
+    def low_power_fallback(self):
+        if self.using_model:
+            self.set_artwork(False)
+        self.set_reduced_motion(True)
+
+    def enterEvent(self, event):
+        self.animate_briefly()
+        super().enterEvent(event)
 
     def get_blend(self):
         return self.mix
@@ -147,12 +185,13 @@ class Crystal(QWidget):
         self.start_color = QColor(self.color)
         self.target_color = QColor(accent(self.person, self.task))
         self.animation.stop()
-        if self.reduced_motion:
+        if self.reduced_motion or not self.isVisible():
             self.set_blend(1.0)
         else:
             self.animation.setStartValue(0.0)
             self.animation.setEndValue(1.0)
             self.animation.start()
+        self.animate_briefly()
 
     def set_reduced_motion(self, enabled):
         self.reduced_motion = enabled
@@ -162,16 +201,21 @@ class Crystal(QWidget):
             self.timer.stop()
             self.phase = 0
         elif self.isVisible():
-            self.timer.start()
+            self.animate_briefly()
         self.update()
+        self.motion_changed.emit(enabled)
 
     def tick(self):
-        self.phase = time.monotonic() - self.started
+        now = time.monotonic()
+        self.phase = now - self.started
+        if now >= self.motion_until:
+            self.timer.stop()
+            self.phase = 0.0
         self.update()
 
     def showEvent(self, event):
         if not self.reduced_motion:
-            self.timer.start()
+            self.animate_briefly()
         super().showEvent(event)
 
     def hideEvent(self, event):
@@ -188,7 +232,11 @@ class Crystal(QWidget):
             p.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
             p.fillRect(self.rect(), Qt.GlobalColor.transparent)
             p.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
-        drift = 0 if self.reduced_motion else math.sin(self.phase * 1.1) * 2.2
+        p.scale(self.width() / 184, self.height() / 252)
+        morph = getattr(self, 'circle_mix', 0.0)
+        p.setOpacity(1 - morph)
+        # One complete gentle movement ends at its starting position.
+        drift = 0 if self.reduced_motion else math.sin(min(self.phase / 3.0, 1) * math.tau) * 2.2
         glow = QRadialGradient(92, 116, 86)
         c = QColor(self.color)
         c.setAlpha(44)
@@ -199,10 +247,13 @@ class Crystal(QWidget):
         p.setBrush(glow)
         p.drawEllipse(QRectF(6, 24, 172, 182))
         destination = QRectF(23, 4 + drift, 138, 195)
-        p.drawPixmap(destination, self.previous, QRectF(self.previous.rect()))
-        p.setOpacity(self.mix)
-        p.drawPixmap(destination, self.current, QRectF(self.current.rect()))
-        p.setOpacity(1)
+        spin = getattr(self, 'spin_frame', None)
+        p.drawPixmap(destination, spin if spin is not None else self.previous, QRectF(self.previous.rect()))
+        p.setOpacity(self.mix * (1 - morph))
+        p.drawPixmap(destination, spin if spin is not None else self.current, QRectF(self.current.rect()))
+        p.setOpacity(1 - morph)
+        if self.width() <= 88:
+            p.setOpacity(0)  # Keep the docked crystal clear of unreadably small labels.
         p.setBrush(QColor(12, 20, 30, 235))
         p.setPen(QPen(QColor(180, 205, 220, 95), 1))
         p.drawRoundedRect(QRectF(13, 211, 158, 31), 15, 15)
@@ -210,9 +261,32 @@ class Crystal(QWidget):
         p.setFont(QFont("Segoe UI", 8, QFont.Weight.DemiBold))
         label = "LYA  ·  " + ("UI PREVIEW" if self.task == "idle" else self.task.upper())
         p.drawText(QRectF(15, 211, 154, 31), Qt.AlignmentFlag.AlignCenter, label)
+        if morph:
+            p.resetTransform()
+            p.setOpacity(morph)
+            side = min(self.width(), self.height())
+            p.translate(self.width() / 2, self.height() / 2)
+            halo = QRadialGradient(0, 0, side / 2)
+            tint = QColor(self.color)
+            tint.setAlpha(90)
+            halo.setColorAt(0.35, tint)
+            tint.setAlpha(0)
+            halo.setColorAt(1, tint)
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(halo)
+            p.drawEllipse(QRectF(-side/2, -side/2, side, side))
+            p.setBrush(QColor(15, 28, 40, 245))
+            p.setPen(QPen(self.color, 1.5))
+            radius = side * 0.27
+            p.drawEllipse(QRectF(-radius, -radius, radius*2, radius*2))
+            p.setBrush(self.color)
+            p.setPen(Qt.PenStyle.NoPen)
+            p.drawEllipse(QRectF(-3, -3, 6, 6))
         p.end()
         self.paint_samples.append((time.perf_counter() - start) * 1000)
         self.paint_samples = self.paint_samples[-600:]
+        if self.using_model and len(self.paint_samples) >= 30 and sum(self.paint_samples[-30:]) / 30 > 8:
+            QTimer.singleShot(0, self.low_power_fallback)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.RightButton:
@@ -479,17 +553,20 @@ def read_project_document(name):
 
 
 class Desktop(QObject):
+    panel_type = GlassPanel
+
     def __init__(self, application, reduced_motion=False):
         super().__init__()
         self.app = application
         self.orb = Crystal()
-        self.panel = GlassPanel()
+        self.panel = self.panel_type()
         self.generation = 0
         self.pool = QThreadPool(self)
         self.pool.setMaxThreadCount(1)
         from brain.workflow import Brain
+        from brain.research import default_researcher
         import threading
-        self.brain = Brain()
+        self.brain = Brain(researcher=default_researcher())
         from brain.oracle import OracleModel
         if isinstance(self.brain.client, OracleModel):
             self.panel.footnote.setText("CLOUD TEXT  ·  CAMERA & MICROPHONE OFF")
@@ -525,6 +602,7 @@ class Desktop(QObject):
                 self.shortcuts.append(shortcut)
         self.orb.set_reduced_motion(reduced_motion)
         self.tray = QSystemTrayIcon(QIcon(self.orb.base), self)
+        self.orb.artwork_changed.connect(lambda _: self.tray.setIcon(QIcon(self.orb.base)))
         self.tray.setToolTip("LYA · native interface preview")
         self.tray.activated.connect(lambda reason: self.wake() if reason == QSystemTrayIcon.ActivationReason.Trigger else None)
         self.menu = self.make_menu()
@@ -539,6 +617,17 @@ class Desktop(QObject):
         menu = QMenu()
         menu.addAction("Open LYA", self.wake)
         menu.addAction("Project files", self.show_files)
+        menu.addAction("Sign in / register admin", lambda: self.command("register admin"))
+        model_art = QAction("Use 3D model artwork (baked, experimental)", menu, checkable=True)
+        model_art.setChecked(self.orb.using_model)
+        model_art.setEnabled(not self.orb.model_art.isNull())
+        model_art.toggled.connect(self.orb.set_artwork)
+        def reflect_artwork(enabled):
+            model_art.blockSignals(True)
+            model_art.setChecked(enabled)
+            model_art.blockSignals(False)
+        self.orb.artwork_changed.connect(reflect_artwork)
+        menu.addAction(model_art)
         persons = menu.addMenu("Preview person color (no authentication)")
         for person in PERSON_COLORS:
             persons.addAction(person.title(), lambda checked=False, p=person: self.set_state(person=p))
@@ -553,6 +642,7 @@ class Desktop(QObject):
         self.motion_action = QAction("Reduce motion", menu, checkable=True)
         self.motion_action.setChecked(self.orb.reduced_motion)
         self.motion_action.toggled.connect(self.orb.set_reduced_motion)
+        self.orb.motion_changed.connect(self.motion_action.setChecked)
         menu.addAction(self.motion_action)
         opaque = QAction("Opaque panel for maximum readability", menu, checkable=True)
         opaque.toggled.connect(self.set_opaque)
@@ -649,16 +739,6 @@ class Desktop(QObject):
         self.open_panel()
         self.set_state(task="listening")
         self.command(text)
-        if not quiet:
-            answer = self.panel.title_label.text()
-            if answer and answer not in ("Let's start here.", "LYA Commands"):
-                try:
-                    import threading
-                    from audio import voice
-                    threading.Thread(target=lambda: voice.speak(answer), daemon=True).start()
-                except Exception:
-                    pass
-
     def start_voice(self):
         """Start offline voice wake listener in background daemon thread."""
         if self.voice_thread and self.voice_thread.is_alive():
@@ -743,10 +823,20 @@ class Desktop(QObject):
         self.set_state(task="approval" if answer.route == "blocked" else "error" if answer.route == "error" else "idle")
         titles = {"demo": "Brain workflow · synthetic demo", "blocked": "One step is missing.", "council": "Council review", "recall": "Your active memories"}
         self.panel.show_answer(titles.get(answer.route, "LYA"), answer.text)
+        route = getattr(self.brain.client, 'last_route', None)
+        if answer.route == 'private-local':
+            self.panel.footnote.setText('LOCAL ONLY · CLOUD BLOCKED')
+        elif (isinstance(route, dict) and isinstance(route.get('route'), str)
+                and type(route.get('attempts')) is int):
+            self.panel.footnote.setText('CLOUD · ' + route['route'] + (' · BACKUP USED' if route['attempts'] > 1 else ''))
 
     def command(self, text):
-        self.generation += 1
         low = " ".join(text.casefold().split())
+        if self.brain_busy and low not in ("stop", "cancel", "close", "close panel", "sleep", "quit", "exit"):
+            self.panel.show_answer("A request is running.",
+                                   "Wait for its answer or say stop to cancel it.")
+            return
+        self.generation += 1
         if low in ("stop", "cancel", "close", "close panel"):
             self.close_panel()
         elif low == "sleep":
@@ -790,18 +880,16 @@ class Desktop(QObject):
             self.panel.show_answer("System Readiness", status_text)
         elif low in ("help", "commands", "what can you do"):
             self.panel.show_answer("LYA Commands",
-                "Available commands:\n"
-                "• brain help / brain status / brain demo\n"
-                "• who am i — actual session, not the color preview\n"
-                "• status — check system readiness & dependencies\n"
-                "• show files — read-only project documents\n"
-                "• time / date — local clock & calendar\n"
-                "• colors — list person & task color options\n"
-                "• person <admin|guest|family|friend> — preview color\n"
-                "• task <thinking|listening|files|success|approval|error|idle>\n"
-                "• reduce motion / motion on — toggle animations\n"
-                "• stop / sleep / quit — control window state\n\n"
-                "Type any command and press Enter.")
+                "Available commands:\n" + self.brain.capability_help() +
+                "\n\nDesktop controls:\n"
+                "• status — check local dependency readiness\n"
+                "• show files — preview the listed project documents\n"
+                "• open chat / close chat / full screen\n"
+                "• open camera / close camera (local preview)\n"
+                "• open recovery / register admin (guided setup)\n"
+                "• colors / person admin / task thinking (appearance only)\n"
+                "• reduce motion / motion on / quit\n"
+                "• brain demo (synthetic, no personal data)")
         else:
             self.ask_brain(text)
 
@@ -811,14 +899,16 @@ def main():
     parser.add_argument("--reduced-motion", action="store_true")
     parser.add_argument("--show-panel", action="store_true")
     parser.add_argument("--voice", action="store_true", help="Start background offline voice wake listener")
+    parser.add_argument("--original-art", action="store_true", help="Use the earlier crystal artwork")
+    parser.add_argument("--model-art", action="store_true", help="Try the experimental baked 3D artwork")
     args = parser.parse_args()
     app = QApplication(sys.argv[:1])
     app.setApplicationName("LYA Desktop")
     app.setQuitOnLastWindowClosed(False)
-    desktop = Desktop(app, args.reduced_motion)
-    desktop.orb.show()
-    if args.show_panel:
-        desktop.open_panel()
+    from experience import OrbDesktop
+    desktop = OrbDesktop(app, args.reduced_motion)
+    desktop.orb.set_artwork(not args.original_art)
+    desktop.start_intro()
     if args.voice:
         desktop.start_voice()
     return app.exec()

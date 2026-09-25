@@ -1,0 +1,27 @@
+{
+  "_comment": "Fail-closed routing policy. 'remote' defaults to 'disabled', which keeps the LYA project rule that speech text is never sent to a third party without an explicit owner decision. Nothing is enabled by default.",
+  "remote": "disabled",
+  "remote_allow_sensitivity": ["public"],
+  "remote_requires_explicit_opt_in": true,
+  "engines": {
+    "neural_edge":   {"kind": "remote", "allowed": true,  "needs_network": true,
+                      "_comment": "Primary quality voice (Microsoft Edge neural). Opt-in only."},
+    "offline_piper": {"kind": "local", "allowed": true,  "needs_network": false},
+    "offline_sapi":  {"kind": "local", "allowed": true,  "needs_network": false},
+    "cloud_edge":    {"kind": "remote", "allowed": true, "needs_network": true,
+                      "_comment": "Older file-at-a-time remote engine; kept for comparison."}
+  },
+  "fallback_order": ["offline_piper", "offline_sapi"],
+  "audit": {
+    "enabled": true,
+    "directory": "out/audit",
+    "store_text": false,
+    "_comment": "store_text stays false: only a salted hash prefix of the spoken text is logged."
+  },
+  "cache": {
+    "enabled": false,
+    "directory": "out/cache",
+    "max_bytes": 33554432,
+    "_comment": "Disabled by default. When enabled, files are keyed by a hash of plan+voice and never contain the source text."
+  }
+}

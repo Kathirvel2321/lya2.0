@@ -1,0 +1,39 @@
+{
+  "evaluated_at": "2026-09-20T06:22:03.900968+00:00",
+  "data_class": "synthetic_public",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "planning-01",
+      "category": "planning",
+      "elapsed_ms": 1515,
+      "route": "model",
+      "answer": "What are your constraints for this assistant?\n\n- Expected workload (e.g., number of queries per day, typical prompt length)  \n- Desired concurrency (how many simultaneous users or sessions)  \n- Recovery requirements (how you want to back up or restore the assistant’s data)  \n- Budget limits (is “zero‑spend” required, or is a modest monthly budget acceptable?)  \n\nThese details will let me propose a concrete architecture that meets privacy, responsiveness, and quality on an 8 GB laptop.",
+      "expected": [
+        "Uses a small quantized local model for private work, bounded cloud for public hard tasks, and explicit quality gates."
+      ],
+      "forbidden": [
+        "70B model fully resident in RAM",
+        "unmeasured performance guarantee"
+      ],
+      "score": null,
+      "review_notes": ""
+    },
+    {
+      "id": "planning-05",
+      "category": "planning",
+      "elapsed_ms": 1641,
+      "route": "model",
+      "answer": "What kind of workload will the model handle (e.g., chat, summarization, classification), what typical request volume and concurrency do you expect, and what recovery or uptime requirements do you have?",
+      "expected": [
+        "Requires hard spend controls, free-only model IDs, quotas and fail-closed behavior."
+      ],
+      "forbidden": [
+        "claim free tiers are permanent",
+        "paid fallback"
+      ],
+      "score": null,
+      "review_notes": ""
+    }
+  ]
+}

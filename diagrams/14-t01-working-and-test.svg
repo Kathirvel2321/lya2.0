@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07141d"/><stop offset="1" stop-color="#111d31"/>
+    </linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity=".32"/></filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#7894a3"/>
+    </marker>
+    <style>
+      text{font-family:'Segoe UI',Arial,sans-serif;fill:#edf7fb}
+      .title{font-size:38px;font-weight:700}.sub{font-size:17px;fill:#99bdca}
+      .head{font-size:22px;font-weight:700}.body{font-size:16px;fill:#d8e8ed}
+      .box{rx:14;stroke-width:2;filter:url(#shadow)}
+      .green{fill:#123d2b;stroke:#6dd39a}.amber{fill:#4b3516;stroke:#e8b761}
+      .purple{fill:#302451;stroke:#ad8ee6}.blue{fill:#163c5b;stroke:#6cafdf}
+      .gray{fill:#28313d;stroke:#8794a3;stroke-dasharray:7 6}.red{fill:#542029;stroke:#eb7b86}
+      .line{fill:none;stroke:#7894a3;stroke-width:2;marker-end:url(#arrow)}
+      .dash{stroke-dasharray:7 6}.small{font-size:14px;fill:#bcd0d7}
+    </style>
+  </defs>
+  <rect width="1600" height="1040" fill="url(#bg)"/>
+  <text x="60" y="66" class="sub">LYA · VERIFIED BASELINE · 2026-09-16</text>
+  <text x="60" y="114" class="title">What works now — and how you test it</text>
+
+  <text x="60" y="162" class="head">CURRENT WORKING FLOW</text>
+  <rect x="60" y="185" width="650" height="90" class="box green"/>
+  <text x="85" y="221" class="head">1 · Native startup</text>
+  <text x="85" y="250" class="body">launch-lya.cmd → crystal orb + compact glass panel</text>
+  <path d="M385 275V306" class="line"/>
+
+  <rect x="60" y="310" width="305" height="105" class="box green"/>
+  <text x="84" y="345" class="head">Local commands</text>
+  <text x="84" y="374" class="body">help · status · time</text>
+  <text x="84" y="398" class="small">Fast deterministic responses</text>
+  <rect x="405" y="310" width="305" height="105" class="box green"/>
+  <text x="429" y="345" class="head">Approved files</text>
+  <text x="429" y="374" class="body">show files</text>
+  <text x="429" y="398" class="small">Four allowlisted project documents</text>
+  <path d="M385 275L212 310" class="line"/><path d="M385 275L557 310" class="line"/>
+
+  <rect x="60" y="455" width="650" height="118" class="box green"/>
+  <text x="85" y="490" class="head">Brain boundary</text>
+  <text x="85" y="520" class="body">brain help · who am i · brain status</text>
+  <text x="85" y="548" class="body">Guest remains unverified; private memory is denied</text>
+  <path d="M212 415L310 455" class="line"/><path d="M557 415L460 455" class="line"/>
+
+  <rect x="60" y="614" width="305" height="108" class="box green"/>
+  <text x="84" y="650" class="head">Lifecycle</text>
+  <text x="84" y="679" class="body">stop · sleep · quit</text>
+  <text x="84" y="703" class="small">Stale results stay closed</text>
+  <rect x="405" y="614" width="305" height="108" class="box amber"/>
+  <text x="429" y="650" class="head">Public AI route</text>
+  <text x="429" y="679" class="body">Oracle SSH → Groq</text>
+  <text x="429" y="703" class="small">Passed earlier; not re-run in T01</text>
+  <path d="M385 573L212 614" class="line"/><path d="M385 573L557 614" class="line"/>
+
+  <rect x="60" y="766" width="202" height="93" class="box blue"/>
+  <text x="82" y="801" class="head">Next</text><text x="82" y="831" class="body">T02 backup AI</text>
+  <rect x="284" y="766" width="202" height="93" class="box gray"/>
+  <text x="306" y="801" class="head">Pending</text><text x="306" y="831" class="body">Voice + identity</text>
+  <rect x="508" y="766" width="202" height="93" class="box gray"/>
+  <text x="530" y="801" class="head">Pending</text><text x="530" y="831" class="body">Phone + recovery</text>
+  <path d="M557 722L161 766" class="line"/><path d="M557 722L385 766" class="line dash"/><path d="M557 722L609 766" class="line dash"/>
+
+  <text x="790" y="162" class="head">YOUR TEST FLOW</text>
+  <rect x="790" y="185" width="720" height="82" class="box purple"/>
+  <text x="818" y="220" class="head">1 · Run .\check-t01.cmd</text>
+  <text x="818" y="247" class="body">Expected: PASS · 57 checks passed</text>
+  <path d="M1150 267V297" class="line"/>
+  <rect x="790" y="301" width="720" height="82" class="box purple"/>
+  <text x="818" y="336" class="head">2 · Launch conservative mode</text>
+  <text x="818" y="363" class="body">.\launch-lya.cmd --original-art --reduced-motion</text>
+  <path d="M1150 383V413" class="line"/>
+  <rect x="790" y="417" width="720" height="108" class="box purple"/>
+  <text x="818" y="452" class="head">3 · Try the commands</text>
+  <text x="818" y="481" class="body">help · status · time · show files · who am i</text>
+  <text x="818" y="507" class="small">Expect guest identity; show memories must be blocked</text>
+  <path d="M1150 525V555" class="line"/>
+  <rect x="790" y="559" width="720" height="96" class="box purple"/>
+  <text x="818" y="594" class="head">4 · Test closing behavior</text>
+  <text x="818" y="623" class="body">stop → reopen → sleep → Ctrl+Q</text>
+  <path d="M1150 655V687" class="line"/>
+  <rect x="790" y="691" width="340" height="108" class="box green"/>
+  <text x="815" y="730" class="head">PASS</text>
+  <text x="815" y="759" class="body">All expected results match</text>
+  <text x="815" y="783" class="small">T01 works on this laptop</text>
+  <rect x="1170" y="691" width="340" height="108" class="box red"/>
+  <text x="1195" y="730" class="head">FAIL</text>
+  <text x="1195" y="759" class="body">Keep first error + summary</text>
+  <text x="1195" y="783" class="small">Do not paste keys or private data</text>
+  <path d="M1150 655L960 691" class="line"/><path d="M1150 655L1340 691" class="line"/>
+
+  <text x="790" y="866" class="head">STATUS LEGEND</text>
+  <rect x="790" y="889" width="22" height="22" class="green"/><text x="823" y="906" class="body">Verified in T01</text>
+  <rect x="1005" y="889" width="22" height="22" class="amber"/><text x="1038" y="906" class="body">Earlier live evidence</text>
+  <rect x="1260" y="889" width="22" height="22" class="blue"/><text x="1293" y="906" class="body">Next task</text>
+  <rect x="790" y="929" width="22" height="22" class="gray"/><text x="823" y="946" class="body">Pending</text>
+  <rect x="1005" y="929" width="22" height="22" class="purple"/><text x="1038" y="946" class="body">Your check</text>
+  <rect x="1260" y="929" width="22" height="22" class="red"/><text x="1293" y="946" class="body">Failure path</text>
+  <text x="60" y="1000" class="sub">Validated Mermaid source: diagrams/14-t01-working-and-test.mmd · Direct visual companion</text>
+</svg>

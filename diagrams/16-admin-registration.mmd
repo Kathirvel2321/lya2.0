@@ -1,0 +1,27 @@
+flowchart TD
+    A["Owner opens local registration screen"] --> B{"Explicit consent to local templates?"}
+    B -- "No" --> X["Stop with no capture or profile"]
+    B -- "Yes" --> C{"Primary admin already exists?"}
+    C -- "Yes" --> X
+    C -- "No" --> D["Windows Hello or trusted-device challenge"]
+    D --> E{"Exact proof returned before expiry?"}
+    E -- "No" --> X
+    E -- "Yes" --> F["Three randomized live face challenges"]
+    F --> G{"Liveness and sample consistency pass?"}
+    G -- "No" --> X
+    G -- "Yes" --> H["Three randomized spoken-code challenges"]
+    H --> I{"Challenge and sample consistency pass?"}
+    I -- "No" --> X
+    I -- "Yes" --> J["Convert captures to face and voice templates"]
+    J --> K["Discard raw captures from the flow"]
+    K --> L["Atomically save one admin, encrypted templates and recovery hash"]
+    L --> M["Issue five-minute local admin session"]
+    M --> N["Greet owner by registered display name"]
+    N --> O["Private or dangerous action still needs exact fresh approval"]
+
+    classDef tested fill:#176b45,color:#fff,stroke:#79ddb1
+    classDef pending fill:#805d16,color:#fff,stroke:#f0c86d
+    classDef denied fill:#7a3030,color:#fff,stroke:#ef9a9a
+    class A,B,C,E,F,G,H,I,J,K,L,M,N,O tested
+    class D pending
+    class X denied

@@ -1,0 +1,221 @@
+{
+  "date": "2026-09-19T17:01:46.639332+00:00",
+  "model": "Qwen3-4B-Q4_K_M",
+  "model_file": "qwen3-4b-q4_k_m.gguf",
+  "threads": 6,
+  "context": 2048,
+  "output_limit": 384,
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "criterion": "Answers Friday; does not treat Monday as current.",
+      "elapsed_seconds": 11.48,
+      "answer": "The current deadline is Friday. The original deadline was Monday, but it has been explicitly corrected to Friday. No further changes are mentioned, so the latest deadline stands as Friday.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 36,
+        "prompt_tokens": 92,
+        "total_tokens": 128,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 92,
+        "prompt_ms": 4787.611,
+        "prompt_per_token_ms": 52.039249999999996,
+        "prompt_per_second": 19.216264646396713,
+        "predicted_n": 36,
+        "predicted_ms": 6563.573,
+        "predicted_per_token_ms": 187.53065714285717,
+        "predicted_per_second": 5.332461450493504
+      }
+    },
+    {
+      "id": "unknown_fact",
+      "criterion": "States it is unknown and does not invent a date.",
+      "elapsed_seconds": 13.47,
+      "answer": "No information is available to determine the owner's birthday. The query does not provide sufficient data, and no contextual clues are present in the provided information. Without additional details, it is not possible to identify or calculate the owner's birthday.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 48,
+        "prompt_tokens": 84,
+        "total_tokens": 132,
+        "prompt_tokens_details": {
+          "cached_tokens": 60
+        }
+      },
+      "timings": {
+        "cache_n": 60,
+        "prompt_n": 24,
+        "prompt_ms": 1257.346,
+        "prompt_per_token_ms": 52.38941666666667,
+        "prompt_per_second": 19.08782467196778,
+        "predicted_n": 48,
+        "predicted_ms": 12138.241,
+        "predicted_per_token_ms": 258.26044680851066,
+        "predicted_per_second": 3.8720602103715027
+      }
+    },
+    {
+      "id": "source_freshness",
+      "criterion": "Does not invent a current figure or claim a search occurred.",
+      "elapsed_seconds": 12.36,
+      "answer": "I cannot access real-time data or external sources to provide the current exchange rate. My knowledge is based on information up to July 2024. For the most accurate and up-to-date exchange rate, please consult a financial service or currency converter.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_tokens": 86,
+        "total_tokens": 138,
+        "prompt_tokens_details": {
+          "cached_tokens": 61
+        }
+      },
+      "timings": {
+        "cache_n": 61,
+        "prompt_n": 25,
+        "prompt_ms": 1457.272,
+        "prompt_per_token_ms": 58.290879999999994,
+        "prompt_per_second": 17.155342310838336,
+        "predicted_n": 52,
+        "predicted_ms": 10830.478,
+        "predicted_per_token_ms": 212.36231372549017,
+        "predicted_per_second": 4.708933437656214
+      }
+    },
+    {
+      "id": "planning",
+      "criterion": "Separates orchestration from large-model inference; includes quotas, testing and outage behavior.",
+      "elapsed_seconds": 21.33,
+      "answer": "Plan a lightweight assistant for 4-core ARM, 24GB RAM, no GPU. Use hosted model APIs with quotas. Optimize for low resource usage. Implement compact code, minimal tests. Avoid GPU. Use efficient inference. Ensure compatibility with ARM architecture. Monitor API quotas. Deploy on server with 4 cores, 24GB RAM. Use lightweight frameworks. Prioritize speed and memory efficiency. Validate with basic tests. Ensure no GPU dependencies. Focus on hosted model APIs. Keep assistant lightweight and responsive. Use minimal libraries. Ensure compatibility with ARM CPU. Optimize for low power consumption. Ensure reliable performance within RAM and CPU limits.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 131,
+        "prompt_tokens": 101,
+        "total_tokens": 232,
+        "prompt_tokens_details": {
+          "cached_tokens": 60
+        }
+      },
+      "timings": {
+        "cache_n": 60,
+        "prompt_n": 41,
+        "prompt_ms": 1885.478,
+        "prompt_per_token_ms": 45.98726829268293,
+        "prompt_per_second": 21.745148975485257,
+        "predicted_n": 131,
+        "predicted_ms": 19364.798,
+        "predicted_per_token_ms": 148.9599846153846,
+        "predicted_per_second": 6.713212293771409
+      }
+    },
+    {
+      "id": "coding",
+      "criterion": "Tests cover empty input, repeated-only input, mixed case and a valid first unique character. Execute only in an isolated reviewed test harness.",
+      "elapsed_seconds": 20.34,
+      "answer": "def first_non_repeated(s):  \n    for i, c in enumerate(s):  \n        if s.count(c) == 1:  \n            return c  \n    return None  \n\ntests = [  \n    (\"aabbcc\", None),  \n    (\"abcabc\", \"a\"),  \n    (\"abba\", None),  \n    (\"\", None),  \n    (\"a\", \"a\")  \n]  \n\nfor input_str, expected in tests:  \n    result = first_non_repeated(input_str)  \n    assert result == expected, f\"Failed for {input_str}: expected {expected}, got {result}\"",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 126,
+        "prompt_tokens": 95,
+        "total_tokens": 221,
+        "prompt_tokens_details": {
+          "cached_tokens": 60
+        }
+      },
+      "timings": {
+        "cache_n": 60,
+        "prompt_n": 35,
+        "prompt_ms": 1407.639,
+        "prompt_per_token_ms": 40.21825714285714,
+        "prompt_per_second": 24.864329561769747,
+        "predicted_n": 126,
+        "predicted_ms": 18878.296,
+        "predicted_per_token_ms": 151.026368,
+        "predicted_per_second": 6.621360317689691
+      }
+    },
+    {
+      "id": "security_review",
+      "criterion": "Identifies missing object authorization; proposes server-side owner checks and a cross-user denial test; does not claim exploitation was performed.",
+      "elapsed_seconds": 31.64,
+      "answer": "The API flaw allows unauthorized access to user notes by bypassing session checks. A user can retrieve another's notes by manipulating the URL.  \n**Repair**: Add session validation in the route handler. Check if the session user matches the URL's user ID before returning notes.  \n**Test**:  \n- **Test 1**: `GET /notes/123` with session user `456` → 403 (forbidden).  \n- **Test 2**: `GET /notes/456` with session user `456` → 200 (success).  \n- **Test 3**: `GET /notes/789` with session user `123` → 403 (forbidden).  \nThis ensures only the session owner can access their notes.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 169,
+        "prompt_tokens": 101,
+        "total_tokens": 270,
+        "prompt_tokens_details": {
+          "cached_tokens": 60
+        }
+      },
+      "timings": {
+        "cache_n": 60,
+        "prompt_n": 41,
+        "prompt_ms": 1810.193,
+        "prompt_per_token_ms": 44.151048780487805,
+        "prompt_per_second": 22.649518587244565,
+        "predicted_n": 169,
+        "predicted_ms": 29766.032,
+        "predicted_per_token_ms": 177.1787619047619,
+        "predicted_per_second": 5.644017314770071
+      }
+    }
+  ],
+  "models": {
+    "models": [
+      {
+        "name": "lya-local",
+        "model": "lya-local",
+        "modified_at": "",
+        "size": "",
+        "digest": "",
+        "type": "model",
+        "description": "",
+        "tags": [
+          ""
+        ],
+        "capabilities": [
+          "completion"
+        ],
+        "parameters": "",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "",
+          "families": [
+            ""
+          ],
+          "parameter_size": "",
+          "quantization_level": ""
+        }
+      }
+    ],
+    "object": "list",
+    "data": [
+      {
+        "id": "lya-local",
+        "aliases": [
+          "lya-local"
+        ],
+        "tags": [],
+        "object": "model",
+        "created": 1789837318,
+        "owned_by": "llamacpp",
+        "meta": {
+          "vocab_type": true,
+          "n_vocab": 151936,
+          "n_ctx": 2048,
+          "n_ctx_train": 40960,
+          "n_embd": 2560,
+          "n_params": 4022468096,
+          "size": 2491323904,
+          "ftype": "Q4_K - Medium"
+        }
+      }
+    ]
+  },
+  "startup_seconds": 11.66,
+  "test_server_stopped": true
+}

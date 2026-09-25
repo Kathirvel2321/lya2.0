@@ -43,21 +43,31 @@ the PNGs are locally rendered companion overviews, not screenshots of private da
 3. **Retrieve relevant context.** Search only this person's active notes and add
    nearby graph relationships. Exclude credential kinds, expired notes and inactive
    profiles. Missing identity never selects the first person in the database.
-4. **Choose a reasoning path.** Ordinary questions use one configured model call;
-   explicit council requests and selected important-plan phrases use three
-   perspectives and a synthesis. Retrieval is not itself a language model.
-5. **Check again.** Discard cancelled answers, changed/expired identities, revoked
-   profiles and answers whose retrieved notes expired during inference.
+4. **Choose a reasoning path.** Bounded simple arithmetic runs through a local
+   deterministic evaluator. Public research requires an injected source adapter and
+   structured claims; ordinary questions use one configured model call. Explicit
+   council requests use three perspectives and a synthesis.
+5. **Verify the output boundary.** Research facts need known source IDs, and visible
+   research text is rebuilt only from validated claims. Missing adapters, malformed
+   claims and unknown citations fail closed. Discard cancelled answers,
+   changed/expired identities, revoked profiles and expired retrieved notes.
 6. **Answer transparently.** Return relevant saved-note IDs/revisions and distinguish
-   user-provided context from verified external evidence. Model prompts request a
-   concise rationale, alternatives and missing facts, not a dump of hidden reasoning.
+   user-provided context from sourced evidence. Model prompts request a direct answer
+   and brief material uncertainty, not a dump of hidden reasoning.
 7. **Save only on request.** An answer, speculation or council consensus does not
    become a saved fact automatically. An explicit save or correction is a separate
    authorized operation.
 
 This is a control workflow around a model. It is not a biological brain simulation
-and does not guarantee correct answers. No live research tool is wired into this
-path yet; current facts and consequential decisions still need reliable sources.
+and does not guarantee correct answers. Routine public research now uses You.com's
+keyless search-only MCP profile, bounded to six HTTPS sources and eight seconds.
+Tavily is consulted only when the request begins `critical research:` or `important
+research:` and its existing key plus both safety flags are present. Search snippets
+carry source URLs, but independent full-page claim validation and consequential
+decisions still require source review. Agent Reach 1.5.0 is installed in its dedicated
+user environment for multi-channel work. Its read-only diagnostic currently verifies
+Jina webpage reading, RSS, V2EX and basic Bilibili search; GitHub and Exa still need
+their separate `gh` and `mcporter` dependencies.
 
 ## Memory lifetimes, in plain language
 
@@ -167,12 +177,16 @@ the conversational database. The existing whole-file encryption is appropriate
 only for small stores; it reserializes the database and is not a large-scale search
 engine. Hardware inventory through WMI was denied, so no RAM/GPU claim was made.
 
-The new model adapter calls only loopback Ollama-compatible inference. It requires
-`LYA_LOCAL_MODEL` to name an installed model, and uses a 12-second request timeout.
-No model was installed or chosen in this task; the local service was not reachable.
-No cloud provider is silently tried if it fails. The legacy provider path remains
-separate. Cancellation hides late results immediately but cannot interrupt a
-network call already inside its timeout or undo a write already committed.
+The private model adapter now calls the installed llama.cpp server only at
+`127.0.0.1:8080`, with the stable `lya-local` alias and a 60-second request bound.
+Use `private mode`, `public mode`, `privacy status`, or a one-message `private:` /
+`secret:` prefix. Private inference fails closed and never falls through to Oracle
+or another cloud route. Start the local server with `run-local-model.cmd`. The
+installed Qwen3 4B Q4_K_M model is hash-verified and improves the frozen local
+rubric to 5 pass, 1 partial and 2 fail. It is still provisional: coding and Tamil
+failed, so T03 verification is required before trusting high-impact answers.
+Cancellation hides late results immediately but cannot interrupt a request already
+inside its timeout.
 
 Free cloud storage is useful for later encrypted snapshots and selected mobile
 files. It is not a reasoning server, RAM or GPU. Keep the live database local;

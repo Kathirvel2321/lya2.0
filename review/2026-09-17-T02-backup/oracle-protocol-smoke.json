@@ -1,0 +1,7 @@
+{
+  "alarm_pass": true,
+  "alarm_ms": 150,
+  "session_cancel_pass": true,
+  "attempts": 1,
+  "private_data_sent": false
+}

@@ -21,7 +21,8 @@ def load_values(path=None):
     values = {}
     path = Path(path) if path is not None else Path(__file__).resolve().parents[1] / '.env'
     names = {'GROQ_API_KEY', 'NVIDIA_API_KEY', 'NVAPI_KEY', 'HF_TOKEN', 'HUGGINGFACE_API_KEY',
-             'LYA_GROQ_MODEL', 'LYA_NVIDIA_MODEL', 'OMNIROUTE_URL', 'OMNIROUTE_KEY'}
+             'OPENROUTER_API_KEY', 'LYA_OPENROUTER_MODEL', 'LYA_GROQ_MODEL', 'LYA_NVIDIA_MODEL',
+             'OMNIROUTE_URL', 'OMNIROUTE_KEY'}
     if path.is_file():
         for line in path.read_text(encoding='utf-8-sig').splitlines():
             line = line.strip()
@@ -48,7 +49,8 @@ def main():
     for provider, keys, url in [
         ('groq', ['GROQ_API_KEY'], 'https://api.groq.com/openai/v1/models'),
         ('nvidia', ['NVIDIA_API_KEY', 'NVAPI_KEY'], 'https://integrate.api.nvidia.com/v1/models'),
-        ('huggingface', ['HF_TOKEN', 'HUGGINGFACE_API_KEY'], 'https://router.huggingface.co/v1/models')]:
+        ('huggingface', ['HF_TOKEN', 'HUGGINGFACE_API_KEY'], 'https://router.huggingface.co/v1/models'),
+        ('openrouter', ['OPENROUTER_API_KEY'], 'https://openrouter.ai/api/v1/models')]:
         token = next((values[k] for k in keys if values.get(k)), '')
         if not token or token.lower().startswith(('your_', 'replace_', 'changeme', '<')):
             print(json.dumps({'provider': provider, 'status': 'credential_not_configured'}))

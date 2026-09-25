@@ -1,0 +1,45 @@
+{
+  "date": "2026-09-19T17:46:45.281964+00:00",
+  "provider": "openrouter",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "elapsed_ms": 5594,
+      "error": null,
+      "answer": "The current deadline is **Friday** — the explicit correction supersedes the original Monday date.",
+      "upstream_provider": "nvidia",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "unknown_fact",
+      "elapsed_ms": 3640,
+      "error": null,
+      "answer": "I don't have any information about an owner or their birthday. No context or notes were provided in this conversation.",
+      "upstream_provider": "nvidia",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "source_freshness",
+      "elapsed_ms": 31360,
+      "error": null,
+      "answer": "I don't have access to real-time data or browsing tools, so I cannot provide today's exact exchange rate. You'll need to check a financial data source (bank, currency API, financial news site) for current rates.",
+      "upstream_provider": "nvidia",
+      "pass": null,
+      "review_notes": ""
+    },
+    {
+      "id": "planning",
+      "elapsed_ms": 37062,
+      "error": "provider_output_length",
+      "answer": "",
+      "upstream_provider": null,
+      "pass": null,
+      "review_notes": ""
+    }
+  ],
+  "completed": false
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "language": "english",
+    "first_audio_seconds": 43.943,
+    "synthesis_seconds": 43.943,
+    "audio_seconds": 4.331,
+    "rtf": 10.147
+  },
+  {
+    "language": "tamil",
+    "first_audio_seconds": 4.379,
+    "synthesis_seconds": 4.824,
+    "audio_seconds": 4.807,
+    "rtf": 1.004
+  }
+]

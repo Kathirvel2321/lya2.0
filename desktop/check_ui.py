@@ -194,7 +194,8 @@ class InterfaceChecks(unittest.TestCase):
         # 4. Voice "sleep" puts crystal to sleep
         d.voice_signals.wake_detected.emit("sleep", False)
         QTest.qWait(60)
-        self.assertFalse(d.orb.isVisible())
+        # Without a system tray (e.g. offscreen Qt), keep the orb recoverable.
+        self.assertEqual(d.orb.isVisible(), not d.tray.isVisible())
 
     def test_motion_stops_on_hide_and_reduced_motion(self):
         orb = self.desktop.orb
@@ -206,6 +207,59 @@ class InterfaceChecks(unittest.TestCase):
         orb.show()
         orb.set_reduced_motion(True)
         self.assertFalse(orb.timer.isActive())
+
+    def test_idle_burst_finishes_and_interaction_can_restart_it(self):
+        orb = self.desktop.orb
+        orb.show()
+        orb.set_reduced_motion(False)
+        self.assertTrue(orb.timer.isActive())
+        orb.motion_until = time.monotonic() - 1
+        orb.tick()
+        self.assertFalse(orb.timer.isActive())
+        self.assertEqual(orb.phase, 0)
+        orb.animate_briefly()
+        self.assertTrue(orb.timer.isActive())
+        orb.hide()
+        orb.animate_briefly()
+        self.assertFalse(orb.timer.isActive())
+        orb.set_state(task="thinking")
+        self.assertEqual(orb.animation.state(), orb.animation.State.Stopped)
+
+    def test_model_artwork_can_revert_and_bad_decode_uses_original(self):
+        from unittest.mock import patch, MagicMock
+        from PySide6.QtCore import QSize
+        from PySide6.QtGui import QImage
+        orb = self.desktop.orb
+        self.assertFalse(orb.using_model)
+        orb.set_artwork(True)
+        self.assertTrue(orb.using_model)
+        self.assertEqual(orb.base.size(), QSize(288, 408))
+        self.assertTrue(any(orb.base.toImage().pixelColor(x, 200).alpha() for x in range(50, 230)))
+        orb.set_artwork(False)
+        self.assertFalse(orb.using_model)
+        self.assertEqual(orb.base.cacheKey(), orb.original.cacheKey())
+        reader = MagicMock()
+        reader.size.return_value = QSize(288, 408)
+        reader.read.return_value = QImage()
+        with patch('app.QImageReader', return_value=reader):
+            failed = Crystal()
+        self.assertFalse(failed.using_model)
+        self.assertFalse(failed.base.isNull())
+        failed.deleteLater()
+
+    def test_slow_paint_falls_back_and_updates_motion_control(self):
+        orb = self.desktop.orb
+        orb.set_artwork(True)
+        orb.show()
+        orb.set_reduced_motion(False)
+        QTest.qWait(40)
+        orb.paint_samples = [20.0] * 30
+        orb.repaint()
+        QTest.qWait(60)
+        self.assertFalse(orb.using_model)
+        self.assertTrue(orb.reduced_motion)
+        self.assertFalse(orb.timer.isActive())
+        self.assertTrue(self.desktop.motion_action.isChecked())
 
     def wait_for_brain(self):
         for _ in range(500):
@@ -270,8 +324,9 @@ class InterfaceChecks(unittest.TestCase):
         self.assertEqual(d.panel.answer.toPlainText(), read_project_document("README.md"))
 
 
-def measure_motion():
+def measure_motion(use_model=True):
     orb = Crystal()
+    orb.set_artwork(use_model)
     orb.show()
     ticks = []
     from PySide6.QtCore import QTimer
@@ -290,6 +345,14 @@ def measure_motion():
               "paint_count": len(samples), "paint_median_ms": round(statistics.median(samples), 3),
               "paint_max_ms": round(max(samples), 3), "event_gap_max_ms": round(max(gaps), 3),
               "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance."}
+    QTest.qWait(3300)
+    count = len(orb.paint_samples)
+    QTest.qWait(1200)
+    result.update(artwork="model_bake" if use_model else "original",
+                  idle_timer_active=orb.timer.isActive(),
+                  idle_paint_delta=len(orb.paint_samples)-count)
+    unique = {p.cacheKey(): p for p in [orb.base, orb.original, orb.model_art, orb.previous, orb.current, *orb.frames.values()] if not p.isNull()}
+    result['estimated_unique_pixmap_bytes'] = sum(p.width()*p.height()*4 for p in unique.values())
     orb.hide()
     orb.deleteLater()
     return result

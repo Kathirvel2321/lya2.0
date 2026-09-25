@@ -1,18 +1,20 @@
-"""LYA's vault — military-grade encryption for her entire brain.
+"""Authenticated encryption for callers that explicitly use this module.
 
-Layers:
-1. AES-256 (Fernet) encrypts EVERYTHING on disk: memory DB, face template,
-   vault, logs. A hacker who steals the files gets unreadable garbage.
-2. The encryption key itself is protected by Windows DPAPI — it is bound to
-   YOUR Windows user account. Copying the files to another PC/user = useless.
-   Even LYA's own code cannot read the data if the Windows session differs.
+Fernet uses AES-128-CBC plus HMAC-SHA256; its key is protected with Windows
+DPAPI. This does not encrypt unrelated files/logs or isolate data from malware
+running as the same unlocked Windows user. Independent recovery is required
+before moving encrypted data to a different Windows account or device.
 """
 import os, base64, threading
 from cryptography.fernet import Fernet
 
 import win32crypt  # from pywin32 — Windows Data Protection API
 
-KEY_PATH = os.path.join(os.path.dirname(__file__), ".lya_key")
+_LEGACY_KEY_PATH = os.path.join(os.path.dirname(__file__), ".lya_key")
+_NEW_KEY_PATH = os.path.join(os.environ.get("LOCALAPPDATA") or os.path.expanduser("~"),
+                             "LYA", "master.key.dpapi")
+# Keep existing vaults on their original key until a verified recovery copy exists.
+KEY_PATH = _LEGACY_KEY_PATH if os.path.exists(_LEGACY_KEY_PATH) else _NEW_KEY_PATH
 ENTROPY = b"LYA-ultron-project-2026"   # extra salt bound to this app
 
 def _get_fernet() -> Fernet:
@@ -23,8 +25,13 @@ def _get_fernet() -> Fernet:
     else:
         raw = Fernet.generate_key()
         blob = win32crypt.CryptProtectData(raw, "LYA", ENTROPY, None, None, 0)
-        with open(KEY_PATH, "wb") as f:
-            f.write(blob)
+        os.makedirs(os.path.dirname(KEY_PATH), exist_ok=True)
+        try:
+            with open(KEY_PATH, "xb") as f:
+                f.write(blob)
+        except FileExistsError:
+            with open(KEY_PATH, "rb") as f:
+                blob = f.read()
     _, raw = win32crypt.CryptUnprotectData(blob, ENTROPY, None, None, 0)
     return Fernet(raw)
 
@@ -67,7 +74,7 @@ def decrypt_file(path: str) -> bytes:
         return decrypt(f.read())
 
 def secure_delete(path: str):
-    """Overwrite with random bytes before deleting — no forensic recovery."""
+    """Best-effort overwrite/delete; SSDs, snapshots and backups may retain copies."""
     if not os.path.exists(path):
         return
     size = os.path.getsize(path)

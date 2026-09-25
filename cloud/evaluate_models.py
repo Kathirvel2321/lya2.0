@@ -12,15 +12,21 @@ import time
 from cloud.inference import infer
 from cloud.probe_models import load_values
 
-MODELS = {'groq': 'openai/gpt-oss-120b', 'nvidia': 'deepseek-ai/deepseek-v4-flash-0731'}
+MODELS = {'groq': 'openai/gpt-oss-120b', 'nvidia': 'deepseek-ai/deepseek-v4-flash-0731',
+          'openrouter': 'deepseek/deepseek-v4-flash-0731:free'}
+KEYS = {'groq': 'GROQ_API_KEY', 'nvidia': 'NVIDIA_API_KEY', 'openrouter': 'OPENROUTER_API_KEY'}
 
 
-def evaluate(provider, model, values, call=infer):
-    key = values.get('GROQ_API_KEY' if provider == 'groq' else 'NVIDIA_API_KEY', '')
+def evaluate(provider, model, values, call=infer, upstream_provider=None):
+    key = values.get(KEYS[provider], '')
     if not key or key.lower().startswith(('your_', 'replace_', 'changeme', '<')):
         raise ValueError('Provider credential is not configured')
     rubric = json.loads(Path(__file__).with_name('model-evaluation.json').read_text(encoding='utf-8'))
-    config = {'provider': provider, 'model': model, 'api_key': key, 'max_tokens': 2048}
+    config = {'provider': provider, 'model': model, 'api_key': key, 'max_tokens': 512 if provider == 'openrouter' else 1024}
+    if provider == 'openrouter':
+        if not model.endswith(':free') or not upstream_provider:
+            raise ValueError('OpenRouter requires a :free model and exact upstream provider')
+        config['upstream_provider'] = upstream_provider
     report = {'date': datetime.now(timezone.utc).isoformat(), 'provider': provider,
               'model': model, 'review_status': 'human_review_required', 'cases': []}
     for case in rubric['cases']:
@@ -31,6 +37,7 @@ def evaluate(provider, model, values, call=infer):
         response = call(packet, config, timeout=8)
         row = {'id': case['id'], 'elapsed_ms': round((time.monotonic()-start)*1000),
                'error': response.get('error'), 'answer': response.get('text', ''),
+               'upstream_provider': response.get('upstream_provider'),
                'pass': None, 'review_notes': ''}
         report['cases'].append(row)
         # Authentication/service failures need investigation, not eight retries.
@@ -44,6 +51,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--provider', choices=MODELS, required=True)
     parser.add_argument('--model')
+    parser.add_argument('--upstream-provider')
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
@@ -51,7 +59,8 @@ def main():
     output.relative_to(root / 'review')  # reports stay in the project review area
     if output.exists():
         parser.error('Output exists; use a new report path to preserve evidence')
-    report = evaluate(args.provider, args.model or MODELS[args.provider], load_values())
+    report = evaluate(args.provider, args.model or MODELS[args.provider], load_values(),
+                      upstream_provider=args.upstream_provider)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     print(json.dumps({'provider': args.provider, 'completed': report['completed'],

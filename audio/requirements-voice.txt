@@ -1,0 +1,4 @@
+# Local TTS only. Keep neural resources out of the desktop process.
+kokoro-onnx==0.4.9
+piper-tts==1.8.0
+sounddevice==0.5.6

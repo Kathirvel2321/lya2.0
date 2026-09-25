@@ -1,0 +1,45 @@
+{
+  "_comment": "The desktop uses separate native English and Tamil Piper voices for clear pronunciation. The speaker changes when the language changes; emotion and style still adjust delivery.",
+  "name": "Alya",
+  "aliases": ["LYA", "Lya", "Alya"],
+  "age": 21,
+  "gender": "female",
+  "base_f0_hz": 198.0,
+  "languages": ["en", "ta"],
+  "default_style": "everyday",
+  "default_emotion": "warm",
+  "interjection_probability": 0.15,
+  "breath_probability": 0.30,
+  "max_span_chars": 180,
+  "voices": {
+    "cloud_edge": {
+      "unified": "en-US-AvaMultilingualNeural",
+      "per_language": {"en": "en-US-AvaMultilingualNeural", "ta": "ta-IN-PallaviNeural"}
+    },
+    "piper": {
+      "unified": "ta_IN-rasa_female-medium",
+      "per_language": {"en": "en_US-ljspeech-medium", "ta": "ta_IN-rasa_female-medium"}
+    }
+  },
+  "interjections": {
+    "en": ["mm", "hmm", "oh", "okay so", "right"],
+    "ta": ["ஹ்ம்ம்", "ஓ", "அப்போ", "சரி", "ஆமா"]
+  },
+  "styles": {
+    "everyday":    {"description": "clear, warm, lightly joyful default", "rate_offset_pct": -8,  "rate_scale": 0.85, "pitch_scale": 1.0,  "volume_scale": 1.0,  "pause_scale": 1.08, "humanize_scale": 0.55, "breath_scale": 0.55},
+    "joyful":      {"description": "bright smile with clear unhurried words", "rate_offset_pct": -6,  "rate_scale": 0.9,  "pitch_scale": 1.15, "volume_scale": 1.0,  "pause_scale": 1.0,  "humanize_scale": 0.7,  "breath_scale": 0.55},
+    "storyteller": {"description": "slower, expressive, longer beats", "rate_offset_pct": -12, "rate_scale": 0.8,  "pitch_scale": 1.15, "volume_scale": 1.0, "pause_scale": 1.25, "humanize_scale": 0.7, "breath_scale": 0.65},
+    "hacker":      {"description": "precise working voice with short pauses", "rate_offset_pct": -4,  "rate_scale": 0.9,  "pitch_scale": 0.6, "volume_scale": 1.0, "pause_scale": 0.75, "humanize_scale": 0.35, "breath_scale": 0.2},
+    "hype":        {"description": "energetic and bright while still clear", "rate_offset_pct": -2,  "rate_scale": 0.9,  "pitch_scale": 1.25, "volume_scale": 1.05, "pause_scale": 0.92, "humanize_scale": 0.7, "breath_scale": 0.55},
+    "whisper":     {"description": "quiet, close, restrained", "rate_offset_pct": -10, "rate_scale": 0.8,  "pitch_scale": 0.7, "volume_scale": 0.6, "pause_scale": 1.15, "humanize_scale": 0.45, "breath_scale": 0.9},
+    "night":       {"description": "calm late-night companion", "rate_offset_pct": -13, "rate_scale": 0.75, "pitch_scale": 0.8, "volume_scale": 0.85, "pause_scale": 1.3, "humanize_scale": 0.4, "breath_scale": 0.75}
+  },
+  "delivery_limits": {
+    "_comment": "Hard clamps applied after emotion x style maths so no engine receives an absurd request.",
+    "rate_pct": [-40, 40],
+    "pitch_hz": [-35, 35],
+    "volume_pct": [-30, 15],
+    "pause_ms": [40, 900],
+    "semitones_per_hz_at_base": true
+  }
+}

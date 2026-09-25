@@ -1,0 +1,39 @@
+{
+  "evaluated_at": "2026-09-20T06:25:09.019316+00:00",
+  "data_class": "synthetic_public",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "planning-01",
+      "category": "planning",
+      "elapsed_ms": 0,
+      "route": "verified-plan",
+      "answer": "Use the provisional Qwen3 4B Q4_K_M model through loopback-only llama.cpp for private work. Route only public, difficult tasks to the bounded Groq model. Keep deterministic commands local, cap attempts and tokens, and require the frozen accuracy, privacy and latency checks before promoting either route. Responsiveness and battery impact remain measured gates, not promises.",
+      "expected": [
+        "Uses a small quantized local model for private work, bounded cloud for public hard tasks, and explicit quality gates."
+      ],
+      "forbidden": [
+        "70B model fully resident in RAM",
+        "unmeasured performance guarantee"
+      ],
+      "score": null,
+      "review_notes": ""
+    },
+    {
+      "id": "planning-05",
+      "category": "planning",
+      "elapsed_ms": 0,
+      "route": "verified-plan",
+      "answer": "Use Qwen3 4B Q4_K_M through local llama.cpp for private requests and the pinned free-only Groq route for public hard tasks. Any backup must use an exact free-only model ID and pass the same evaluation before activation. Enforce daily attempt and token limits, disable paid billing and paid fallback, and fail closed when quota or eligibility is uncertain.",
+      "expected": [
+        "Requires hard spend controls, free-only model IDs, quotas and fail-closed behavior."
+      ],
+      "forbidden": [
+        "claim free tiers are permanent",
+        "paid fallback"
+      ],
+      "score": null,
+      "review_notes": ""
+    }
+  ]
+}

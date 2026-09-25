@@ -1,0 +1,97 @@
+{
+  "model_id": "Prince-1/OmniVoice",
+  "execution_provider": "CPUExecutionProvider",
+  "precision": "int4",
+  "backbone": {
+    "audio_embeddings_encoder": {
+      "filename": "audio_embeddings_encoder.onnx",
+      "description": "Fuses text + audio codec token embeddings \u2192 inputs_embeds",
+      "inputs": {
+        "input_ids": "int64 (batch, num_codebooks=8, seq)",
+        "audio_mask": "bool  (batch, seq)"
+      },
+      "outputs": {
+        "inputs_embeds": "float32 (batch, seq, hidden=1024)"
+      }
+    },
+    "llm_decoder": {
+      "filename": "llm_decoder.onnx",
+      "description": "Qwen3 28-layer backbone (inputs_embeds \u2192 hidden_states)",
+      "note": "Exported with exclude_embeds=True, exclude_lm_head=True",
+      "inputs": {
+        "inputs_embeds": "float32 (batch, seq, hidden=1024)",
+        "attention_mask": "int64   (batch, seq)",
+        "position_ids": "int64   (batch, seq)",
+        "past_key_values": "float32 per layer \u2014 pass empty (shape [B,heads,0,head_dim]) for full-sequence forward"
+      },
+      "outputs": {
+        "hidden_states": "float32 (batch, seq, hidden=1024)"
+      },
+      "hidden_size": 1024,
+      "num_layers": 28,
+      "num_attn_heads": 16,
+      "num_kv_heads": 8,
+      "head_dim": 128
+    },
+    "audio_heads_decoder": {
+      "filename": "audio_heads_decoder.onnx",
+      "description": "Projects hidden_states to per-codebook audio-token logits",
+      "inputs": {
+        "hidden_states": "float32 (batch, seq, hidden=1024)"
+      },
+      "outputs": {
+        "logits": "float32 (batch, num_codebooks=8, seq, audio_vocab=1025)"
+      },
+      "num_codebooks": 8,
+      "audio_vocab_size": 1025,
+      "audio_mask_id": 1024
+    }
+  },
+  "higgs_tokenizer": {
+    "note": "Exported via optimize.py --include-higgs (or --higgs-only).",
+    "models_dir": "higgs/models/",
+    "sub_models": {
+      "acoustic_encoder": "acoustic_encoder.onnx",
+      "semantic_encoder": "semantic_encoder.onnx",
+      "quantizer_encoder": "quantizer_encoder.onnx",
+      "higgs_decoder": "higgs_decoder.onnx"
+    },
+    "sample_rate_acoustic": 24000,
+    "sample_rate_semantic": 16000,
+    "downsample_factor": 320,
+    "num_codebooks": 8,
+    "codebook_size": 1024,
+    "pipeline": [
+      "acoustic_encoder(waveform_24k) \u2192 acoustic_features",
+      "semantic_encoder(waveform_16k) \u2192 semantic_features",
+      "quantizer_encoder(acoustic_features, semantic_features) \u2192 codes",
+      "  --- TTS inference: codes \u2192 audio_embeddings_encoder \u2192 ... \u2192 audio_codes ---",
+      "higgs_decoder(audio_codes) \u2192 waveform_24k"
+    ],
+    "loading_priority": [
+      "transformers.HiggsAudioV2TokenizerModel (transformers>=5.3.0)",
+      "boson_multimodal.load_higgs_audio_tokenizer (pip install boson-multimodal @ git+...)"
+    ]
+  },
+  "iterative_decoding": {
+    "note": "OmniVoice uses 32-step iterative unmasking (non-autoregressive).",
+    "steps": 32,
+    "audio_codebook_weights": [
+      8,
+      8,
+      6,
+      6,
+      4,
+      4,
+      2,
+      2
+    ],
+    "per_step_pipeline": [
+      "audio_embeddings_encoder(input_ids, audio_mask) \u2192 inputs_embeds",
+      "llm_decoder(inputs_embeds, attention_mask, position_ids) \u2192 hidden_states",
+      "audio_heads_decoder(hidden_states) \u2192 logits",
+      "sample audio tokens from logits using codebook weights",
+      "unmask predicted positions in input_ids"
+    ]
+  }
+}

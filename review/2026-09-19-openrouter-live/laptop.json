@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-19T17:40:44.809100+00:00",
+  "provider": "openrouter",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "elapsed_ms": 3328,
+      "error": "invalid_provider_response",
+      "answer": "",
+      "pass": null,
+      "review_notes": ""
+    }
+  ],
+  "completed": false
+}

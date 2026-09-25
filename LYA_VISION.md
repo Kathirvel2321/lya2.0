@@ -76,3 +76,13 @@ The owner authorized implementing the plan in stages. LYA should distinguish tem
 The owner wants LYA to create and retain reusable capabilities from natural-language requests and adapt its file interface from a video reference. Examples: on request, inspect an authorized room camera for visible people; from a shared phone video, reproduce the useful folder-layout style, persist the choice and support undo. These are capability examples, not a request to activate cameras or monitor the phone now.
 
 Desired learning flow: understand the request -> reuse existing tools/settings where possible -> draft a workflow or code change -> test with limited access -> preview/verify -> activate within applicable authorization -> retain a version with rollback. Generated skills must not modify core permissions or credentials. Camera observations must state coverage/uncertainty; saving a skill does not imply saving recordings. Video input needs an explicit sharing/capture integration. Neither end-to-end example is implemented today.
+
+## Admin setup request — 2026-09-25
+
+The owner has now requested admin setup. A device-only Windows verification
+path was implemented and fake-tested; biometric enrollment remains separate.
+The locally built Windows verifier is blocked by Application Control on this
+machine, so no real admin has yet been created. Startup face recognition and
+unknown-visitor photo retention remain requirements, not working features.
+The camera cannot recognize anyone without actually activating; any future
+capture needs a visible state and an explicit retention rule.

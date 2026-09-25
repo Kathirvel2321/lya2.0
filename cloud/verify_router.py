@@ -14,7 +14,7 @@ with tempfile.TemporaryDirectory(prefix='lya-router-check-') as tmp:
     def fake_call(route, timeout):
         calls.append(route['id'])
         return {'error': 'provider_http_503'} if len(calls) == 1 else {'text': 'Synthetic backup response'}
-    result = route_request({'task': 'general', 'sensitivity': 'public'}, config,
+    result = route_request({'task': 'general', 'sensitivity': 'public', 'messages': [{'role': 'user', 'content': 'Synthetic fixture'}]}, config,
                            fake_call, State(Path(tmp) / 'state.sqlite'))
     assert result['text'] == 'Synthetic backup response' and len(calls) == 2
 print('Oracle router smoke check passed: synthetic failover; template disabled; no provider call.')

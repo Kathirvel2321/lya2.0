@@ -1,0 +1,254 @@
+test_blank_sentences_do_not_crash (tests.test_director.DirectorTests.test_blank_sentences_do_not_crash) ... FAIL
+test_emotion_persists_to_the_next_sentence (tests.test_director.DirectorTests.test_emotion_persists_to_the_next_sentence) ... FAIL
+test_emotion_tag_in_text_wins (tests.test_director.DirectorTests.test_emotion_tag_in_text_wins) ... FAIL
+test_empty_text_makes_an_empty_plan (tests.test_director.DirectorTests.test_empty_text_makes_an_empty_plan) ... ok
+test_explicit_emotion_applies_to_every_span (tests.test_director.DirectorTests.test_explicit_emotion_applies_to_every_span) ... ok
+test_interjections_only_when_allowed (tests.test_director.DirectorTests.test_interjections_only_when_allowed) ... FAIL
+test_language_routing (tests.test_director.DirectorTests.test_language_routing) ... ok
+test_lines_and_dict_are_serialisable (tests.test_director.DirectorTests.test_lines_and_dict_are_serialisable) ... ok
+test_long_sentence_is_split_into_bounded_spans (tests.test_director.DirectorTests.test_long_sentence_is_split_into_bounded_spans) ... ok
+test_no_words_are_lost_or_invented (tests.test_director.DirectorTests.test_no_words_are_lost_or_invented) ... ok
+test_number_commas_survive_clause_splitting (tests.test_director.DirectorTests.test_number_commas_survive_clause_splitting) ... ok
+test_pauses_stay_inside_limits (tests.test_director.DirectorTests.test_pauses_stay_inside_limits) ... ok
+test_question_lifts_the_last_clause (tests.test_director.DirectorTests.test_question_lifts_the_last_clause) ... ok
+test_same_seed_same_plan (tests.test_director.DirectorTests.test_same_seed_same_plan) ... ok
+test_statement_gets_a_final_cadence (tests.test_director.DirectorTests.test_statement_gets_a_final_cadence) ... ok
+test_style_changes_beat_length (tests.test_director.DirectorTests.test_style_changes_beat_length) ... ok
+test_unsupported_language_is_rejected (tests.test_director.DirectorTests.test_unsupported_language_is_rejected) ... ok
+test_duration_helper (tests.test_dsp.AudioFileTests.test_duration_helper) ... ok
+test_int16_conversion_clips_safely (tests.test_dsp.AudioFileTests.test_int16_conversion_clips_safely) ... ok
+test_wav_round_trip (tests.test_dsp.AudioFileTests.test_wav_round_trip) ... ok
+test_as_float_and_helpers (tests.test_dsp.BasicSignalTests.test_as_float_and_helpers) ... ok
+test_concat_and_fade (tests.test_dsp.BasicSignalTests.test_concat_and_fade) ... ok
+test_empty_inputs_are_safe (tests.test_dsp.BasicSignalTests.test_empty_inputs_are_safe) ... ok
+test_limiter_cannot_exceed_ceiling (tests.test_dsp.BasicSignalTests.test_limiter_cannot_exceed_ceiling) ... ok
+test_loudness_normalisation_hits_the_target (tests.test_dsp.BasicSignalTests.test_loudness_normalisation_hits_the_target) ... ok
+test_breath_has_no_dc_offset (tests.test_dsp.HumanisingTests.test_breath_has_no_dc_offset) ... C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\alya_voice\dsp.py:224: RuntimeWarning: invalid value encountered in power
+  envelope = np.sin(np.pi * t) ** 1.5
+FAIL
+test_breath_is_quiet_and_the_right_length (tests.test_dsp.HumanisingTests.test_breath_is_quiet_and_the_right_length) ... FAIL
+test_humanize_changes_the_signal_without_breaking_it (tests.test_dsp.HumanisingTests.test_humanize_changes_the_signal_without_breaking_it) ... ok
+test_humanize_is_reproducible_with_a_seed (tests.test_dsp.HumanisingTests.test_humanize_is_reproducible_with_a_seed) ... ok
+test_vibrato_keeps_length_and_stays_bounded (tests.test_dsp.HumanisingTests.test_vibrato_keeps_length_and_stays_bounded) ... ok
+test_duration_is_preserved (tests.test_dsp.PitchTests.test_duration_is_preserved) ... ok
+test_formant_correction_keeps_the_spectral_shape (tests.test_dsp.PitchTests.test_formant_correction_keeps_the_spectral_shape) ... FAIL
+test_pitch_ratio_matches_request (tests.test_dsp.PitchTests.test_pitch_ratio_matches_request) ... FAIL
+test_resample_ratio (tests.test_dsp.PitchTests.test_resample_ratio) ... ok
+test_time_stretch_approximates_the_factor (tests.test_dsp.PitchTests.test_time_stretch_approximates_the_factor) ... ERROR
+test_tiny_shift_is_a_passthrough (tests.test_dsp.PitchTests.test_tiny_shift_is_a_passthrough) ... ok
+test_hz_to_semitones (tests.test_emotions.DeliveryTests.test_hz_to_semitones) ... ok
+test_limits_are_never_exceeded (tests.test_emotions.DeliveryTests.test_limits_are_never_exceeded) ... ok
+test_real_table_stays_inside_engine_safe_ranges (tests.test_emotions.DeliveryTests.test_real_table_stays_inside_engine_safe_ranges) ... ok
+test_style_scales_emotion (tests.test_emotions.DeliveryTests.test_style_scales_emotion) ... ok
+test_aliases_and_unknown_names (tests.test_emotions.EmotionTableTests.test_aliases_and_unknown_names) ... ok
+test_cue_inference_english (tests.test_emotions.EmotionTableTests.test_cue_inference_english) ... ok
+test_cue_inference_tamil (tests.test_emotions.EmotionTableTests.test_cue_inference_tamil) ... ok
+test_explicit_tags_are_extracted (tests.test_emotions.EmotionTableTests.test_explicit_tags_are_extracted) ... FAIL
+test_table_is_loaded (tests.test_emotions.EmotionTableTests.test_table_is_loaded) ... ok
+test_word_boundaries_do_not_match_inside_words (tests.test_emotions.EmotionTableTests.test_word_boundaries_do_not_match_inside_words) ... ok
+test_identity (tests.test_emotions.PersonaTests.test_identity) ... ok
+test_interjection_is_skipped_when_probability_not_met (tests.test_emotions.PersonaTests.test_interjection_is_skipped_when_probability_not_met) ... ok
+test_one_voice_for_both_languages (tests.test_emotions.PersonaTests.test_one_voice_for_both_languages) ... ok
+test_per_language_voice_available_when_asked (tests.test_emotions.PersonaTests.test_per_language_voice_available_when_asked) ... ok
+test_styles_and_unknown_style (tests.test_emotions.PersonaTests.test_styles_and_unknown_style) ... ok
+test_unknown_keys_are_rejected (tests.test_emotions.PersonaTests.test_unknown_keys_are_rejected) ... ok
+test_availability_reports_the_model_folder (tests.test_local_piper.LocalPiperTests.test_availability_reports_the_model_folder) ... ok
+test_english_renders_audible_audio (tests.test_local_piper.LocalPiperTests.test_english_renders_audible_audio) ... C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\alya_voice\audiofile.py:16: RuntimeWarning: invalid value encountered in cast
+  return np.clip(np.rint(scaled), -32768, 32767).astype('<i2')
+FAIL
+test_missing_models_are_reported_not_crashed (tests.test_local_piper.LocalPiperTests.test_missing_models_are_reported_not_crashed) ... ok
+test_native_mode_uses_a_model_per_language (tests.test_local_piper.LocalPiperTests.test_native_mode_uses_a_model_per_language) ... ok
+test_tamil_renders_audible_audio (tests.test_local_piper.LocalPiperTests.test_tamil_renders_audible_audio) ... FAIL
+test_unified_mode_uses_one_model_for_both_languages (tests.test_local_piper.LocalPiperTests.test_unified_mode_uses_one_model_for_both_languages) ... ok
+test_english_numbers (tests.test_normalize.NumberWordsTests.test_english_numbers) ... ok
+test_language_detection (tests.test_normalize.NumberWordsTests.test_language_detection) ... ok
+test_ordinals (tests.test_normalize.NumberWordsTests.test_ordinals) ... ok
+test_tamil_numbers (tests.test_normalize.NumberWordsTests.test_tamil_numbers) ... ok
+test_abbreviations_and_pauses (tests.test_normalize.SpokenFormTests.test_abbreviations_and_pauses) ... ok
+test_empty_and_whitespace (tests.test_normalize.SpokenFormTests.test_empty_and_whitespace) ... ok
+test_grouped_digits_read_digit_by_digit (tests.test_normalize.SpokenFormTests.test_grouped_digits_read_digit_by_digit) ... ok
+test_markdown_code_urls_and_emoji (tests.test_normalize.SpokenFormTests.test_markdown_code_urls_and_emoji) ... ok
+test_percent_currency_and_units (tests.test_normalize.SpokenFormTests.test_percent_currency_and_units) ... ok
+test_tamil_keeps_word_order (tests.test_normalize.SpokenFormTests.test_tamil_keeps_word_order) ... ok
+test_time_and_iso_date (tests.test_normalize.SpokenFormTests.test_time_and_iso_date) ... ok
+test_very_long_numbers_are_spelled_out (tests.test_normalize.SpokenFormTests.test_very_long_numbers_are_spelled_out) ... ok
+test_credentials_are_private (tests.test_privacy.ClassificationTests.test_credentials_are_private) ... ok
+test_findings_never_contain_the_secret (tests.test_privacy.ClassificationTests.test_findings_never_contain_the_secret) ... ok
+test_fingerprint_is_stable_short_and_not_reversible (tests.test_privacy.ClassificationTests.test_fingerprint_is_stable_short_and_not_reversible) ... ok
+test_highest_sensitivity (tests.test_privacy.ClassificationTests.test_highest_sensitivity) ... ok
+test_ipv4_range_is_checked (tests.test_privacy.ClassificationTests.test_ipv4_range_is_checked) ... ok
+test_luhn_is_enforced_for_cards (tests.test_privacy.ClassificationTests.test_luhn_is_enforced_for_cards) ... ok
+test_personal_identifiers (tests.test_privacy.ClassificationTests.test_personal_identifiers) ... ok
+test_public_text_stays_public (tests.test_privacy.ClassificationTests.test_public_text_stays_public) ... ok
+test_redaction_masks_and_keeps_the_rest (tests.test_privacy.ClassificationTests.test_redaction_masks_and_keeps_the_rest) ... FAIL
+test_ladder_excludes_remote_while_disabled (tests.test_privacy.PolicyTests.test_ladder_excludes_remote_while_disabled) ... ok
+test_ladder_for_private_text_is_local_only (tests.test_privacy.PolicyTests.test_ladder_for_private_text_is_local_only) ... ok
+test_local_engines_are_allowed (tests.test_privacy.PolicyTests.test_local_engines_are_allowed) ... ok
+test_opt_in_ladder_puts_remote_first (tests.test_privacy.PolicyTests.test_opt_in_ladder_puts_remote_first) ... ok
+test_opt_in_requires_an_explicit_per_run_flag (tests.test_privacy.PolicyTests.test_opt_in_requires_an_explicit_per_run_flag) ... ok
+test_opt_in_still_refuses_personal_text (tests.test_privacy.PolicyTests.test_opt_in_still_refuses_personal_text) ... ok
+test_remote_is_disabled_by_default (tests.test_privacy.PolicyTests.test_remote_is_disabled_by_default) ... ok
+test_unknown_engine_is_denied (tests.test_privacy.PolicyTests.test_unknown_engine_is_denied) ... ok
+test_all_engines_failing_is_an_error_not_silence (tests.test_runtime.VoiceRuntimeTests.test_all_engines_failing_is_an_error_not_silence) ... ok
+test_audit_never_stores_the_spoken_text (tests.test_runtime.VoiceRuntimeTests.test_audit_never_stores_the_spoken_text) ... ok
+test_auto_never_selects_the_remote_engine (tests.test_runtime.VoiceRuntimeTests.test_auto_never_selects_the_remote_engine) ... ok
+test_close_releases_engines_and_blocks_nothing (tests.test_runtime.VoiceRuntimeTests.test_close_releases_engines_and_blocks_nothing) ... ok
+test_engine_failure_falls_back_to_the_next_local_engine (tests.test_runtime.VoiceRuntimeTests.test_engine_failure_falls_back_to_the_next_local_engine) ... FAIL
+test_offline_render_writes_audio_and_reports_honestly (tests.test_runtime.VoiceRuntimeTests.test_offline_render_writes_audio_and_reports_honestly) ... ok
+test_private_text_cannot_be_sent_remotely (tests.test_runtime.VoiceRuntimeTests.test_private_text_cannot_be_sent_remotely) ... C:\Users\kathirvel\Downloads\lya-main\lya-main\.venv-ui\Lib\site-packages\sounddevice.py:2795: DeprecationWarning: Setting the shape on a NumPy array has been deprecated in NumPy 2.5.
+As an alternative, you can create a new view using np.reshape (with copy=False if needed).
+  data.shape = -1, channels
+FAIL
+test_private_text_stays_local_even_with_opt_in (tests.test_runtime.VoiceRuntimeTests.test_private_text_stays_local_even_with_opt_in) ... ok
+test_remote_engine_needs_opt_in_and_skips_wav_export (tests.test_runtime.VoiceRuntimeTests.test_remote_engine_needs_opt_in_and_skips_wav_export) ... FAIL
+test_report_is_json_serialisable (tests.test_runtime.VoiceRuntimeTests.test_report_is_json_serialisable) ... ok
+test_stop_cancels_and_returns_quickly (tests.test_runtime.VoiceRuntimeTests.test_stop_cancels_and_returns_quickly) ... ok
+
+======================================================================
+ERROR: test_time_stretch_approximates_the_factor (tests.test_dsp.PitchTests.test_time_stretch_approximates_the_factor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_dsp.py", line 104, in test_time_stretch_approximates_the_factor
+    self.assertLess(abs(stretched.size / signal.size - factor), 0.12, factor)
+                        ^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'size'
+
+======================================================================
+FAIL: test_blank_sentences_do_not_crash (tests.test_director.DirectorTests.test_blank_sentences_do_not_crash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_director.py", line 121, in test_blank_sentences_do_not_crash
+    self.assertEqual(split_sentences('...'), [])
+AssertionError: Lists differ: ['...'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'...'
+
+- ['...']
++ []
+
+======================================================================
+FAIL: test_emotion_persists_to_the_next_sentence (tests.test_director.DirectorTests.test_emotion_persists_to_the_next_sentence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_director.py", line 61, in test_emotion_persists_to_the_next_sentence
+    self.assertEqual(plan.spans[-1].emotion, 'excited')
+AssertionError: 'firm' != 'excited'
+- firm
++ excited
+
+
+======================================================================
+FAIL: test_emotion_tag_in_text_wins (tests.test_director.DirectorTests.test_emotion_tag_in_text_wins)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_director.py", line 55, in test_emotion_tag_in_text_wins
+    self.assertEqual(plan.emotion, 'playful')
+AssertionError: 'excited' != 'playful'
+- excited
++ playful
+
+
+======================================================================
+FAIL: test_interjections_only_when_allowed (tests.test_director.DirectorTests.test_interjections_only_when_allowed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_director.py", line 92, in test_interjections_only_when_allowed
+    self.assertTrue(any(s.text.split(',')[0] in palette for s in chattier.spans))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_breath_has_no_dc_offset (tests.test_dsp.HumanisingTests.test_breath_has_no_dc_offset)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_dsp.py", line 139, in test_breath_has_no_dc_offset
+    self.assertLess(abs(float(np.mean(dsp.breath(SR, ms=200, level=0.08, seed=2)))), 0.01)
+AssertionError: nan not less than 0.01
+
+======================================================================
+FAIL: test_breath_is_quiet_and_the_right_length (tests.test_dsp.HumanisingTests.test_breath_is_quiet_and_the_right_length)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_dsp.py", line 135, in test_breath_is_quiet_and_the_right_length
+    self.assertLessEqual(dsp.peak(puff), 0.051)
+AssertionError: nan not less than or equal to 0.051
+
+======================================================================
+FAIL: test_formant_correction_keeps_the_spectral_shape (tests.test_dsp.PitchTests.test_formant_correction_keeps_the_spectral_shape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_dsp.py", line 93, in test_formant_correction_keeps_the_spectral_shape
+    self.assertLess(corrected_error, plain_error)
+AssertionError: nan not less than nan
+
+======================================================================
+FAIL: test_pitch_ratio_matches_request (tests.test_dsp.PitchTests.test_pitch_ratio_matches_request)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_dsp.py", line 83, in test_pitch_ratio_matches_request
+    self.assertLess(abs(measured - expected) / expected, 0.06,
+AssertionError: 1.0 not less than 0.06 : 0.0 vs 168.1792830507429
+
+======================================================================
+FAIL: test_explicit_tags_are_extracted (tests.test_emotions.EmotionTableTests.test_explicit_tags_are_extracted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_emotions.py", line 30, in test_explicit_tags_are_extracted
+    self.assertEqual(name, 'cheerful')
+AssertionError: None != 'cheerful'
+
+======================================================================
+FAIL: test_english_renders_audible_audio (tests.test_local_piper.LocalPiperTests.test_english_renders_audible_audio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_local_piper.py", line 58, in test_english_renders_audible_audio
+    self.assertGreater(float(np.max(np.abs(samples))), 0.01)
+AssertionError: 0.0 not greater than 0.01
+
+======================================================================
+FAIL: test_tamil_renders_audible_audio (tests.test_local_piper.LocalPiperTests.test_tamil_renders_audible_audio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_local_piper.py", line 66, in test_tamil_renders_audible_audio
+    self.assertGreater(float(np.max(np.abs(samples))), 0.01)
+AssertionError: 0.0 not greater than 0.01
+
+======================================================================
+FAIL: test_redaction_masks_and_keeps_the_rest (tests.test_privacy.ClassificationTests.test_redaction_masks_and_keeps_the_rest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_privacy.py", line 56, in test_redaction_masks_and_keeps_the_rest
+    self.assertGreaterEqual(len(findings), 2)
+AssertionError: 1 not greater than or equal to 2
+
+======================================================================
+FAIL: test_engine_failure_falls_back_to_the_next_local_engine (tests.test_runtime.VoiceRuntimeTests.test_engine_failure_falls_back_to_the_next_local_engine)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_runtime.py", line 111, in test_engine_failure_falls_back_to_the_next_local_engine
+    self.assertTrue(any('offline_piper failed' in note for note in report.notes))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_private_text_cannot_be_sent_remotely (tests.test_runtime.VoiceRuntimeTests.test_private_text_cannot_be_sent_remotely)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_runtime.py", line 103, in test_private_text_cannot_be_sent_remotely
+    with self.assertRaises(RuntimeError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: RuntimeError not raised
+
+======================================================================
+FAIL: test_remote_engine_needs_opt_in_and_skips_wav_export (tests.test_runtime.VoiceRuntimeTests.test_remote_engine_needs_opt_in_and_skips_wav_export)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\external work\tests\test_runtime.py", line 158, in test_remote_engine_needs_opt_in_and_skips_wav_export
+    with self.assertRaises(RuntimeError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: RuntimeError not raised
+
+----------------------------------------------------------------------
+Ran 98 tests in 12.015s
+
+FAILED (failures=15, errors=1)

@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "id": "groq-reasoning",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "enabled": true,
+      "failure_domain": "groq",
+      "allow_private": false,
+      "max_tokens": 2048
+    },
+    {
+      "id": "nvidia-backup",
+      "provider": "nvidia",
+      "model": "openai/gpt-oss-20b",
+      "enabled": false,
+      "failure_domain": "nvidia",
+      "allow_private": false,
+      "max_tokens": 2048
+    },
+    {
+      "id": "nvidia-deepseek",
+      "provider": "nvidia",
+      "model": "deepseek-ai/deepseek-v4-flash-0731",
+      "enabled": false,
+      "failure_domain": "nvidia",
+      "allow_private": false,
+      "max_tokens": 2048
+    }
+  ],
+  "daily_attempt_limit": 100
+}

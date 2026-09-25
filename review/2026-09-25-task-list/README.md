@@ -1,0 +1,9 @@
+# Native task list check — 2026-09-25
+
+The native brain now handles `task add <text>`, `tasks` (also `show tasks`), `tasks all`, and `task done <number>` without a model or cloud call. Task text is encrypted within LYA's existing whole-file encrypted SQLite store, scoped by person ID, and hidden from note retrieval and model context. Each command passes through the existing verified-admin and exact phone-approval path. A task ID from another person cannot be completed or listed. Text is capped at 300 characters and the owner can have at most 100 open tasks. This is a checklist, not a scheduler: no reminders or deadlines are claimed.
+
+The `tasks` table is created only on the first explicit task addition. Reading an older store returns an empty list without persisting a schema change. The owner store was not opened or migrated during development. A first real addition is a normal encrypted-store write; a verified off-device backup is still recommended before depending on it.
+
+Verification: `.venv-ui/Scripts/python.exe -m unittest test_brain_workflow test_approval -q` passed 44 isolated tests using disposable identities, a disposable Fernet key and database, and a stub model. New checks cover encrypted at-rest text, restart persistence, person isolation, blocked approval and guest denial. There was no live phone approval, actual enrollment, cloud call, real owner data, or desktop interaction test. Because live owner enrollment/identity binding is deferred, these protected commands are implemented and fake-tested but not yet accessible end-to-end in the owner desktop.
+
+Next foundation gates: verified off-device recovery, owner-initiated identity setup, and local private-inference readiness under measured RAM/power. Platform work should follow a stable brain-to-desktop contract; the native desktop already routes unmatched typed commands to `Brain.respond`.

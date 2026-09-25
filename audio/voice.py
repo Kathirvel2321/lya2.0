@@ -1,6 +1,6 @@
 """One microphone reader, command forwarding, optional local transcription.
 Set LYA_VOSK_MODEL to an existing Vosk model directory for offline voice.
-Otherwise voice mode uses Google speech recognition; text/build stay offline.
+Offline is the default. Remote recognition requires an explicit caller opt-in.
 """
 import io
 import os
@@ -65,103 +65,53 @@ def set_rate(rate, base=175):
         _CURRENT_TONE["tone"] = "serious"
     else:
         _CURRENT_TONE["tone"] = "neutral"
-    try:
-        if _engine is None:
-            import pyttsx3
-            _engine = pyttsx3.init()
-        _engine.setProperty("rate", rate)
-        return True
-    except Exception:
-        return False
+    return True
 
 
 def stop_speaking():
     """Interrupt ongoing speech playback immediately."""
     _STOP_PLAYBACK.set()
+    with _playback_lock:
+        if _playback_process is not None:
+            _playback_process.kill()
     _SPEAKING.clear()
 
 
-def _play_mp3_interruptible(mp3_path, stop_event=None):
-    """Play MP3 file using Windows native Multimedia Command Interface (MCI) with interrupt support."""
-    if not os.path.exists(mp3_path) or os.name != "nt":
-        return False
-    import ctypes
-    winmm = ctypes.windll.winmm
-    alias = f"lya_mp3_{int(time.time() * 1000)}"
-    res = winmm.mciSendStringW(f'open "{mp3_path}" type mpegvideo alias {alias}', None, 0, None)
-    if res != 0:
-        return False
-    try:
-        winmm.mciSendStringW(f"play {alias}", None, 0, None)
-        buf = ctypes.create_unicode_buffer(128)
-        while True:
-            if stop_event and stop_event.is_set():
-                winmm.mciSendStringW(f"stop {alias}", None, 0, None)
-                break
-            winmm.mciSendStringW(f"status {alias} mode", buf, 128, None)
-            if buf.value in ("stopped", ""):
-                break
-            time.sleep(0.04)
-        return True
-    except Exception:
-        return False
-    finally:
-        winmm.mciSendStringW(f"close {alias}", None, 0, None)
+_playback_lock = threading.Lock()
+_playback_process = None
 
 
 def speak(text, tone=None, voice_name=None, *args, **kwargs):
-    """Speak text with natural 21yo human tone via edge-tts, falling back to local pyttsx3."""
-    global _engine
-    if QUIET["on"]:
+    """Legacy callers share the local renderer; never use online TTS implicitly."""
+    import json
+    import subprocess
+    import sys
+    from pathlib import Path
+    global _playback_process
+    if QUIET['on'] or not str(text).strip():
         return
-    _STOP_PLAYBACK.clear()
-    _SPEAKING.set()
-    text_str = str(text).strip()
-    if not text_str:
-        _SPEAKING.clear()
-        return
-
-    # 1. Try Microsoft Edge Neural TTS (ultra-clean, human, 21yo natural voice)
-    played = False
-    chosen_voice = voice_name or os.environ.get("LYA_VOICE", DEFAULT_VOICE)
-    chosen_tone = tone or _CURRENT_TONE.get("tone", "neutral")
-    emo = EMOTIONS.get(chosen_tone, EMOTIONS["neutral"])
-
+    tone = tone or _CURRENT_TONE.get('tone', 'neutral')
+    style = {'happy': 'cheerful', 'excited': 'cheerful', 'sad': 'calm',
+             'worried': 'calm'}.get(tone, tone or 'warm')
+    payload = json.dumps(dict(text=str(text)[:1000], style=style)).encode('utf-8')
+    with _playback_lock:
+        if _playback_process is not None:
+            _playback_process.kill()
+        process = subprocess.Popen([sys.executable, str(Path(__file__).resolve().parents[1] / 'desktop' / 'setup_speech.py')],
+            stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+        _playback_process = process
+        _SPEAKING.set()
     try:
-        import asyncio
-        import edge_tts
-        import tempfile
-        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as f:
-            tmp_mp3 = f.name
-        try:
-            async def _synth():
-                comm = edge_tts.Communicate(text_str, chosen_voice, rate=emo["rate"], pitch=emo["pitch"])
-                await comm.save(tmp_mp3)
-            asyncio.run(_synth())
-            if os.path.exists(tmp_mp3) and os.path.getsize(tmp_mp3) > 0 and not _STOP_PLAYBACK.is_set():
-                played = _play_mp3_interruptible(tmp_mp3, stop_event=_STOP_PLAYBACK)
-        finally:
-            if os.path.exists(tmp_mp3):
-                try:
-                    os.remove(tmp_mp3)
-                except Exception:
-                    pass
-    except Exception:
-        played = False
-
-    # 2. Local fallback: pyttsx3 (offline Windows speech)
-    if not played and not _STOP_PLAYBACK.is_set():
-        try:
-            if _engine is None:
-                import pyttsx3
-                _engine = pyttsx3.init()
-                _engine.setProperty("rate", 175)
-            _engine.say(text_str)
-            _engine.runAndWait()
-        except Exception:
-            pass
-
-    _SPEAKING.clear()
+        process.communicate(payload, timeout=120)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.communicate()
+    finally:
+        with _playback_lock:
+            if _playback_process is process:
+                _playback_process = None
+                _SPEAKING.clear()
 
 
 def _record(seconds):
@@ -226,7 +176,7 @@ def _transcribe_groq(wav_bytes, api_key):
         return data.get("text", "").strip()
 
 
-def transcribe(wav_bytes, offline_required=False):
+def transcribe(wav_bytes, offline_required=True):
     global _local
     # 1. If not offline_required, try Groq Whisper Large v3 (multilingual, fast)
     if not offline_required:
@@ -318,7 +268,7 @@ def process_utterance(text, last_wake_time=0.0, on_wake=None, quiet=False):
     return False, last_wake_time
 
 
-def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=False, on_ready=None):
+def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=True, on_ready=None):
     """Forward the recognized utterance exactly once; never start wake threads."""
     import sounddevice
     import numpy

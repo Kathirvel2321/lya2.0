@@ -1,5 +1,31 @@
 # Oracle inference bridge
 
+T02 update (2026-09-19): an OpenRouter route is implemented but disabled. It accepts
+only exact free-model IDs ending in `:free`, requires a pinned upstream provider,
+sets gateway fallback false and rejects a different provider reported by the response.
+Live synthetic checks verified provider pinning, then rejected both tested free
+routes for latency/completion failures. Direct NVIDIA Nemotron 3.5 Lightning also
+failed the eight-second gate on laptop and Oracle. See
+`review/2026-09-19-openrouter-live/README.md` and
+`review/2026-09-19-nvidia-lightning/README.md`.
+
+T02 update (2026-09-18): local sources now include persistent token reservations,
+Retry-After cooldowns, canonical upstream grouping, POSIX wall-clock bounds and an
+optional cancellable stdin session. These changes are tested but NOT deployed.
+Both NVIDIA candidates failed the Oracle eight-second acceptance limit and remain
+disabled. Run `check-t02.cmd` for 81 offline checks. Full evidence and the deployment/
+rollback gate: `review/2026-09-17-T02-backup/README.md`. Do not set local
+`session_protocol: true` until matching server sources are deployed and verified.
+
+Local desktop update (2026-09-24): the default non-session SSH call now uses
+the existing bounded `cloud/ssh_session.py` process helper. It closes stdin
+after the JSON request, preserving the server's one-request protocol, and a
+Stop event can terminate the local SSH process. A local fake-process test
+proved normal completion and prompt cancellation; no live Oracle call was
+made. The server's optional session cancellation protocol still requires
+matching deployed server code. Local SSH termination alone does not prove an
+upstream provider immediately stops computing or releases quota.
+
 Updated 2026-09-14: public-text Groq is active through the desktop/Oracle bridge.
 NVIDIA routes remain disabled after failed live reliability checks; there is one
 active provider. Private context is denied. See

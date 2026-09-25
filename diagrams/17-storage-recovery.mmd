@@ -1,0 +1,25 @@
+flowchart TD
+  U["Explicit owner request"] --> A["Verified session and exact approval"]
+  A --> M["Only owner's active notes"]
+  M --> L["Local inference; no cloud fallback"]
+  L --> V["Recheck session, expiry and cancellation"]
+  V --> R["Answer; no automatic fact saving"]
+  A --> S["Explicit save with chosen lifetime"]
+  S --> D["Encrypted local SQLite"]
+  D --> M
+  A --> E["Select notes for encrypted export"]
+  D --> E
+  K["Independent recovery key; kept separately"] --> E
+  E --> B["Versioned authenticated archive bytes"]
+  B --> C["Validate archive and fresh owner approval"]
+  K --> C
+  C --> N["Empty owner profile; new local key; preserve expiry"]
+  B -.-> F["Pending: owner file and key-custody UI"]
+  F -.-> G["Pending: ciphertext-only Drive transport"]
+  M -.-> O["Pending: selected Markdown export for Obsidian"]
+  P["Public or deliberately sanitized sources"] -.-> Q["Optional future NotebookLM research"]
+  H["Real enrollment deferred; desktop stays guest"] -.-> A
+  classDef tested fill:#153e45,stroke:#70d4dd,color:#ffffff
+  classDef pending fill:#443821,stroke:#e6b35a,color:#ffffff,stroke-dasharray:5
+  class A,M,L,V,R,S,D,E,K,B,C,N tested
+  class F,G,O,Q,H pending

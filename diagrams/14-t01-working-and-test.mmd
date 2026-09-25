@@ -1,0 +1,47 @@
+flowchart TD
+    classDef working fill:#17663a,color:#ffffff,stroke:#75d69b
+    classDef earlier fill:#8a5a12,color:#ffffff,stroke:#f0bf67
+    classDef next fill:#174d7a,color:#ffffff,stroke:#72b8e8
+    classDef pending fill:#4b5563,color:#ffffff,stroke:#9ca3af,stroke-dasharray:5
+    classDef check fill:#49327a,color:#ffffff,stroke:#ba9cec
+    classDef fail fill:#8a2932,color:#ffffff,stroke:#f28b94
+
+    subgraph runtime["LYA current runtime - evidence as of 2026-09-16"]
+        R0["launch-lya.cmd"] --> R1["Native orb and glass panel"]
+        R1 --> R2{"Command type"}
+        R2 -->|"help / status / time"| R3["Local deterministic reply"]
+        R2 -->|"show files"| R4["Four allowlisted project documents"]
+        R2 -->|"brain help / who am i / brain status"| R5["Brain workflow"]
+        R5 --> R6["Guest / unverified session"]
+        R6 -->|"private memory request"| R7["Deny and explain missing verification"]
+        R6 -->|"public AI question"| R8["Oracle SSH bridge"]
+        R8 --> R9["Groq public-text route"]
+        R2 -->|"stop / sleep / quit"| R10["Cancel stale work and close or exit"]
+        R9 --> R11["Independent backup - T02 next"]
+        R1 -.-> R12["Offline voice hardware journey"]
+        R1 -.-> R13["Real identity and phone approval"]
+        R1 -.-> R14["iPhone and cloud recovery"]
+    end
+
+    subgraph owner_test["How you test T01"]
+        T0["Run check-t01.cmd"] --> T1{"57 checks pass?"}
+        T1 -->|"No"| TF["FAIL - copy the failing test output"]
+        T1 -->|"Yes"| T2["Run launch-lya.cmd --original-art --reduced-motion"]
+        T2 --> T3["Orb and panel appear"]
+        T3 --> T4["Try help, status, time and show files"]
+        T4 --> T5["Try who am i and show memories"]
+        T5 --> T6["Expect guest identity and private-memory denial"]
+        T6 --> T7["Try stop, reopen, sleep and Ctrl+Q"]
+        T7 --> T8{"All expected results?"}
+        T8 -->|"No"| TF
+        T8 -->|"Yes"| TP["PASS - T01 works on this laptop"]
+    end
+
+    R0 -. "manual verification" .-> T2
+    class R0,R1,R2,R3,R4,R5,R6,R7,R10 working
+    class R8,R9 earlier
+    class R11 next
+    class R12,R13,R14 pending
+    class T0,T1,T2,T3,T4,T5,T6,T7,T8 check
+    class TP working
+    class TF fail

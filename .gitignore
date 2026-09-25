@@ -1,4 +1,5 @@
 __pycache__/
+security/HelloVerifier.exe
 *.pyc
 .venv/
 .venv-ui/
@@ -7,6 +8,8 @@ venv/
 
 # --- SECRETS: never commit. DPAPI-wrapped key, API keys, auth tokens/hashes.
 security/.lya_key
+*.lya-notes
+.lya-backup-*.tmp
 *.key
 *.pem
 oracle_known_hosts.local
@@ -54,6 +57,17 @@ data/appearance.json
 data/appearance.tmp
 *.lya.lock
 *.lya.tmp
+models/local/*.gguf
+models/local/*.bin
+models/biometric/*.onnx
+models/biometric/*.bin
+models/biometric/*.pt
+tools/llama-runtime/
 skills/forge_draft.py
 skills/forge_meta.json
 skills/forged_skill.py
+
+models/voice/*.onnx
+models/voice/*.bin
+models/voice/*.part
+models/vision/*.onnx

@@ -1,5 +1,14 @@
 # LYA model strategy and controllable reasoning workflow
 
+## Update — 2026-09-19: independent backup and private local model
+
+- **Public primary:** Groq `openai/gpt-oss-120b` remains the only active cloud route.
+- **OpenRouter candidates:** the adapter accepts only an exact `:free` model, pins the upstream with gateway fallback disabled, requests routing metadata and verifies the selected provider. Live synthetic checks rejected both tested routes: NVIDIA Nemotron 3 Ultra became slow and truncated, while DeepSeek V4 Flash on OpenInference repeatedly missed the first-case deadline. Both remain disabled. OpenRouter is public-data only; its free pool is rate-limited and not a production SLA.
+- **Direct NVIDIA candidate:** `nvidia/nemotron-3.5-lightning-30b-a3b` failed the first case at the eight-second deadline from both laptop and Oracle, even with thinking disabled. It remains disabled.
+- **Private local route:** official Qwen3 4B Q4_K_M is the best tested fit currently installed on this 8 GB laptop. It runs via CPU-only llama.cpp and keeps prompts on loopback. It scored 5 pass, 1 partial and 2 fail, so it is provisional for secret conversation and cannot be called excellent for coding, Tamil or important decisions without T03 verification.
+
+OpenRouter or any hosted API must never receive secret/private content. The local route fails closed. Research/model pages used for this decision: [OpenRouter free models](https://openrouter.ai/collections/free-models), [OpenRouter pricing](https://openrouter.ai/pricing), [OpenRouter privacy](https://openrouter.ai/privacy), [NVIDIA Nemotron 3.5 Lightning](https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b), and [Qwen3 4B GGUF](https://huggingface.co/Qwen/Qwen3-4B-GGUF).
+
 ## Live update — 2026-09-14, after credentials were saved
 
 Public-text `openai/gpt-oss-120b` through Groq is now active on Oracle and selected

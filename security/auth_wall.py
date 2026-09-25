@@ -5,7 +5,7 @@ Face:  InsightFace ArcFace (buffalo_l) — 99.4%+ accuracy embeddings, the
 Voice: Resemblyzer speaker encoder — real voicePRINT matching (is it YOUR
        voice, not just the right words). Research shows reliable auth with
        clips as short as ~2.6 seconds.
-Keyword: Whisper transcription — you must SPEAK the secret phrase.
+Keyword: local transcription only — the secret phrase must not leave the device.
 
 All three must pass for vault access. Templates stored encrypted (vault.py).
 """
@@ -93,28 +93,26 @@ def voice_match(emb_a, emb_b, threshold=0.75):
     sim = float(np.dot(emb_a, emb_b) / (np.linalg.norm(emb_a) * np.linalg.norm(emb_b)))
     return sim >= threshold, sim
 
-# ---------------- KEYWORD: Whisper transcription ----------------
-def keyword_match(audio_bytes, stored_phrase, source_format="webm"):
-    """The spoken audio must contain the secret phrase (content check)."""
-    import json, urllib.request
-    from brain.mind import HEADERS
-    boundary = "----lyaboundary"
-    body = (f"--{boundary}\r\nContent-Disposition: form-data; name='file'; "
-            f"filename='audio.{source_format}'\r\nContent-Type: application/octet-stream\r\n\r\n").encode() \
-           + audio_bytes + \
-           f"\r\n--{boundary}\r\nContent-Disposition: form-data; name='model'\r\n\r\nwhisper-large-v3\r\n--{boundary}--\r\n".encode()
-    req = urllib.request.Request("https://api.groq.com/openai/v1/audio/transcriptions", data=body,
-        headers={**HEADERS, "Authorization": f"Bearer {os.environ['GROQ_API_KEY']}",
-                 "Content-Type": f"multipart/form-data; boundary={boundary}"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        spoken = json.loads(r.read()).get("text", "").strip().lower()
-    return stored_phrase.lower() in spoken, spoken
+# ---------------- KEYWORD: local transcription only ----------------
+def keyword_match(audio_bytes, stored_phrase, source_format="webm", *, local_transcriber=None):
+    """Check the phrase locally; unavailable transcription must deny access."""
+    if local_transcriber is None:
+        raise RuntimeError("Local security-phrase transcription is unavailable.")
+    import re
+    spoken = local_transcriber(audio_bytes, source_format)
+    if not isinstance(spoken, str) or not stored_phrase.strip():
+        return False, ""
+    normalize = lambda value: " ".join(re.findall(r"\w+", value.casefold()))
+    phrase = normalize(stored_phrase)
+    words = normalize(spoken)
+    return bool(phrase and f" {phrase} " in f" {words} "), ""
 
 # ---------------- THE WALL: all three gates ----------------
 class AuthWall:
     """Enroll once; every vault request must pass face + voiceprint + keyword."""
 
-    def __init__(self, store_face_bytes, store_voice_bytes):
+    def __init__(self, store_face_bytes, store_voice_bytes, *, local_transcriber=None):
+        self.local_transcriber = local_transcriber
         self.store_face = face_embedding(store_face_bytes)
         self.store_voice = voice_embedding(store_voice_bytes)
         self.store_face = vault.encrypt(self.store_face.astype(np.float32).tobytes())
@@ -136,9 +134,10 @@ class AuthWall:
         except Exception as e:
             return False, f"voiceprint FAIL ({e})"
         try:
-            ok_k, spoken = keyword_match(voice_bytes, phrase, voice_fmt)
-            report.append(f"keyword {'PASS' if ok_k else 'FAIL'} (heard: '{spoken}')")
-        except Exception as e:
-            return False, f"keyword FAIL ({e})"
+            ok_k, _ = keyword_match(voice_bytes, phrase, voice_fmt,
+                                    local_transcriber=self.local_transcriber)
+            report.append(f"keyword {'PASS' if ok_k else 'FAIL'}")
+        except Exception:
+            return False, "keyword FAIL (local transcription unavailable)"
         ok = ok_f and ok_v and ok_k
         return ok, " | ".join(report)

@@ -2,6 +2,10 @@
 import io
 import json
 from pathlib import Path
+import subprocess
+import sys
+import threading
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -9,11 +13,42 @@ import urllib.error
 from cloud.inference import infer, validate
 from brain.oracle import OracleModel
 from brain.workflow import Brain, ModelUnavailable
+from cloud.ssh_session import exchange
 
 
 class OracleChecks(unittest.TestCase):
     messages = [{'role': 'user', 'content': 'Synthetic hello'}]
     config = {'provider': 'groq', 'api_key': 'FAKE_KEY', 'model': 'test-model'}
+
+    def test_non_session_exchange_completes_after_stdin_eof(self):
+        command = [sys.executable, '-c',
+                   'import sys; sys.stdin.buffer.read(); sys.stdout.write("ok")']
+        run = exchange(command, '{"fake":true}', timeout=5, close_stdin=True)
+        self.assertEqual(run.returncode, 0)
+        self.assertEqual(run.stdout, 'ok')
+
+    def test_non_session_exchange_cancels_local_child(self):
+        command = [sys.executable, '-c',
+                   'import sys,time; sys.stdin.buffer.read(); time.sleep(8)']
+        cancelled = threading.Event()
+        trigger = threading.Timer(.25, cancelled.set)
+        start = time.monotonic()
+        trigger.start()
+        try:
+            with self.assertRaises(InterruptedError):
+                exchange(command, '{"fake":true}', cancelled, timeout=5,
+                         close_stdin=True)
+        finally:
+            trigger.join(2)
+        self.assertLess(time.monotonic() - start, 4)
+
+    def test_default_bridge_uses_cancellable_exchange(self):
+        model = OracleModel({'host': '192.0.2.1', 'key_file': 'fake.key'})
+        fake = SimpleNamespace(returncode=0, stdout='{"text":"Synthetic reply"}')
+        with patch.object(Path, 'is_file', return_value=True), \
+             patch('cloud.ssh_session.exchange', return_value=fake) as call:
+            self.assertEqual(model.invoke(self.messages, sensitivity='public'), 'Synthetic reply')
+        self.assertTrue(call.call_args.kwargs['close_stdin'])
 
     def test_valid_provider_request_is_bounded(self):
         def opener(req, timeout):

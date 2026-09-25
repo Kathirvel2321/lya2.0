@@ -1,0 +1,30 @@
+[
+  {
+    "name": "english-everyday",
+    "engine": "offline_piper",
+    "audio_seconds": 4.052,
+    "first_audio_ms": 2281.6,
+    "chunks": 2
+  },
+  {
+    "name": "english-joyful",
+    "engine": "offline_piper",
+    "audio_seconds": 3.576,
+    "first_audio_ms": 93.5,
+    "chunks": 2
+  },
+  {
+    "name": "tamil-everyday",
+    "engine": "offline_piper",
+    "audio_seconds": 4.818,
+    "first_audio_ms": 126.9,
+    "chunks": 2
+  },
+  {
+    "name": "tamil-joyful",
+    "engine": "offline_piper",
+    "audio_seconds": 4.087,
+    "first_audio_ms": 67.0,
+    "chunks": 2
+  }
+]

@@ -1,0 +1,12 @@
+{
+    "type": "onnxmodel",
+    "config": {
+        "model_path": "higgs_decoder.onnx",
+        "onnx_file_name": null,
+        "inference_settings": null,
+        "use_ort_extensions": false,
+        "external_initializers_file_name": null,
+        "constant_inputs_file_name": null,
+        "model_attributes": null
+    }
+}

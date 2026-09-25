@@ -1,0 +1,54 @@
+[
+  {
+    "duration_seconds": 2.509,
+    "process_cpu_seconds": 0.25,
+    "paint_count": 162,
+    "paint_median_ms": 1.029,
+    "paint_max_ms": 2.973,
+    "event_gap_max_ms": 26.579,
+    "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance.",
+    "artwork": "model_bake",
+    "idle_timer_active": false,
+    "idle_paint_delta": 0,
+    "estimated_unique_pixmap_bytes": 5636736
+  },
+  {
+    "duration_seconds": 2.552,
+    "process_cpu_seconds": 0.062,
+    "paint_count": 129,
+    "paint_median_ms": 1.92,
+    "paint_max_ms": 8.226,
+    "event_gap_max_ms": 32.094,
+    "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance.",
+    "artwork": "original",
+    "idle_timer_active": false,
+    "idle_paint_delta": 0,
+    "estimated_unique_pixmap_bytes": 5602176
+  },
+  {
+    "duration_seconds": 2.551,
+    "process_cpu_seconds": 0.516,
+    "paint_count": 134,
+    "paint_median_ms": 2.093,
+    "paint_max_ms": 6.322,
+    "event_gap_max_ms": 31.881,
+    "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance.",
+    "artwork": "model_bake",
+    "idle_timer_active": false,
+    "idle_paint_delta": 0,
+    "estimated_unique_pixmap_bytes": 5636736
+  },
+  {
+    "duration_seconds": 2.526,
+    "process_cpu_seconds": 0.062,
+    "paint_count": 128,
+    "paint_median_ms": 1.221,
+    "paint_max_ms": 2.453,
+    "event_gap_max_ms": 32.025,
+    "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance.",
+    "artwork": "original",
+    "idle_timer_active": false,
+    "idle_paint_delta": 0,
+    "estimated_unique_pixmap_bytes": 5602176
+  }
+]

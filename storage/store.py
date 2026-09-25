@@ -2,7 +2,7 @@
 
 Implements the architecture agreed in LYA_FOUNDATION_DECISIONS.md:
 - Store lives outside the repository root in %LOCALAPPDATA%\\LYA (or LYA_DATA_DIR)
-- AES-256 encrypted SQLite at rest with atomic replacement and process locking
+- Fernet authenticated encrypted SQLite at rest with atomic replacement and process locking
 - Person-scoped schemas: people, face_templates, pending_faces, memories, vault_items, audit_events
 - Unknown thumbnails expire automatically after 7 days
 - Audit log never stores secrets, biometric data, or private transcript text
@@ -10,6 +10,7 @@ Implements the architecture agreed in LYA_FOUNDATION_DECISIONS.md:
 
 from contextlib import contextmanager
 import datetime
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -51,7 +52,7 @@ def ensure_layout(base_dir: Path | None = None) -> dict[str, Path]:
 
 
 @contextmanager
-def store_connection(db_path: Path | None = None):
+def store_connection(db_path: Path | None = None, *, read_only: bool = False):
     """Encrypted in-memory SQLite with thread/process locking and atomic write."""
     target = db_path or (get_data_dir() / "lya.db.enc")
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -80,21 +81,38 @@ def store_connection(db_path: Path | None = None):
 
         db = sqlite3.connect(":memory:")
         try:
-            if target.exists() and target.stat().st_size > 0:
+            existing = target.exists() and target.stat().st_size > 0
+            if existing:
                 raw_enc = target.read_bytes()
                 db.deserialize(vault.decrypt(raw_enc))
             db.execute("PRAGMA foreign_keys = ON")
-            _init_schema(db)
+            db.execute("PRAGMA temp_store = MEMORY")
+            db.create_function("lya_decrypt", 1, vault.decrypt_text)
+            has_search = bool(db.execute("SELECT 1 FROM sqlite_master WHERE name='note_search' AND type='table'").fetchone())
+            # Existing owner stores migrate only after an explicit, backed-up opt-in.
+            use_search = (read_only or not existing or has_search
+                          or os.environ.get("LYA_ENABLE_SEARCH_MIGRATION") == "1")
+            _init_schema(db, use_search=use_search)
+            if read_only:
+                db.execute("PRAGMA query_only = ON")
             yield db
+            if read_only:
+                return
             db.commit()
             serialized = db.serialize()
             encrypted = vault.encrypt(serialized)
             tmp_path = target.with_name(target.name + f".tmp.{secrets.token_hex(4)}")
-            with open(tmp_path, "wb") as f:
-                f.write(encrypted)
-                f.flush()
-                os.fsync(f.fileno())
-            os.replace(tmp_path, target)
+            created = False
+            try:
+                with open(tmp_path, "xb") as f:
+                    created = True
+                    f.write(encrypted)
+                    f.flush()
+                    os.fsync(f.fileno())
+                os.replace(tmp_path, target)
+            finally:
+                if created:
+                    tmp_path.unlink(missing_ok=True)
         finally:
             db.close()
             if os.name == "nt":
@@ -104,7 +122,7 @@ def store_connection(db_path: Path | None = None):
                 fcntl.flock(lock, fcntl.LOCK_UN)
 
 
-def _init_schema(db: sqlite3.Connection):
+def _init_schema(db: sqlite3.Connection, *, use_search: bool = True):
     """Initialize person-scoped database schemas."""
     db.executescript("""
         CREATE TABLE IF NOT EXISTS people (
@@ -122,6 +140,22 @@ def _init_schema(db: sqlite3.Connection):
             model_version TEXT NOT NULL,
             quality REAL NOT NULL,
             created_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS voice_templates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            person_id TEXT NOT NULL REFERENCES people(person_id),
+            embedding_enc TEXT NOT NULL,
+            model_version TEXT NOT NULL,
+            quality REAL NOT NULL,
+            created_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS admin_recovery (
+            person_id TEXT PRIMARY KEY REFERENCES people(person_id),
+            code_hash TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            used_at TEXT
         );
 
         CREATE TABLE IF NOT EXISTS pending_faces (
@@ -178,6 +212,43 @@ def _init_schema(db: sqlite3.Connection):
         PRIMARY KEY(src, dst, relation))""")
     db.execute("CREATE INDEX IF NOT EXISTS memory_owner_expiry ON memories(person_id, expires_at)")
 
+    if not use_search:
+        return
+
+    had_search = db.execute("SELECT 1 FROM sqlite_master WHERE name='note_search' AND type='table'").fetchone()
+    db.executescript("""
+        CREATE VIRTUAL TABLE IF NOT EXISTS note_search USING fts5(
+            label, value, person_id UNINDEXED, tokenize='unicode61');
+        CREATE TRIGGER IF NOT EXISTS note_search_insert AFTER INSERT ON memories
+        WHEN NEW.kind IN ('fact','preference','lesson','decision','private')
+        BEGIN
+            INSERT INTO note_search(rowid,label,value,person_id)
+            VALUES(NEW.id,lya_decrypt(NEW.key_enc),lya_decrypt(NEW.value_enc),NEW.person_id);
+        END;
+        CREATE TRIGGER IF NOT EXISTS note_search_delete AFTER DELETE ON memories
+        BEGIN
+            DELETE FROM note_search WHERE rowid=OLD.id;
+        END;
+        CREATE TRIGGER IF NOT EXISTS note_search_update
+        AFTER UPDATE OF person_id,kind,key_enc,value_enc ON memories
+        BEGIN
+            DELETE FROM note_search WHERE rowid=OLD.id;
+            INSERT INTO note_search(rowid,label,value,person_id)
+            SELECT NEW.id,lya_decrypt(NEW.key_enc),lya_decrypt(NEW.value_enc),NEW.person_id
+            WHERE NEW.kind IN ('fact','preference','lesson','decision','private');
+        END;
+    """)
+    if not had_search:
+        for mid, person_id, key_enc, value_enc in db.execute("""
+                SELECT id,person_id,key_enc,value_enc FROM memories
+                WHERE kind IN ('fact','preference','lesson','decision','private')"""):
+            try:
+                label, value = vault.decrypt_text(key_enc), vault.decrypt_text(value_enc)
+            except Exception:
+                continue  # Legacy unreadable rows were already excluded by recall.
+            db.execute("INSERT INTO note_search(rowid,label,value,person_id) VALUES (?,?,?,?)",
+                       (mid, label, value, person_id))
+
 
 # ---------------------------------------------------------- People / Profiles
 
@@ -229,6 +300,51 @@ def list_people(active_only: bool = True, db_path: Path | None = None) -> list[d
             }
             for r in db.execute(q).fetchall()
         ]
+
+
+def has_active_admin(db_path: Path | None = None) -> bool:
+    """Return whether the store already has an active primary administrator."""
+    with store_connection(db_path) as db:
+        return db.execute(
+            "SELECT 1 FROM people WHERE role = 'admin' AND active = 1 LIMIT 1"
+        ).fetchone() is not None
+
+
+def get_primary_admin(db_path: Path | None = None) -> dict | None:
+    """Return the one active admin from the encrypted store, if present."""
+    with store_connection(db_path, read_only=True) as db:
+        rows = db.execute("SELECT person_id, display_name, role, created_at, active FROM people WHERE role='admin' AND active=1 LIMIT 2").fetchall()
+        if len(rows) > 1:
+            raise RuntimeError("Multiple active admin profiles require owner review.")
+        row = rows[0] if rows else None
+        device_only = bool(row and db.execute("""SELECT 1 FROM audit_events
+            WHERE person_id=? AND action_type='primary_admin_registered'
+              AND outcome='windows_device_only' LIMIT 1""", (row[0],)).fetchone())
+    if row is None:
+        return None
+    return {"person_id": row[0], "display_name": row[1], "role": row[2],
+            "created_at": row[3], "active": bool(row[4]), "device_only": device_only}
+
+
+def register_device_admin(display_name: str, db_path: Path | None = None) -> str:
+    """Create the first admin after the caller verifies Windows Hello.
+
+    No face/voice template or recovery credential is invented here. The desktop
+    must accept only a fresh window-bound Windows verification before calling.
+    """
+    name = display_name.strip()
+    if not name or len(name) > 80 or any(ord(c) < 32 for c in name):
+        raise ValueError("A display name of 1 to 80 printable characters is required.")
+    person_id = "p_" + secrets.token_urlsafe(12)
+    now = datetime.datetime.now().isoformat()
+    with store_connection(db_path) as db:
+        if db.execute("SELECT 1 FROM people WHERE role='admin' AND active=1").fetchone():
+            raise PermissionError("An active primary administrator already exists.")
+        db.execute("INSERT INTO people(person_id,display_name,role,created_at,active) VALUES(?,?,'admin',?,1)",
+                   (person_id, name, now))
+        db.execute("INSERT INTO audit_events(time,action_type,outcome,person_id) VALUES(?,?,?,?)",
+                   (now, "primary_admin_registered", "windows_device_only", person_id))
+    return person_id
 
 
 # ---------------------------------------------------------- Face Templates
@@ -311,6 +427,112 @@ def remove_face_templates(person_id: str, db_path: Path | None = None) -> int:
     return count
 
 
+def register_primary_admin(
+    display_name: str,
+    face_embeddings: list,
+    voice_embeddings: list,
+    recovery_code: str,
+    face_model_version: str = "arcface-512d",
+    voice_model_version: str = "resemblyzer-256d",
+    db_path: Path | None = None,
+) -> str:
+    """Atomically create the first admin and encrypted biometric templates.
+
+    The caller must perform consent, trusted-device proof, liveness, quality,
+    and sample-consistency checks before calling this storage boundary. Raw
+    camera frames and audio are intentionally not accepted here.
+    """
+    name = display_name.strip()
+    if not name:
+        raise ValueError("Admin display name is required.")
+    if len(name) > 80:
+        raise ValueError("Admin display name is too long.")
+    if len(face_embeddings) < 3 or len(voice_embeddings) < 3:
+        raise ValueError("Three face and three voice templates are required.")
+    if not recovery_code:
+        raise ValueError("A recovery code is required.")
+
+    def encrypted_vectors(vectors):
+        result = []
+        for vector in vectors:
+            values = vector.tolist() if hasattr(vector, "tolist") else list(vector)
+            result.append(vault.encrypt_text(json.dumps(values)))
+        return result
+
+    face_tokens = encrypted_vectors(face_embeddings)
+    voice_tokens = encrypted_vectors(voice_embeddings)
+    recovery_hash = hashlib.sha256(recovery_code.encode("utf-8")).hexdigest()
+    person_id = "p_" + secrets.token_urlsafe(12)
+    now = datetime.datetime.now().isoformat()
+
+    with store_connection(db_path) as db:
+        existing = db.execute(
+            "SELECT 1 FROM people WHERE role = 'admin' AND active = 1 LIMIT 1"
+        ).fetchone()
+        if existing:
+            raise PermissionError("An active primary administrator already exists.")
+        db.execute(
+            "INSERT INTO people (person_id, display_name, role, created_at, active) VALUES (?, ?, 'admin', ?, 1)",
+            (person_id, name, now),
+        )
+        db.executemany(
+            """INSERT INTO face_templates
+               (person_id, embedding_enc, model_version, quality, created_at)
+               VALUES (?, ?, ?, 1.0, ?)""",
+            [(person_id, token, face_model_version, now) for token in face_tokens],
+        )
+        db.executemany(
+            """INSERT INTO voice_templates
+               (person_id, embedding_enc, model_version, quality, created_at)
+               VALUES (?, ?, ?, 1.0, ?)""",
+            [(person_id, token, voice_model_version, now) for token in voice_tokens],
+        )
+        db.execute(
+            "INSERT INTO admin_recovery (person_id, code_hash, created_at, used_at) VALUES (?, ?, ?, NULL)",
+            (person_id, recovery_hash, now),
+        )
+        db.execute(
+            "INSERT INTO audit_events (time, action_type, outcome, person_id) VALUES (?, ?, ?, ?)",
+            (now, "primary_admin_registered", "local_templates_saved", person_id),
+        )
+    return person_id
+
+
+def list_voice_templates(
+    person_id: str | None = None,
+    db_path: Path | None = None,
+) -> list[dict]:
+    """Retrieve decrypted voice templates for active people."""
+    with store_connection(db_path) as db:
+        q = """SELECT t.id, t.person_id, t.embedding_enc, t.model_version,
+                      t.quality, t.created_at, p.display_name, p.role
+               FROM voice_templates t
+               JOIN people p ON t.person_id = p.person_id
+               WHERE p.active = 1"""
+        args = []
+        if person_id:
+            q += " AND t.person_id = ?"
+            args.append(person_id)
+        q += " ORDER BY t.id ASC"
+        results = []
+        for tid, pid, token, model, quality, created, name, role in db.execute(q, args):
+            try:
+                embedding = json.loads(vault.decrypt_text(token))
+            except Exception:
+                continue
+            results.append({
+                "template_id": tid,
+                "person_id": pid,
+                "display_name": name,
+                "role": role,
+                "embedding": embedding,
+                "model_version": model,
+                "quality": quality,
+                "created_at": created,
+            })
+        return results
+
+
 # ---------------------------------------------------------- Person-Scoped Memory
 
 def remember(
@@ -358,7 +580,7 @@ def recall(
     """Recall memories strictly scoped to the specified person_id."""
     if not person_id:
         return []
-    with store_connection(db_path) as db:
+    with store_connection(db_path, read_only=True) as db:
         now = time.time() if now is None else now
         q = "SELECT id, kind, key_enc, value_enc, source, importance, hits, created_at, retention, expires_at, revision FROM memories WHERE person_id = ? AND (expires_at IS NULL OR expires_at > ?) AND EXISTS (SELECT 1 FROM people WHERE person_id = memories.person_id AND active = 1)"
         args: list = [person_id, now]

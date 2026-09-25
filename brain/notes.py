@@ -67,63 +67,66 @@ def save(person_id, key, value, retention="short", *, until=None, kind="fact",
 
 
 def retrieve(person_id, query="", *, db_path=None, now=None, limit=6):
-    """Rank scoped notes in a disposable RAM index, then reserve graph evidence.
-
-    ponytail: rebuild at most 2,000 notes per request; benchmark before introducing
-    persistent indexes. No decrypted search index is written to a disk database.
-    """
+    """Rank scoped notes in the encrypted store's FTS index, then add graph evidence."""
     import re
-    import sqlite3
-    from contextlib import closing
     limit = max(0, min(int(limit), 6))
-    if not limit:
+    if not limit or not person_id:
         return []
-    rows = store.recall(person_id, limit=MAX_NOTES, db_path=db_path, context_only=True, now=now)
+    now = time.time() if now is None else now
     ignored = {"what", "does", "have", "with", "that", "this", "please", "tell", "about", "should", "would", "could"}
     tokens = sorted({x for x in re.findall(r"\w+", query.casefold()) if len(x) > 2} - ignored)[:64]
-    if not tokens:
-        return sorted(rows, key=lambda r: r['id'], reverse=True)[:limit]
-    if not rows:
-        return []
-    by_id = {r['id']: r for r in rows}
-    with closing(sqlite3.connect(':memory:')) as index:
-        index.execute('PRAGMA temp_store=MEMORY')
-        index.execute("CREATE VIRTUAL TABLE search USING fts5(label, value, tokenize='unicode61')")
-        index.executemany('INSERT INTO search(rowid,label,value) VALUES (?,?,?)',
-                          [(r['id'], r['key'], r['value']) for r in rows])
-        # Quoted tokens are data, never caller-supplied FTS operators.
-        expression = ' OR '.join('"' + token + '"' for token in tokens)
-        ranked = [by_id[mid] for (mid,) in index.execute(
-            'SELECT rowid FROM search WHERE search MATCH ? ORDER BY bm25(search, 3.0, 1.0), rowid DESC LIMIT ?',
-            (expression, limit))]
-    if not ranked:
-        return []
-    seeds = ranked[:max(1, limit-2)]
-    seed_ids = {r['id'] for r in seeds}
-    with store.store_connection(db_path) as db:
-        edges = db.execute('SELECT src,dst,relation FROM memory_links WHERE src IN (SELECT id FROM memories WHERE person_id=?)', (person_id,)).fetchall()
-    priority = {'contradicts': 0, 'depends_on': 1, 'supports': 2, 'related_to': 3}
-    candidates = []
-    for src, dst, relation in edges:
-        if src in seed_ids or dst in seed_ids:
-            other = dst if src in seed_ids else src
-            if other in by_id and other not in seed_ids:
-                candidates.append((priority.get(relation, 4), other))
-    selected = list(seeds)
-    used = set(seed_ids)
-    for _, mid in sorted(candidates):
-        if len(selected) >= limit:
-            break
-        if mid not in used:
-            selected.append(by_id[mid])
-            used.add(mid)
-    for row in ranked:
-        if len(selected) >= limit:
-            break
-        if row['id'] not in used:
-            selected.append(row)
-            used.add(row['id'])
-    return selected
+    with store.store_connection(db_path, read_only=True) as db:
+        if not db.execute("SELECT 1 FROM people WHERE person_id=? AND active=1", (person_id,)).fetchone():
+            return []
+        if tokens:
+            # Quoted tokens are data, never caller-supplied FTS operators.
+            expression = ' OR '.join('"' + token + '"' for token in tokens)
+            ranked_ids = [mid for (mid,) in db.execute("""
+                SELECT note_search.rowid FROM note_search
+                JOIN memories m ON m.id=note_search.rowid
+                WHERE note_search MATCH ? AND note_search.person_id=?
+                  AND m.person_id=? AND m.kind IN ('fact','preference','lesson','decision','private')
+                  AND (m.expires_at IS NULL OR m.expires_at>?)
+                ORDER BY bm25(note_search,3.0,1.0),note_search.rowid DESC LIMIT ?""",
+                (expression, person_id, person_id, now, limit))]
+        else:
+            ranked_ids = [mid for (mid,) in db.execute("""
+                SELECT id FROM memories WHERE person_id=?
+                  AND kind IN ('fact','preference','lesson','decision','private')
+                  AND (expires_at IS NULL OR expires_at>?)
+                ORDER BY id DESC LIMIT ?""", (person_id, now, limit))]
+        if not ranked_ids:
+            return []
+        seeds = ranked_ids[:max(1, limit-2)] if tokens else ranked_ids
+        candidates = []
+        if tokens:
+            placeholders = ','.join('?' for _ in seeds)
+            edges = db.execute(f"""SELECT src,dst,relation FROM memory_links
+                WHERE src IN ({placeholders}) OR dst IN ({placeholders})""", (*seeds, *seeds))
+            priority = {'contradicts': 0, 'depends_on': 1, 'supports': 2, 'related_to': 3}
+            for src, dst, relation in edges:
+                other = dst if src in seeds else src
+                if other not in seeds:
+                    candidates.append((priority.get(relation, 4), other))
+        order = list(seeds) + [mid for _, mid in sorted(candidates)] + ranked_ids
+        ids = list(dict.fromkeys(order))
+        placeholders = ','.join('?' for _ in ids)
+        rows = db.execute(f"""SELECT id,kind,key_enc,value_enc,source,importance,hits,
+            created_at,retention,expires_at,revision FROM memories
+            WHERE id IN ({placeholders}) AND person_id=?
+              AND kind IN ('fact','preference','lesson','decision','private')
+              AND (expires_at IS NULL OR expires_at>?)""", (*ids, person_id, now))
+        by_id = {}
+        for mid, kind, key_enc, value_enc, source, importance, hits, created, retention, expiry, revision in rows:
+            try:
+                key, value = vault.decrypt_text(key_enc), vault.decrypt_text(value_enc)
+            except Exception:
+                continue
+            by_id[mid] = {"id": mid, "person_id": person_id, "kind": kind, "key": key,
+                          "value": value, "source": source, "importance": importance,
+                          "hits": hits, "created_at": created, "retention": retention,
+                          "expires_at": expiry, "revision": revision}
+        return [by_id[mid] for mid in ids if mid in by_id][:limit]
 
 
 def link(person_id, src, relation, dst, *, db_path=None, now=None):
@@ -140,6 +143,6 @@ def link(person_id, src, relation, dst, *, db_path=None, now=None):
 
 def graph(person_id, *, db_path=None, now=None):
     active = {r["id"]: r for r in store.recall(person_id, limit=MAX_NOTES, db_path=db_path, context_only=True, now=now)}
-    with store.store_connection(db_path) as db:
+    with store.store_connection(db_path, read_only=True) as db:
         rows = db.execute("SELECT src,relation,dst FROM memory_links WHERE src IN (SELECT id FROM memories WHERE person_id=?) LIMIT 200", (person_id,)).fetchall()
     return [(active[a]["key"], relation, active[b]["key"]) for a, relation, b in rows if a in active and b in active]

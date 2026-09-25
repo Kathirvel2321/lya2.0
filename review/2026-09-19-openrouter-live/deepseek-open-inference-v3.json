@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-19T17:53:04.796311+00:00",
+  "provider": "openrouter",
+  "model": "deepseek/deepseek-v4-flash-0731:free",
+  "review_status": "human_review_required",
+  "cases": [
+    {
+      "id": "corrected_fact",
+      "elapsed_ms": 10532,
+      "error": "provider_unavailable",
+      "answer": "",
+      "upstream_provider": null,
+      "pass": null,
+      "review_notes": ""
+    }
+  ],
+  "completed": false
+}

@@ -1,0 +1,32 @@
+{
+  "tests_passed": 16,
+  "measurements": [
+    {
+      "duration_seconds": 2.529,
+      "process_cpu_seconds": 0.266,
+      "paint_count": 126,
+      "paint_median_ms": 1.501,
+      "paint_max_ms": 4.88,
+      "event_gap_max_ms": 32.191,
+      "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance.",
+      "artwork": "original",
+      "idle_timer_active": false,
+      "idle_paint_delta": 0,
+      "estimated_unique_pixmap_bytes": 5602176
+    },
+    {
+      "duration_seconds": 2.532,
+      "process_cpu_seconds": 1.25,
+      "paint_count": 131,
+      "paint_median_ms": 2.003,
+      "paint_max_ms": 3.651,
+      "event_gap_max_ms": 45.837,
+      "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance.",
+      "artwork": "model_bake",
+      "idle_timer_active": false,
+      "idle_paint_delta": 0,
+      "estimated_unique_pixmap_bytes": 5636736
+    }
+  ],
+  "limits": "Offscreen Qt painter/idle checks, not measured battery drain or physical display FPS."
+}

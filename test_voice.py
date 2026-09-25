@@ -208,7 +208,7 @@ class VoicePipelineTests(unittest.TestCase):
         # When GROQ_API_KEY is configured, transcribe routes through _transcribe_groq
         with patch.dict(os.environ, {"GROQ_API_KEY": "gsk_test_fake_key"}):
             with patch.object(voice, "_transcribe_groq", return_value="hello lya vanakkam") as mock_groq:
-                result = voice.transcribe(wav_bytes)
+                result = voice.transcribe(wav_bytes, offline_required=False)
                 self.assertEqual(result, "hello lya vanakkam")
                 mock_groq.assert_called_once_with(wav_bytes, "gsk_test_fake_key")
 

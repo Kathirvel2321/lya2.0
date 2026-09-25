@@ -1,6 +1,7 @@
 {
   "version": 2,
   "daily_attempt_limit": 100,
+  "daily_token_limit": 200000,
   "routes": [
     {
       "id": "groq-reasoning",
@@ -8,7 +9,13 @@
       "provider": "groq",
       "model": "openai/gpt-oss-120b",
       "api_key": "",
-      "tasks": ["general", "research", "coding", "security", "council"],
+      "tasks": [
+        "general",
+        "research",
+        "coding",
+        "security",
+        "council"
+      ],
       "failure_domain": "groq",
       "allow_private": false,
       "max_tokens": 1024
@@ -19,10 +26,35 @@
       "provider": "nvidia",
       "model": "deepseek-ai/deepseek-v4-flash-0731",
       "api_key": "",
-      "tasks": ["general", "research", "coding", "security", "council"],
+      "tasks": [
+        "general",
+        "research",
+        "coding",
+        "security",
+        "council"
+      ],
       "failure_domain": "nvidia",
       "allow_private": false,
       "max_tokens": 1024
+    },
+    {
+      "id": "openrouter-backup",
+      "enabled": false,
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash-0731:free",
+      "api_key": "",
+      "tasks": [
+        "general",
+        "research",
+        "coding",
+        "security",
+        "council"
+      ],
+      "failure_domain": "openrouter-open-inference",
+      "upstream_pinned": true,
+      "upstream_provider": "open-inference",
+      "allow_private": false,
+      "max_tokens": 512
     }
   ]
 }

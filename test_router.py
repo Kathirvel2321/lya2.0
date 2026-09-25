@@ -51,7 +51,8 @@ class RouterChecks(unittest.TestCase):
         self.assertFalse(self.calls)  # conservative default private, primary cooled down
 
     def test_shared_upstream_is_not_independent_backup(self):
-        self.config['routes'][1]['failure_domain'] = 'primary'
+        self.config['routes'][1].update(provider='huggingface', model='fixture:groq', failure_domain='groq', upstream_pinned=True)
+        self.config['routes'][2].update(provider='nvidia', failure_domain='nvidia')
         self.run_route()
         self.assertEqual(self.calls, ['primary', 'third'])
 
@@ -78,14 +79,18 @@ class RouterChecks(unittest.TestCase):
         self.assertEqual(results.count('daily_budget_exhausted'), 7)
 
     def test_deadline_stops_second_attempt(self):
-        times = iter([0, 0, 0, 20])
-        result = route_request(self.packet, self.config, self.call, self.state,
-                               clock=lambda: 2000000000, monotonic=lambda: next(times))
+        now = [0]
+        def late(route, timeout):
+            now[0] = 20
+            return self.call(route, timeout)
+        result = route_request(self.packet, self.config, late, self.state,
+                               clock=lambda: 2000000000, monotonic=lambda: now[0])
         self.assertEqual(len(result['attempts']), 1)
+        self.assertEqual(result['error'], 'deadline_exceeded')
 
-    def test_no_fallback_for_auth_refusal_or_invalid_output(self):
+    def test_no_fallback_for_auth_refusal_or_invalid_input(self):
         for error in ('provider_http_401', 'provider_http_403', 'provider_http_400',
-                      'provider_output_content_filter', 'invalid_provider_response'):
+                      'provider_output_content_filter'):
             result = self.run_route(call=lambda *a: {'error': error})
             self.assertEqual(len(result['attempts']), 1)
             self.assertEqual(result['error'], error)
@@ -113,6 +118,26 @@ class RouterChecks(unittest.TestCase):
         infer(self.packet, dict(cfg, provider='nvidia', model='fixture'), opener)
         self.assertIn('max_tokens', bodies[-1][1])
         self.assertNotIn('reasoning_format', bodies[-1][1])
+
+    def test_openrouter_free_route_pins_and_verifies_upstream(self):
+        route = {'id': 'or-backup', 'provider': 'openrouter',
+                 'model': 'nvidia/nemotron-3-ultra-550b-a55b:free', 'tasks': ['general'],
+                 'enabled': True, 'failure_domain': 'openrouter-fixture-host',
+                 'upstream_pinned': True, 'upstream_provider': 'fixture-host',
+                 'allow_private': False}
+        validate_config({'version': 2, 'routes': [route]})
+        bodies = []
+        def opener(req, **kw):
+            bodies.append(json.loads(req.data))
+            self.assertEqual(req.headers['X-openrouter-metadata'], 'enabled')
+            return io.BytesIO(b'{"openrouter_metadata":{"endpoints":{"available":[{"provider":"Fixture Host","selected":true}]}},"choices":[{"message":{"content":"ok"},"finish_reason":"stop"}]}')
+        result = infer(self.packet, {**route, 'api_key': 'FAKE'}, opener)
+        self.assertEqual(result['text'], 'ok')
+        self.assertEqual(result['upstream_provider'], 'fixture-host')
+        self.assertEqual(bodies[0]['provider'], {'order': ['fixture-host'], 'allow_fallbacks': False})
+        wrong = lambda *a, **k: io.BytesIO(b'{"provider":"Other","choices":[{"message":{"content":"ok"},"finish_reason":"stop"}]}')
+        self.assertEqual(infer(self.packet, {**route, 'api_key': 'FAKE'}, wrong)['error'], 'invalid_provider_response')
+        self.assertEqual(infer(self.packet, {**route, 'model': 'paid/model', 'api_key': 'FAKE'}, opener)['error'], 'invalid_endpoint')
 
     def test_truncation_is_not_reported_as_complete_answer(self):
         def opener(*a, **k):
