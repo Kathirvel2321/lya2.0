@@ -197,6 +197,59 @@ class InterfaceChecks(unittest.TestCase):
         # Without a system tray (e.g. offscreen Qt), keep the orb recoverable.
         self.assertEqual(d.orb.isVisible(), not d.tray.isVisible())
 
+    def test_voice_enables_claps_and_surfaces_listener_failures(self):
+        from unittest.mock import patch
+        d = self.desktop
+        with patch('threading.Thread') as thread, patch('audio.voice.wake_loop') as listen:
+            d.start_voice()
+            thread.call_args.kwargs['target']()
+            self.assertTrue(listen.call_args.kwargs['clap_enabled'])
+            listen.call_args.kwargs['on_ready']()
+            self.assertIn('CLAP TWICE', d.orb.toolTip())
+            listen.call_args.kwargs['on_error']('SyntheticError')
+            self.assertIn('SyntheticError', d.panel.footnote.text())
+        d.on_voice_status('VOICE UNAVAILABLE · synthetic test')
+        self.assertTrue(d.panel.isVisible())
+        self.assertIn('VOICE UNAVAILABLE', d.panel.answer.toPlainText())
+
+    def test_microphone_self_test_reports_without_a_second_microphone_reader(self):
+        from unittest.mock import Mock, patch
+        import audio.voice as voice
+        d = self.desktop
+        d.voice_thread = Mock()
+        report = {'device': 'Synthetic microphone', 'seconds': 5.0, 'elapsed': 5.2, 'blocks': 250,
+                  'samples': 80000, 'peak': 4200, 'loud_blocks': 42, 'claps': 0, 'suppressed': 0,
+                  'threshold': 700, 'rms_mean': 130.5, 'rms_min': 3.0, 'rms_max': 1900.0,
+                  'listening': True, 'verdict': 'hearing', 'detail': 'Synthetic detail.'}
+        with patch.object(voice, 'listener_health', return_value={'listening': True, 'state': 'listening',
+                                                                 'device': 'Synthetic microphone'}), \
+             patch.object(voice, 'mic_test_start') as start, \
+             patch.object(voice, 'mic_test_report', return_value=report), \
+             patch('sounddevice.RawInputStream', side_effect=AssertionError('second microphone reader')):
+            d.microphone_self_test()
+            self.assertTrue(start.called)
+            self.assertTrue(d._mic_test_timer.isActive())
+            d.finish_microphone_self_test()
+            d._mic_test_timer.stop()
+        self.assertEqual(d.panel.title_label.text(), "The microphone is hearing you.")
+        self.assertIn('Synthetic microphone', d.panel.answer.toPlainText())
+        self.assertIn('42', d.panel.answer.toPlainText())
+        self.assertIn('Synthetic detail.', d.panel.answer.toPlainText())
+        self.assertEqual(d.orb.task, 'success')
+
+    def test_microphone_self_test_refuses_when_the_listener_is_off(self):
+        from unittest.mock import Mock, patch
+        import audio.voice as voice
+        d = self.desktop
+        d.voice_thread = Mock()
+        with patch.object(voice, 'listener_health',
+                          return_value={'listening': False, 'state': 'stopped', 'device': None}), \
+             patch.object(voice, 'mic_test_start') as start:
+            d.microphone_self_test()
+        self.assertFalse(start.called)
+        self.assertIn('not running', d.panel.answer.toPlainText())
+        self.assertNotEqual(d.orb.task, 'success')
+
     def test_motion_stops_on_hide_and_reduced_motion(self):
         orb = self.desktop.orb
         orb.show()

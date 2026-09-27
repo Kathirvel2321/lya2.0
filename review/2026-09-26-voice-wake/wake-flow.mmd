@@ -1,0 +1,19 @@
+flowchart TD
+  A["Launch desktop"] --> B{"No active admin?"}
+  B --> C["Empty store: owner setup gate"]
+  B --> D["Existing or unreadable store: orb intro; enrollment locked on conflict"]
+  A --> E["Local Vosk wake listener"]
+  E --> F{"Wake phrase heard?"}
+  F --> G["No phrase: discard ambient audio in memory"]
+  F --> H["Phrase heard: open orb; play cached greeting; warm local voice"]
+  H --> I["Listen for next request"]
+  I --> J{"Cloud command transcription enabled?"}
+  J --> K["Enabled: Groq transcribes post-wake request"]
+  J --> L["Disabled: Vosk transcribes locally"]
+  K --> M["Existing identity and policy checks, then answer"]
+  L --> M
+  M --> N["Piper speaks; caption follows audio"]
+  classDef wired fill:#176642,color:#fff
+  classDef gate fill:#8a5a16,color:#fff
+  class A,D,E,F,G,H,I,J,K,L,M,N wired
+  class B,C gate

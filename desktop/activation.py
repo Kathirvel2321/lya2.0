@@ -37,6 +37,11 @@ if not __package__ and str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))  # support activate-lya.cmd without PYTHONPATH
 HELPER = ROOT / "security" / "HelloVerifier.exe"
 
+
+def windows_verify(hwnd, nonce, pump=None, cancelled=None):
+    from security.windows_consent import verify_for_window
+    return verify_for_window(hwnd, nonce, pump=pump, cancelled=cancelled)
+
 CYAN = "#63e6ff"
 CYAN_DIM = "#2b7f92"
 AMBER = "#ffc861"
@@ -158,10 +163,16 @@ def probe_layers() -> list[Layer]:
                         "no liveness verifier is connected to this flow",
                         "live face challenge verification"))
 
-    hello_ok = HELPER.is_file()
-    layers.append(Layer("hello", "WINDOWS CHECKPOINT", hello_ok,
-                        "helper found; Windows proof not run" if hello_ok
-                        else "run security\\build-hello.cmd",
+    try:
+        from security.windows_consent import runtime_ready
+        hello_ok = runtime_ready()
+        hello_detail = ("Windows consent API ready in-process; proof not run" if hello_ok
+                        else "Windows consent API unavailable")
+    except Exception as exc:
+        hello_ok, hello_detail = HELPER.is_file(), f"{type(exc).__name__}: {exc}"
+        if hello_ok:
+            hello_detail = "unsigned helper present; prefer in-process consent"
+    layers.append(Layer("hello", "WINDOWS CHECKPOINT", hello_ok, hello_detail,
                         "the proof that creates your admin profile"))
     return layers
 
@@ -370,8 +381,8 @@ SCRIPT = {
                "This does not identify you, and I will not keep a picture."),
     "VOCAL": ("Press Record to check your microphone. Read the number on screen. "
               "I can measure the sound, but I cannot verify the spoken words yet."),
-    "VAULT": ("Now verify with Windows. Your PIN stays with Windows. After that, "
-              "you decide whether to create your encrypted admin profile."),
+    "VAULT": ("Camera and microphone only measured presence. They cannot create an "
+              "admin. Windows PIN proves you can unlock this PC. LYA never sees the PIN."),
     "ONLINE": ("Your local admin profile is ready, {salutation}. "
                "Face and voice sign-in are not enrolled yet."),
 }
@@ -677,7 +688,11 @@ class ActivationDialog(QDialog):
 
         from PySide6.QtWidgets import QComboBox
         self.pages = QStackedWidget(self)
-        self.pages.setStyleSheet("QStackedWidget{background:#0a1520;border-top:1px solid #244351;}")
+        self.pages.setStyleSheet(
+            "QStackedWidget{background:qlineargradient(x1:0,y1:0,x2:1,y2:1,"
+            "stop:0 rgba(30,66,83,225),stop:0.35 rgba(13,36,52,238),"
+            "stop:1 rgba(8,24,37,242));border-top:1px solid #507388;"
+            "border-bottom:1px solid #244351;}")
         self._build_pages(QComboBox)
 
         bar = QHBoxLayout()
@@ -691,7 +706,10 @@ class ActivationDialog(QDialog):
         for widget in (self.close_btn, self.back, self.voice_toggle, self.replay, self.next):
             bar.addWidget(widget)
         self.bar = QWidget(self)
-        self.bar.setStyleSheet("background:#08111a;border-top:1px solid #1c3745;")
+        self.bar.setStyleSheet(
+            "background:qlineargradient(x1:0,y1:0,x2:1,y2:0,"
+            "stop:0 #0b1d2b,stop:0.5 #102b3b,stop:1 #0a1c29);"
+            "border-top:1px solid #52768a;")
         self.bar.setLayout(bar)
 
         outer = QVBoxLayout(self)
@@ -707,8 +725,6 @@ class ActivationDialog(QDialog):
             self.speech.unavailable.connect(self._speech_missing)
             self.speech.caption.connect(self._speech_caption)
         self.process = QProcess(self)
-        self.process.finished.connect(self._hello_done)
-        self.process.errorOccurred.connect(self._hello_failed)
         self.timeout = QTimer(self)
         self.timeout.setSingleShot(True)
         self.timeout.timeout.connect(self._hello_timeout)
@@ -731,10 +747,12 @@ class ActivationDialog(QDialog):
         if primary:
             button.setObjectName("primary")
         button.setStyleSheet(
-            "QPushButton{background:#11222f;color:#d9eef5;border:1px solid #315668;"
+            "QPushButton{background:qlineargradient(x1:0,y1:0,x2:0,y2:1,"
+            "stop:0 #234759,stop:0.12 #173645,stop:1 #102938);"
+            "color:#e7f7fb;border:1px solid #537b8f;"
             "border-radius:10px;padding:11px 18px;font-size:13px;}"
-            "QPushButton:hover{border-color:#72d9ed;background:#173345;}"
-            "QPushButton#primary{background:#0f4f63;color:#f2feff;border:1px solid #2f8fa8;}"
+            "QPushButton:hover{border-color:#8ce8f4;background:#214c60;}"
+            "QPushButton#primary{background:#12657b;color:#f2feff;border:1px solid #79d7ea;}"
             "QPushButton:disabled{color:#4a6572;border-color:#162a34;}")
         button.clicked.connect(slot)
         return button
@@ -749,7 +767,7 @@ class ActivationDialog(QDialog):
     def _build_pages(self, combo_cls):
         def page():
             widget = QWidget()
-            widget.setStyleSheet("QWidget{background:#0a1520;} QLabel{background:transparent;}")
+            widget.setStyleSheet("QWidget{background:transparent;} QLabel{background:transparent;}")
             layout = QVBoxLayout(widget)
             layout.setContentsMargins(24, 6, 24, 10)
             layout.setSpacing(6)
@@ -767,12 +785,12 @@ class ActivationDialog(QDialog):
         for option in ("boss", "sir", "ma'am", "friend"):
             self.salutation_box.addItem(option)
         self.salutation_box.setStyleSheet(
-            "background:#0d2230;color:#cfeaf2;border:1px solid #1d4c5c;"
+            "background:#183d50;color:#e2f5fa;border:1px solid #5f91a5;"
             "border-radius:8px;padding:6px;")
         self.name = QLineEdit()
         self.name.setPlaceholderText("your name")
         self.name.setStyleSheet(
-            "background:#0d2230;color:#eafcff;border:1px solid #2f8fa8;"
+            "background:#133346;color:#eafcff;border:1px solid #77bbd1;"
             "border-radius:8px;padding:7px;")
         self.name.setAccessibleName("Display name")
         row.addWidget(self._label("I address you as", 8))
@@ -1130,31 +1148,33 @@ class ActivationDialog(QDialog):
 
     # ------------------------------------------------------------------- vault
     def _hello(self):
-        if self.busy or self.process.state() != QProcess.ProcessState.NotRunning:
-            return
-        if not HELPER.is_file():
-            self.vault_status.setText("helper missing · run security\\build-hello.cmd")
+        if self.busy:
             return
         self.busy = True
         self.verified_until = 0.0
         self.verified_name = ""
         self.hello_failure = ""
         self.proof_nonce = secrets.token_urlsafe(24)
+        nonce = self.proof_nonce
         self.vault_status.setText("complete the secure Windows prompt...")
         self.timeout.start(100000)
-        self.process.start(str(HELPER),
-                           ["verify", str(int(self.winId())), self.proof_nonce])
         self._sync()
+        QApplication.processEvents()
+        result = windows_verify(
+            int(self.winId()), nonce,
+            pump=QApplication.processEvents,
+            cancelled=lambda: not self.busy or self.proof_nonce != nonce)
+        self._hello_apply(nonce, result)
 
-    def _hello_done(self, code, status):
+    def _hello_apply(self, nonce, result):
         self.timeout.stop()
-        result = bytes(self.process.readAllStandardOutput()).decode("utf-8", "replace").strip()
-        nonce, self.proof_nonce = self.proof_nonce, ""
+        if self.proof_nonce != nonce:
+            self.busy = False
+            self._sync()
+            return
+        self.proof_nonce = ""
         self.busy = False
-        if self.hello_failure:
-            self.vault_status.setText(self.hello_failure)
-        elif (code == 0 and status == QProcess.ExitStatus.NormalExit
-                and nonce and result == "Verified:" + nonce):
+        if result == "Verified:" + nonce:
             self.verified_until = time.monotonic() + 90
             self.verified_name = self.name.text().strip()
             self.vault_status.setText("Windows checkpoint passed")
@@ -1162,37 +1182,55 @@ class ActivationDialog(QDialog):
             self.vault_status.setText("not verified - you stay a guest")
         self._sync()
 
-    def _hello_failed(self, _error):
-        self.timeout.stop()
-        self.busy = False
-        self.proof_nonce = ""
-        detail = self.process.errorString().casefold()
-        self.hello_failure = ("Windows Application Control blocked the helper · admin setup stays locked"
-                              if "policy" in detail or "blocked" in detail
-                              else "Windows verification could not run · admin setup stays locked")
-        self.vault_status.setText(self.hello_failure)
-        self._sync()
-
     def _hello_timeout(self):
         self.busy = False
         self.proof_nonce = ""
-        self.process.kill()
         self.vault_status.setText("verification timed out")
         self._sync()
 
+    def _bind_session(self, person_id, name):
+        from security.policy import Session
+        session = Session(role="admin", person=name,
+                          id="session_" + secrets.token_urlsafe(18),
+                          person_id=person_id, verified_until=time.time() + 300)
+        self.authenticated.emit(session)
+        self.act = len(ACTS) - 1
+        self.pages.setCurrentIndex(self.act)
+        self._after_act()
+        self._sync()
+        self.say()
+
     def _commit(self):
-        """Write the admin profile only after a fresh Windows proof and consent."""
+        """Write or sign in only after a fresh Windows proof and consent."""
+        name = self.name.text().strip()
         if (self.busy or not self.consent.isChecked()
                 or time.monotonic() >= self.verified_until
-                or not self.name.text().strip()
-                or self.name.text().strip() != self.verified_name):
+                or not name or name != self.verified_name):
             self.vault_status.setText("verify with Windows and confirm the consent box")
             self._sync()
             return
-        from security.policy import Session
         try:
-            from storage.store import register_device_admin
-            person_id = register_device_admin(self.name.text().strip(), db_path=self.db_path)
+            from storage.store import find_unique_admin, has_active_admin, register_device_admin
+            existing = find_unique_admin(name, db_path=self.db_path)
+        except RuntimeError:
+            self.vault_status.setText("multiple admin profiles need owner review")
+            self._sync()
+            return
+        except Exception:
+            self.vault_status.setText("the encrypted identity store is unavailable")
+            self._sync()
+            return
+        if existing:
+            if not existing["device_only"]:
+                self.vault_status.setText("this admin needs its original verification method")
+                self._sync()
+                return
+            self.created = existing["person_id"]
+            self.vault_status.setText("signed in as the existing device admin")
+            self._bind_session(existing["person_id"], existing["display_name"])
+            return
+        try:
+            person_id = register_device_admin(name, db_path=self.db_path)
         except PermissionError:
             self.vault_status.setText("an admin already exists - sign in as that name")
             self._sync()
@@ -1203,15 +1241,7 @@ class ActivationDialog(QDialog):
             return
         self.created = person_id
         self.vault_status.setText(f"admin profile created: {person_id}")
-        session = Session(role="admin", person=self.name.text().strip(),
-                          id="session_" + secrets.token_urlsafe(18),
-                          person_id=person_id, verified_until=time.time() + 300)
-        self.authenticated.emit(session)
-        self.act = len(ACTS) - 1
-        self.pages.setCurrentIndex(self.act)
-        self._after_act()
-        self._sync()
-        self.say()
+        self._bind_session(person_id, name)
 
     def _finish(self):
         self._stop_sensors()
@@ -1223,8 +1253,6 @@ class ActivationDialog(QDialog):
         self.timeout.stop()
         self.verified_until = 0.0
         self.verified_name = ""
-        if self.process.state() != QProcess.ProcessState.NotRunning:
-            self.process.kill()
         self._stop_sensors()
         self._stop_speech()
         super().reject()

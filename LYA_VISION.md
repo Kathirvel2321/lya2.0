@@ -8,6 +8,10 @@ LYA is an ambitious personal assistant inspired by Jarvis: conversational, conte
 
 ## Required experience
 
+- Owner clarification (2026-09-27): hands-free speech is the main interface; typing is a public-place fallback. First acceptance gate: say "wake up LYA", hear a prompt for input, speak a question, hear the answer, then continue without touching the device. Test and confirm this step before expanding higher capabilities.
+- Additional wake trigger requested (2026-09-27): two claps should wake LYA into that same conversation flow. Sound detection is a wake gesture only, never identity verification.
+- Hands-free startup clarification (2026-09-27): start listening automatically after Windows sign-in; detect LYA/Laya/Leya/Elya-like names anywhere in a sentence without requiring a fixed prefix. Sleep and pre-sign-in listening are not implemented. Broader acoustic name matching can false-wake on similar ordinary words; it cannot grant authority.
+
 - A native desktop presence, not a separate website or browser dashboard as the primary interface.
 - "Hey LYA" / "wake up LYA" reveals a small circular assistant similar in interaction to Siri.
 - Requested files, answers and task results appear in focused floating panels.

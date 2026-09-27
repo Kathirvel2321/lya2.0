@@ -1,5 +1,6 @@
 """Compact native presentation. No sensors, persistence or inference changes."""
 import re
+import wave
 from PySide6.QtCore import Qt, QEvent, QRect, QPoint, QTimer, QElapsedTimer, QPropertyAnimation, QVariantAnimation, QEasingCurve, Signal
 from PySide6.QtGui import QTextCursor, QPixmap
 from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QTextBrowser
@@ -22,6 +23,7 @@ class CompactPanel(GlassPanel):
         self.reveal_offset = 0
         self.spoken_tokens = []
         self.spoken_original = ''
+        self.spoken_prefix = ''
         self.preserve_chat = False
         self.detached = False
         self.drag_offset = None
@@ -150,11 +152,12 @@ class CompactPanel(GlassPanel):
         if self.reveal_offset >= len(self.full_text):
             self.reveal.stop()
 
-    def begin_spoken(self, original):
+    def begin_spoken(self, original, prefix=''):
         self.reveal.stop()
         self.spoken_tokens = []
         self.spoken_original = str(original)
-        self.answer.clear()
+        self.spoken_prefix = prefix
+        self.answer.setPlainText(prefix)
 
     def sync_caption(self, phrase, duration_ms):
         if not self.spoken_original:
@@ -171,8 +174,9 @@ class CompactPanel(GlassPanel):
         if not self.spoken_original:
             return
         self.reveal.stop()
-        self.answer.setPlainText(self.spoken_original)
+        self.answer.setPlainText(self.spoken_prefix + self.spoken_original)
         self.spoken_original = ''
+        self.spoken_prefix = ''
         self.spoken_tokens = []
 
     def hideEvent(self, event):
@@ -191,6 +195,10 @@ class OrbDesktop(Desktop):
         super().__init__(application, reduced_motion)
         from desktop.setup_speech import SetupSpeech
         self.speech = SetupSpeech(self)
+        self.wake_timer = QTimer(self)
+        self.wake_timer.setSingleShot(True)
+        self.wake_timer.timeout.connect(
+            lambda: self._speaking_changed(False) if not self.speech.busy else None)
         self.spoken = True
         self.speech_language = 'auto'
         self.speech_style = 'everyday'
@@ -239,6 +247,7 @@ class OrbDesktop(Desktop):
         self.orb.setMinimumSize(1, 1)
         self.orb.setMaximumSize(16777215, 16777215)
         self.transcript = []
+        self.first_run_setup = False
         self.pending_question = ''
         self.panel.set_mode('input')
 
@@ -401,6 +410,42 @@ class OrbDesktop(Desktop):
         self.quiet_reply = quiet
         super().on_voice(text, quiet)
 
+    def needs_owner_setup(self):
+        """True when the encrypted store is readable and holds no administrator."""
+        try:
+            from storage.store import get_primary_admin
+            return get_primary_admin(self.brain.db_path) is None
+        except Exception:
+            return False   # An unreadable store must never silently open owner setup.
+
+    def begin_owner_setup(self):
+        """First run: the owner is set up before the orb opens, like a new phone."""
+        if not self.needs_owner_setup():
+            self.start_intro()
+            return
+        self.first_run_setup = True
+        self.close_panel()
+        self.orb.hide()
+        from activation import ActivationDialog
+        if (not hasattr(self, 'activation_dialog')
+                or not self.activation_dialog.isVisible()):
+            self.activation_dialog = ActivationDialog(
+                reduced_motion=self.orb.reduced_motion, db_path=self.brain.db_path)
+            self.activation_dialog.authenticated.connect(self.on_admin_authenticated)
+            self.activation_dialog.rejected.connect(self.on_setup_dismissed)
+        self.activation_dialog.show()
+        self.activation_dialog.raise_()
+        self.activation_dialog.activateWindow()
+
+    def on_setup_dismissed(self):
+        """Closing setup leaves a usable guest orb, never a locked window."""
+        if not getattr(self, 'first_run_setup', False):
+            return
+        self.first_run_setup = False
+        self.orb.show()
+        self.dock(False)
+        self.panel.footnote.setText('SETUP NOT FINISHED · SAY "REGISTER ADMIN" TO CONTINUE')
+
     def on_admin_authenticated(self, session):
         self.brain.bind_session(session)
         self.orb.set_state(person='admin', task='idle')
@@ -409,6 +454,14 @@ class OrbDesktop(Desktop):
             if hasattr(self, 'activation_dialog') and self.activation_dialog.isVisible():
                 return  # The activation's ONLINE act already greets the owner.
             self.panel.set_mode('answer')
+            if getattr(self, 'first_run_setup', False):
+                self.first_run_setup = False
+                dialog = getattr(self, 'activation_dialog', None)
+                if dialog is not None:
+                    dialog.finished.connect(lambda _: self.start_intro())
+                else:
+                    QTimer.singleShot(0, self.start_intro)
+                return
             self.panel.show_answer('Admin verified',
                 f'Welcome, {session.person}. This Windows account has a local admin profile. '
                 'Face and voice are not enrolled. Private actions still need separate phone approval.')
@@ -465,10 +518,33 @@ class OrbDesktop(Desktop):
 
     def wake(self):
         self.start_intro()
+        if self.spoken:
+            self.speech.prewarm()
+        if self.spoken:
+            try:
+                import winsound
+                path = HERE / 'assets' / 'wake-greeting.wav'
+                with wave.open(str(path), 'rb') as sound:
+                    duration_ms = round(1000 * sound.getnframes() / sound.getframerate())
+                self._speaking_changed(True)
+                winsound.PlaySound(str(path),
+                                   winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_NODEFAULT)
+                self.wake_timer.start(duration_ms + 100)
+            except (ImportError, RuntimeError, OSError, wave.Error):
+                self._speaking_changed(False)
+                self.speak_reply("I'm here. What can I help you with?")
+
+    def stop_wake_greeting(self):
+        if hasattr(self, 'wake_timer') and self.wake_timer.isActive():
+            import winsound
+            self.wake_timer.stop()
+            winsound.PlaySound(None, 0)
+            self._speaking_changed(False)
 
     def close_panel(self):
+        self.stop_wake_greeting()
         if hasattr(self, 'speech'):
-            self.speech.stop()
+            self.speech.stop(keep_warm=True)
         if hasattr(self, 'intro_timer'):
             self.panel_geometry.stop()
             self.intro_timer.stop()
@@ -485,7 +561,8 @@ class OrbDesktop(Desktop):
 
     def command(self, text):
         low = ' '.join(text.casefold().split())
-        self.speech.stop()
+        self.stop_wake_greeting()
+        self.speech.stop(keep_warm=low not in ('voice off', 'stop speaking'))
         from vision.answers import is_visual_question
         if low in ('close camera', 'stop camera'):
             if hasattr(self, 'vision_dialog'):
@@ -620,6 +697,13 @@ class OrbDesktop(Desktop):
         if not self.brain_busy:
             self.pending_question = text
         super().command(text)
+        if low in ('time', 'what time is it', 'date', 'what date is it', 'day',
+                   'status', 'system status', 'check', 'help', 'commands', 'what can you do'):
+            quiet = getattr(self, 'quiet_reply', False)
+            self.quiet_reply = False
+            if not quiet:
+                self.speak_reply(self.panel.full_text if self.panel.reveal.isActive()
+                                 else self.panel.answer.toPlainText())
 
     def ensure_vision(self):
         if not hasattr(self, 'vision_dialog'):
@@ -706,21 +790,27 @@ class OrbDesktop(Desktop):
         finally:
             self.panel.preserve_chat = False
         spoken_now = valid and self.spoken and not getattr(self, 'request_quiet', False)
-        if spoken_now:
-            self.speak_reply(answer.text)
         if in_chat:
             reply = 'LYA: ' + answer.text[:8000]
             self.transcript.append(reply)
             self.transcript = self.transcript[-12:]
             history = '\n\n'.join(self.transcript[:-1]) + '\n\nLYA: '
-            self.panel.animate_append(history, answer.text[:8000], '')
+            if spoken_now:
+                self.panel.begin_spoken(answer.text[:8000], history)
+                self.speak_reply(answer.text)
+            else:
+                self.panel.animate_append(history, answer.text[:8000], '')
         elif valid:
             self.transcript.extend(['You: ' + self.pending_question, 'LYA: ' + answer.text[:8000]])
             self.transcript = self.transcript[-12:]
-            if not spoken_now:
+            if spoken_now:
+                self.panel.begin_spoken(answer.text)
+                self.speak_reply(answer.text)
+            else:
                 self.panel.animate_answer(answer.text)
 
     def quit(self):
+        self.stop_wake_greeting()
         self.speech.stop()
         if hasattr(self, 'recovery_dialog'):
             if self.recovery_dialog.busy:

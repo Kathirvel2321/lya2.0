@@ -56,6 +56,47 @@ class ExperienceChecks(unittest.TestCase):
         self.assertEqual(self.d.brain.session, before)
         self.d.activation_dialog.reject()
 
+    def test_bare_voice_wake_opens_intro_instead_of_help(self):
+        with patch.object(self.d, 'wake') as wake, patch.object(self.d, 'command') as command:
+            self.d.on_voice('wake up lya')
+        wake.assert_called_once_with()
+        command.assert_not_called()
+
+    def test_wake_preserves_warm_voice_and_gates_mic_for_whole_greeting(self):
+        import wave
+        from app import HERE
+        from audio import voice
+        from PySide6.QtCore import QProcess
+        self.d.spoken = True
+        self.d.speech.process = Mock()
+        self.d.speech.process.state.return_value = QProcess.ProcessState.Running
+        with patch('winsound.PlaySound') as play, patch.object(self.d.speech, 'say') as say:
+            self.d.on_voice('wake up lya')
+            self.d.speech.process.kill.assert_not_called()
+            play.assert_called_once()
+            self.assertTrue(voice._SPEAKING.is_set())
+            with wave.open(str(HERE / 'assets' / 'wake-greeting.wav'), 'rb') as sound:
+                duration = round(1000 * sound.getnframes() / sound.getframerate())
+            self.assertEqual(self.d.wake_timer.interval(), duration + 100)
+            self.d.command('time')
+            self.assertFalse(self.d.wake_timer.isActive())
+            self.assertFalse(voice._SPEAKING.is_set())
+            self.d.speech.process.kill.assert_not_called()
+            self.assertIn(':', self.d.panel.answer.toPlainText())
+            say.assert_called_once()
+            self.assertIn(':', say.call_args.args[0])
+
+    def test_voice_clock_answers_aloud_and_quiet_turn_stays_silent(self):
+        self.d.spoken = True
+        with patch.object(self.d.speech, 'say') as say:
+            self.d.on_voice('what time is it')
+            say.assert_called_once()
+            self.assertIn(':', say.call_args.args[0])
+            say.reset_mock()
+            self.d.on_voice('what time is it', quiet=True)
+            say.assert_not_called()
+            self.assertFalse(self.d.quiet_reply)
+
     def test_verified_admin_handoff_updates_brain_without_phone_approval(self):
         from security.policy import Session
         import time
@@ -71,16 +112,29 @@ class ExperienceChecks(unittest.TestCase):
     def test_only_current_completed_answer_is_spoken(self):
         from brain.workflow import Answer
         self.d.spoken = True
-        with patch.object(self.d.speech, 'say') as say, patch.object(
-                self.d.panel, 'animate_answer', wraps=self.d.panel.animate_answer) as animate:
+        with patch.object(self.d.speech, 'say') as say:
             self.d.on_brain(self.d.generation - 1, Answer('Old answer', 'local'))
             say.assert_not_called()
             self.d.on_brain(self.d.generation, Answer('Current answer', 'local'))
             self.assertEqual(say.call_args.args[0], 'Current answer')
-            self.assertEqual(animate.call_count, 1)
+            self.assertEqual(self.d.panel.answer.toPlainText(), '')
+            self.d.panel.sync_caption('Current ', 120)
+            self.d.panel.finish_spoken()
+            self.assertEqual(self.d.panel.answer.toPlainText(), 'Current answer')
             self.d.brain_cancel.set()
             self.d.on_brain(self.d.generation, Answer('Cancelled answer', 'local'))
             self.assertEqual(say.call_count, 1)
+
+    def test_spoken_chat_keeps_history_and_reveals_one_reply(self):
+        from brain.workflow import Answer
+        self.d.spoken = True
+        self.d.panel.set_mode('chat')
+        self.d.transcript = ['You: hello']
+        with patch.object(self.d.speech, 'say'):
+            self.d.on_brain(self.d.generation, Answer('Hello there.', 'local'))
+            self.assertEqual(self.d.panel.answer.toPlainText(), 'You: hello\n\nLYA: ')
+            self.d.panel.finish_spoken()
+        self.assertEqual(self.d.panel.answer.toPlainText(), 'You: hello\n\nLYA: Hello there.')
 
     def test_second_question_while_busy_does_not_discard_first_answer(self):
         from brain.workflow import Answer

@@ -1,0 +1,114 @@
+[
+  {
+    "public_generated_phrase": "Wake up Lya.",
+    "claps_enabled": false,
+    "detected": true,
+    "expected": true,
+    "false_claps": 0,
+    "audio_seconds_consumed": 0.88
+  },
+  {
+    "public_generated_phrase": "Wake up Lya.",
+    "claps_enabled": true,
+    "detected": true,
+    "expected": true,
+    "false_claps": 0,
+    "audio_seconds_consumed": 0.88
+  },
+  {
+    "public_generated_phrase": "Wake up Leah.",
+    "claps_enabled": false,
+    "detected": true,
+    "expected": true,
+    "false_claps": 0,
+    "audio_seconds_consumed": 1.12
+  },
+  {
+    "public_generated_phrase": "Wake up Leah.",
+    "claps_enabled": true,
+    "detected": true,
+    "expected": true,
+    "false_claps": 0,
+    "audio_seconds_consumed": 1.12
+  },
+  {
+    "public_generated_phrase": "Hey Leah.",
+    "claps_enabled": false,
+    "detected": true,
+    "expected": true,
+    "false_claps": 0,
+    "audio_seconds_consumed": 0.88
+  },
+  {
+    "public_generated_phrase": "Hey Leah.",
+    "claps_enabled": true,
+    "detected": true,
+    "expected": true,
+    "false_claps": 0,
+    "audio_seconds_consumed": 0.88
+  },
+  {
+    "public_generated_phrase": "The weather is pleasant today.",
+    "claps_enabled": false,
+    "detected": false,
+    "expected": false,
+    "false_claps": 0,
+    "audio_seconds_consumed": 2.74
+  },
+  {
+    "public_generated_phrase": "The weather is pleasant today.",
+    "claps_enabled": true,
+    "detected": false,
+    "expected": false,
+    "false_claps": 0,
+    "audio_seconds_consumed": 2.74
+  },
+  {
+    "public_generated_phrase": "What time is it?",
+    "claps_enabled": false,
+    "detected": false,
+    "expected": false,
+    "false_claps": 0,
+    "audio_seconds_consumed": 2.02
+  },
+  {
+    "public_generated_phrase": "What time is it?",
+    "claps_enabled": true,
+    "detected": false,
+    "expected": false,
+    "false_claps": 0,
+    "audio_seconds_consumed": 2.02
+  },
+  {
+    "public_generated_phrase": "Can you help me please?",
+    "claps_enabled": false,
+    "detected": false,
+    "expected": false,
+    "false_claps": 0,
+    "audio_seconds_consumed": 2.64
+  },
+  {
+    "public_generated_phrase": "Can you help me please?",
+    "claps_enabled": true,
+    "detected": false,
+    "expected": false,
+    "false_claps": 0,
+    "audio_seconds_consumed": 2.64
+  },
+  {
+    "public_generated_phrase": "I would like a cup of tea.",
+    "claps_enabled": false,
+    "detected": false,
+    "expected": false,
+    "false_claps": 0,
+    "audio_seconds_consumed": 2.46
+  },
+  {
+    "public_generated_phrase": "I would like a cup of tea.",
+    "claps_enabled": true,
+    "detected": false,
+    "expected": false,
+    "false_claps": 0,
+    "audio_seconds_consumed": 2.46
+  }
+]

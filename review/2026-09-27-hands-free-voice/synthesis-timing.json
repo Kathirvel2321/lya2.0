@@ -1,0 +1,9 @@
+{
+  "prompt": "I'm here. What can I help you with?",
+  "synthesis_ms_cold_then_warm": [
+    4313.1,
+    229.1
+  ],
+  "duration_seconds": 2.02,
+  "scope": "Local synthesis only, no playback, microphone or network; excludes process launch, ASR and answer generation"
+}

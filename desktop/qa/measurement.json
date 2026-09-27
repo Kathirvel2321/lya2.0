@@ -1,9 +1,13 @@
 {
   "duration_seconds": 2.516,
-  "process_cpu_seconds": 1.078,
-  "paint_count": 172,
-  "paint_median_ms": 2.928,
-  "paint_max_ms": 20.12,
-  "event_gap_max_ms": 25.988,
-  "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance."
+  "process_cpu_seconds": 1.156,
+  "paint_count": 169,
+  "paint_median_ms": 3.031,
+  "paint_max_ms": 15.271,
+  "event_gap_max_ms": 26.672,
+  "limits": "Short local Qt smoke measurement; excludes sensors/model/network, not a guarantee of display FPS or sustained performance.",
+  "artwork": "model_bake",
+  "idle_timer_active": false,
+  "idle_paint_delta": 0,
+  "estimated_unique_pixmap_bytes": 5636736
 }

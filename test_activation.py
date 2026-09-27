@@ -268,7 +268,8 @@ class CommitTests(unittest.TestCase):
         self.assertEqual(admin["display_name"], "Owner")
         self.assertTrue(admin["device_only"])
         self.dialog._commit()
-        self.assertIn("already exists", self.dialog.vault_status.text())
+        self.assertIn("existing device admin", self.dialog.vault_status.text())
+        self.assertEqual(get_primary_admin(db_path=self.db)["person_id"], admin["person_id"])
 
     def test_name_change_invalidates_windows_proof(self):
         self.dialog.name.setText("Owner")
@@ -291,6 +292,45 @@ class SensorDefaultTests(unittest.TestCase):
         self.assertFalse(mic.recording)
         mic.stop()
         camera.stop()
+
+
+class FirstRunGateTests(unittest.TestCase):
+    """The launcher must offer owner setup only when the store has no admin."""
+
+    def setUp(self):
+        from cryptography.fernet import Fernet
+        from security import vault
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.db = Path(self.tmp.name) / "firstrun.db.enc"
+        patcher = patch.object(vault, "_F", Fernet(Fernet.generate_key()))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        desktop_dir = str(ROOT / "desktop")
+        if desktop_dir not in sys.path:
+            sys.path.insert(0, desktop_dir)
+
+    def test_needs_setup_tracks_the_store(self):
+        try:
+            from experience import OrbDesktop
+        except Exception as exc:            # pragma: no cover - import guard
+            self.skipTest(f"desktop experience unavailable: {exc}")
+        from storage.store import register_device_admin
+        from brain.workflow import Brain
+        desktop = OrbDesktop.__new__(OrbDesktop)
+        desktop.brain = Brain(db_path=self.db)
+        self.assertTrue(desktop.needs_owner_setup())
+        register_device_admin("Owner", db_path=self.db)
+        self.assertFalse(desktop.needs_owner_setup())
+
+    def test_unreadable_store_never_opens_setup(self):
+        try:
+            from experience import OrbDesktop
+        except Exception as exc:            # pragma: no cover - import guard
+            self.skipTest(f"desktop experience unavailable: {exc}")
+        desktop = OrbDesktop.__new__(OrbDesktop)
+        desktop.brain = type("B", (), {"db_path": Path("Z:/does/not/exist/db.enc")})()
+        self.assertFalse(desktop.needs_owner_setup())
 
 
 if __name__ == "__main__":

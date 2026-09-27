@@ -10,7 +10,8 @@ import time
 from pathlib import Path
 
 from PySide6.QtCore import (Qt, QPoint, QRect, QRectF, QSize, QTimer, Signal, Property,
-                            QEasingCurve, QPropertyAnimation, QObject, QRunnable, QThreadPool)
+                            QEasingCurve, QPropertyAnimation, QObject, QRunnable, QThreadPool,
+                            QLockFile, QStandardPaths)
 from PySide6.QtGui import (QAction, QColor, QFont, QIcon, QImage, QImageReader, QKeySequence, QLinearGradient,
                            QPainter, QPainterPath, QPen, QPixmap, QPolygonF, QRadialGradient,
                            QShortcut, QRegion)
@@ -26,6 +27,9 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 DOCUMENTS = ("LYA_FOUNDATION_DECISIONS.md", "LYA_REBUILD_PLAN.md", "LYA_VISION.md", "README.md")
 WINDOW_FLAGS = Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
+MIC_COMMANDS = ("can you hear me", "can you hear me now", "are you hearing me", "mic test",
+                "microphone test", "mic check", "microphone check", "test microphone", "test mic")
+MIC_TEST_SECONDS = 5
 
 
 def box(rect):
@@ -339,12 +343,13 @@ class GlassPanel(QWidget):
         self.setStyleSheet("""
             QWidget { color: #f1f5fa; font-family: 'Segoe UI'; font-size: 13px; }
             QLabel { background: transparent; }
-            QPushButton { background: rgba(190,220,245,15); border: 1px solid rgba(210,232,250,35);
-                border-radius: 10px; padding: 9px 13px; color: #dce9f3; }
-            QPushButton:hover { background: rgba(140,210,240,35); border-color: #9bcddf; }
+            QPushButton { background: rgba(150,205,240,22); border: 1px solid rgba(190,226,250,58);
+                border-radius: 12px; padding: 10px 14px; color: #e6f4fb; }
+            QPushButton:hover { background: rgba(120,215,250,54); border-color: #9de4ee; }
+            QPushButton:pressed { background: rgba(90,190,235,78); }
             QPushButton:focus, QLineEdit:focus, QListWidget:focus { border: 2px solid #9de4ee; }
-            QLineEdit { background: rgba(5,12,22,150); border: 1px solid rgba(200,225,245,55);
-                border-radius: 12px; padding: 12px; selection-background-color: #296a83; }
+            QLineEdit { background: rgba(6,14,26,190); border: 1px solid rgba(150,215,245,90);
+                border-radius: 14px; padding: 13px; selection-background-color: #1d6d8c; }
             QTextBrowser { background: transparent; border: none; color: #edf4f8;
                 font-size: 15px; selection-background-color: #296a83; }
             QListWidget { background: transparent; border: none; outline: 0; }
@@ -477,10 +482,29 @@ class GlassPanel(QWidget):
         glass.setColorAt(1, QColor(10, 19, 31, 255 if self.opaque else 232))
         p.setBrush(glass)
         p.setPen(QPen(QColor(212, 231, 245, 105), 1))
-        p.drawRoundedRect(body, 22, 22)
+        accent = QColor(self.color)
+        accent.setAlpha(40)
+        p.setPen(Qt.PenStyle.NoPen)
+        for spread in (18, 13, 8):
+            p.setBrush(accent)
+            p.drawRoundedRect(body.adjusted(-spread, -spread, spread, spread), 32, 32)
+        glass = QLinearGradient(body.topLeft(), body.bottomRight())
+        glass.setColorAt(0.0, QColor(48, 72, 98, 255 if self.opaque else 226))
+        glass.setColorAt(0.40, QColor(22, 36, 52, 255 if self.opaque else 230))
+        glass.setColorAt(1.0, QColor(8, 15, 26, 255 if self.opaque else 240))
+        p.setBrush(glass)
+        p.setPen(QPen(QColor(200, 228, 248, 120), 1))
+        p.drawRoundedRect(body, 24, 24)
         p.setPen(QPen(QColor(255, 255, 255, 33), 1))
         p.drawRoundedRect(body.adjusted(2, 2, -2, -2), 20, 20)
         c = QColor(self.color)
+        sheen = QLinearGradient(body.topLeft(), body.bottomLeft())
+        sheen.setColorAt(0.0, QColor(255, 255, 255, 32))
+        sheen.setColorAt(0.35, QColor(255, 255, 255, 7))
+        sheen.setColorAt(1.0, QColor(255, 255, 255, 0))
+        p.setPen(Qt.PenStyle.NoPen)
+        p.setBrush(sheen)
+        p.drawRoundedRect(body.adjusted(1, 1, -1, -1), 23, 23)
         c.setAlpha(160)
         p.setPen(QPen(c, 2))
         p.drawLine(35, 11, min(160, self.width() - 35), 11)
@@ -578,9 +602,10 @@ class Desktop(QObject):
         self.signals.finished.connect(self.on_document)
         self.voice_signals = VoiceSignals(self)
         self.voice_signals.wake_detected.connect(self.on_voice)
-        self.voice_signals.status.connect(self.panel.footnote.setText)
+        self.voice_signals.status.connect(self.on_voice_status)
         self.voice_thread = None
         self.voice_stop_event = None
+        self._mic_test_timer = None
         self.orb.activated.connect(self.toggle_panel)
         self.orb.relocated.connect(self.position_panel)
         self.orb.menu_requested.connect(self.open_menu)
@@ -639,6 +664,7 @@ class Desktop(QObject):
         self.voice_action.setChecked(self.voice_thread is not None and self.voice_thread.is_alive())
         self.voice_action.toggled.connect(lambda checked: self.start_voice() if checked else self.stop_voice())
         menu.addAction(self.voice_action)
+        menu.addAction("Microphone self-test", self.microphone_self_test)
         self.motion_action = QAction("Reduce motion", menu, checkable=True)
         self.motion_action.setChecked(self.orb.reduced_motion)
         self.motion_action.toggled.connect(self.orb.set_reduced_motion)
@@ -728,6 +754,9 @@ class Desktop(QObject):
     def on_voice(self, text, quiet=False):
         """Handle wake word and speech utterances forwarded from the audio thread."""
         low = " ".join(text.casefold().split())
+        if low == "wake up lya":
+            self.wake()
+            return
         if low in ("stop", "cancel", "close", "close panel"):
             self.close_panel()
             return
@@ -739,8 +768,8 @@ class Desktop(QObject):
         self.open_panel()
         self.set_state(task="listening")
         self.command(text)
-    def start_voice(self):
-        """Start offline voice wake listener in background daemon thread."""
+    def start_voice(self, allow_cloud=False):
+        """Start the voice listener. `allow_cloud` permits remote transcription."""
         if self.voice_thread and self.voice_thread.is_alive():
             return
         import threading
@@ -751,17 +780,31 @@ class Desktop(QObject):
                 from audio import voice
                 voice.wake_loop(
                     on_wake=lambda text, quiet=False: self.voice_signals.wake_detected.emit(text, quiet),
+                    clap_enabled=True,
                     stop_event=self.voice_stop_event,
-                    offline_required=True,
-                    on_ready=lambda: self.voice_signals.status.emit("LOCAL VOICE LISTENER RUNNING · CAMERA OFF")
+                    offline_required=not allow_cloud,
+                    on_error=lambda kind: self.voice_signals.status.emit(
+                        'VOICE INPUT ERROR (' + kind + ') · RETRYING'),
+                    on_ready=lambda: self.voice_signals.status.emit(
+                        "SAY LYA / LAYA / LEYA OR CLAP TWICE · COMMANDS REMOTE (GROQ)"
+                        if allow_cloud else
+                        "SAY LYA / LAYA / LEYA OR CLAP TWICE · AUDIO STAYS ON DEVICE")
                 )
             except Exception as e:
                 print(f"[voice] wake listener ended: {e}")
-                self.voice_signals.status.emit("VOICE UNAVAILABLE · CHECK LOCAL MODEL / DEVICE")
+                self.voice_signals.status.emit("VOICE UNAVAILABLE · CHECK MICROPHONE / LOCAL MODEL · RESTART VOICE WAKE")
             else:
                 self.voice_signals.status.emit("CAMERA & MICROPHONE OFF")
         self.voice_thread = threading.Thread(target=_runner, daemon=True, name="LYA-VoiceWake")
         self.voice_thread.start()
+
+    def on_voice_status(self, text):
+        self.panel.footnote.setText(text)
+        self.orb.setToolTip(text)
+        self.tray.setToolTip(text)
+        if text.startswith('VOICE UNAVAILABLE'):
+            self.panel.show_answer('Voice listener stopped', text)
+            self.open_panel()
 
     def stop_voice(self):
         """Signal voice wake listener to stop."""
@@ -769,6 +812,96 @@ class Desktop(QObject):
             self.voice_stop_event.set()
             if self.voice_thread and self.voice_thread.is_alive():
                 self.panel.footnote.setText("VOICE LISTENER STOPPING · CAMERA OFF")
+
+    def _voice_telemetry(self):
+        """Return the audio.voice module holding the local listener, or None."""
+        try:
+            from audio import voice
+            return voice
+        except Exception as error:
+            self.panel.footnote.setText("VOICE TELEMETRY UNAVAILABLE · " + type(error).__name__)
+            return None
+
+    def microphone_self_test(self):
+        """Count what reaches the microphone; never opens a second microphone reader."""
+        self.generation += 1
+        self.set_state(task="listening")
+        voice = self._voice_telemetry()
+        if voice is None:
+            self.panel.show_answer("Microphone self-test unavailable.",
+                                  "The local voice module could not be loaded, so no microphone state is known.")
+            self.open_panel()
+            return
+        health = voice.listener_health()
+        if not health.get('listening'):
+            self.panel.show_answer(
+                "The voice listener is not running.",
+                "This test measures the listener that is already open; it never starts a second microphone reader.\n\n"
+                "The voice listener is not running. Turn Voice wake on from the crystal menu "
+                "(or restart LYA) and run the test again.\n"
+                "Listener state: " + str(health.get('state')) +
+                " · device: " + str(health.get('device') or 'not opened yet'))
+            self.open_panel()
+            return
+        voice.mic_test_start(MIC_TEST_SECONDS)
+        self.panel.show_answer(
+            "Listening for " + str(MIC_TEST_SECONDS) + " seconds…",
+            "Speak normally now, then read the result here.\n\n"
+            "LYA counts loudness only. Nothing is recorded, transcribed, stored or sent.\n"
+            "Microphone: " + str(health.get('device') or 'default input'))
+        self.open_panel()
+        if self._mic_test_timer is None:
+            self._mic_test_timer = QTimer(self)
+            self._mic_test_timer.setSingleShot(True)
+            self._mic_test_timer.timeout.connect(self.finish_microphone_self_test)
+        self._mic_test_timer.start(int(MIC_TEST_SECONDS * 1000) + 400)
+
+    def finish_microphone_self_test(self):
+        """Show what the counted microphone window contained."""
+        voice = self._voice_telemetry()
+        report = voice.mic_test_report() if voice is not None else None
+        if not report:
+            return
+        verdict = report.get('verdict')
+        titles = {'hearing': "The microphone is hearing you.",
+                  'too-quiet': "Sound arrives, but very quietly.",
+                  'silent': "The microphone is returning silence.",
+                  'no-audio': "No audio blocks arrived.",
+                  'no-listener': "The listener was not running."}
+        self.set_state(task="success" if verdict == 'hearing' else
+                       "error" if verdict in ('silent', 'no-audio', 'no-listener') else "approval")
+        lines = [
+            "Microphone: " + str(report.get('device') or 'default input'),
+            "Window: " + str(report.get('elapsed')) + "s of " + str(report.get('seconds')) + "s · " +
+            str(report.get('blocks')) + " blocks · " +
+            f"{(report.get('samples') or 0) / 16000:.1f}s of audio counted",
+            "Peak: " + str(report.get('peak')) + " · mean RMS: " + str(report.get('rms_mean')) +
+            " · loudest RMS: " + str(report.get('rms_max')),
+            "Blocks crossing the " + str(report.get('threshold')) + " recorder gate: " +
+            str(report.get('loud_blocks')) + " · clap pairs: " + str(report.get('claps')),
+        ]
+        if report.get('suppressed'):
+            lines.append(str(report['suppressed']) +
+                         " blocks arrived while LYA was speaking; those can never wake LYA.")
+        lines.extend(["", str(report.get('detail') or '')])
+        self.panel.show_answer(titles.get(verdict, "Microphone self-test"), "\n".join(lines))
+
+    def _voice_health(self):
+        """One truthful listener line for the status command."""
+        voice = self._voice_telemetry()
+        if voice is None:
+            return "• Voice listener: telemetry unavailable (audio.voice did not load)"
+        health = voice.listener_health()
+        if not health.get('listening'):
+            return ("• Voice listener: " + str(health.get('state')) +
+                    " · no microphone open · say “can you hear me” after enabling Voice wake")
+        gate = "crossing" if health.get('loud_blocks') else "below"
+        return ("• Voice listener: " + str(health.get('state')) + " " + str(health.get('state_seconds')) +
+                "s · " + str(health.get('device') or 'default input') +
+                " · peak " + str(health.get('peak')) +
+                " · loud blocks " + str(health.get('loud_blocks')) + " (" + gate + " the recorder gate)" +
+                " · clap pairs " + str(health.get('claps')) +
+                " · idle " + str(health.get('idle_seconds')) + "s")
 
     def quit(self):
         self.brain_cancel.set()
@@ -858,6 +991,8 @@ class Desktop(QObject):
             self.panel.show_answer("A color for each moment.", "Person palettes\nGuest · ice     Admin · amber\nFamily · violet     Friend · jade\n\nTask colors take priority\nListening · cyan   Thinking · violet\nFiles · blue   Success · green\nApproval · amber   Error · rose\n\nTry: person admin   or   task thinking\nUse task idle to return to the person color.")
         elif low in ("time", "what time is it", "date", "what date is it", "day"):
             self.panel.show_answer(time.strftime("%I:%M %p"), time.strftime("%A, %d %B %Y"))
+        elif low in MIC_COMMANDS:
+            self.microphone_self_test()
         elif low in ("status", "system status", "check"):
             ready_deps = []
             missing_deps = []
@@ -875,7 +1010,8 @@ class Desktop(QObject):
                 f"• Python: {sys.version.split()[0]} on {sys.platform}\n"
                 f"• Foundations: {', '.join(ready_deps)}\n"
                 f"• Vision/Voice (Next): {', '.join(missing_deps)}\n"
-                f"• Policy Gate: Deny-by-default, Local Scoped"
+                f"• Policy Gate: Deny-by-default, Local Scoped\n"
+                + self._voice_health()
             )
             self.panel.show_answer("System Readiness", status_text)
         elif low in ("help", "commands", "what can you do"):
@@ -883,6 +1019,7 @@ class Desktop(QObject):
                 "Available commands:\n" + self.brain.capability_help() +
                 "\n\nDesktop controls:\n"
                 "• status — check local dependency readiness\n"
+                "• can you hear me — count what reaches the microphone (diagnostic, nothing recorded)\n"
                 "• show files — preview the listed project documents\n"
                 "• open chat / close chat / full screen\n"
                 "• open camera / close camera (local preview)\n"
@@ -898,19 +1035,36 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reduced-motion", action="store_true")
     parser.add_argument("--show-panel", action="store_true")
-    parser.add_argument("--voice", action="store_true", help="Start background offline voice wake listener")
+    parser.add_argument("--voice", action="store_true", help="Deprecated: the voice listener is on by default")
+    parser.add_argument("--no-voice", action="store_true", help="Start without the microphone listener")
+    parser.add_argument("--skip-setup", action="store_true", help="Do not open first-run owner setup")
     parser.add_argument("--original-art", action="store_true", help="Use the earlier crystal artwork")
     parser.add_argument("--model-art", action="store_true", help="Try the experimental baked 3D artwork")
     args = parser.parse_args()
     app = QApplication(sys.argv[:1])
     app.setApplicationName("LYA Desktop")
+    instance_lock = QLockFile(str(Path(QStandardPaths.writableLocation(
+        QStandardPaths.StandardLocation.TempLocation)) / 'lya-desktop.lock'))
+    instance_lock.setStaleLockTime(0)
+    if not instance_lock.tryLock(0):
+        return 0  # Startup plus a manual launch must not create two microphone readers.
     app.setQuitOnLastWindowClosed(False)
     from experience import OrbDesktop
     desktop = OrbDesktop(app, args.reduced_motion)
     desktop.orb.set_artwork(not args.original_art)
-    desktop.start_intro()
-    if args.voice:
-        desktop.start_voice()
+    if not args.no_voice:
+        allow_cloud = False
+        try:
+            from brain.mind import get_groq_key
+            allow_cloud = bool(get_groq_key())
+        except Exception:
+            allow_cloud = False
+        desktop.cloud_voice = allow_cloud
+        desktop.start_voice(allow_cloud=allow_cloud)
+    if not args.skip_setup and desktop.needs_owner_setup():
+        desktop.begin_owner_setup()   # First run: set up the owner before opening LYA.
+    else:
+        desktop.start_intro()
     return app.exec()
 
 

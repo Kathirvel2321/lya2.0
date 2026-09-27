@@ -30,6 +30,11 @@ if __name__ == '__main__':
     import logging
     logging.disable(logging.CRITICAL)
     voice = _load_voice(keep_warm=True)
+    if '--warm-piper' in sys.argv:
+        try:
+            voice._engine('offline_piper')._voice('en')
+        except Exception:
+            pass  # A missing model is reported when speech is requested.
     while True:
         line = sys.stdin.buffer.readline(16385)
         if not line:
@@ -72,6 +77,7 @@ else:
             self.cancelled = False
             self.busy = False
             self.request = 0
+            self.warming = False
             self.buffer = b''
             self.process = QProcess(self)
             self.process.started.connect(self._started)
@@ -88,6 +94,7 @@ else:
         def say(self, text, language='auto', style='everyday', engine='offline_piper'):
             self.request += 1
             self.idle.stop()
+            self.warming = False
             self.pending = dict(id=self.request, text=str(text)[:1000], language=language, style=style, engine=engine)
             if self.process.state() == QProcess.ProcessState.NotRunning:
                 self._launch()
@@ -97,16 +104,37 @@ else:
                 self.cancelled = True
                 self.process.kill()
 
+        def prewarm(self):
+            """Load the local voice worker now, so the first answer speaks at once."""
+            if self.pending is not None or self.busy or self.warming:
+                return
+            if self.process.state() != QProcess.ProcessState.NotRunning:
+                return
+            self.cancelled = False
+            self.warming = True
+            self.timeout.start(120000)
+            self.process.start(sys.executable, [str(Path(__file__).resolve()), '--warm-piper'])
+
         def _launch(self):
             if self.pending is None:
                 return
             self.cancelled = False
             self.busy = True
             self.buffer = b''
-            self.process.start(sys.executable, [str(Path(__file__).resolve())])
+            arguments = [str(Path(__file__).resolve())]
+            if self.pending['engine'] == 'offline_piper':
+                arguments.append('--warm-piper')
+            self.process.start(sys.executable, arguments)
             self.timeout.start(120000)
 
         def _started(self):
+            if self.warming and self.pending is None:
+                self.warming = False
+                self.busy = False
+                self.timeout.stop()
+                self.idle.start(45000)     # Keep the loaded voice warm and idle.
+                return
+            self.warming = False
             if self.pending is None or self.cancelled:
                 self.process.kill()
                 return
@@ -142,8 +170,12 @@ else:
                     else:
                         self.idle.start(45000)
 
-        def stop(self):
+        def stop(self, keep_warm=False):
+            # Navigation must not unload an idle model before the next reply.
+            if keep_warm and not self.busy and self.pending is None and not self.cancelled:
+                return
             was_active = self.busy or self.pending is not None
+            self.warming = False
             self.request += 1
             self.pending = None
             self.cancelled = True
@@ -159,6 +191,7 @@ else:
 
         def _finished(self, code, _status):
             was_busy = self.busy
+            self.warming = False
             self.busy = False
             self.timeout.stop()
             self.speaking.emit(False)

@@ -25,6 +25,16 @@ MESSAGES = {
 }
 
 
+def windows_check():
+    from security.windows_consent import check_availability
+    return check_availability()
+
+
+def windows_verify(hwnd, nonce, pump=None, cancelled=None):
+    from security.windows_consent import verify_for_window
+    return verify_for_window(hwnd, nonce, pump=pump, cancelled=cancelled)
+
+
 class HologramDialog(QDialog):
     """Paint one intact core and a one-shot connected reveal; never animate at idle."""
     STAGES = ("IDENTITY", "DEVICE", "SIGNALS", "REVIEW")
@@ -440,7 +450,7 @@ class RegistrationDialog(HologramDialog):
         QDesktopServices.openUrl(QUrl("ms-settings:signinoptions"))
 
     def update_button(self):
-        idle = not self.active and self.process.state() == QProcess.ProcessState.NotRunning
+        idle = not self.active
         self.verify.setEnabled(idle and bool(self.name.text().strip()) and self.consent.isChecked())
         self.check_device.setEnabled(idle)
         self.settings.setEnabled(idle)
@@ -453,10 +463,7 @@ class RegistrationDialog(HologramDialog):
             self.start_process("verify")
 
     def start_process(self, operation):
-        if self.active or self.process.state() != QProcess.ProcessState.NotRunning:
-            return
-        if not HELPER.is_file():
-            self.status.setText("Verification helper missing · Run security\\build-hello.cmd")
+        if self.active:
             return
         self.narration_timer.stop()
         self.speech.stop()
@@ -464,6 +471,7 @@ class RegistrationDialog(HologramDialog):
         self.active, self.operation = True, operation
         self.verified_name, self.verified_until = "", 0
         self.proof_nonce = secrets.token_urlsafe(24) if operation == "verify" else ""
+        nonce = self.proof_nonce
         self.name.setEnabled(False)
         self.consent.setEnabled(False)
         self.update_button()
@@ -471,8 +479,17 @@ class RegistrationDialog(HologramDialog):
         self.status.setText("Checking Windows · Sensors remain off…" if operation == "check" else
                             "Complete the secure Windows prompt · PIN stays with Windows…")
         self.timeout.start(15000 if operation == "check" else 100000)
-        self.process.start(str(HELPER), ["check"] if operation == "check" else
-                           ["verify", str(int(self.winId())), self.proof_nonce])
+        QApplication.processEvents()
+        if operation == "check":
+            result = windows_check()
+            success = result == "Available"
+        else:
+            result = windows_verify(
+                int(self.winId()), nonce,
+                pump=QApplication.processEvents,
+                cancelled=lambda: not self.active or self.proof_nonce != nonce)
+            success = result == "Verified:" + nonce
+        self._on_windows_result(success, result, nonce)
 
     def reset_controls(self):
         self.active = False
@@ -482,46 +499,58 @@ class RegistrationDialog(HologramDialog):
         self.update_button()
         self.update_step()
 
+    def _on_windows_result(self, success, result, nonce=""):
+        if not self.active:
+            self.update_button()
+            return
+        self.proof_nonce = ""
+        self.reset_controls()
+        if self.operation == "check" and success and result == "Available":
+            self.status.setText("Windows verification available · Availability alone does not verify you")
+        elif (self.operation == "verify" and success and nonce
+              and result == "Verified:" + nonce):
+            self._after_verified()
+        else:
+            self.status.setText(MESSAGES.get(result, "Windows verification unavailable. You remain a guest."))
+        self.update_step()
+
+    def _after_verified(self):
+        self.verified_name, self.verified_until = self.name.text().strip(), time.monotonic()+90
+        self.proof_timeout.start(90000)
+        try:
+            from storage.store import find_unique_admin, has_active_admin
+            existing = find_unique_admin(self.verified_name, self.db_path)
+        except RuntimeError:
+            self.verified_name, self.verified_until = "", 0
+            self.status.setText("Multiple admin profiles need owner review. Sign-in and new registration are locked.")
+            return
+        except Exception:
+            self.verified_name, self.verified_until = "", 0
+            self.status.setText("The encrypted identity store is unavailable. No admin access was granted.")
+            return
+        if existing:
+            if not existing["device_only"]:
+                self.verified_name, self.verified_until = "", 0
+                self.status.setText("This admin profile needs its original verification method. Windows-only sign-in was denied.")
+                return
+            self._finish_authentication(existing["person_id"], existing["display_name"])
+            return
+        if has_active_admin(self.db_path):
+            self.verified_name, self.verified_until = "", 0
+            self.status.setText("An admin already exists. Enter that profile's display name to sign in.")
+            return
+        self.status.setText("Windows verified. Review the local profile before creating it.")
+
     def completed(self, code, exit_status):
+        """Kept for isolated tests that inject a fake helper process."""
         if not self.active:
             self.update_button()
             return
         result = bytes(self.process.readAllStandardOutput()).decode("utf-8", errors="replace").strip()
         nonce, self.proof_nonce = self.proof_nonce, ""
-        self.reset_controls()
         success = code == 0 and exit_status == QProcess.ExitStatus.NormalExit
-        if self.operation == "check" and success and result == "Available":
-            self.status.setText("Windows verification available · Availability alone does not verify you")
-        elif (self.operation == "verify" and success and nonce
-              and result == "Verified:" + nonce):
-            self.verified_name, self.verified_until = self.name.text().strip(), time.monotonic()+90
-            self.proof_timeout.start(90000)
-            try:
-                from storage.store import get_primary_admin
-                existing = get_primary_admin(self.db_path)
-            except RuntimeError:
-                self.verified_name, self.verified_until = "", 0
-                self.status.setText("Multiple admin profiles need owner review. Sign-in and new registration are locked.")
-                return
-            except Exception:
-                self.verified_name, self.verified_until = "", 0
-                self.status.setText("The encrypted identity store is unavailable. No admin access was granted.")
-                return
-            if existing:
-                if not existing["device_only"]:
-                    self.verified_name, self.verified_until = "", 0
-                    self.status.setText("This admin profile needs its original verification method. Windows-only sign-in was denied.")
-                    return
-                if existing["display_name"].casefold() != self.verified_name.casefold():
-                    self.verified_name, self.verified_until = "", 0
-                    self.status.setText("An admin already exists. Enter that profile's display name to sign in.")
-                    return
-                self._finish_authentication(existing["person_id"], existing["display_name"])
-                return
-            self.status.setText("Windows verified. Review the local profile before creating it.")
-        else:
-            self.status.setText(MESSAGES.get(result, "Windows verification unavailable. You remain a guest."))
-        self.update_step()
+        self.active = True  # reset_controls is called from _on_windows_result
+        self._on_windows_result(success, result, nonce)
 
     def _finish_authentication(self, person_id, name):
         from security.policy import Session

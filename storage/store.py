@@ -310,6 +310,12 @@ def has_active_admin(db_path: Path | None = None) -> bool:
         ).fetchone() is not None
 
 
+def _device_only(db, person_id: str) -> bool:
+    return bool(db.execute("""SELECT 1 FROM audit_events
+        WHERE person_id=? AND action_type='primary_admin_registered'
+          AND outcome='windows_device_only' LIMIT 1""", (person_id,)).fetchone())
+
+
 def get_primary_admin(db_path: Path | None = None) -> dict | None:
     """Return the one active admin from the encrypted store, if present."""
     with store_connection(db_path, read_only=True) as db:
@@ -317,13 +323,32 @@ def get_primary_admin(db_path: Path | None = None) -> dict | None:
         if len(rows) > 1:
             raise RuntimeError("Multiple active admin profiles require owner review.")
         row = rows[0] if rows else None
-        device_only = bool(row and db.execute("""SELECT 1 FROM audit_events
-            WHERE person_id=? AND action_type='primary_admin_registered'
-              AND outcome='windows_device_only' LIMIT 1""", (row[0],)).fetchone())
+        device_only = bool(row and _device_only(db, row[0]))
     if row is None:
         return None
     return {"person_id": row[0], "display_name": row[1], "role": row[2],
             "created_at": row[3], "active": bool(row[4]), "device_only": device_only}
+
+
+def find_unique_admin(display_name: str, db_path: Path | None = None) -> dict | None:
+    """Return the unique active admin with this display name, if present."""
+    wanted = display_name.strip().casefold()
+    if not wanted:
+        return None
+    with store_connection(db_path, read_only=True) as db:
+        rows = db.execute(
+            "SELECT person_id, display_name, role, created_at, active FROM people "
+            "WHERE role='admin' AND active=1"
+        ).fetchall()
+        matches = [row for row in rows if row[1].casefold() == wanted]
+        if len(matches) > 1:
+            raise RuntimeError("Multiple active admin profiles require owner review.")
+        if not matches:
+            return None
+        row = matches[0]
+        return {"person_id": row[0], "display_name": row[1], "role": row[2],
+                "created_at": row[3], "active": bool(row[4]),
+                "device_only": _device_only(db, row[0])}
 
 
 def register_device_admin(display_name: str, db_path: Path | None = None) -> str:

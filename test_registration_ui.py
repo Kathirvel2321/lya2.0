@@ -1,7 +1,9 @@
 """Fake-process tests: no Windows prompt, capture or real profile writes."""
 import os
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import Mock, patch
 from PySide6.QtCore import QProcess, QAbstractAnimation
 from PySide6.QtGui import QPixmap
@@ -14,7 +16,15 @@ app = QApplication.instance() or QApplication([])
 
 class RegistrationScreenTests(unittest.TestCase):
     def setUp(self):
-        self.dialog = RegistrationDialog(speech_enabled=False)
+        from cryptography.fernet import Fernet
+        from security import vault
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        key = patch.object(vault, "_F", Fernet(Fernet.generate_key()))
+        key.start()
+        self.addCleanup(key.stop)
+        self.dialog = RegistrationDialog(speech_enabled=False,
+                                         db_path=Path(self.tmp.name) / "identity.enc")
         self.dialog.process = Mock()
         self.dialog.process.state.return_value = QProcess.ProcessState.NotRunning
 
@@ -34,18 +44,17 @@ class RegistrationScreenTests(unittest.TestCase):
 
     def test_missing_helper_is_clear(self):
         self.ready()
-        with patch("desktop.registration.HELPER") as helper:
-            helper.is_file.return_value = False
+        with patch("desktop.registration.windows_verify", return_value="DisabledByPolicy"):
             self.dialog.start_verification()
-        self.dialog.process.start.assert_not_called()
-        self.assertIn("missing", self.dialog.status.text())
+        self.assertIn("blocked by policy", self.dialog.status.text())
+        self.assertEqual(self.dialog.verified_until, 0)
 
     def test_verified_does_not_claim_enrollment(self):
         self.ready()
         self.dialog.active = True
         self.dialog.proof_nonce = "A" * 32
         self.dialog.process.readAllStandardOutput.return_value = b"Verified:" + b"A" * 32
-        with patch("storage.store.get_primary_admin", return_value=None):
+        with patch("storage.store.find_unique_admin", return_value=None):
             self.dialog.completed(0, QProcess.ExitStatus.NormalExit)
         self.assertIn("Windows verified", self.dialog.status.text())
         self.assertIn("profile: not created", self.dialog.summary.text())
@@ -56,7 +65,7 @@ class RegistrationScreenTests(unittest.TestCase):
         self.dialog.active = True
         self.dialog.proof_nonce = 'A' * 32
         self.dialog.process.readAllStandardOutput.return_value = b'Verified:' + b'A' * 32
-        with patch('storage.store.get_primary_admin', return_value={
+        with patch('storage.store.find_unique_admin', return_value={
                 'person_id': 'fake-admin', 'display_name': 'Test Owner', 'device_only': False}):
             self.dialog.completed(0, QProcess.ExitStatus.NormalExit)
         self.assertIn('denied', self.dialog.status.text())
@@ -67,7 +76,7 @@ class RegistrationScreenTests(unittest.TestCase):
         self.dialog.active = True
         self.dialog.proof_nonce = 'A' * 32
         self.dialog.process.readAllStandardOutput.return_value = b'Verified:' + b'A' * 32
-        with patch('storage.store.get_primary_admin', side_effect=RuntimeError('Multiple active admin profiles')):
+        with patch('storage.store.find_unique_admin', side_effect=RuntimeError('Multiple active admin profiles')):
             self.dialog.completed(0, QProcess.ExitStatus.NormalExit)
         self.assertIn('owner review', self.dialog.status.text())
         self.assertEqual(self.dialog.verified_until, 0)
@@ -155,11 +164,15 @@ class RegistrationScreenTests(unittest.TestCase):
 
     def test_verification_sweep_is_one_shot(self):
         self.ready()
-        with patch('desktop.registration.HELPER') as helper:
-            helper.is_file.return_value = True
+        seen = []
+        def verify(_hwnd, nonce, **_kwargs):
+            seen.append(nonce)
+            return "Canceled"
+        with patch('desktop.registration.windows_verify', side_effect=verify):
             self.dialog.start_verification()
-        self.assertEqual(len(self.dialog.proof_nonce), 32)
-        self.assertEqual(self.dialog.process.start.call_args.args[1][-1], self.dialog.proof_nonce)
+        self.assertEqual(len(seen), 1)
+        self.assertEqual(len(seen[0]), 32)
+        self.assertEqual(self.dialog.proof_nonce, "")
         self.assertEqual(self.dialog.scan.state(), QAbstractAnimation.State.Running)
         QTest.qWait(780)
         self.assertEqual(self.dialog.scan.state(), QAbstractAnimation.State.Stopped)
@@ -185,12 +198,8 @@ class RegistrationScreenTests(unittest.TestCase):
         self.dialog.process.start.assert_not_called()
 
     def test_availability_check_is_not_authentication(self):
-        with patch("desktop.registration.HELPER") as helper:
-            helper.is_file.return_value = True
+        with patch("desktop.registration.windows_check", return_value="Available"):
             self.dialog.check_availability()
-        self.assertEqual(self.dialog.process.start.call_args.args[1], ["check"])
-        self.dialog.process.readAllStandardOutput.return_value = b"Available"
-        self.dialog.completed(0, QProcess.ExitStatus.NormalExit)
         self.assertEqual(self.dialog.verified_until, 0)
         self.assertIn("Availability alone does not verify", self.dialog.status.text())
 

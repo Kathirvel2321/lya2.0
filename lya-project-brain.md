@@ -1,5 +1,52 @@
 # LYA project brain
 
+Soft-voice investigation (2026-09-27): owner reports Windows microphone meter moves only a little even when speaking softly near camera; Realtek Microphone Array Properties has no Boost slider. This points to weak capture before LYA's recognizer. No production gain/noise filter was added because the amplified prior sample remained unintelligible to local ASR and software gain would lift room noise too. Windows voice/noise effects availability still being checked. See latest ledger entry.
+
+Microphone path follow-up (2026-09-27): owner heard LYA playback but no clear owner voice in the local copy. Windows microphone permission was allowed and the default Realtek array received sound. In a bounded test of LYA's actual input, the spoken-name window remained weak; the two-clap detector accepted one event in a separate cued window. This is a partial clap-stage check, not a full desktop wake/greeting success. No audio retained in this test; no production code or Windows setting changed. Evidence and next close-mic comparison: review/2026-09-27-wake-calibration/mic-path-check.md.
+
+Owner-requested recording check (2026-09-27): owner reports maximum Windows input volume and requested a local audibility recording. Ten-second original and louder listening copy retained only in an owner-local temporary lya-voice-check directory outside the repo. Signal was weak without clipping; local recognition did not recover the requested phrase from either copy. This is not a personal listening judgment or proof of no audible voice. No cloud audio processing, transcript retention, enrollment or production change. Next: owner listens to louder copy to distinguish intelligible faint speech from noise/wrong input. Safe evidence: `review/2026-09-27-wake-calibration/recording-check.md`.
+
+Current calibration gate (2026-09-27): owner confirmed speaking/clapping during timed local tests. Input remained weak in current and native formats; captured bursts could not reach the old clap threshold. Lowered default clap threshold and added quiet/noise regressions. A generated-speech false wake led to finalized-result name gating, trading some latency for rejection of provisional matches. 30 tests passed + one skip; 22 real-model fixture outcomes passed. Windows Sound settings opened without modification; awaiting input volume/meter report. Changes are on disk, existing desktop not restarted; live owner wake remains unaccepted. Evidence: `review/2026-09-27-wake-calibration/README.md`.
+
+Live wake result (2026-09-27): after owner said ready, normal-session diagnostic opened microphone. First attempt registered no sound above its diagnostic floor; a cued channel check and repeated wake test confirmed sound input. The repeated actual listener test still detected neither name nor two claps, so no greeting playback was attempted. Failure is narrowed to the input-to-wake stage, not resolved; exact acoustic/timing/detection cause remains unknown. No recording/transcript retained, no cloud call or settings/source change. Evidence: `review/2026-09-27-name-wake-startup/live-check.md`. Next: separately cued name and clap calibration, then an owner-heard greeting before advancing.
+
+Current voice status (2026-09-27, live failure isolation): owner still reports no hearing/response; the voice journey is NOT accepted. Added a bounded local diagnostic reporting microphone-open, sound-received, name/clap detection and greeting playback separately. `tools/check_voice_live.py` / `check-voice-live.cmd` are ready; no new production fix is claimed. Voice/diagnostic/transport checks: 29 passed, one intentional skip. Live test awaits owner readiness. Evidence and usage: `review/2026-09-27-name-wake-startup/live-check.md`.
+
+Current hands-free startup gate (2026-09-27): no desktop process was running when checked and no LYA Startup-folder/user-Run entry was found. Owner requested automatic listening plus LYA/Laya/Leya/Elya anywhere in speech. Implemented contextual phonetic name matching and Qt single-instance lock; installed/verified native per-user sign-in shortcut via `tools/set-startup.ps1`; started updated LYA and verified duplicate launch exits. Voice/transport 27 passed + 1 skip, desktop 44 passed; real-model generated speech 22 expected outcomes. Owner live recognition/clap acceptance, future sign-in and sleep/resume remain unverified. Evidence: `review/2026-09-27-name-wake-startup/README.md`.
+
+Current wake acceptance (2026-09-27): owner reports repeated spoken wake failed and requests two-clap wake. Replaced segmented standby capture with continuous local Vosk partial/final recognition; implemented short broadband double-clap detection in standby and command listening; enabled it in desktop; surfaced bounded microphone failures and truthful readiness. Voice/transport: 27 passed, 1 intentional skip; desktop: 44 passed; generated speech through real models: 14 expected outcomes, zero clap events on seven speech samples. Real microphone listener startup/stop succeeded in a bounded normal-session check. Human voice/clap recognition and spoken response remain owner-unconfirmed; exact cause of the reported running-app failure is not proven. Evidence: `review/2026-09-27-wake-and-claps/README.md`.
+
+Current owner direction (2026-09-27, hands-free correction): speech is primary; typing is a public-place fallback. First acceptance gate is wake -> spoken invitation -> spoken question -> spoken answer -> follow-up. Fixed navigation/command teardown of the warmed speech worker, cached a prompt asking for input, synchronized its microphone guard to WAV duration, shortened wake-only silence and connected spoken clock/help/status answers. Voice/transport: 21 passed, 1 designed skip; compact desktop: 27 passed. Local prompt synthesis measured 4313.1 ms cold versus 229.1 ms warm, NOT end-to-end latency. Live microphone/speaker acceptance remains pending. Evidence: `review/2026-09-27-hands-free-voice/README.md`. This supersedes the typed-first owner trial below.
+
+Current acceptance gate (2026-09-27): owner requested foundation-first work, one tested and owner-confirmed step before advancing. Step 1: desktop lifecycle. Fresh isolated checks: 14 foundation + 16 base UI + 5 compact lifecycle passed. Current visible launcher/typed-command/stop/quit/restart acceptance awaits owner confirmation. Preserve existing implementation. Prior end-to-end claims are not verified; current registration uses in-process Windows consent, so the unsigned legacy helper alone does not prove a current blocker. Evidence and next test: `review/2026-09-27-foundation-ladder/README.md`.
+
+Wake-flow handoff (2026-09-27): the local Vosk wake listener, cached greeting, warmed Piper reply, and audio-synced caption path are implemented. The wake greeting is now trackable despite the WAV ignore rule; a source-based Mermaid flow is validated. Isolated offline checks pass: voice/setup-speech 20 with one intentional skip, desktop UI/experience 41, activation 22, registration 22. Activation/registration tests were updated for current Windows verification and existing-admin sign-in after stale assertions failed. Live microphone wake, cloud command transcription, and enrollment remain unverified; conflicting protected admin records remain untouched. Evidence: `review/2026-09-26-voice-wake/README.md` and `wake-flow.mmd`.
+
+
+Latest voice-wake review (2026-09-26): an independent re-review of the 2026-09-26
+change set (local-wake-then-transcribe listener, Groq Whisper opt-in, Piper pre-warm,
+six-act activation walkthrough) re-ran all affected offline suites: 20 setup-speech/voice,
+22 activation, 41 desktop UI/experience, 22 registration-UI, 141 external-work voice-lab
+and 14 foundation checks — all green with the two designed online skips. Findings: the
+legacy `audio/voice.py` speak() blocks its caller and spawns one voice subprocess per
+utterance (P2/P3, desktop path unaffected); the 2026-09-26 review folder had no README
+(now written). The Windows-proof blocker is unchanged and the activation gate still
+fails closed. No sensor, enrollment or cloud call was made. Evidence:
+`review/2026-09-26-voice-wake/README.md`.
+
+Latest first-run/voice work (2026-09-25): `launch-lya.cmd` now opens owner setup by
+itself when the store has no administrator, then plays the normal introduction; no
+command has to be typed. Voice is on by default and the footer names the live mode
+(remote Groq transcription or on-device only); speech is pre-warmed at launch so
+the first answer does not wait for the voice model. The panel was redrawn as
+layered glass. `test_activation.py` 22, `check_ui` 16, `check_experience` 23,
+`test_registration_ui` 22 and the brain/approval suites all passed. This does not
+make registration complete here: the protected store already holds admin record(s)
+and an unresolved ambiguous state, so the gate correctly declines to auto-open
+setup, and the Windows proof is still required. Details:
+`review/2026-09-25-first-run-and-voice-first/README.md`.
+
+
 Admin gate follow-up (2026-09-25): the Windows verifier's read-only
 availability check now succeeds in the owner's current session. Enrollment is
 still blocked by a pre-existing conflicting admin state in the protected
@@ -3222,3 +3269,328 @@ path. Next: review a protected backup and explicit owner-approved resolution
 of the conflicting records, then perform owner-led Windows verification and
 registration. Earlier statements that no admin exists described only what
 those sessions created; they do not establish the current runtime-store state.
+
+## 2026-09-25 — First-run setup inside the normal launcher, voice-first, glass
+
+Owner asked not to add a separate workflow: make the existing `launch-lya.cmd`
+path behave like a new phone (setup first, then LYA opens), stop requiring typed
+commands, and give the panel a modern glass look with faster speech. No new
+workflow was added; everything changed the existing launcher.
+
+`desktop/experience.py` gained `needs_owner_setup()`, `begin_owner_setup()` and
+`on_setup_dismissed()` on `OrbDesktop`. Needs-setup is True only when the store is
+readable and holds no primary administrator; an unreadable or ambiguous store
+returns False so a damaged or conflicting store can never silently open owner
+setup. Setup hides the orb, opens the six-act activation dialog, and on success
+waits for the dialog to finish before playing the normal orb introduction instead
+of showing a second "admin verified" panel. Dismissing setup leaves a docked guest
+orb with `SETUP NOT FINISHED · SAY "REGISTER ADMIN" TO CONTINUE`, never a locked
+window. `desktop/app.py` `main()` calls `begin_owner_setup()` when required and
+`start_intro()` otherwise, with new `--skip-setup` and `--no-voice` flags.
+
+Voice is now the default rather than an opt-in: `main()` starts the listener, and
+`Desktop.start_voice(allow_cloud=False)` decides remote transcription from whether
+a transcriber key actually resolves. The footer names the live mode —
+`TRANSCRIPTION REMOTE (GROQ)` or `LOCAL VOICE LISTENER RUNNING · AUDIO STAYS ON
+DEVICE` — so the microphone mode is never hidden. This fixes the earlier cause:
+`wake_loop` ran with `offline_required=True` and no local Vosk model exists here,
+so the listener raised and stopped, which is why typing felt mandatory.
+
+Speech latency improved structurally: `desktop/setup_speech.py` gained `prewarm()`,
+called from `main()`, which loads the local voice worker at launch and keeps it
+warm for 45 idle seconds, so the first answer no longer pays the model-load cost.
+A `warming` flag separates pre-loading from a real request and is cleared by
+`stop()` and `_finished()`. `GlassPanel` in `desktop/app.py` was redrawn as
+layered glass: accent glow, three-stop translucent gradient, lit inner rim and a
+top-light sheen at radius 24, with a pressed button state and a deeper input well.
+
+Checks: `test_activation.py` 22 passed including two new first-run gate tests,
+`desktop/check_ui` 16, `desktop/check_experience` 23, `test_registration_ui` 22,
+and `test_router`/`test_oracle`/`test_provider_setup`/`test_brain_workflow`
+14/8/3/41 all passed. All offscreen with injected sensors and a temporary
+encrypted store. `activate-lya.cmd` was accidentally deleted and restored from
+git; it remains a documented direct way to open the walk-through.
+
+This does not make registration complete on the owner's machine. Their store
+already holds admin record(s), one prior session recorded an ambiguous active
+state, and the recorded decision is to keep sign-in and enrollment locked until
+the owner resolves it — so the new gate correctly declines to auto-open setup
+there. Registration still requires a working Windows proof for the exact verified
+name. Evidence: `review/2026-09-25-first-run-and-voice-first/README.md`. Limits:
+no real camera, microphone, Windows prompt, admin profile or enrollment was
+performed, and no real spoken-answer latency was measured; the brain round trip
+itself is unchanged. Next: resolve the conflicting admin records with owner
+approval, then confirm `launch-lya.cmd` opens setup by itself on a clean store.
+
+
+## 2026-09-26 � Voice wake and speech pre-warm: independent re-review
+
+- Reviewed every file touched on 2026-09-26: `audio/voice.py`, `desktop/setup_speech.py`,
+  `desktop/activation.py`, `desktop/app.py`, `desktop/experience.py`, new wake sound asset.
+  No source file was modified; only this ledger and the review README were written.
+- Re-ran the affected offline suites on `.venv-ui`: `test_setup_speech`+`test_voice` 20/20
+  (1 designed online skip), `test_activation` 22/22, `desktop/check_experience`+`check_ui`
+  41/41, `test_registration_ui` 22/22, external-work voice lab 141/141 (1 skip),
+  `test_foundations` 14/14. Total 260 checks green.
+- Findings recorded: F1 (P2) legacy `speak()` blocks its caller via
+  `process.communicate(timeout=120)`; F2 (P3) legacy path spawns a fresh voice subprocess
+  per utterance instead of reusing the warm worker; F3 (P3) the 2026-09-26 review folder
+  previously had no README; F4 (P3) minor tone/style mapping drift between `set_rate()` and
+  `speak()`; F5 the Windows Application Control blocker on `HelloVerifier.exe` remains open
+  and the activation gate still fails closed (unchanged by design).
+- Wake design verified in code and tests: pre-wake matching is local Vosk grammar only;
+  audio reaches Groq Whisper solely after a wake and an explicit `allow_cloud=True`, with
+  the live mode shown on screen. Camera/mic samples in activation are measured (RMS, clip,
+  seconds), never scored or stored; admin commit re-checks verification freshness, name
+  match and consent.
+- Limits: no microphone, camera, real Windows prompt, enrollment, or live cloud call was
+  exercised; the pre-warm latency benefit is structural, not freshly timed.
+- Evidence: `review/2026-09-26-voice-wake/README.md` (written this session).
+
+
+## 2026-09-26 — Voice-wake review follow-up: F1/F2/F4 fixed, persona drift restored
+
+Resumed from the 2026-09-26 independent review's findings. Changed only
+`audio/voice.py`, `external-work/config/persona.json`, and this ledger.
+
+- **F1 (P2, blocking speak)** — `audio/voice.py::speak()` now runs the
+  synthesis+playback subprocess on a dedicated background worker thread and
+  returns immediately (measured ~24 ms vs the previous blocking
+  `communicate(timeout=120)`). A new `block=True` keyword preserves the old
+  synchronous contract for callers that need it. `stop_speaking()` also sets a
+  new `_PLAYBACK_STOP` event so a queued legacy utterance is cancelled; R04
+  stop/cancel semantics unchanged and re-tested.
+- **F2 (P3, subprocess per utterance)** — partially addressed: the worker
+  thread is reused, but the subprocess is still per-utterance (the warm
+  desktop `SetupSpeech` worker remains the desktop path). Legacy callers no
+  longer block or serialize on the calling thread.
+- **F4 (P3, tone/rate drift)** — `set_rate()` now applies the rate to a lazily
+  initialised pyttsx3 engine (when available) and still maps to the neural
+  tone table, so both tables share one entry point. This also un-breaks the
+  pre-existing `test_regressions_r01_r05` R05 failures (4 failing checks
+  before this session; 16/16 after).
+- **Restored `external-work/config/persona.json`** — an uncommitted working-tree
+  change had switched the English Piper voice from the pinned
+  `en_US-ljspeech-medium` to `en_US-amy-medium`, breaking
+  `test_setup_speech.SpeechTests.test_desktop_uses_native_models_for_english_and_tamil`
+  and contradicting `models/voice/manifest.json`. Reverted to ljspeech; the
+  voice-lab suite returned to green.
+
+Checks re-run on `.venv-ui` (all offscreen/offline): `test_voice`+`test_setup_speech`
+20/1 designed skip, `test_registration_ui` 22/22, `test_activation` 22/22,
+`test_regressions_r01_r05` 16/16, `test_foundations` 14/14,
+`desktop/check_experience` 25/25, `desktop/check_ui` 16/16, external-work voice
+lab 141/1 skip. Functional smoke: non-blocking `speak()` returned in 24 ms with
+`stop_speaking()` clean. Limits: no real microphone, camera, Windows prompt,
+enrollment or cloud call; F2's subprocess-per-utterance cost is reduced but not
+eliminated (spawn still happens); two suites (`test_setup_speech` +
+`test_registration_ui`) crash when run in ONE shared unittest process because
+`test_activation`-style `QApplication.instance()` binding interacts with
+QProcess teardown — each passes standalone, as the ledger procedure already
+requires. Known-open: Windows Application Control on `HelloVerifier.exe`
+(F5) and the conflicting admin records in the protected store remain owner
+decisions.
+
+
+## 2026-09-26 — Quarantine sweep: unused/legacy files moved into `noneeded/` (nothing deleted)
+
+At the owner's request, all unused and unreachable files were moved — not
+deleted — into a structured `noneeded/` folder with a `MANIFEST.md` describing
+each item and its restore command. Subfolders: `legacy-skills/` (18 unreachable
+skill modules; `main.py` never calls `allskills.py`), `legacy-audio/synthesis.py`
+(superseded Kokoro renderer; only consumer was the stale `test_synthesis.py`),
+`legacy-ui/jarvis_server.py` (legacy browser HUD per the architecture map),
+`dead-tools/` (`tools/test-local-model.py`, `check-biometric-stack.py`,
+`install-voice-models.py`, `examples/extract_books.py`, `desktop/bake_crystal.py`,
+`test_synthesis.py`, `test_native_ui.py`), `unsafe-test-scripts/`
+(`crash_test.py`, `crash_test2.py`, `security_test.py`, `test_security_fixes.py`
+— these modify real stores; do not run), and `stray-artifacts/` (the stray root
+file `external` — a 99-byte shell-error text — and `probe.txt`).
+
+Deliberately kept despite looking legacy: `audio/voice_auth.py` and
+`vision/face_auth.py` (still imported by `desktop/activation.py` and
+`web_server.py`), `brain/knowledge.py` and `brain/sync.py` (imported by
+`skills/reminder.py` and `cloud/lya_cloud.py`), `brain/council.py` (used by
+`brain/workflow.py`), `ui/orb.py` + `ui/themes.py` (used by `main.py`),
+`review_checks.py`, the SSH keys and `oracle_known_hosts.local`. `.env`,
+protected stores, models, review evidence and desktop QA artifacts were not
+touched.
+
+Verification after the sweep on `.venv-ui`: `test_foundations`+`test_brain_workflow`
++`test_voice`+`test_activation` 90/1 designed skip, `test_router`+`test_oracle`
++`test_provider_setup`+`test_registration` 38/38, `test_t02`+`test_answer_verification`
++`test_research_adapter`+`test_recovery`+`test_recovery_ui` 52/52,
+`test_skills`+`test_guardian_governor`+`test_mind`+`test_identity`+`test_liveness`
+40/40, `desktop/check_ui` 16/16, `test_regressions_r01_r05` 16/16,
+`test_setup_speech` 7/7. Total 259 checks green. Limits: no live provider,
+sensor, store or enrollment was touched; `skills/` still imports its kept
+modules only.
+
+## 2026-09-27 - Wake-flow handoff and isolated test repair
+
+Changed: `.gitignore` now allows only `desktop/assets/wake-greeting.wav` through the general WAV ignore; updated isolated expectations in `test_activation.py` and `test_registration_ui.py` for existing-admin sign-in and in-process Windows verification; added `review/2026-09-26-voice-wake/wake-flow.mmd` and handoff notes in its README. Existing voice/UI implementation was reviewed, not reworked in this entry.
+
+Decisions: ambient audio stays local until a Vosk wake match; post-wake command transcription may use Groq when configured. Other WAV recordings stay ignored. The protected admin conflict remains locked; no records were altered.
+
+Checks: `test_voice test_setup_speech` 20 passed, one intentional online skip; `desktop/check_ui check_experience` 41 passed; `test_activation` 22 passed; `test_registration_ui` 22 passed, each independently and with temporary fake-secret stores. Mermaid validation passed with zero warnings. Cached WAV header read successfully (mono 22050 Hz). `git diff --check` on the touched ignore rule passed. A combined activation/registration run initially showed seven failures from stale tests; separate reruns after correction passed.
+
+Limits and next step: real spoken wake, command ASR, voice/text timing, Windows proof, cloud behavior, and enrollment were not exercised. Owner can run `launch-lya.cmd`, say "wake up LYA," then ask one question and report what happens; resolve the protected admin ambiguity separately before enrolling.
+## 2026-09-27 — Full-project workflow report and re-run of every suite
+
+- Re-ran everything offline on `.venv-ui`: `check-t01.cmd` (41 brain + 16 UI + 25
+  experience), `check-t02/t03/t04` full chains, `check-storage-recovery`, and
+  individually: voice/setup-speech (20, 1 designed skip), activation 22,
+  registration + registration-UI, regressions R01–R05 16, foundations, skills,
+  guardian/governor, mind, identity, liveness, vision, camera-preview,
+  escalation, auth-wall, storage, search-index, vault-recovery, recovery,
+  recovery-ui. All green. External voice lab: 141 checks green (1 skip).
+- Live-safe functional smokes: `audio.voice.speak()` returned in 22 ms
+  (non-blocking F1 fix confirmed) with clean `stop_speaking()`;
+  `desktop.app`/`desktop.activation`/`web_server`/`main` all import OK (note:
+  `desktop.app` needs `desktop` on PYTHONPATH — the .cmd launchers set it).
+- Read-only environment probe: `.venv-ui` has vosk, sounddevice, cv2, pyttsx3,
+  win32crypt, insightface, onnxruntime, torch, PySide6; `resemblyzer` and
+  `pyautogui` are missing. Models present (3 Piper + kokoro, 2 Qwen GGUFs,
+  NanoDet + YuNet). `.env` holds GROQ/OpenRouter keys and research flags
+  (values never printed). `desktop/oracle.local.json` configured. Local
+  llama.cpp endpoint closed (server not running — expected).
+- Confirmed `security/HelloVerifier.exe` is unsigned via Authenticode, which
+  is the root of the Windows Application Control enrollment blocker.
+- Wrote the owner-facing detailed report with five Mermaid diagrams,
+  per-workflow status, per-item root-cause table ("what was done wrong"),
+  in-progress list and runner map:
+  `review/2026-09-27-full-project-workflow-report/README.md`.
+- No real store, sensor, enrollment, cloud call or credential disclosure.
+  Limits: live mic wake, phone approval round trip, battery/voice naturalness
+  and Windows-proof paths remain owner-run trials.
+
+
+## 2026-09-27 - Foundation-first acceptance restart, step 1
+
+Owner requested testing and confirmation of each step before advancing. Read brain, vision, roadmap, launch and UI paths, existing tests and current registration entry points. Application source and pre-existing changes preserved. Added `review/2026-09-27-foundation-ladder/README.md` with exact checks, missing prerequisites and owner acceptance steps; annotated `review/2026-09-27-full-project-workflow-report/README.md` to correct unsupported end-to-end claims and stale helper-only diagnosis; updated opening status here.
+
+Checks: test_foundations.py 14 passed; desktop.check_ui.InterfaceChecks 16 passed; five selected compact lifecycle tests 5 passed, names in the linked report. Separate processes, offscreen Qt, synthetic state and temporary encrypted storage where used. No real sensor, protected store contents, identity prompt, enrollment, provider request or deployment exercised. No source fix indicated by these checks.
+
+Decision: restart acceptance, not rewrite the codebase. Step 1 is isolated-tested, not owner-accepted. Next: owner runs launch-lya.cmd with --no-voice --skip-setup --reduced-motion and reports the first failed item or confirms the lifecycle. Repair/retest before advancing. Default voice/setup startup, live trusted session, independent backup and higher gates remain unaccepted in this restart. Historical admin ambiguity was not rechecked. Brain byte encoding preserved because existing content contains non-UTF-8 bytes.
+
+
+## 2026-09-27 - Hands-free first: warm voice reuse and wake conversation
+
+Owner clarified hands-free voice is primary and typing is for public places. Traced wake_loop, recording, speech worker, compact wake/command/close paths and all speech.stop callers before editing. Reused installed Piper and existing cached greeting; no dependencies added.
+
+Changed: `desktop/setup_speech.py` optional idle-worker preservation; `desktop/experience.py` warm-worker handoff, cancellable greeting timer based on WAV duration, greeting stop on command/close/quit, and spoken deterministic clock/date/help/status; `audio/voice.py` 0.4-second wake-only silence and post-speech conversation window refresh; `desktop/assets/wake-greeting.wav` now asks for input. Regressions in `test_setup_speech.py`, `test_voice.py`, `desktop/check_experience.py`. Updated `LYA_VISION.md` and foundation-ladder report. Evidence, limitations and next trial: `review/2026-09-27-hands-free-voice/README.md`; timing: `synthesis-timing.json` in that folder; previous greeting preserved as ignored local `previous-wake-greeting.wav`.
+
+Checks: voice/transport 22 tests, 21 passed and one intentional online skip; compact UI 27 passed; diff whitespace check passed. Initial added spoken-clock tests found reduced-motion text was empty; fixed output selection and reran the entire compact suite successfully. One local synthesis pair: cold 4313.1 ms, warm 229.1 ms, generated greeting 2.02 seconds. No real microphone, speaker playback, protected store contents, enrollment or cloud request tested. Existing changes preserved.
+
+Status: implemented and isolated-tested, live acceptance pending. Not a measured end-to-end speed claim. Recorder still pauses during playback, so spoken barge-in remains incomplete. Next: restart with launch-lya.cmd --skip-setup, say wake up LYA, wait for invitation, ask time, hear reply, ask date without another wake phrase. Owner confirms or identifies the delayed stage before any higher feature work.
+
+
+## 2026-09-27 - Continuous wake listening and two-clap trigger
+
+Owner reported no response to repeated wake phrases and requested two-clap wake. Read current brain, voice pipeline, desktop startup/status, callers and tests before editing. Model loads; supported grammar aliases exist. Identified ignored clap_enabled flag, segmented standby capture and silently swallowed input errors. Restricted-session microphone failure was distinguished from a successful bounded normal-session microphone read; this does not establish the exact cause in the existing app instance. Process metadata access was denied; no running process changed.
+
+Changed `audio/voice.py`: continuous local standby stream, partial/final phrase matching, DoubleClap heuristic with spectral rejection and threshold knob, clap handling in command recording, cancellation and bounded error reporting. Changed `desktop/app.py`: enable claps, truthful readiness, visible failure/status. Regression checks in `test_voice.py` and `desktop/check_ui.py`; wake gesture requirement in `LYA_VISION.md`. Evidence and next test: `review/2026-09-27-wake-and-claps/README.md`; reproducible sensor-free real-model check: `check_model.py`; results: `model-check.json` in that folder. No dependencies or authorization changes.
+
+Checks: voice/transport 28 tests (27 passed, one online skip); desktop UI/experience 44 passed; real Piper/Vosk generated-speech check 14 expected outcomes, three wake phrases accepted and four negatives ignored with clap mode on/off. Initial amplitude-only clap heuristic false-triggered on generated speech; added high-frequency criterion and verified zero clap events for all seven final samples. Normal-session updated listener opened microphone and stopped cleanly within a three-second local check, with no errors. No audio saved, cloud call, enrollment, protected-store access or private runtime facts recorded. Source diff whitespace check passed.
+
+Status: implemented and isolated-tested; real microphone startup/stop tested, not real human wake/clap acceptance. Sound gesture never grants authority. Threshold/noise calibration, accent recognition and barge-in remain open; listener pauses during output. Next: restart updated LYA with --skip-setup, test voice and two claps about half a second apart separately, then ask time after the greeting. Stay on this step until owner confirms.
+
+
+## 2026-09-27 - Flexible name wake and real Windows startup
+
+Owner clarified no hand interaction after opening laptop and pronunciation flexibility anywhere in a sentence. Normal-session metadata check found no running LYA desktop; native Startup-folder/user-Run inspection found no LYA entry. No active process was killed. Read current brain, listener and desktop startup before changing shared wake matching.
+
+Changed `audio/voice.py`: shared whole-word wake aliases, context grammar and trailing wake-up normalization; `desktop/app.py`: Qt single-instance lock and updated status; `test_voice.py`: alias/in-sentence regressions; `tools/set-startup.ps1`: native per-user shortcut install/remove; `LYA_VISION.md`: startup/name-wake requirement and physical limits. Installed/verified shortcut outside workspace under the owner-requested startup authorization. Launched updated desktop with --skip-setup; it stayed running and duplicate launch exited 0. No enrollment or private store change.
+
+Checks: voice/transport 28 tests, 27 passed + one intentional skip; desktop 44 passed. `review/2026-09-27-name-wake-startup/check_names.py` and `model-check.json` record 22 expected real-model outcomes on generated public speech, with zero clap events. Initial Elya/in-sentence-Laya fixture misses drove phonetic/context grammar correction. Real sign-in execution and human accent/claps are not established by these tests. No developer test uploaded audio or retained microphone samples. Source whitespace check passed.
+
+Evidence/rollback: `review/2026-09-27-name-wake-startup/README.md`; remove automatic startup using tools/set-startup.ps1 -Disable. Broader phonetic alias layer can false-wake on that ordinary word; waking grants no permissions. Sleep/pre-sign-in hearing and speech barge-in remain incomplete. Next: owner tests names and two claps with now-running app, without manually launching; fix the first failed trigger before advancing.
+
+
+## 2026-09-27 - Bounded diagnostic for unresolved live voice failure
+
+Owner requested help building the hands-free system after continued failed wake/response. Read current brain/listener/startup/greeting paths. Added `tools/check_voice_live.py` and `check-voice-live.cmd`: reuse real local wake_loop with temporary in-process meter/clap instrumentation; report microphone-open, sound-received, name/clap and playback status; stop at first wake or 20 seconds; no command transcription, recording or network. Added `test_voice_live_check.py` with synthetic silence/sound/name/clap/failure cases. Existing production implementation and startup settings unchanged.
+
+Checks: test_voice_live_check + test_voice + test_setup_speech: 30 tests, 29 passed and one intentional online skip. Initial fake playback check exposed unsupported winsound.SND_SYNC constant; fixed to native synchronous default before passing rerun. No microphone, speaker, protected store or external service exercised this turn. Evidence: `review/2026-09-27-name-wake-startup/live-check.md`.
+
+Status: diagnostic implemented and fake-tested; owner-reported failure unresolved. Asked owner readiness for live trial; no response yet. Next: run bounded test while owner speaks/claps, identify the first failing stage, repair and retest only that stage. Playback-call success is not audible-output acceptance.
+
+
+## 2026-09-27 - Owner-ready live microphone and wake checks
+
+Owner replied ready. Ran tools/check_voice_live.py in normal Windows session, a bounded microphone-channel comparison with audible cues, and one repeated 20-second real wake check with a start cue. Initial run opened input but saw no activity above the diagnostic floor. Channel comparison and repeated test confirmed sound input; repeated test detected no name/clap and did not invoke greeting playback. No input errors in final wake check. These results do not identify a specific recognition/threshold cause or prove speaker failure.
+
+Updated `review/2026-09-27-name-wake-startup/live-check.md` and this brain with safe stage summaries only. No detailed private runtime readings, device identifiers, audio or transcripts stored. No network, enrollment, protected store access, device settings or production source changes.
+
+Status: live sound input confirmed in a later attempt; name/clap wake still failed, playback untested. Next: isolate name and clap criteria with separate timing cues, then verify a real greeting. No higher-step development or acceptance claimed.
+
+
+## 2026-09-27 - Separate name/clap calibration and quieter clap default
+
+Owner asked to work on failed wake detection, then confirmed participation in both cue windows. Ran two bounded local name/clap stages and a bounded current/native input-format comparison. Input was weak and captured impulses did not reach old threshold; exact Windows-level/recognition cause remains unresolved. No audio/transcript or detailed private runtime facts saved, no cloud calls or protected store access.
+
+Changed `audio/voice.py`: quieter default clap threshold (150), existing override preserved, finalized local Vosk name matching to reject transient alias guesses. Changed `test_voice.py`: quiet clap, background noise, finalized streaming and disappearing provisional-name checks. Initial real-model speech rerun revealed a false wake; corrected gating passed the subsequent 22 expected outcomes. Evidence: `review/2026-09-27-wake-calibration/README.md`; updated public fixture results at `review/2026-09-27-name-wake-startup/model-check.json`.
+
+Checks: test_voice/test_voice_live_check/test_setup_speech 31 total, 30 passed and one intentional skip; source whitespace check passed. No claim of live recognition success or lower end-to-end latency. Existing desktop process was not restarted. Opened Windows Sound settings read-only and asked owner for input volume/meter behavior. Next: resolve input-level question, restart intended desktop after calibration, prove an actual name/clap wake and audible greeting before advancing.
+
+
+## 2026-09-27 - Explicitly authorized local audibility recording
+
+Owner reported maximum microphone volume and explicitly requested recording their input for audibility assessment. Captured a bounded ten-second native-rate input sample; created original and amplified mono listening copies in the owner-local temporary lya-voice-check directory, outside source control. No raw media, transcript, detailed runtime readings or biometric representation added to project documentation.
+
+Check: selected-input signal was very low without clipping; local Vosk did not recover the requested test phrase from original or louder copy. No cloud audio service used. The assistant has not personally listened to the recording; audibility/intelligibility requires owner playback confirmation. No source, Windows settings, startup or enrollment changes. Wrote `review/2026-09-27-wake-calibration/recording-check.md` with safe evidence and retention scope.
+
+Next: owner listens to temporary original/louder copies and reports recognizable speech versus noise. Do not promise wake success or blindly amplify live audio from these measurements alone.
+
+
+## 2026-09-27 - Compare live microphone paths and isolate clap detection
+
+Owner reported that the earlier local listening copy contained LYA playback but no discernible owner speech amid house noise. Checked Windows microphone permission and compared available Realtek input paths with tools/check_mic_paths.py. The default and WASAPI microphone-array paths opened and received sound; lower-level WDM-KS paths were unavailable to the blocking stream API. A separate bounded check on LYA's exact 16 kHz mono input showed weak spoken-name signal and one accepted double-clap event in the clap window. No raw audio, transcript, or detailed private readings saved; no network, enrollment, protected-store, startup, production code, or Windows settings changed.
+
+Added the local diagnostic script and safe findings at review/2026-09-27-wake-calibration/mic-path-check.md. Checks: diagnostic completed in the normal Windows session; exact LYA input opened; clap detector returned true once. Limitation: no end-to-end desktop wake or owner-heard greeting, and voice audibility remains unresolved. Next: compare close speech near the laptop mic with ordinary distance, verify Windows input meter/recording, then rerun the bounded full wake check.
+
+
+## 2026-09-27 - Soft voice and room-noise investigation
+
+Owner asks LYA to hear quiet speech without shouting in a noisy house. Owner confirmed the Windows input meter moves only a little for soft speech near the laptop camera, and the selected Realtek microphone-array Properties has only the Microphone level, no Boost slider. Reviewed LYA's standby/command capture: direct default 16 kHz mono stream, no noise suppression; command segmentation uses a fixed peak threshold. The earlier amplified local recording still failed offline recognition, so boosting all audio is not a validated fix. Microsoft documentation confirms some devices offer Microphone Boost, Windows Studio Effects Voice Focus requires compatible hardware, and microphone effects can include noise suppression/automatic gain control. Opened Recording device Properties for owner inspection. No device setting, production code, protected store or enrollment changed; no new audio collected or transmitted. Checks: prior exact-input live test and owner input-meter report; voice-focus/enhancement availability and improved soft-voice capture remain unverified. Next: inspect available microphone enhancements, then retest soft voice with a close-positioned input and isolate the wake/greeting path. If the built-in array remains weak, use a microphone placed nearer the mouth before adding software suppression.
+## 2026-09-27 — Voice wake unblocked: Vosk model installed, clap-wake path verified
+- Root cause of "wake up LYA / double clap never works": the local Vosk wake
+  model was missing. `.env` pointed `LYA_VOSK_MODEL=kaushalya` (nonexistent),
+  and the LYA data dir held no model, so `wake_loop` raised "Local wake model
+  missing. Microphone not started." — the microphone never opened. All other
+  pieces (DoubleClap detector, wake-word regex, wake-greeting WAV, Groq
+  post-wake transcription, desktop `start_voice` with `clap_enabled=True`)
+  were already implemented and tested.
+- Installed the official `vosk-model-small-en-us-0.15` from alphacephei.com
+  into `C:\Users\kathirvel\AppData\Local\LYA\models\vosk-model-small-en-us-0.15`
+  (also directly under the LYA data root; the store fallback checks both).
+  Corrected `.env` to the real path. Model loads in ~0.9 s; wake recognizer
+  builds with the alias grammar.
+- Verification: `test_voice` 24 passed (1 designed online skip),
+  `test_setup_speech` 9 passed, and the full offscreen desktop suite
+  (check_ui + check_experience) 46/46 after fixing one assertion mismatch:
+  the listener-off self-test message now also states "The voice listener is
+  not running." in the answer body (the check reads the body, not the title).
+- Live microphone wake, clap, and spoken round trip remain owner-run trials;
+  no sensor was opened during these checks.
+- Next: owner launches `launch-lya.cmd`, says "wake up LYA" (or claps twice),
+  asks one question; then tune `LYA_CLAP_THRESHOLD` if room noise causes
+  false wakes.
+## 2026-09-27 — LYA now starts at login (no manual launch-lya.cmd)
+- Added a minimized shortcut `LYA Assistant.lnk` in the user's Startup folder
+  (`C:\Users\kathirvel\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`)
+  targeting `launch-lya.cmd` with the project directory as the working folder.
+  At every login Windows now starts the desktop (`pythonw desktop/app.py
+  --show-panel`), which starts the Vosk wake listener automatically
+  (`clap_enabled=True`), so "wake up LYA", any alias phrase, or a double clap
+  works without typing anything.
+- Safety already present: the app's QLockFile single-instance guard prevents
+  two microphone readers if the owner also launches manually; the voice
+  listener stops/starts via the crystal menu toggle.
+- Note: at startup the process environment does not include `.env`, so cloud
+  command transcription (Groq) is only used when `get_groq_key()` finds the
+  key (env or DPAPI-protected store); otherwise transcription stays on-device
+  Vosk — the designed fail-closed behavior. The wake model is found via the
+  LYA data-dir fallback path verified earlier.
+- Live first-boot verification (log out/in, speak the wake phrase, clap) is an
+  owner-run trial.

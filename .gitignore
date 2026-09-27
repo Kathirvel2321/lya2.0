@@ -23,6 +23,7 @@ security/*.lya
 # --- BIOMETRICS: voice recordings and face templates are auth material.
 debug/
 *.wav
+!desktop/assets/wake-greeting.wav
 *.npy
 
 # --- PERSONAL DATA: memory brain, reminders, logs, screenshots.
