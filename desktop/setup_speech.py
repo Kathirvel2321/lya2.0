@@ -9,11 +9,23 @@ VOICE_ROOT = ROOT / 'external-work'
 
 
 def _load_voice(keep_warm=False):
+    import dataclasses
     sys.path.insert(0, str(VOICE_ROOT))
     from alya_voice.audit import Auditor
     from alya_voice.runtime import Voice
+    from alya_voice.persona import load_persona
+    from alya_voice.engines.offline_piper import default_models_dir
+    persona = load_persona()
+    # Try the already-installed Amy female voice instead of the prior narrator.
+    # Keep the original voice as the portable fallback; Tamil is unchanged.
+    if (default_models_dir() / 'en_US-amy-medium.onnx').is_file():
+        voices = dict(persona.voices)
+        piper = dict(voices['piper'])
+        piper['per_language'] = dict(piper['per_language'], en='en_US-amy-medium')
+        voices['piper'] = piper
+        persona = dataclasses.replace(persona, voices=voices)
     # LYA never stores spoken text or a fingerprint of it in the desktop path.
-    return Voice(timbre='native', keep_warm=keep_warm,
+    return Voice(persona=persona, timbre='native', keep_warm=keep_warm,
                  auditor=Auditor(VOICE_ROOT / 'out' / 'audit', enabled=False))
 
 

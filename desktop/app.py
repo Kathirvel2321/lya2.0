@@ -1,20 +1,21 @@
 """LYA's native crystal and glass panel. Run launch-lya.ps1 from the project root.
 
-This milestone implements presentation and read-only project-document previews.
-Person/task previews are cosmetic. Default launch has a guest brain and no sensors.
+Person/task previews are cosmetic. Default launch has a guest brain and local
+microphone wake; --no-voice disables it. Camera enrollment remains separate.
 """
 import argparse
 import math
+import os
 import sys
 import time
 from pathlib import Path
 
-from PySide6.QtCore import (Qt, QPoint, QRect, QRectF, QSize, QTimer, Signal, Property,
+from PySide6.QtCore import (Qt, QPoint, QPointF, QRect, QRectF, QSize, QTimer, Signal, Property,
                             QEasingCurve, QPropertyAnimation, QObject, QRunnable, QThreadPool,
                             QLockFile, QStandardPaths)
 from PySide6.QtGui import (QAction, QColor, QFont, QIcon, QImage, QImageReader, QKeySequence, QLinearGradient,
                            QPainter, QPainterPath, QPen, QPixmap, QPolygonF, QRadialGradient,
-                           QShortcut, QRegion)
+                           QShortcut, QRegion, QTextCursor, QTextBlockFormat, QTextCharFormat)
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                                QPushButton, QLineEdit, QTextBrowser, QListWidget, QListWidgetItem,
                                QStackedWidget, QMenu, QSystemTrayIcon)
@@ -116,6 +117,8 @@ class Crystal(QWidget):
         self.started = time.monotonic()
         self.motion_until = self.started + 3.0
         self.phase = 0.0
+        self.voice_phase = 'off'
+        self.voice_level = 0.0
         self._press = None
         self._dragged = False
         self.paint_samples = []
@@ -212,10 +215,81 @@ class Crystal(QWidget):
     def tick(self):
         now = time.monotonic()
         self.phase = now - self.started
-        if now >= self.motion_until:
+        if self.voice_phase in ('listening', 'hearing'):
+            from audio import voice
+            self.voice_level = voice.listener_health()['level']
+        if now >= self.motion_until and self.voice_phase not in ('listening', 'hearing', 'thinking', 'speaking'):
             self.timer.stop()
             self.phase = 0.0
         self.update()
+
+    def set_voice_phase(self, phase):
+        if phase == self.voice_phase:
+            return
+        self.voice_phase = phase
+        names = {'standby': 'Waiting for LYA or two claps', 'listening': 'Listening for your question',
+                 'hearing': 'Hearing your question', 'thinking': 'Thinking',
+                 'speaking': 'Speaking. Say stop to interrupt', 'uncertain': 'Please repeat your question',
+                 'off': 'Voice off'}
+        label = names.get(phase, phase)
+        self.setAccessibleName('LYA. ' + label)
+        self.setToolTip(label)
+        self.animate_briefly()
+        self.update()
+
+    def paint_voice_dots(self, p, side):
+        """A crystal constellation, crossing thought paths, or a spoken wave."""
+        phase = self.voice_phase
+        active = phase in ('listening', 'hearing', 'thinking', 'speaking')
+        color = QColor('#b69bff' if phase == 'thinking' else '#ff879b' if phase == 'uncertain'
+                       else '#78e1bf' if phase == 'speaking' else '#68e5f2')
+        radius = side * 0.37
+        p.setPen(QPen(QColor(color.red(), color.green(), color.blue(), 65), 0.8))
+        p.setBrush(QColor(9, 17, 24, 248))
+        p.drawEllipse(QRectF(-radius, -radius, 2 * radius, 2 * radius))
+        # Four small compass cuts connect the circle to the faceted crystal.
+        p.setPen(QPen(QColor(color.red(), color.green(), color.blue(), 150), 1.2))
+        for angle in (0, 90, 180, 270):
+            p.save()
+            p.rotate(angle)
+            p.drawLine(QPointF(0, -radius + side * .02), QPointF(0, -radius + side * .05))
+            p.restore()
+        p.setPen(Qt.PenStyle.NoPen)
+        t = 0.0 if self.reduced_motion or not active else self.phase
+        energy = self.voice_level
+        for strand in range(3):
+            count = 40
+            for index in range(count):
+                u = index / count
+                angle = math.tau * u
+                if phase == 'thinking':
+                    angle += t * .65 + strand * .18
+                    x = math.sin(angle) * side * (.22 + strand * .012)
+                    y = math.sin(2 * angle) * side * (.105 + strand * .012)
+                    brightness = .25 + .75 * ((u + t * .17) % 1) ** 2
+                elif phase == 'speaking':
+                    x = (u - .5) * side * .54
+                    envelope = math.sin(math.pi * u) ** 1.4
+                    y = (math.sin(u * math.tau * 1.8 - t * 2.8 + strand * .6) *
+                         side * .095 * envelope + (strand - 1) * side * .035)
+                    brightness = .45 + .55 * envelope
+                else:
+                    # Sample actual diamond edges, keeping the crystal silhouette.
+                    r = side * (.14 + strand * .055 + energy * .025)
+                    edge = r / (abs(math.cos(angle)) + abs(math.sin(angle)))
+                    x = math.cos(angle) * edge
+                    y = math.sin(angle) * edge * 1.12
+                    brightness = .25 + .75 * ((u - t * .12 + strand * .16) % 1) ** 2
+                dot = side * (.0075 + .002 * brightness)
+                color.setAlpha(round((235 if active else 110) * brightness))
+                p.setBrush(color)
+                p.drawEllipse(QRectF(x - dot, y - dot, dot * 2, dot * 2))
+        color.setAlpha(200)
+        p.setPen(QPen(color, .8))
+        p.setBrush(Qt.BrushStyle.NoBrush)
+        if phase in ('listening', 'hearing', 'standby', 'uncertain'):
+            r = side * .042
+            p.drawPolygon(QPolygonF([QPointF(0, -r), QPointF(r, 0), QPointF(0, r), QPointF(-r, 0)]))
 
     def showEvent(self, event):
         if not self.reduced_motion:
@@ -256,14 +330,22 @@ class Crystal(QWidget):
         p.setOpacity(self.mix * (1 - morph))
         p.drawPixmap(destination, spin if spin is not None else self.current, QRectF(self.current.rect()))
         p.setOpacity(1 - morph)
+        # A quiet plinth and suspended facet give the original artwork an anchor.
+        c = QColor(self.color)
+        c.setAlpha(110)
+        p.setPen(QPen(c, .8))
+        p.setBrush(Qt.BrushStyle.NoBrush)
+        p.drawPolygon(QPolygonF([QPointF(62, 196), QPointF(92, 187),
+                                QPointF(122, 196), QPointF(92, 203)]))
+        p.drawLine(QPointF(92, 199), QPointF(92, 206))
         if self.width() <= 88:
             p.setOpacity(0)  # Keep the docked crystal clear of unreadably small labels.
         p.setBrush(QColor(12, 20, 30, 235))
         p.setPen(QPen(QColor(180, 205, 220, 95), 1))
-        p.drawRoundedRect(QRectF(13, 211, 158, 31), 15, 15)
+        p.drawRoundedRect(QRectF(24, 214, 136, 25), 6, 6)
         p.setPen(self.color)
         p.setFont(QFont("Segoe UI", 8, QFont.Weight.DemiBold))
-        label = "LYA  ·  " + ("UI PREVIEW" if self.task == "idle" else self.task.upper())
+        label = "L Y A" if self.task == "idle" else "LYA  /  " + self.task.upper()
         p.drawText(QRectF(15, 211, 154, 31), Qt.AlignmentFlag.AlignCenter, label)
         if morph:
             p.resetTransform()
@@ -279,6 +361,12 @@ class Crystal(QWidget):
             p.setPen(Qt.PenStyle.NoPen)
             p.setBrush(halo)
             p.drawEllipse(QRectF(-side/2, -side/2, side, side))
+            if self.voice_phase != 'off':
+                self.paint_voice_dots(p, side)
+                p.end()
+                self.paint_samples.append((time.perf_counter() - start) * 1000)
+                self.paint_samples = self.paint_samples[-600:]
+                return
             p.setBrush(QColor(15, 28, 40, 245))
             p.setPen(QPen(self.color, 1.5))
             radius = side * 0.27
@@ -327,6 +415,40 @@ class Crystal(QWidget):
             super().keyPressEvent(event)
 
 
+class ResponseText(QTextBrowser):
+    """Format plain text with native paragraph styles; never interpret reply HTML."""
+
+    def setPlainText(self, text):
+        normal = QTextCharFormat()
+        normal.setFontWeight(QFont.Weight.Normal)
+        normal.setForeground(QColor('#d8e2e8'))
+        self.setCurrentCharFormat(normal)
+        super().setPlainText(text)
+        block = self.document().begin()
+        while block.isValid():
+            cursor = QTextCursor(block)
+            paragraph = QTextBlockFormat()
+            paragraph.setLineHeight(125, QTextBlockFormat.LineHeightTypes.ProportionalHeight.value)
+            paragraph.setLeftMargin(4)
+            paragraph.setRightMargin(4)
+            cursor.setBlockFormat(paragraph)
+            line = block.text()
+            prefix = next((part for part in ('You asked:', 'You:', 'LYA:') if line.startswith(part)), '')
+            if prefix:
+                cursor.movePosition(QTextCursor.MoveOperation.Right, QTextCursor.MoveMode.KeepAnchor, len(prefix))
+                style = QTextCharFormat()
+                style.setFontWeight(QFont.Weight.DemiBold)
+                style.setForeground(QColor('#9dd7df' if prefix == 'LYA:' else '#b8c2cb'))
+                cursor.mergeCharFormat(style)
+            block = block.next()
+        # Subsequent streamed caption text inherits the normal response style.
+        cursor = self.textCursor()
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+        cursor.setCharFormat(normal)
+        self.setTextCursor(cursor)
+        self.moveCursor(QTextCursor.MoveOperation.Start)
+
+
 class GlassPanel(QWidget):
     submitted = Signal(str)
     dismissed = Signal()
@@ -341,17 +463,17 @@ class GlassPanel(QWidget):
         self.color = QColor("#9cdfe8")
         self.opaque = False
         self.setStyleSheet("""
-            QWidget { color: #f1f5fa; font-family: 'Segoe UI'; font-size: 13px; }
+            QWidget { color: #e9eff2; font-family: 'Segoe UI'; font-size: 13px; }
             QLabel { background: transparent; }
-            QPushButton { background: rgba(150,205,240,22); border: 1px solid rgba(190,226,250,58);
-                border-radius: 12px; padding: 10px 14px; color: #e6f4fb; }
-            QPushButton:hover { background: rgba(120,215,250,54); border-color: #9de4ee; }
-            QPushButton:pressed { background: rgba(90,190,235,78); }
+            QPushButton { background: rgba(150,205,220,10); border: 1px solid rgba(190,226,235,45);
+                border-radius: 6px; padding: 10px 14px; color: #cddde4; }
+            QPushButton:hover { background: rgba(120,215,230,35); border-color: #9de4ee; }
+            QPushButton:pressed { background: rgba(90,190,210,65); }
             QPushButton:focus, QLineEdit:focus, QListWidget:focus { border: 2px solid #9de4ee; }
-            QLineEdit { background: rgba(6,14,26,190); border: 1px solid rgba(150,215,245,90);
-                border-radius: 14px; padding: 13px; selection-background-color: #1d6d8c; }
-            QTextBrowser { background: transparent; border: none; color: #edf4f8;
-                font-size: 15px; selection-background-color: #296a83; }
+            QLineEdit { background: rgba(6,12,18,220); border: 1px solid rgba(150,215,230,68);
+                border-radius: 7px; padding: 13px; selection-background-color: #1d6d8c; }
+            QTextBrowser { background: transparent; border: none; color: #d8e2e8;
+                font-size: 16px; selection-background-color: #296a83; }
             QListWidget { background: transparent; border: none; outline: 0; }
             QListWidget::item { background: rgba(175,205,230,12); border: 1px solid rgba(200,225,245,24);
                 border-radius: 12px; padding: 0; margin-bottom: 8px; }
@@ -365,14 +487,15 @@ class GlassPanel(QWidget):
         outer.setSpacing(15)
         header = QHBoxLayout()
         brand = QLabel("L Y A")
-        brand.setStyleSheet("font-size: 16px; font-weight: 600; letter-spacing: 4px;")
+        brand.setStyleSheet("font-size: 14px; font-weight: 600; color: #b7e7eb; letter-spacing: 3px; padding-left: 20px;")
         header.addWidget(brand)
         header.addStretch()
-        self.state_label = QLabel("INTERFACE PREVIEW")
-        self.state_label.setStyleSheet("font-size: 10px; color: #aec6d5;")
+        self.state_label = QLabel("CONVERSATION")
+        self.state_label.setStyleSheet("font-size: 10px; color: #9aaeb9; letter-spacing: 1px;")
         header.addWidget(self.state_label)
         close = QPushButton("×")
         close.setFixedSize(32, 32)
+        close.setStyleSheet('padding: 0; font-size: 19px; border: none; background: transparent;')
         close.setAccessibleName("Close result panel")
         close.setToolTip("Close panel · Escape")
         close.clicked.connect(self.dismissed)
@@ -386,7 +509,7 @@ class GlassPanel(QWidget):
         self.title_label.setStyleSheet("font-size: 25px; font-weight: 600; color: #f4f8fc;")
         outer.addWidget(self.title_label)
         self.stack = QStackedWidget()
-        self.answer = QTextBrowser()
+        self.answer = ResponseText()
         self.answer.setOpenExternalLinks(False)
         self.answer.setOpenLinks(False)
         self.answer.setAccessibleName("LYA response")
@@ -420,7 +543,8 @@ class GlassPanel(QWidget):
         composer.addWidget(send)
         outer.addLayout(composer)
         self.footnote = QLabel("LOCAL INTERFACE  ·  CAMERA & MICROPHONE OFF")
-        self.footnote.setStyleSheet("font-size: 9px; color: #a6b7c5; letter-spacing: 1px;")
+        self.footnote.setWordWrap(True)
+        self.footnote.setStyleSheet("font-size: 10px; color: #9aadb9; letter-spacing: 1px;")
         outer.addWidget(self.footnote)
         self.show_answer("Right here with you.", "Your desktop stays yours.\n\nClick Project files to read the saved project plans, or type help.\n\nDrag the crystal to place me. Right-click it to preview person and task colors.")
 
@@ -472,42 +596,50 @@ class GlassPanel(QWidget):
             p.fillRect(self.rect(), Qt.GlobalColor.transparent)
             p.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
         body = QRectF(self.rect()).adjusted(10, 10, -10, -10)
+        # Faceted native surface; no backdrop capture, blur or added paint timer.
+        path = QPainterPath()
+        path.moveTo(body.left() + 22, body.top())
+        path.lineTo(body.right() - 48, body.top())
+        path.lineTo(body.right(), body.top() + 48)
+        path.lineTo(body.right(), body.bottom() - 22)
+        path.lineTo(body.right() - 22, body.bottom())
+        path.lineTo(body.left() + 22, body.bottom())
+        path.lineTo(body.left(), body.bottom() - 22)
+        path.lineTo(body.left(), body.top() + 22)
+        path.closeSubpath()
         p.setPen(Qt.PenStyle.NoPen)
-        # Cheap fixed shadow, no live backdrop capture or expensive blur.
-        for spread in (8, 6, 4, 2):
-            p.setBrush(QColor(0, 0, 0, 12))
-            p.drawRoundedRect(body.adjusted(-spread, -spread + 3, spread, spread + 3), 26, 26)
+        p.save()
+        p.translate(0, 4)
+        p.setBrush(QColor(0, 0, 0, 75))
+        p.drawPath(path)
+        p.restore()
         glass = QLinearGradient(body.topLeft(), body.bottomRight())
-        glass.setColorAt(0, QColor(28, 41, 55, 255 if self.opaque else 220))
-        glass.setColorAt(1, QColor(10, 19, 31, 255 if self.opaque else 232))
+        glass.setColorAt(0.0, QColor(28, 39, 47, 255 if self.opaque else 250))
+        glass.setColorAt(0.45, QColor(14, 24, 31, 255 if self.opaque else 251))
+        glass.setColorAt(1.0, QColor(9, 16, 22, 255 if self.opaque else 252))
         p.setBrush(glass)
-        p.setPen(QPen(QColor(212, 231, 245, 105), 1))
-        accent = QColor(self.color)
-        accent.setAlpha(40)
-        p.setPen(Qt.PenStyle.NoPen)
-        for spread in (18, 13, 8):
-            p.setBrush(accent)
-            p.drawRoundedRect(body.adjusted(-spread, -spread, spread, spread), 32, 32)
-        glass = QLinearGradient(body.topLeft(), body.bottomRight())
-        glass.setColorAt(0.0, QColor(48, 72, 98, 255 if self.opaque else 226))
-        glass.setColorAt(0.40, QColor(22, 36, 52, 255 if self.opaque else 230))
-        glass.setColorAt(1.0, QColor(8, 15, 26, 255 if self.opaque else 240))
-        p.setBrush(glass)
-        p.setPen(QPen(QColor(200, 228, 248, 120), 1))
-        p.drawRoundedRect(body, 24, 24)
-        p.setPen(QPen(QColor(255, 255, 255, 33), 1))
-        p.drawRoundedRect(body.adjusted(2, 2, -2, -2), 20, 20)
+        p.setPen(QPen(QColor(166, 201, 213, 100), 1))
+        p.drawPath(path)
+        p.save()
+        p.setClipPath(path)
         c = QColor(self.color)
-        sheen = QLinearGradient(body.topLeft(), body.bottomLeft())
-        sheen.setColorAt(0.0, QColor(255, 255, 255, 32))
-        sheen.setColorAt(0.35, QColor(255, 255, 255, 7))
-        sheen.setColorAt(1.0, QColor(255, 255, 255, 0))
-        p.setPen(Qt.PenStyle.NoPen)
-        p.setBrush(sheen)
-        p.drawRoundedRect(body.adjusted(1, 1, -1, -1), 23, 23)
-        c.setAlpha(160)
-        p.setPen(QPen(c, 2))
-        p.drawLine(35, 11, min(160, self.width() - 35), 11)
+        c.setAlpha(85)
+        p.setPen(QPen(c, .8))
+        if self.height() > 150:
+            for offset in (0, 9, 18):
+                p.drawLine(QPointF(body.right() - 80 - offset, body.top()),
+                           QPointF(body.right(), body.top() + 80 + offset))
+            # Native mark avoids depending on a font's diamond glyph support.
+            p.drawPolygon(QPolygonF([QPointF(36, 31), QPointF(41, 37),
+                                    QPointF(36, 43), QPointF(31, 37)]))
+            p.setPen(QPen(QColor(190, 213, 225, 22), 1))
+            p.drawLine(QPointF(34, 76), QPointF(self.width() - 34, 76))
+        c.setAlpha(200)
+        p.setPen(QPen(c, 1.6))
+        p.drawLine(QPointF(34, 10), QPointF(min(170, self.width() - 75), 10))
+        p.setPen(QPen(QColor(212, 193, 151, 140), 1.2))
+        p.drawLine(QPointF(body.right() - 22, body.bottom()), QPointF(body.right(), body.bottom() - 22))
+        p.restore()
         p.end()
 
 
@@ -518,6 +650,8 @@ class ReadSignals(QObject):
 class VoiceSignals(QObject):
     wake_detected = Signal(str, bool)
     status = Signal(str)
+    phase = Signal(str)
+    retry = Signal(str, bool)
 
 
 class BrainSignals(QObject):
@@ -603,8 +737,13 @@ class Desktop(QObject):
         self.voice_signals = VoiceSignals(self)
         self.voice_signals.wake_detected.connect(self.on_voice)
         self.voice_signals.status.connect(self.on_voice_status)
+        self.voice_signals.phase.connect(self.on_voice_phase)
+        self.voice_signals.retry.connect(self.on_voice_retry)
         self.voice_thread = None
         self.voice_stop_event = None
+        self._voice_restart = 0
+        self.cloud_voice = False
+        self.cloud_asr = 'groq'
         self._mic_test_timer = None
         self.orb.activated.connect(self.toggle_panel)
         self.orb.relocated.connect(self.position_panel)
@@ -662,8 +801,14 @@ class Desktop(QObject):
         menu.addSeparator()
         self.voice_action = QAction("Voice wake", menu, checkable=True)
         self.voice_action.setChecked(self.voice_thread is not None and self.voice_thread.is_alive())
-        self.voice_action.toggled.connect(lambda checked: self.start_voice() if checked else self.stop_voice())
+        self.voice_action.toggled.connect(lambda checked: self.start_voice(self.cloud_voice) if checked else self.stop_voice())
         menu.addAction(self.voice_action)
+        menu.addAction('Use Windows Voice Access input', self.prepare_system_dictation)
+        self.microphone_menu = menu.addMenu("Microphone")
+        self.microphone_menu.aboutToShow.connect(self.refresh_microphones)
+        recognition = menu.addMenu('Command recognition (local)')
+        for label, engine in [('Whisper English (experimental)', 'whisper'), ('Legacy Vosk', 'vosk')]:
+            recognition.addAction(label, lambda checked=False, value=engine: self.select_command_asr(value))
         menu.addAction("Microphone self-test", self.microphone_self_test)
         self.motion_action = QAction("Reduce motion", menu, checkable=True)
         self.motion_action.setChecked(self.orb.reduced_motion)
@@ -677,6 +822,65 @@ class Desktop(QObject):
         menu.addAction("Sleep", self.sleep)
         menu.addAction("Quit LYA", self.quit)
         return menu
+
+    def refresh_microphones(self):
+        """List input metadata only. Opening the menu never starts recording."""
+        self.microphone_menu.clear()
+        selected = os.environ.get('LYA_MICROPHONE', '')
+        choices = [('Follow Windows default', '')]
+        try:
+            import sounddevice as sd
+            devices = sd.query_devices()
+            native = [d['name'] for d in devices if d['max_input_channels'] and
+                      sd.query_hostapis(d['hostapi'])['name'] == 'Windows WASAPI']
+            choices.extend((name, name) for name in dict.fromkeys(native))
+        except Exception:
+            self.microphone_menu.addAction('Input list unavailable').setEnabled(False)
+        for label, name in choices:
+            action = QAction(label, self.microphone_menu, checkable=True)
+            action.setChecked(selected == name)
+            action.triggered.connect(lambda checked=False, value=name: self.select_microphone(value))
+            self.microphone_menu.addAction(action)
+
+    def select_command_asr(self, engine):
+        from audio import local_whisper
+        if engine == 'whisper' and not local_whisper.available():
+            self.panel.footnote.setText('WHISPER MODEL MISSING · RUN THE LOCAL MODEL SETUP')
+            return
+        os.environ['LYA_COMMAND_ASR'] = engine
+        self.panel.footnote.setText('LOCAL COMMAND RECOGNIZER SELECTED · APPLIES TO NEXT QUESTION')
+
+    def prepare_system_dictation(self):
+        """Accept OS dictation in the existing composer; never opens a microphone."""
+        self.stop_voice()
+        self.voice_action.blockSignals(True)
+        self.voice_action.setChecked(False)
+        self.voice_action.blockSignals(False)
+        self.wake()
+        self.panel.entry.setFocus()
+        self.panel.footnote.setText('WINDOWS VOICE ACCESS INPUT · SAY PRESS ENTER TO SEND')
+
+    def select_microphone(self, name):
+        """Session-only choice; wait for the old reader before restarting it."""
+        if name:
+            os.environ['LYA_MICROPHONE'] = name
+        else:
+            os.environ.pop('LYA_MICROPHONE', None)
+        was_running = bool(self.voice_thread and self.voice_thread.is_alive())
+        self.stop_voice()
+        generation = self._voice_restart
+        self.panel.footnote.setText('MICROPHONE SELECTED · VOICE RESTARTING' if was_running else
+                                    'MICROPHONE SELECTED · VOICE OFF')
+        if not was_running:
+            return
+        def restart():
+            if generation != self._voice_restart:
+                return
+            if self.voice_thread and self.voice_thread.is_alive():
+                QTimer.singleShot(50, restart)
+            else:
+                self.start_voice(self.cloud_voice)
+        QTimer.singleShot(50, restart)
 
     def open_menu(self, position):
         self.menu.popup(position)
@@ -728,6 +932,8 @@ class Desktop(QObject):
         self.close_panel() if self.panel.isVisible() else self.open_panel()
 
     def close_panel(self):
+        from audio import voice
+        voice._THINKING.clear()
         self.brain_cancel.set()
         if not self.brain_busy:
             self.brain.clear_temporary()
@@ -782,17 +988,27 @@ class Desktop(QObject):
                     on_wake=lambda text, quiet=False: self.voice_signals.wake_detected.emit(text, quiet),
                     clap_enabled=True,
                     stop_event=self.voice_stop_event,
-                    offline_required=not allow_cloud,
+                    offline_required=lambda: not allow_cloud or self.brain.private_mode,
+                    cloud_provider=self.cloud_asr,
+                    cloud_only=allow_cloud and self.cloud_asr == 'nvidia',
+                    on_provider=lambda model, backup: self.voice_signals.status.emit(
+                        'SPEECH: ' + model.upper() + (' · BACKUP' if backup else ' · PRIMARY')),
                     on_error=lambda kind: self.voice_signals.status.emit(
                         'VOICE INPUT ERROR (' + kind + ') · RETRYING'),
                     on_ready=lambda: self.voice_signals.status.emit(
-                        "SAY LYA / LAYA / LEYA OR CLAP TWICE · COMMANDS REMOTE (GROQ)"
-                        if allow_cloud else
-                        "SAY LYA / LAYA / LEYA OR CLAP TWICE · AUDIO STAYS ON DEVICE")
+                        "SAY LYA / LAYA / LEYA OR CLAP TWICE · COMMANDS REMOTE (" + self.cloud_asr.upper() + ")"
+                        if allow_cloud and not self.brain.private_mode else
+                        "SAY LYA / LAYA / LEYA OR CLAP TWICE · AUDIO STAYS ON DEVICE" +
+                        (" · PRIVATE MODE: USE TEXT" if allow_cloud and self.cloud_asr == 'nvidia' else "")),
+                    on_state=lambda phase: self.voice_signals.phase.emit(phase),
+                    on_retry=lambda candidate, paused: self.voice_signals.retry.emit(candidate, paused)
                 )
             except Exception as e:
                 print(f"[voice] wake listener ended: {e}")
-                self.voice_signals.status.emit("VOICE UNAVAILABLE · CHECK MICROPHONE / LOCAL MODEL · RESTART VOICE WAKE")
+                self.voice_signals.status.emit(
+                    "VOICE UNAVAILABLE · ONLINE HEARING FAILED · USE TEXT / RESTART VOICE"
+                    if allow_cloud and self.cloud_asr == 'nvidia' else
+                    "VOICE UNAVAILABLE · CHECK MICROPHONE / LOCAL MODEL · RESTART VOICE WAKE")
             else:
                 self.voice_signals.status.emit("CAMERA & MICROPHONE OFF")
         self.voice_thread = threading.Thread(target=_runner, daemon=True, name="LYA-VoiceWake")
@@ -803,11 +1019,40 @@ class Desktop(QObject):
         self.orb.setToolTip(text)
         self.tray.setToolTip(text)
         if text.startswith('VOICE UNAVAILABLE'):
+            self.orb.set_voice_phase('off')
             self.panel.show_answer('Voice listener stopped', text)
             self.open_panel()
+        elif text == 'CAMERA & MICROPHONE OFF':
+            self.orb.set_voice_phase('off')
+        elif text.startswith('VOICE INPUT ERROR'):
+            self.orb.set_voice_phase('off')
+
+    def on_voice_phase(self, phase):
+        self.orb.set_voice_phase('thinking' if phase == 'transcribing' else phase)
+
+    def on_voice_retry(self, candidate='', paused=False):
+        from brain.capabilities import volume_action
+        action = volume_action(candidate)
+        if self.cloud_voice and self.cloud_asr == 'nvidia' and self.brain.private_mode:
+            message = "Private mode blocks online hearing. Please type your private question."
+        elif paused:
+            message = "Recognition is still uncertain. I'll wait for you to say Lya again. You can also use the text box."
+        elif action:
+            command = 'mute volume' if action == 'mute' else 'volume ' + action
+            message = "I think you asked for a volume change. Please try saying " + command + "."
+        else:
+            message = "I'm not sure what I heard. Please try once more."
+        self.orb.set_voice_phase('uncertain')
+        body = message + "\n\nNo command was run."
+        if candidate:
+            body += "\nHeard (uncertain): " + candidate[:400]
+        self.panel.show_answer('Waiting for Lya.' if paused else 'Words were uncertain.', body)
+        self.open_panel()
+        return message
 
     def stop_voice(self):
         """Signal voice wake listener to stop."""
+        self._voice_restart += 1
         if self.voice_stop_event:
             self.voice_stop_event.set()
             if self.voice_thread and self.voice_thread.is_alive():
@@ -863,7 +1108,7 @@ class Desktop(QObject):
         if not report:
             return
         verdict = report.get('verdict')
-        titles = {'hearing': "The microphone is hearing you.",
+        titles = {'hearing': "Sound reaches the microphone.",
                   'too-quiet': "Sound arrives, but very quietly.",
                   'silent': "The microphone is returning silence.",
                   'no-audio': "No audio blocks arrived.",
@@ -871,6 +1116,8 @@ class Desktop(QObject):
         self.set_state(task="success" if verdict == 'hearing' else
                        "error" if verdict in ('silent', 'no-audio', 'no-listener') else "approval")
         lines = [
+            "This checks incoming sound only. Voice clarity and word recognition are separate checks.",
+            "",
             "Microphone: " + str(report.get('device') or 'default input'),
             "Window: " + str(report.get('elapsed')) + "s of " + str(report.get('seconds')) + "s · " +
             str(report.get('blocks')) + " blocks · " +
@@ -916,7 +1163,9 @@ class Desktop(QObject):
     def set_state(self, person=None, task=None):
         self.orb.set_state(person, task)
         self.panel.color = self.orb.target_color
-        self.panel.state_label.setText(f"{self.orb.person.upper()} PALETTE · {self.orb.task.upper()}")
+        self.panel.state_label.setText({'idle': 'CONVERSATION', 'files': 'DOCUMENTS',
+                                       'success': 'REPLY', 'approval': 'YOUR APPROVAL',
+                                       'error': 'NEEDS ATTENTION'}.get(self.orb.task, self.orb.task.upper()))
         self.panel.update()
 
     def show_files(self):
@@ -944,6 +1193,9 @@ class Desktop(QObject):
         import threading
         self.brain_cancel = threading.Event()
         self.brain_busy = True
+        from audio import voice
+        voice._THINKING.set()
+        self.orb.set_voice_phase('thinking')
         self.panel.show_answer("Working on your request…", "Checking identity, permission and relevant context.")
         self.set_state(task="thinking")
         self.open_panel()
@@ -951,6 +1203,8 @@ class Desktop(QObject):
 
     def on_brain(self, generation, answer):
         self.brain_busy = False
+        from audio import voice
+        voice._THINKING.clear()
         if generation != self.generation or self.brain_cancel.is_set():
             return
         self.set_state(task="approval" if answer.route == "blocked" else "error" if answer.route == "error" else "idle")
@@ -1037,11 +1291,19 @@ def main():
     parser.add_argument("--show-panel", action="store_true")
     parser.add_argument("--voice", action="store_true", help="Deprecated: the voice listener is on by default")
     parser.add_argument("--no-voice", action="store_true", help="Start without the microphone listener")
+    parser.add_argument("--microphone", help="Exact input-device name; overrides Windows default for this session")
+    parser.add_argument("--cloud-voice", action="store_true", help="Explicitly permit remote command transcription")
+    parser.add_argument("--cloud-asr", choices=('groq', 'nvidia'), default='groq',
+                        help="Remote recognizer; requires --cloud-voice")
+    parser.add_argument("--command-asr", choices=('whisper', 'vosk'),
+                        help="Local command recognizer; Whisper is an experimental opt-in")
+    parser.add_argument("--system-dictation", action="store_true",
+                        help="Prepare Windows Voice Access input with LYA's microphone off")
     parser.add_argument("--skip-setup", action="store_true", help="Do not open first-run owner setup")
     parser.add_argument("--original-art", action="store_true", help="Use the earlier crystal artwork")
     parser.add_argument("--model-art", action="store_true", help="Try the experimental baked 3D artwork")
     args = parser.parse_args()
-    app = QApplication(sys.argv[:1])
+    app = QApplication.instance() or QApplication(sys.argv[:1])
     app.setApplicationName("LYA Desktop")
     instance_lock = QLockFile(str(Path(QStandardPaths.writableLocation(
         QStandardPaths.StandardLocation.TempLocation)) / 'lya-desktop.lock'))
@@ -1052,19 +1314,20 @@ def main():
     from experience import OrbDesktop
     desktop = OrbDesktop(app, args.reduced_motion)
     desktop.orb.set_artwork(not args.original_art)
-    if not args.no_voice:
-        allow_cloud = False
-        try:
-            from brain.mind import get_groq_key
-            allow_cloud = bool(get_groq_key())
-        except Exception:
-            allow_cloud = False
-        desktop.cloud_voice = allow_cloud
-        desktop.start_voice(allow_cloud=allow_cloud)
+    if args.microphone:
+        os.environ['LYA_MICROPHONE'] = args.microphone
+    if args.command_asr:
+        os.environ['LYA_COMMAND_ASR'] = args.command_asr
+    desktop.cloud_voice = args.cloud_voice
+    desktop.cloud_asr = args.cloud_asr
+    if not args.no_voice and not args.system_dictation:
+        desktop.start_voice(allow_cloud=args.cloud_voice)
     if not args.skip_setup and desktop.needs_owner_setup():
         desktop.begin_owner_setup()   # First run: set up the owner before opening LYA.
     else:
         desktop.start_intro()
+    if args.system_dictation:
+        desktop.prepare_system_dictation()
     return app.exec()
 
 

@@ -1,0 +1,3 @@
+# Optional hosted ASR client only. No CUDA, GPU server or production-default change.
+# Check dependency compatibility before installing into an existing environment.
+nvidia-riva-client==2.27.0

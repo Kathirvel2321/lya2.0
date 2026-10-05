@@ -1,0 +1,6 @@
+{
+  "source": "https://media.githubusercontent.com/media/opencv/opencv_zoo/47534e27c9851bb1128ccc0102f1145e27f23f98/models/handpose_estimation_mediapipe/example_outputs/mphandpose_demo.webp",
+  "hands": 1,
+  "landmarks_per_hand": 21,
+  "private_camera_used": false
+}

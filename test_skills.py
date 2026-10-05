@@ -104,6 +104,13 @@ class DeviceSkillsTests(unittest.TestCase):
                 self.assertTrue(saved_path.startswith(os.path.abspath(tmp)))
                 self.assertTrue(saved_path.endswith(".png"))
 
+    def test_volume_unavailable_fails_without_claiming_a_change(self):
+        native = MagicMock()
+        native.keybd_event.side_effect = OSError('synthetic device failure')
+        with patch.object(device, 'pyautogui', None), patch.dict(sys.modules, {'win32api': native}):
+            self.assertEqual(device.volume('down'), 'Could not adjust volume on this device.')
+
+
 
 class FolderBrowserTests(unittest.TestCase):
     def setUp(self):

@@ -8,6 +8,8 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 MODEL_DIR = ROOT / 'models' / 'vision'
 NANODET = MODEL_DIR / 'nanodet-int8.onnx'
 YUNET = MODEL_DIR / 'yunet-2026may.onnx'
@@ -85,10 +87,18 @@ class VisionEngine:
         verify_models()
         self.face = cv2.FaceDetectorYN.create(str(YUNET), '', (width, height))
         self.objects = cv2.dnn.readNet(str(NANODET))
+        from vision.hands import HandTracker
+        try:
+            self.hands = HandTracker()
+        except (RuntimeError, cv2.error):
+            self.hands = None  # Optional hand analysis must not break the existing camera.
 
     def analyze(self, frame):
         import cv2
         original_height, original_width = frame.shape[:2]
+        hand_frame = frame
+        if original_width > 960:
+            hand_frame = cv2.resize(frame, (960, round(original_height * 960 / original_width)), interpolation=cv2.INTER_AREA)
         if original_width > 640:
             frame = cv2.resize(frame, (640, round(original_height * 640 / original_width)), interpolation=cv2.INTER_AREA)
         height, width = frame.shape[:2]
@@ -97,12 +107,22 @@ class VisionEngine:
         face_boxes = [] if faces is None else [list(map(int, (f[0], f[1], f[0] + f[2], f[1] + f[3])))
                                                 for f in faces[:12]]
         objects = detect_objects(frame, self.objects)
+        hands, hand_status = [], 'unavailable'
+        if self.hands is not None:
+            try:
+                hands, hand_status = self.hands.analyze(hand_frame), 'ready'
+            except (cv2.error, ValueError, OverflowError):
+                hand_status = 'unavailable'
         sx, sy = original_width / width, original_height / height
         def original_box(box):
             return [round(box[0]*sx), round(box[1]*sy), round(box[2]*sx), round(box[3]*sy)]
         for item in objects:
             item['box'] = original_box(item['box'])
-        return {'faces': [original_box(box) for box in face_boxes], 'objects': objects, 'identity': 'unknown'}
+        for hand in hands:
+            hand['points'] = [[round(x * original_width / hand_frame.shape[1], 1),
+                               round(y * original_height / hand_frame.shape[0], 1)] for x, y in hand['points']]
+        return {'faces': [original_box(box) for box in face_boxes], 'objects': objects,
+                'hands': hands, 'hand_status': hand_status, 'identity': 'unknown'}
 
 
 def encode_frame(frame):

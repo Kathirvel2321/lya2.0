@@ -1,0 +1,11 @@
+{
+  "public_fixture_hands": 1,
+  "landmarks_per_hand": 21,
+  "public_open_palm_rejected_as_pointing": true,
+  "public_combined_analysis_ms": 178.1,
+  "blank_combined_analysis_median_ms": 155.9,
+  "blank_combined_analysis_max_ms": 188.6,
+  "blank_runs": 8,
+  "private_camera_used": false,
+  "limitations": "Public open-hand and blank-frame checks, not owner pointing accuracy or a sustained resource benchmark."
+}

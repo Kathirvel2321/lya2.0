@@ -17,10 +17,48 @@ CONVERSATION_SECONDS=45
 QUIET={"on":False}
 LAST_WAV={"wav":None}
 _SPEAKING=threading.Event()
+_THINKING=threading.Event()
+COMMAND_SILENCE=2.5
+COMMAND_MAX_SECONDS=120
 _engine=None
 _mic_lock=threading.Lock()
 _local=None
 _CLAP_WAKE = object()
+
+
+class RecognitionUncertain(RuntimeError):
+    """Do not send an uncertain or truncated spoken question to the brain."""
+    def __init__(self, message, candidate=''):
+        super().__init__(message)
+        self.candidate = candidate  # Transient diagnostic only; excluded from error strings/logs.
+
+
+class SpeechActivity:
+    """Streaming state for the already-installed local Silero VAD (32ms frames)."""
+    def __init__(self):
+        import numpy as np
+        from faster_whisper.vad import get_vad_model
+        self.session = getattr(get_vad_model(), 'session', None)
+        if self.session is None or {item.name for item in self.session.get_inputs()} != {'input', 'h', 'c'}:
+            raise RuntimeError('Installed VAD does not support this streaming format.')
+        self.pending = b''
+        self.h = np.zeros((1, 1, 128), np.float32)
+        self.c = np.zeros_like(self.h)
+        self.context = np.zeros((1, 64), np.float32)
+        self.active = False
+
+    def feed(self, pcm):
+        import numpy as np
+        self.pending += pcm
+        while len(self.pending) >= 1024:
+            block, self.pending = self.pending[:1024], self.pending[1024:]
+            samples = np.frombuffer(block, np.int16).astype(np.float32)[None, :] / 32768
+            probability, self.h, self.c = self.session.run(
+                None, {'input': np.concatenate([self.context, samples], axis=1),
+                       'h': self.h, 'c': self.c})
+            self.context = samples[:, -64:]
+            self.active = float(probability.reshape(-1)[-1]) >= 0.5
+        return self.active
 
 # --- Passive listener telemetry --------------------------------------------------
 # Aggregate counters only: microphone audio is never stored, logged or transmitted.
@@ -29,7 +67,8 @@ _MIC_TEST_MIN_SECONDS=1.0
 _MIC_TEST_MAX_SECONDS=30.0
 _STATS_LOCK=threading.Lock()
 _STATS={"state":"stopped","device":None,"samples":0,"peak":0,"loud_blocks":0,"claps":0,
-        "speaking_blocks":0,"state_since":None,"last_audio":None,"stream_open":False,"window":None}
+        "speaking_blocks":0,"state_since":None,"last_audio":None,"stream_open":False,"window":None,
+        "level":0.0}
 
 
 def _note_state(state, device=None):
@@ -47,11 +86,30 @@ def _note_state(state, device=None):
 
 
 def _input_device_name():
-    """Best-effort default input device name; never raises and never opens a stream."""
+    """Best-effort selected input device name; never opens a stream."""
     try:
         import sounddevice as sd
-        return str(sd.query_devices(kind="input").get("name","")).strip() or None
+        return str(sd.query_devices(_input_device(sd), "input").get("name", "")).strip() or None
     except Exception:
+        return None
+
+
+def _input_device(sd):
+    """Use Windows' native default input when available; otherwise PortAudio's default."""
+    selected = os.environ.get('LYA_MICROPHONE', '').strip()
+    if selected:
+        matches = [(i, d) for i, d in enumerate(sd.query_devices())
+                   if d['max_input_channels'] and d['name'] == selected]
+        for i, device in matches:
+            if sd.query_hostapis(device['hostapi'])['name'] == 'Windows WASAPI':
+                return i
+        if matches:
+            return matches[0][0]
+        raise RuntimeError('Selected microphone is unavailable. Choose a microphone from the LYA menu.')
+    try:
+        return next(api['default_input_device'] for api in sd.query_hostapis()
+                    if api['name'] == 'Windows WASAPI' and api['default_input_device'] >= 0)
+    except (StopIteration, KeyError, TypeError, OSError):
         return None
 
 
@@ -59,7 +117,7 @@ def _reset_listener_stats():
     """Clear the aggregate counters without touching the listener itself."""
     with _STATS_LOCK:
         _STATS.update(samples=0,peak=0,loud_blocks=0,claps=0,speaking_blocks=0,
-                      state_since=time.monotonic(),last_audio=None)
+                      state_since=time.monotonic(),last_audio=None,level=0.0)
 
 
 def _note_audio(pcm, threshold=None, suppressed=False):
@@ -88,6 +146,7 @@ def _note_audio(pcm, threshold=None, suppressed=False):
         _STATS["loud_blocks"]+=1 if loud else 0
         _STATS["speaking_blocks"]+=1 if suppressed else 0
         _STATS["last_audio"]=now
+        _STATS['level'] = 0.65 * _STATS['level'] + 0.35 * min(1.0, rms / 1800.0)
         if active:
             window["samples"]+=int(samples.size)
             window["blocks"]+=1
@@ -124,7 +183,7 @@ def listener_health():
             "state_seconds":round(seconds,1) if seconds is not None else None,
             "idle_seconds":round(idle,1) if idle is not None else None,
             "listening":bool(stats["stream_open"]),"speaking":_SPEAKING.is_set(),
-            "speaking_blocks":stats["speaking_blocks"],"mic_test":bool(testing)}
+            "speaking_blocks":stats["speaking_blocks"],"mic_test":bool(testing),"level":stats['level']}
 
 
 def mic_test_start(seconds=5.0, threshold=None):
@@ -161,8 +220,8 @@ def _mic_test_verdict(report):
         return "too-quiet", ("Sound arrived but never crossed the " + str(report["threshold"]) +
                              " peak gate the command recorder uses. Raise the input level or speak closer "
                              "to the microphone.")
-    return "hearing", ("Sound crossed the recorder's loudness gate, so a dead, muted or mis-selected "
-                       "microphone is not the cause of the wake failure.")
+    return "hearing", ("Sound crossed the recorder's loudness gate. It may be speech or background noise. "
+                       "This does not verify the chosen microphone, voice clarity or recognized words.")
 
 
 def mic_test_report():
@@ -332,7 +391,8 @@ def _speak_blocking(payload, subprocess, sys, Path):
 def _record(seconds):
     import sounddevice as sd
     with _mic_lock:
-        audio=sd.rec(int(seconds*16000),samplerate=16000,channels=1,dtype="int16")
+        audio=sd.rec(int(seconds*16000),samplerate=16000,channels=1,dtype="int16",
+                     device=_input_device(sd))
         sd.wait()
     return _wav(audio.tobytes())
 
@@ -345,20 +405,38 @@ def _wav(pcm):
     return buf
 
 
-def _record_stream(max_seconds=25,silence=0.8,thresh=700,stop_event=None,clap_enabled=False):
+def _record_stream(max_seconds=25,silence=0.8,thresh=700,stop_event=None,clap_enabled=False,
+                   endpoint_model=None,on_state=None,use_vad=False):
     import numpy as np
     import sounddevice as sd
     from collections import deque
-    parts=[];pre=deque(maxlen=20);quiet=0;started=False
+    parts=[];pre=deque(maxlen=50);quiet=0;started=False
     clap = DoubleClap(int(os.environ.get('LYA_CLAP_THRESHOLD', '150'))) if clap_enabled else None
-    if _SPEAKING.is_set():
+    if _SPEAKING.is_set() or _THINKING.is_set():
         return None
-    with _mic_lock, sd.RawInputStream(samplerate=16000,channels=1,dtype="int16") as stream:
+    endpoint = None
+    activity = None
+    if use_vad:
+        try:
+            activity = SpeechActivity()
+        except (ImportError, FileNotFoundError, RuntimeError):
+            pass  # Portable fallback retains local Vosk speech gating.
+    endpoint_quiet = None
+    previous_partial = ''
+    if endpoint_model is not None and activity is None:
+        import json
+        import vosk
+        endpoint = vosk.KaldiRecognizer(endpoint_model, 16000)
+    with _mic_lock, sd.RawInputStream(samplerate=16000,channels=1,dtype="int16",
+                                      device=_input_device(sd)) as stream:
         _note_state('listening', _input_device_name())
+        if on_state:
+            on_state('listening')
         try:
             deadline=time.monotonic()+max_seconds
             while time.monotonic()<deadline:
-                if _SPEAKING.is_set() or (stop_event is not None and stop_event.is_set()):
+                if (_SPEAKING.is_set() or _THINKING.is_set() or
+                        (stop_event is not None and stop_event.is_set())):
                     return None
                 data,overflow=stream.read(320);pcm=bytes(data)
                 _note_audio(pcm,thresh)
@@ -367,13 +445,40 @@ def _record_stream(max_seconds=25,silence=0.8,thresh=700,stop_event=None,clap_en
                 if clap is not None and clap.feed(pcm):
                     _note_clap()
                     return _CLAP_WAKE
+                recognized = False
+                if endpoint is not None:
+                    if endpoint.AcceptWaveform(pcm):
+                        recognized = bool(json.loads(endpoint.Result()).get('text', '').strip())
+                        previous_partial = ''
+                        if recognized:
+                            endpoint_quiet = 0
+                    else:
+                        partial = json.loads(endpoint.PartialResult()).get('partial', '').strip()
+                        recognized = bool(partial and partial != previous_partial)
+                        previous_partial = partial
+                        if recognized:
+                            endpoint_quiet = None
                 loud=float(np.abs(np.frombuffer(pcm,np.int16).astype(np.int32)).max())>thresh
-                if loud and not started:
+                speech = activity.feed(pcm) if activity is not None else (recognized if endpoint is not None else loud)
+                if speech and not started:
                     parts.extend(pre);started=True
+                    if on_state:
+                        on_state('hearing')
                 if started:
-                    parts.append(pcm);quiet=0 if loud else quiet+1
-                    if quiet>=silence/0.02:break
+                    parts.append(pcm)
+                    speaking_now = speech if activity is not None else loud or recognized
+                    quiet=0 if speaking_now else quiet+1
+                    if quiet>=silence/0.02 and not recognized:break
                 else:pre.append(pcm)
+                # Allow a brief continuation after a finalized clause. Do not
+                # submit the question at the first internal recognizer endpoint.
+                if endpoint_quiet is not None:
+                    endpoint_quiet += 1
+                    if started and endpoint_quiet >= silence / 0.02:
+                        break
+            else:
+                if parts:
+                    raise RecognitionUncertain('Question exceeded the capture limit; repeat a shorter question.')
         finally:
             _note_state('stopped')
     return _wav(b"".join(parts)) if parts else None
@@ -406,10 +511,18 @@ def _transcribe_groq(wav_bytes, api_key):
         return data.get("text", "").strip()
 
 
-def transcribe(wav_bytes, offline_required=True):
+def transcribe(wav_bytes, offline_required=True, *, cloud_provider='groq', cancelled=None, on_provider=None):
     global _local
+    local_only = offline_required() if callable(offline_required) else offline_required
     # 1. If not offline_required, try Groq Whisper Large v3 (multilingual, fast)
-    if not offline_required:
+    if not local_only:
+        if cloud_provider == 'nvidia':
+            from audio import nvidia_asr
+            permitted = (lambda: not offline_required()) if callable(offline_required) else True
+            return nvidia_asr.transcribe(wav_bytes, remote_allowed=permitted,
+                                        cancelled=cancelled, on_model=on_provider)
+        if cloud_provider != 'groq':
+            raise RuntimeError('Unknown remote speech recognizer. No audio sent.')
         groq_key = os.environ.get("GROQ_API_KEY", "").strip()
         if not groq_key:
             try:
@@ -417,13 +530,24 @@ def transcribe(wav_bytes, offline_required=True):
                 groq_key = get_groq_key()
             except Exception:
                 pass
-        if groq_key:
-            try:
-                res = _transcribe_groq(wav_bytes, groq_key)
-                if res:
-                    return res
-            except Exception:
-                pass
+        if not groq_key:
+            raise RuntimeError('Groq speech is not configured. No audio provider was contacted.')
+        try:
+            res = _transcribe_groq(wav_bytes, groq_key)
+        except Exception:
+            raise RuntimeError('Groq speech is unavailable. No other audio provider was contacted.') from None
+        if not res:
+            raise RecognitionUncertain('No clear question was recognized.')
+        return res
+
+    # Installed English Whisper handles whole questions; Vosk remains the wake/stop reader.
+    # Do not substitute another engine's guess after an uncertain Whisper result.
+    from audio import local_whisper
+    engine = os.environ.get('LYA_COMMAND_ASR', 'vosk').strip().lower()
+    if engine not in ('whisper', 'vosk'):
+        raise RuntimeError('Unknown local command recognizer.')
+    if engine == 'whisper':
+        return local_whisper.transcribe(wav_bytes)
 
     with wave.open(io.BytesIO(wav_bytes), "rb") as wav:
         pcm = wav.readframes(wav.getnframes())
@@ -448,17 +572,26 @@ def transcribe(wav_bytes, offline_required=True):
         if _local is None:
             _local = vosk.Model(path)
         recognizer = vosk.KaldiRecognizer(_local, 16000)
-        recognizer.AcceptWaveform(pcm)
-        return json.loads(recognizer.FinalResult()).get("text", "").strip()
+        recognizer.SetWords(True)
+        parts = []
+        words = []
+        for offset in range(0, len(pcm), 4000):
+            if recognizer.AcceptWaveform(pcm[offset:offset + 4000]):
+                result = json.loads(recognizer.Result())
+                parts.append(result.get('text', ''))
+                words.extend(result.get('result', []))
+        result = json.loads(recognizer.FinalResult())
+        parts.append(result.get('text', ''))
+        words.extend(result.get('result', []))
+        text = " ".join(part for part in parts if part).strip()
+        confidence = [word['conf'] for word in words if 'conf' in word]
+        # Confidence is a rejection heuristic, not proof that the words are right.
+        if not text or (confidence and (min(confidence) < 0.45 or
+                                       sum(confidence) / len(confidence) < 0.75)):
+            raise RecognitionUncertain('Please repeat the question; local recognition was uncertain.', text)
+        return text
 
-    if offline_required:
-        raise RuntimeError("Offline voice needs a local Vosk model. No cloud fallback allowed.")
-
-    # 3. Google Speech Recognition fallback
-    import speech_recognition as sr
-    recognizer = sr.Recognizer()
-    recognizer.operation_timeout = 8
-    return recognizer.recognize_google(sr.AudioData(pcm, 16000, 2), language="en-IN").strip()
+    raise RuntimeError("Offline voice needs a local Vosk model. No cloud fallback allowed.")
 
 
 def listen(timeout=6, lang=None):
@@ -477,15 +610,25 @@ def process_utterance(text, last_wake_time=0.0, on_wake=None, quiet=False):
     low = text.casefold() if text else ""
     if not low:
         return False, last_wake_time
-    if _SPEAKING.is_set() and low not in {"stop", "cancel"}:
+    command = low.strip(' \t\r\n,.!?')
+    if _SPEAKING.is_set() and command not in {"stop", "cancel"}:
         return False, last_wake_time
     # R04 fix: stop/cancel must ALWAYS interrupt running tasks, even after conversation window closes
-    if low in {"stop", "cancel", "go to sleep", "sleep"}:
+    if command in {"stop", "cancel", "go to sleep", "sleep"}:
         if on_wake:
-            on_wake(low, False)
+            on_wake(command, False)
         return True, 0.0
     match = WAKE_PATTERN.search(low)
-    active = (time.monotonic() - last_wake_time) < CONVERSATION_SECONDS
+    active = bool(last_wake_time) and (time.monotonic() - last_wake_time) < CONVERSATION_SECONDS
+    if active:
+        # Within a conversation the name belongs to the question, including all
+        # context before it. Only a standalone wake/address is an acknowledgement.
+        wake_only = re.fullmatch(r'\s*(?:(?:hey|please|wake\s+up)[\s,.!?]+)?' + WAKE_PATTERN.pattern +
+                                 r'(?:[\s,.!?]+wake\s+up)?[\s,.!?]*', low)
+        now = time.monotonic()
+        if not wake_only and on_wake:
+            on_wake(text, quiet)
+        return True, now
     if match:
         remainder = text[match.end():].strip(" ,.!?")
         if remainder.casefold() == 'wake up':
@@ -493,11 +636,6 @@ def process_utterance(text, last_wake_time=0.0, on_wake=None, quiet=False):
         now = time.monotonic()
         if on_wake:
             on_wake(remainder or "wake up lya", quiet)
-        return True, now
-    elif active:
-        now = time.monotonic()
-        if on_wake:
-            on_wake(text, quiet)
         return True, now
     return False, last_wake_time
 
@@ -554,7 +692,8 @@ def _wait_for_wake(model, clap_enabled, stop_event, on_ready):
                           for context in ('{}', '[unk] {}', '{} [unk]', '[unk] {} [unk]')] + ['[unk]'])
     recognizer = vosk.KaldiRecognizer(model, 16000, grammar)
     clap = DoubleClap(int(os.environ.get('LYA_CLAP_THRESHOLD', '150'))) if clap_enabled else None
-    with _mic_lock, sd.RawInputStream(samplerate=16000, channels=1, dtype='int16') as stream:
+    with _mic_lock, sd.RawInputStream(samplerate=16000, channels=1, dtype='int16',
+                                      device=_input_device(sd)) as stream:
         _note_state('listening', _input_device_name())
         if on_ready:
             on_ready()  # Ready means the actual microphone opened, not just the model.
@@ -589,8 +728,55 @@ def _wait_for_wake(model, clap_enabled, stop_event, on_ready):
     return False
 
 
-def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=True, on_ready=None, on_error=None):
-    """Detect the wake phrase locally; only transcribe later commands remotely."""
+def _wait_for_interrupt(model, stop_event, on_wake, on_ready=None):
+    """One local microphone reader hears only interruption while LYA is busy.
+
+    Unrestricted recognition avoids forcing unrelated speech into a small
+    command grammar. Echo cancellation is not implemented; headphones help.
+    """
+    import json
+    import sounddevice as sd
+    import vosk
+    recognizer = vosk.KaldiRecognizer(model, 16000)
+    previous = ''
+    with _mic_lock, sd.RawInputStream(samplerate=16000, channels=1, dtype='int16',
+                                      device=_input_device(sd)) as stream:
+        _note_state('listening', _input_device_name())
+        try:
+            if on_ready:
+                on_ready()
+            while _SPEAKING.is_set() or _THINKING.is_set():
+                if stop_event is not None and stop_event.is_set():
+                    return
+                data, overflow = stream.read(320)
+                if stop_event is not None and stop_event.is_set():
+                    return
+                if overflow:
+                    raise RuntimeError('Microphone input overflow')
+                pcm = bytes(data)
+                _note_audio(pcm, suppressed=True)
+                final = recognizer.AcceptWaveform(pcm)
+                result = json.loads(recognizer.Result() if final else recognizer.PartialResult())
+                text = result.get('text' if final else 'partial', '').strip().casefold()
+                if text in ('stop', 'cancel', 'stop speaking') and (final or text == previous):
+                    if on_wake:
+                        on_wake('stop', True)
+                    return
+                previous = text
+        finally:
+            _note_state('stopped')
+
+
+def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=True, on_ready=None, on_error=None,
+              on_state=None, on_retry=None, cloud_provider='groq', on_provider=None, cloud_only=False):
+    """Detect wake locally; on_retry(candidate, paused) never dispatches uncertain words.
+
+    Two uncertain turns return to local wake detection. Remote command
+    transcription still requires offline_required=False. A callable privacy
+    policy is checked after capture, immediately before transcription.
+    """
+    if cloud_provider not in ('groq', 'nvidia'):
+        raise RuntimeError('Unknown remote speech recognizer. Listener not started.')
     import vosk
     global _local
     path = os.environ.get("LYA_VOSK_MODEL", "")
@@ -608,25 +794,45 @@ def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=Tru
         raise RuntimeError("Local wake model missing. Microphone not started.")
     if _local is None:
         _local = vosk.Model(path)  # Never stream ambient audio to a provider.
+    from audio import local_whisper
+    engine = os.environ.get('LYA_COMMAND_ASR', 'vosk').strip().lower()
+    if engine == 'whisper' and not cloud_only:
+        local_whisper.load(str(local_whisper.model_path()))  # Warm before microphone readiness.
     last = 0.0
     failures = 0
+    uncertain_turns = 0
     _note_state('starting')
     while stop_event is None or not stop_event.is_set():
-        if _SPEAKING.is_set():
-            if last:
-                last = time.monotonic()  # Give the user a full turn after LYA finishes.
-            time.sleep(0.1)
-            continue
         try:
+            if _SPEAKING.is_set() or _THINKING.is_set():
+                if on_state:
+                    on_state('speaking' if _SPEAKING.is_set() else 'thinking')
+                _wait_for_interrupt(_local, stop_event, on_wake)
+                if last:
+                    last = time.monotonic()
+                if stop_event is not None:
+                    stop_event.wait(0.05)  # Let the UI consume an interruption signal.
+                else:
+                    time.sleep(0.05)
+                continue
             active = bool(last) and time.monotonic() - last < CONVERSATION_SECONDS
             if not active:
-                if not _wait_for_wake(_local, clap_enabled, stop_event, on_ready):
+                def ready():
+                    if on_ready:
+                        on_ready()
+                    if on_state:
+                        on_state('standby')
+                if not _wait_for_wake(_local, clap_enabled, stop_event, ready):
                     return
                 _, last = process_utterance('wake up lya', last, on_wake, QUIET['on'])
                 failures = 0
+                uncertain_turns = 0
                 continue
-            wav = _record_stream(max_seconds=25, silence=0.8, stop_event=stop_event,
-                                 clap_enabled=clap_enabled)
+            # Bound noise/dictation, but never forward a question chopped at the limit.
+            wav = _record_stream(max_seconds=COMMAND_MAX_SECONDS,
+                                 silence=3.0 if cloud_provider == 'nvidia' else COMMAND_SILENCE,
+                                 stop_event=stop_event, clap_enabled=clap_enabled,
+                                 endpoint_model=_local, on_state=on_state, use_vad=True)
             if stop_event is not None and stop_event.is_set():
                 return
             if wav is None:
@@ -634,11 +840,41 @@ def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=Tru
             if wav is _CLAP_WAKE:
                 _, last = process_utterance('wake up lya', last, on_wake, QUIET['on'])
                 failures = 0
+                uncertain_turns = 0
                 continue
-            data = wav.getvalue()
-            text = transcribe(data, offline_required=offline_required)
+            if on_state:
+                on_state('transcribing')
+            local_only = offline_required() if callable(offline_required) else offline_required
+            if cloud_only and local_only:
+                raise RecognitionUncertain('Private mode blocks online hearing. Please use text input.')
+            if cloud_provider == 'nvidia' and not local_only:
+                text = transcribe(wav.getvalue(), offline_required=offline_required,
+                                  cloud_provider='nvidia', cancelled=stop_event, on_provider=on_provider)
+            else:
+                text = transcribe(wav.getvalue(), offline_required=local_only)
+            if stop_event is not None and stop_event.is_set():
+                return  # A slow decoder must not dispatch after voice was turned off.
+            if not text.strip():
+                raise RecognitionUncertain('No clear words were recognized.')
             failures = 0
+            uncertain_turns = 0
+        except RecognitionUncertain as error:
+            if stop_event is not None and stop_event.is_set():
+                return
+            failures = 0
+            uncertain_turns += 1
+            paused = uncertain_turns >= 2
+            if paused:
+                last = 0.0  # Wait for a fresh wake instead of speaking retries forever.
+            if on_retry:
+                on_retry(error.candidate, paused)
+            continue
         except Exception as error:
+            if cloud_only:
+                from audio.nvidia_asr import SpeechUnavailable
+                if isinstance(error, (SpeechUnavailable, PermissionError)):
+                    _note_state('stopped')
+                    raise RuntimeError('Online hearing is unavailable or blocked. Use text or restart voice.') from None
             failures += 1
             if on_error:
                 on_error(type(error).__name__)
@@ -650,5 +886,8 @@ def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=Tru
             else:
                 time.sleep(0.5)
             continue
+        # This turn began while awake. A long capture or decoder wait must not
+        # expire its context and reinterpret an interior name as a new wake.
+        last = time.monotonic()
         _, last = process_utterance(text, last, on_wake, QUIET["on"])
     _note_state('stopped')

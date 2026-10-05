@@ -7,7 +7,7 @@ the voice as though it were proven.
 
 The pipeline produces audible, emotion-differentiated audio, and the tests check
 signal properties (peak, loudness, pitch ratio, duration). None of that proves the
-voice *sounds good*. That requires a human listener, and specifically a native
+voice _sounds good_. That requires a human listener, and specifically a native
 Tamil speaker. Until `out/reel-*.wav` has been listened to and accepted, the
 correct description is "renders speech with directional emotion", not "sounds
 natural".
@@ -26,11 +26,11 @@ trustworthy of the two.
   through the Tamil-trained Piper model — English then carries a noticeable accent.
 - `native` gives a better English model, but two different female timbres, i.e.
   two different-seeming people.
-- The remote `en-US-AvaMultilingualNeural` is the only *free* way found to get one
+- The remote `en-US-AvaMultilingualNeural` is the only _free_ way found to get one
   timbre across both languages properly, and it costs privacy.
 
 There is no offline, free option that is simultaneously accurate in both
-languages *and* one timbre. This is a genuine constraint, not a tuning problem.
+languages _and_ one timbre. This is a genuine constraint, not a tuning problem.
 
 ## Emotion is direction, not acting
 
@@ -40,7 +40,7 @@ is a keyword/punctuation heuristic with continuity, not sentiment analysis. Two
 consequences:
 
 - A cue can misfire. The `firm` cues were tightened during development because a
-  bare `"cannot"` matched *"I cannot believe it"* and turned astonishment into
+  bare `"cannot"` matched _"I cannot believe it"_ and turned astonishment into
   refusal.
 - Emotion never changes **what** she says — only how. That is deliberate, but it
   means emotion is expressed entirely through prosody, which is a weaker signal
@@ -57,7 +57,7 @@ non-trivial stage and is bounded to short spans.
 
 ## Remote quality is unmeasured
 
-`cloud_edge` has been exercised for *delivery* (a clip comes back), not for
+`cloud_edge` has been exercised for _delivery_ (a clip comes back), not for
 quality, latency on a poor connection, or consistency across languages. It is off
 by default. Enabling it means the sentence text leaves the device, which the LYA
 project refuses by default; the opt-in exists so that decision is explicit and
@@ -68,7 +68,7 @@ per-run, not implicit.
 Nothing here is wired into LYA. There are no tests proving this stack behaves under
 the app's real threading, approval or session model. If it is ever integrated, that
 integration needs its own privacy review — the fail-closed policy here is evidence
-for the *voice* boundary only.
+for the _voice_ boundary only.
 
 ## Windows-specific pieces
 

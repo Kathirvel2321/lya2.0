@@ -104,7 +104,7 @@ def volume(action):
             return f"Volume {action}."
     except Exception:
         pass
-    return f"Volume {action}."
+    return "Could not adjust volume on this device."
 
 HANDS = {
     "open": open_app, "close": close_app, "search": search_web,

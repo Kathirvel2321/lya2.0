@@ -142,6 +142,17 @@ class VoiceRuntimeTests(unittest.TestCase):
         self.assertLessEqual(max(e[1] for e in events if e[0] == 'audio'), round(SR * 0.02))
         self.assertIsNone(self.voice._pcm_stream)
 
+    def test_final_sentence_has_no_added_playback_pause(self):
+        stream = Mock(samplerate=SR)
+        with patch('sounddevice.OutputStream', return_value=stream):
+            report = self.voice.speak('A short answer.', play=True,
+                                      allow_interjections=False)
+        self.assertEqual(report.chunks, 1)
+        self.assertEqual(sum(len(call.args[0]) for call in stream.write.call_args_list),
+                         int(SR * 0.2))
+        stream.stop.assert_called_once()
+        stream.close.assert_called_once()
+
     def test_pcm_cancel_aborts_without_playing_remaining_blocks(self):
         stream = Mock(samplerate=SR)
         stream.write.side_effect = lambda data: self.voice._cancel.set()

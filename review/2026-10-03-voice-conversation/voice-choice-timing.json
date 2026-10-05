@@ -1,0 +1,21 @@
+[
+  {
+    "engine": "kokoro_bella",
+    "trial": 0,
+    "synthesis_ms": 28342.5,
+    "audio_seconds": 2.901,
+    "load_ms": 2687.3
+  },
+  {
+    "engine": "kokoro_bella",
+    "trial": 1,
+    "synthesis_ms": 30017.0,
+    "audio_seconds": 2.901,
+    "load_ms": 2687.3
+  },
+  {
+    "engine": "piper_current",
+    "synthesis_ms": 7424.5,
+    "audio_seconds": 3.982
+  }
+]

@@ -11,13 +11,13 @@ external work\tools\run-tests.cmd
 
 ## Global options
 
-| Option | Meaning |
-|---|---|
-| `--persona PATH` | load a different persona JSON |
-| `--models DIR` | directory holding the Piper `.onnx` models |
+| Option                     | Meaning                                                               |
+| -------------------------- | --------------------------------------------------------------------- |
+| `--persona PATH`           | load a different persona JSON                                         |
+| `--models DIR`             | directory holding the Piper `.onnx` models                            |
 | `--timbre unified\|native` | one timbre for both languages (**default**) or one model per language |
-| `--seed N` | reproducible prosody (same seed → same plan) |
-| `--keep-warm` | keep model memory between calls (faster, more RAM) |
+| `--seed N`                 | reproducible prosody (same seed → same plan)                          |
+| `--keep-warm`              | keep model memory between calls (faster, more RAM)                    |
 
 ## `doctor` — is anything usable?
 
@@ -28,7 +28,7 @@ alya-voice.cmd doctor --remote
 
 Prints the persona, styles, emotion count, policy, audit/cache location, timbre,
 and each engine's availability with a reason. `--remote` also asks whether the
-remote engine *would* be allowed (it still will not call it).
+remote engine _would_ be allowed (it still will not call it).
 
 ## `plan` — inspect prosody without speaking
 
@@ -39,7 +39,7 @@ alya-voice.cmd plan "No, stop." --style hacker --seed 7
 ```
 
 Shows each span's language, emotion, rate/pitch/volume deltas, pause and text,
-then the same plan as JSON. This is the fastest way to see *why* something sounds
+then the same plan as JSON. This is the fastest way to see _why_ something sounds
 the way it does.
 
 ## `say` — speak
@@ -50,16 +50,16 @@ alya-voice.cmd say "சூப்பர்! வேலை முடிந்தத
 alya-voice.cmd say "Important. Do not open that link." --style serious --silent
 ```
 
-| Option | Meaning |
-|---|---|
-| `--emotion NAME` | force an emotion (see `config/emotions.json`) |
-| `--style NAME` | delivery style (see `config/persona.json`) |
-| `--language auto\|en\|ta` | force a language instead of detecting |
-| `--engine auto\|offline_piper\|offline_sapi\|cloud_edge` | pick an engine |
-| `--remote` | acknowledge that text will leave the device (remote only) |
-| `--silent` | render without playing |
-| `--wav [PATH]` | export a mono 16-bit WAV (auto-named if no path) |
-| `--no-interjections` | disable the discourse markers ("mm, okay so") |
+| Option                                                   | Meaning                                                   |
+| -------------------------------------------------------- | --------------------------------------------------------- |
+| `--emotion NAME`                                         | force an emotion (see `config/emotions.json`)             |
+| `--style NAME`                                           | delivery style (see `config/persona.json`)                |
+| `--language auto\|en\|ta`                                | force a language instead of detecting                     |
+| `--engine auto\|offline_piper\|offline_sapi\|cloud_edge` | pick an engine                                            |
+| `--remote`                                               | acknowledge that text will leave the device (remote only) |
+| `--silent`                                               | render without playing                                    |
+| `--wav [PATH]`                                           | export a mono 16-bit WAV (auto-named if no path)          |
+| `--no-interjections`                                     | disable the discourse markers ("mm, okay so")             |
 
 Prints a JSON report: engine used, spans, chunk count, first-audio ms, total ms,
 audio seconds, sensitivity, any findings, and notes explaining every fallback.
@@ -113,27 +113,27 @@ alya-voice.cmd remote-probe --remote
 
 Refuses unless `config/policy.json` says `"remote": "opt_in"` **and** `--remote`
 is passed. Renders two short clips (one English, one Tamil) through the Edge
-multilingual voice and writes `out/remote-probe-*.json`. It proves *delivery*, not
+multilingual voice and writes `out/remote-probe-*.json`. It proves _delivery_, not
 quality, and it means that text left the laptop — only run it with text you are
 happy to send.
 
 ## Environment variables
 
-| Variable | Effect |
-|---|---|
+| Variable            | Effect                             |
+| ------------------- | ---------------------------------- |
 | `ALYA_VOICE_MODELS` | override the Piper model directory |
 
 ## Where output goes
 
-| Path | Contents |
-|---|---|
-| `out/reel-*.wav` | the demo reel |
-| `out/say-*.wav` | auto-named exports from `say --wav` |
-| `out/bench-*.json` | benchmark results |
-| `out/remote-probe-*.json` | remote probe results |
-| `out/audit/voice-audit.jsonl` | append-only log — **salted hash only, never the text** |
-| `out/cache/` | render cache (only when enabled in policy) |
-| `out/remote/` | temporary MP3s from the remote engine, deleted on close |
+| Path                          | Contents                                                |
+| ----------------------------- | ------------------------------------------------------- |
+| `out/reel-*.wav`              | the demo reel                                           |
+| `out/say-*.wav`               | auto-named exports from `say --wav`                     |
+| `out/bench-*.json`            | benchmark results                                       |
+| `out/remote-probe-*.json`     | remote probe results                                    |
+| `out/audit/voice-audit.jsonl` | append-only log — **salted hash only, never the text**  |
+| `out/cache/`                  | render cache (only when enabled in policy)              |
+| `out/remote/`                 | temporary MP3s from the remote engine, deleted on close |
 
 ## Adding an emotion or style
 

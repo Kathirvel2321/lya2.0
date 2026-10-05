@@ -10,10 +10,21 @@ app = QCoreApplication.instance() or QCoreApplication([])
 class SpeechTests(unittest.TestCase):
     def test_desktop_uses_native_models_for_english_and_tamil(self):
         voice = _load_voice()
+        from alya_voice.engines.offline_piper import default_models_dir
         try:
             piper = voice._engine('offline_piper')
-            self.assertEqual(piper._model_for('en'), 'en_US-ljspeech-medium')
+            expected = ('en_US-amy-medium' if (default_models_dir() / 'en_US-amy-medium.onnx').is_file()
+                        else 'en_US-ljspeech-medium')
+            self.assertEqual(piper._model_for('en'), expected)
             self.assertEqual(piper._model_for('ta'), 'ta_IN-rasa_female-medium')
+        finally:
+            voice.close()
+
+    def test_missing_amy_keeps_the_original_local_voice(self):
+        with patch('pathlib.Path.is_file', return_value=False):
+            voice = _load_voice()
+        try:
+            self.assertEqual(voice._engine('offline_piper')._model_for('en'), 'en_US-ljspeech-medium')
         finally:
             voice.close()
 

@@ -11,12 +11,12 @@ import unittest
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QRectF, QPoint
-from PySide6.QtGui import QPainter, QColor, QFont, QLinearGradient
+from PySide6.QtGui import QPainter, QColor, QFont, QLinearGradient, QTextCursor
 from PySide6.QtWidgets import QApplication, QWidget, QLabel
 from PySide6.QtTest import QTest
 
 from layout import Box, place_panel, accent
-from app import Desktop, Crystal, GlassPanel, read_project_document, WINDOW_FLAGS
+from app import Desktop, Crystal, GlassPanel, ResponseText, read_project_document, WINDOW_FLAGS
 
 OUTPUT = Path(__file__).resolve().parent / "qa"
 APPLICATION = QApplication.instance() or QApplication([])
@@ -77,6 +77,19 @@ def render_sample(light, person="admin", task="files", message=False):
 
 
 class InterfaceChecks(unittest.TestCase):
+    def test_response_styles_preserve_literal_text_and_reset_between_turns(self):
+        view = ResponseText()
+        self.addCleanup(view.close)
+        first = 'You: <b>literal question</b>\n\nLYA: literal answer'
+        view.setPlainText(first)
+        self.assertEqual(view.toPlainText(), first)
+        second = 'Ordinary answer <script>literal text</script>'
+        view.setPlainText(second)
+        self.assertEqual(view.toPlainText(), second)
+        cursor = QTextCursor(view.document())
+        cursor.movePosition(QTextCursor.MoveOperation.Right)
+        self.assertEqual(cursor.charFormat().fontWeight(), QFont.Weight.Normal)
+
     def setUp(self):
         self.desktop = Desktop(APPLICATION, reduced_motion=True)
 
@@ -91,6 +104,45 @@ class InterfaceChecks(unittest.TestCase):
         d.panel.deleteLater()
         d.deleteLater()
         APPLICATION.processEvents()
+
+    def test_microphone_menu_reads_metadata_without_opening_input(self):
+        import os
+        from unittest.mock import patch
+        devices = [{'name': 'Synthetic mic', 'max_input_channels': 1, 'hostapi': 0},
+                   {'name': 'Speaker', 'max_input_channels': 0, 'hostapi': 0}]
+        with patch.dict(os.environ, {'LYA_MICROPHONE': 'Synthetic mic'}), \
+             patch('sounddevice.query_devices', return_value=devices), \
+             patch('sounddevice.query_hostapis', return_value={'name': 'Windows WASAPI'}), \
+             patch('sounddevice.RawInputStream', side_effect=AssertionError('unexpected recording')):
+            self.desktop.refresh_microphones()
+            actions = self.desktop.microphone_menu.actions()
+            self.assertEqual([a.text() for a in actions], ['Follow Windows default', 'Synthetic mic'])
+            self.assertTrue(actions[1].isChecked())
+
+    def test_microphone_restart_waits_and_manual_stop_cancels_it(self):
+        import os
+        from unittest.mock import Mock, patch
+        d = self.desktop
+        d.voice_thread = Mock()
+        d.voice_thread.is_alive.return_value = True
+        d.voice_stop_event = Mock()
+        callbacks = []
+        with patch.dict(os.environ, {}, clear=False), \
+             patch('app.QTimer.singleShot', side_effect=lambda delay, callback: callbacks.append(callback)), \
+             patch.object(d, 'start_voice') as start:
+            d.select_microphone('Synthetic mic')
+            self.assertEqual(os.environ['LYA_MICROPHONE'], 'Synthetic mic')
+            d.voice_stop_event.set.assert_called_once()
+            callbacks.pop(0)()
+            start.assert_not_called()
+            d.voice_thread.is_alive.return_value = False
+            callbacks.pop(0)()
+            start.assert_called_once_with(False)
+            d.voice_thread.is_alive.return_value = True
+            d.select_microphone('Synthetic other mic')
+            d.stop_voice()
+            callbacks.pop(0)()
+            self.assertEqual(start.call_count, 1)
 
     def test_panel_stays_on_available_monitor_for_edges_and_negative_coordinates(self):
         for screen in (Box(0, 0, 1536, 816), Box(-1920, 0, 1920, 1080), Box(0, -900, 1440, 900), Box(0, 0, 600, 600)):
@@ -212,6 +264,44 @@ class InterfaceChecks(unittest.TestCase):
         self.assertTrue(d.panel.isVisible())
         self.assertIn('VOICE UNAVAILABLE', d.panel.answer.toPlainText())
 
+    def test_nvidia_voice_checks_current_privacy_before_each_question(self):
+        from unittest.mock import patch
+        d = self.desktop
+        d.cloud_asr = 'nvidia'
+        d.brain.private_mode = False
+        with patch('threading.Thread') as thread, patch('audio.voice.wake_loop') as listen:
+            d.start_voice(allow_cloud=True)
+            thread.call_args.kwargs['target']()
+            policy = listen.call_args.kwargs['offline_required']
+            self.assertFalse(policy())
+            self.assertEqual(listen.call_args.kwargs['cloud_provider'], 'nvidia')
+            self.assertTrue(listen.call_args.kwargs['cloud_only'])
+            listen.call_args.kwargs['on_provider']('Whisper Large v3', True)
+            self.assertIn('BACKUP', d.panel.footnote.text())
+            listen.call_args.kwargs['on_ready']()
+            self.assertIn('NVIDIA', d.panel.footnote.text())
+            d.brain.private_mode = True
+            self.assertTrue(policy())
+            listen.call_args.kwargs['on_ready']()
+            self.assertIn('AUDIO STAYS ON DEVICE', d.panel.footnote.text())
+
+    def test_nvidia_selection_alone_keeps_cloud_audio_disabled(self):
+        from unittest.mock import patch
+        d = self.desktop
+        d.cloud_asr = 'nvidia'
+        with patch('threading.Thread') as thread, patch('audio.voice.wake_loop') as listen:
+            d.start_voice()
+            thread.call_args.kwargs['target']()
+            self.assertTrue(listen.call_args.kwargs['offline_required']())
+
+    def test_online_private_mode_tells_owner_to_use_text(self):
+        d = self.desktop
+        d.cloud_voice = True
+        d.cloud_asr = 'nvidia'
+        d.brain.private_mode = True
+        message = d.on_voice_retry()
+        self.assertIn('type your private question', message)
+
     def test_microphone_self_test_reports_without_a_second_microphone_reader(self):
         from unittest.mock import Mock, patch
         import audio.voice as voice
@@ -231,7 +321,7 @@ class InterfaceChecks(unittest.TestCase):
             self.assertTrue(d._mic_test_timer.isActive())
             d.finish_microphone_self_test()
             d._mic_test_timer.stop()
-        self.assertEqual(d.panel.title_label.text(), "The microphone is hearing you.")
+        self.assertEqual(d.panel.title_label.text(), "Sound reaches the microphone.")
         self.assertIn('Synthetic microphone', d.panel.answer.toPlainText())
         self.assertIn('42', d.panel.answer.toPlainText())
         self.assertIn('Synthetic detail.', d.panel.answer.toPlainText())

@@ -1,5 +1,6 @@
 """Commands exposed by the native brain. Matchers also drive its help text."""
 from dataclasses import dataclass
+import re
 from security.policy import Session, allowed
 
 
@@ -28,6 +29,8 @@ COMMANDS = {
     "stop": Capability("stop / sleep", exact=("stop", "sleep", "cancel", "forget session")),
     "device_status": Capability("device status / battery status", "device_status", exact=
                                 ("device status", "battery status", "memory usage", "disk space")),
+    "volume": Capability("volume up / volume down / mute volume", "volume", exact=("volume", "mute"),
+                         prefixes=("volume ",)),
     "note_save": Capability("remember short label = note (or session / long / until / permanent)",
                             "memory_write", prefixes=("remember ",)),
     "note_correct": Capability("correct label = replacement", "memory_write", prefixes=("correct ",)),
@@ -43,6 +46,29 @@ COMMANDS = {
 }
 
 
+def volume_action(text: str) -> str | None:
+    """Recognize a whole explicit request, never a quoted/negated mention."""
+    text = " ".join(re.sub(r"[.,!?]", " ", text.casefold()).split())
+    prefix = (r"(?:(?:hey )?(?:lya|laya|leya) )?"
+              r"(?:(?:your|the|my) volume (?:is )?(?:so |too )?(?:low|down|high|loud) )?"
+              r"(?:please )?(?:(?:can|could|would|will) you )?(?:please )?")
+    noun = r"(?:(?:the|my|your|system|device|speaker) )?volume"
+    suffix = r"(?: (?:on|in) (?:this|my|the) (?:device|computer|laptop))?(?: for me)?(?: please)?"
+    directions = {
+        "up": (rf"(?:turn |put |bring )?{noun} (?:up|high|higher|louder)",
+               rf"(?:increase|raise) {noun}", rf"turn up {noun}",
+               rf"(?:make|set) {noun} (?:high|higher|up|louder)"),
+        "down": (rf"(?:turn |put |bring )?{noun} (?:down|low|lower|quieter)",
+                 rf"(?:lower|decrease|reduce) {noun}", rf"turn down {noun}",
+                 rf"(?:make|set) {noun} (?:low|lower|down|quieter)"),
+        "mute": (rf"mute(?: {noun})?", rf"{noun} mute"),
+    }
+    for action, patterns in directions.items():
+        if any(re.fullmatch(prefix + pattern + suffix, text) for pattern in patterns):
+            return action
+    return None
+
+
 def matches(name: str, text: str) -> bool:
     return COMMANDS[name].matches(text)
 
@@ -52,7 +78,7 @@ def help_text(*, verified: bool, session: Session) -> str:
                  if item.action is None or verified and allowed(session, item.action, phone_approved=True)]
     lines = ["Connected brain commands:", *("• " + item for item in available)]
     if not verified:
-        lines.append("Device readings require a verified session; personal memory needs a verified admin and approval.")
+        lines.append("Device readings and volume controls require a verified session; personal memory needs a verified admin and approval.")
     elif allowed(session, "memory_read", phone_approved=True):
         lines.append("Personal memory and council requests still require approval; model availability is checked when used.")
     lines.append("Model replies are not automatically saved as facts.")

@@ -1,7 +1,7 @@
 """Identity -> permission -> relevant memory -> bounded reasoning -> answer.
 
-No sensors, automatic enrollment, cloud calls, automatic fact learning or tool
-execution. Session binding is an internal authentication-adapter boundary, never
+No automatic sensors, enrollment, cloud calls, fact learning or model-directed
+tool execution. Session binding is an internal authentication-adapter boundary, never
 a command a user/model can issue. Public trace names expose stages, not hidden
 model reasoning. Run each Brain from one worker; do not share it across threads.
 """
@@ -12,7 +12,7 @@ import os
 import re
 import time
 import urllib.request
-from brain.capabilities import help_text, matches
+from brain.capabilities import help_text, matches, volume_action
 from security.policy import OWNER, Session, require
 
 
@@ -157,6 +157,18 @@ class Brain:
             low = text.casefold()
             if matches("help", low):
                 return result(self.capability_help())
+            volume_direction = volume_action(low)
+            if volume_direction:
+                stages.append("authorize")
+                if not self._identified():
+                    return result("Volume control is locked. Sign in with a verified identity first.", "blocked")
+                self._authorize("volume", text)
+                check()
+                from skills.device import volume
+                reply = volume(volume_direction)
+                return result(reply, "blocked" if reply.startswith("Could not") else "local-device")
+            if matches("volume", low):
+                return result("Say volume up, volume down, or mute volume. No volume was changed.", "blocked")
             if matches("device_status", low):
                 self._authorize("device_status", text)
                 check()

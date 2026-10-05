@@ -1,0 +1,14 @@
+[
+  {
+    "trial": 0,
+    "first_audio_ms": 3766.5,
+    "total_ms": 4504.4,
+    "audio_seconds": 4.122
+  },
+  {
+    "trial": 1,
+    "first_audio_ms": 104.5,
+    "total_ms": 500.3,
+    "audio_seconds": 4.052
+  }
+]

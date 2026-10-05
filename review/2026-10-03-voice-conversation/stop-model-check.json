@@ -1,0 +1,27 @@
+[
+  {
+    "public_phrase": "Stop.",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "public_phrase": "Cancel.",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "public_phrase": "What time is it?",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "public_phrase": "Please continue answering.",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "public_phrase": "The bus stop is nearby.",
+    "expected": false,
+    "actual": false
+  }
+]

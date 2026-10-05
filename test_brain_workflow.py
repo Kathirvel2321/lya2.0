@@ -137,6 +137,55 @@ class BrainChecks(unittest.TestCase):
         self.assertNotIn('• remember short', text)
         self.assertIn('• what time is it', text)
 
+    def test_natural_volume_commands_use_local_control_and_keep_identity_gate(self):
+        commands = {'volume up': 'up', 'Please lower the volume.': 'down',
+                    'Can you make my volume low in this device?': 'down',
+                    'Your volume is too low can you increase the volume?': 'up',
+                    'Lya, could you turn up the volume please?': 'up',
+                    'mute volume': 'mute'}
+        with patch('skills.device.volume', return_value='Volume adjusted.') as adjust, \
+             patch.object(self.brain, 'approve', side_effect=AssertionError('No phone approval for trusted volume')):
+            for command, direction in commands.items():
+                adjust.reset_mock()
+                answer = self.brain.respond(command)
+                self.assertEqual(answer.route, 'local-device')
+                adjust.assert_called_once_with(direction)
+            self.assertIn('volume up / volume down', self.brain.capability_help())
+            adjust.reset_mock()
+            self.brain.bind_session(Session('admin', 'Fake color', 'unverified'))
+            answer = self.brain.respond('volume down')
+            self.assertEqual(answer.route, 'blocked')
+            self.assertIn('Sign in', answer.text)
+            self.assertNotIn('• volume up', self.brain.capability_help())
+            adjust.assert_not_called()
+            self.brain.bind_session(self.session(self.alice))
+            with patch('storage.store.get_person', return_value={'active': False, 'role': 'admin'}):
+                self.assertEqual(self.brain.respond('volume down').route, 'blocked')
+            adjust.assert_not_called()
+            cancelled = threading.Event()
+            cancelled.set()
+            self.assertEqual(self.brain.respond('volume up', cancelled).route, 'cancelled')
+            adjust.assert_not_called()
+        self.assertEqual(self.calls, [])
+
+    def test_volume_parser_rejects_mentions_negation_and_conflicting_requests(self):
+        from brain.capabilities import volume_action
+        for phrase in ('Do not lower the volume', 'How can I lower the volume?',
+                       'I said "volume down"', 'Your volume is low',
+                       'Volume down and delete my files', 'Can you raise or lower the volume?',
+                       'Can you lower the microphone volume?', 'Set volume to 20 percent'):
+            self.assertIsNone(volume_action(phrase), phrase)
+        with patch('skills.device.volume') as adjust:
+            self.assertEqual(self.brain.respond('volume sideways').route, 'blocked')
+            adjust.assert_not_called()
+
+    def test_volume_actuator_failure_does_not_report_success(self):
+        with patch('skills.device.volume', return_value='Could not adjust volume on this device.'):
+            answer = self.brain.respond('lower the volume')
+        self.assertEqual(answer.route, 'blocked')
+        self.assertIn('Could not', answer.text)
+        self.assertEqual(self.calls, [])
+
     def test_task_commands_are_encrypted_scoped_and_model_free(self):
         from brain import tasks
         self.assertEqual(self.brain.respond('tasks').text, 'No tasks saved.')

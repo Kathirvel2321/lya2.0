@@ -1,0 +1,30 @@
+{
+  "repo": "csukuangfj/sherpa-onnx-streaming-zipformer-en-2023-06-26",
+  "revision": "672fbf1b30579d6585301139bb363f42a0ad4a24",
+  "files": [
+    {
+      "file": "encoder-epoch-99-avg-1-chunk-16-left-128.int8.onnx",
+      "bytes": 71083163,
+      "sha256": "563fde436d16cf7607cf408cd6b30909819d03162652ef389c2450ced3f45ac1",
+      "publisher_lfs_hash_matched": true
+    },
+    {
+      "file": "decoder-epoch-99-avg-1-chunk-16-left-128.onnx",
+      "bytes": 2092621,
+      "sha256": "7bf787f90b194b307e5a4ad6a34fadb4e748304c35f78a8d66358a05b13ee6ef",
+      "publisher_lfs_hash_matched": true
+    },
+    {
+      "file": "joiner-epoch-99-avg-1-chunk-16-left-128.int8.onnx",
+      "bytes": 259335,
+      "sha256": "d944208d660d67c8d72cd2acaeac971fa5ceb8c80e76c1968148846fedd6e297",
+      "publisher_lfs_hash_matched": true
+    },
+    {
+      "file": "tokens.txt",
+      "bytes": 5048,
+      "sha256": "49e3c2646595fd907228b3c6787069658f67b17377c60aeb8619c4551b2316fb",
+      "publisher_lfs_hash_matched": false
+    }
+  ]
+}

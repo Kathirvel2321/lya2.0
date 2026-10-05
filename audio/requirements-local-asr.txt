@@ -1,0 +1,4 @@
+# Free local English command recognition; model setup is separate and explicit.
+faster-whisper==1.2.1
+vosk==0.3.45
+sounddevice==0.5.6

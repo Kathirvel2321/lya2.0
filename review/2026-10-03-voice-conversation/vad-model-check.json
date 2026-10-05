@@ -1,0 +1,6 @@
+{
+  "silence_rejected": true,
+  "generated_noise_rejected": true,
+  "public_speech_detected": true,
+  "quiet_tail_released": true
+}

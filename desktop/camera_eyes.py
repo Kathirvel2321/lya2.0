@@ -133,7 +133,7 @@ class VisionDialog(QDialog):
             self.output.clear()
             return
         if len(self.output) > 4_000_000:
-            self.stop_camera('Camera stream stopped: preview could not keep up')
+            self.stop_camera('Camera stream stopped: preview could not keep up', notify_pending=True)
             return
         # Render only the newest complete packet. Old video frames are never replayed.
         end = self.output.rfind(b'\n')
@@ -155,7 +155,7 @@ class VisionDialog(QDialog):
             self.status.setText(f"Live · {result['width']} × {result['height']} · local only")
             self._answer_pending()
         except (ValueError, KeyError, TypeError) as exc:
-            self.stop_camera(f'Camera stopped: {exc}')
+            self.stop_camera(f'Camera stopped: {exc}', notify_pending=True)
 
     def _finished(self, *_):
         if not self.stopping:

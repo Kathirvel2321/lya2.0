@@ -1,11 +1,11 @@
 """Compact native presentation. No sensors, persistence or inference changes."""
 import re
 import wave
-from PySide6.QtCore import Qt, QEvent, QRect, QPoint, QTimer, QElapsedTimer, QPropertyAnimation, QVariantAnimation, QEasingCurve, Signal
+from PySide6.QtCore import Qt, QEvent, QRect, QPoint, QTimer, QElapsedTimer, QPropertyAnimation, QVariantAnimation, QEasingCurve, Signal, QProcess
 from PySide6.QtGui import QTextCursor, QPixmap
 from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QTextBrowser
 from app import Desktop, GlassPanel, WINDOW_FLAGS, HERE, DOCUMENTS, read_project_document
-from layout import Box
+from layout import Box, place_panel
 
 
 class CompactPanel(GlassPanel):
@@ -73,17 +73,14 @@ class CompactPanel(GlassPanel):
             visible(layout.itemAt(i), mode != 'input' or i == 5)
         self.eyebrow.hide()
         if mode == 'answer':
-            visible(layout.itemAt(0), False)
-            self.title_label.hide()
-            visible(layout.itemAt(6), False)
             visible(layout.itemAt(5), False)
         if mode == 'files':
             visible(layout.itemAt(5), False)
         if mode != 'chat':
             visible(layout.itemAt(4), False)
-        layout.setContentsMargins(24, 16, 24, 16)
-        layout.setSpacing(8)
-        self.title_label.setStyleSheet('font-size: 17px; font-weight: 600;')
+        layout.setContentsMargins(30, 22, 30, 24)
+        layout.setSpacing(18)
+        self.title_label.setStyleSheet('font-size: 23px; font-weight: 600; color: #f1f4f3;')
         self.resized_mode.emit()
 
     def show_answer(self, title, message):
@@ -97,9 +94,6 @@ class CompactPanel(GlassPanel):
             if title == 'Working on your request…':
                 self.answer.setPlainText('Thinking…')
             else:
-                # Clock commands put the actual time in their title.
-                if title.endswith((' AM', ' PM')):
-                    message = title + '\n' + message
                 self.animate_answer(message)
 
     def animate_answer(self, text):
@@ -191,6 +185,12 @@ class CompactPanel(GlassPanel):
 class OrbDesktop(Desktop):
     panel_type = CompactPanel
 
+    def prepare_system_dictation(self):
+        super().prepare_system_dictation()
+        self.command('open chat')
+        self.panel.entry.setFocus()
+        self.panel.footnote.setText('WINDOWS VOICE ACCESS INPUT · SAY PRESS ENTER TO SEND')
+
     def __init__(self, application, reduced_motion=False):
         super().__init__(application, reduced_motion)
         from desktop.setup_speech import SetupSpeech
@@ -200,6 +200,8 @@ class OrbDesktop(Desktop):
         self.wake_timer.timeout.connect(
             lambda: self._speaking_changed(False) if not self.speech.busy else None)
         self.spoken = True
+        self.listener_phase = 'off'
+        self.voice_dispatch = False
         self.speech_language = 'auto'
         self.speech_style = 'everyday'
         self.speech_engine = 'offline_piper'
@@ -365,14 +367,18 @@ class OrbDesktop(Desktop):
 
     def panel_target(self):
         screen = self.app.screenAt(self.orb.geometry().center()) or self.app.primaryScreen()
-        size = {'input': (460, 90), 'answer': (460, 220), 'chat': (520, 540), 'files': (520, 450)}[self.panel.mode]
+        size = {'input': (460, 100), 'answer': (500, 320), 'chat': (560, 590), 'files': (520, 470)}[self.panel.mode]
         area = screen.availableGeometry()
         width = min(size[0], area.width() - 24)
-        height = min(size[1], max(90, self.orb.y() - area.top() - 24))
+        height = min(size[1], area.height() - 24)
         x = max(area.left() + 12, min(self.orb.geometry().center().x() - width // 2, area.right() - width - 12))
         if self.panel.detached:
             return Box(self.panel.x(), self.panel.y(), width, height)
-        return Box(x, max(area.top() + 12, self.orb.y() - height - 12), width, height)
+        if self.orb.y() - height - 12 >= area.top() + 12:
+            return Box(x, self.orb.y() - height - 12, width, height)
+        # Keep the full card beside the crystal when there is no room above it.
+        return place_panel(Box(self.orb.x(), self.orb.y(), self.orb.width(), self.orb.height()),
+                           Box(area.x(), area.y(), area.width(), area.height()), (width, height))
 
     def _speaking_changed(self, active):
         from audio import voice
@@ -380,6 +386,32 @@ class OrbDesktop(Desktop):
             voice._SPEAKING.set()
         else:
             voice._SPEAKING.clear()
+        if hasattr(self, 'listener_phase'):
+            if not active:
+                self.listener_phase = 'standby' if self.voice_thread and self.voice_thread.is_alive() else 'off'
+            self.refresh_voice_phase()
+
+    def refresh_voice_phase(self):
+        from audio import voice
+        phase = ('speaking' if voice._SPEAKING.is_set() else 'thinking'
+                 if self.brain_busy else self.listener_phase)
+        self.orb.set_voice_phase(phase)
+        labels = {'listening': 'LISTENING', 'hearing': 'HEARING YOU', 'thinking': 'THINKING',
+                  'speaking': 'SPEAKING · SAY STOP', 'uncertain': 'WORDS UNCERTAIN',
+                  'standby': 'VOICE ON', 'off': 'VOICE OFF'}
+        if phase in labels:
+            self.panel.state_label.setText(labels[phase])
+
+    def on_voice_phase(self, phase):
+        self.listener_phase = 'thinking' if phase == 'transcribing' else phase
+        self.refresh_voice_phase()
+
+    def on_voice_retry(self, candidate='', paused=False):
+        from audio import voice
+        self.listener_phase = 'uncertain'
+        message = super().on_voice_retry(candidate, paused)
+        if not voice.QUIET['on']:
+            self.speak_reply(message)
 
     def speak_reply(self, text):
         if self.spoken:
@@ -387,11 +419,11 @@ class OrbDesktop(Desktop):
 
     def on_voice(self, text, quiet=False):
         low = ' '.join(text.casefold().split())
-        from vision.answers import is_visual_question
-        if low in ('close camera', 'stop camera') or is_visual_question(text):
+        from vision.answers import camera_control, is_visual_question
+        if camera_control(text) or is_visual_question(text):
             self.command(text)
             return
-        if low in ('open vision', 'open camera', 'look around', 'scan room'):
+        if low in ('open vision', 'look around', 'scan room'):
             self.command(text)
             return
         if low in ('register admin', 'admin setup', 'setup admin', 'sign in', 'unlock lya'):
@@ -408,7 +440,11 @@ class OrbDesktop(Desktop):
         if quiet:
             self.speech.stop()
         self.quiet_reply = quiet
-        super().on_voice(text, quiet)
+        self.voice_dispatch = True
+        try:
+            super().on_voice(text, quiet)
+        finally:
+            self.voice_dispatch = False
 
     def needs_owner_setup(self):
         """True when the encrypted store is readable and holds no administrator."""
@@ -517,7 +553,11 @@ class OrbDesktop(Desktop):
             self.open_panel()
 
     def wake(self):
-        self.start_intro()
+        # Voice wake stays in the compact circle instead of replaying the
+        # crystal introduction while the owner waits to ask their question.
+        self.close_panel()
+        self.dock(False)
+        self.orb.show()
         if self.spoken:
             self.speech.prewarm()
         if self.spoken:
@@ -563,12 +603,15 @@ class OrbDesktop(Desktop):
         low = ' '.join(text.casefold().split())
         self.stop_wake_greeting()
         self.speech.stop(keep_warm=low not in ('voice off', 'stop speaking'))
-        from vision.answers import is_visual_question
-        if low in ('close camera', 'stop camera'):
+        from vision.answers import camera_control, is_visual_question
+        camera_action = camera_control(text)
+        if camera_action == 'close':
             if hasattr(self, 'vision_dialog'):
                 self.vision_dialog.close()
             return
-        if is_visual_question(text):
+        camera_active = (hasattr(self, 'vision_dialog') and
+                         self.vision_dialog.process.state() != QProcess.ProcessState.NotRunning)
+        if is_visual_question(text, camera_active=camera_active):
             if self.brain_busy:
                 return
             self.generation += 1
@@ -617,12 +660,12 @@ class OrbDesktop(Desktop):
             if low == 'restore notes':
                 self.recovery_dialog.tabs.setCurrentIndex(1)
             return
-        if low in ('open vision', 'open camera', 'look around', 'scan room'):
+        if camera_action == 'open' or low in ('open vision', 'look around', 'scan room'):
             self.ensure_vision()
             self.vision_dialog.show()
             self.vision_dialog.raise_()
             self.vision_dialog.activateWindow()
-            if low in ('open camera', 'look around', 'scan room') and self.vision_dialog.process.state() == self.vision_dialog.process.ProcessState.NotRunning:
+            if (camera_action == 'open' or low in ('look around', 'scan room')) and self.vision_dialog.process.state() == self.vision_dialog.process.ProcessState.NotRunning:
                 self.vision_dialog.toggle_live()
             return
         if low in ('register admin', 'admin setup', 'setup admin', 'sign in', 'unlock lya'):
@@ -702,8 +745,12 @@ class OrbDesktop(Desktop):
             quiet = getattr(self, 'quiet_reply', False)
             self.quiet_reply = False
             if not quiet:
-                self.speak_reply(self.panel.full_text if self.panel.reveal.isActive()
-                                 else self.panel.answer.toPlainText())
+                reply = (self.panel.full_text if self.panel.reveal.isActive()
+                         else self.panel.answer.toPlainText())
+                title = self.panel.title_label.text()
+                if title.endswith((' AM', ' PM')):
+                    reply = title + '\n' + reply
+                self.speak_reply(reply)
 
     def ensure_vision(self):
         if not hasattr(self, 'vision_dialog'):
@@ -737,6 +784,8 @@ class OrbDesktop(Desktop):
                 self.panel.preserve_chat = False
             return
         super().ask_brain(text)
+        if self.voice_dispatch:
+            self.panel.hide()
 
     def read_document(self, name):
         # Preserve the existing four-document allowlist and bounded local reader.
@@ -789,6 +838,10 @@ class OrbDesktop(Desktop):
             super().on_brain(generation, answer)
         finally:
             self.panel.preserve_chat = False
+        if valid:
+            self.listener_phase = 'standby' if self.voice_thread and self.voice_thread.is_alive() else 'off'
+            self.refresh_voice_phase()
+            self.open_panel()
         spoken_now = valid and self.spoken and not getattr(self, 'request_quiet', False)
         if in_chat:
             reply = 'LYA: ' + answer.text[:8000]
@@ -803,11 +856,13 @@ class OrbDesktop(Desktop):
         elif valid:
             self.transcript.extend(['You: ' + self.pending_question, 'LYA: ' + answer.text[:8000]])
             self.transcript = self.transcript[-12:]
+            context = ('You asked: ' + self.pending_question + '\n\nLYA: '
+                       if self.pending_question else '')
             if spoken_now:
-                self.panel.begin_spoken(answer.text)
+                self.panel.begin_spoken(answer.text, context)
                 self.speak_reply(answer.text)
             else:
-                self.panel.animate_answer(answer.text)
+                self.panel.animate_answer(context + answer.text)
 
     def quit(self):
         self.stop_wake_greeting()

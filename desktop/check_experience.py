@@ -19,6 +19,16 @@ for font in ('segoeui.ttf', 'segoeuib.ttf'):
 
 
 class ExperienceChecks(unittest.TestCase):
+    def test_system_dictation_prepares_composer_and_leaves_lya_microphone_off(self):
+        with patch.object(self.d, 'start_voice') as start, \
+             patch('sounddevice.RawInputStream', side_effect=AssertionError('unexpected recording')):
+            self.d.prepare_system_dictation()
+        start.assert_not_called()
+        self.assertFalse(self.d.voice_action.isChecked())
+        self.assertEqual(self.d.panel.mode, 'chat')
+        self.assertTrue(self.d.panel.entry.isVisible())
+        self.assertIn('PRESS ENTER', self.d.panel.footnote.text())
+
     def test_quit_waits_for_recovery_cancellation_without_blocking(self):
         self.d.command('open recovery')
         dialog = self.d.recovery_dialog
@@ -82,7 +92,7 @@ class ExperienceChecks(unittest.TestCase):
             self.assertFalse(self.d.wake_timer.isActive())
             self.assertFalse(voice._SPEAKING.is_set())
             self.d.speech.process.kill.assert_not_called()
-            self.assertIn(':', self.d.panel.answer.toPlainText())
+            self.assertIn(':', self.d.panel.title_label.text())
             say.assert_called_once()
             self.assertIn(':', say.call_args.args[0])
 
@@ -96,6 +106,113 @@ class ExperienceChecks(unittest.TestCase):
             self.d.on_voice('what time is it', quiet=True)
             say.assert_not_called()
             self.assertFalse(self.d.quiet_reply)
+
+    def test_voice_orb_tracks_listener_and_reply_and_stop_cancels_playback(self):
+        from audio import voice
+        d = self.d
+        d.dock(False)
+        d.on_voice_phase('listening')
+        self.assertEqual(d.orb.voice_phase, 'listening')
+        self.assertEqual(d.panel.state_label.text(), 'LISTENING')
+        d.on_voice_phase('hearing')
+        self.assertEqual(d.orb.voice_phase, 'hearing')
+        d.on_voice_phase('transcribing')
+        self.assertEqual(d.orb.voice_phase, 'thinking')
+        self.assertEqual(d.panel.state_label.text(), 'THINKING')
+        d._speaking_changed(True)
+        d.on_voice_phase('listening')  # A queued capture event must not overwrite playback.
+        self.assertEqual(d.orb.voice_phase, 'speaking')
+        self.assertEqual(d.panel.state_label.text(), 'SPEAKING · SAY STOP')
+        with patch.object(d.speech, 'stop') as stop:
+            d.on_voice('stop', quiet=True)
+        stop.assert_called()
+        self.assertTrue(d.brain_cancel.is_set())
+        self.assertFalse(d.panel.isVisible())
+        d._speaking_changed(False)
+        self.assertFalse(voice._SPEAKING.is_set())
+        self.assertEqual(d.panel.state_label.text(), 'VOICE OFF')
+
+    def test_uncertain_voice_shows_candidate_suggests_short_volume_command_and_pauses(self):
+        d = self.d
+        d.spoken = True
+        before = list(d.transcript)
+        with patch.object(d.speech, 'say') as say, patch.object(d.brain, 'respond') as respond:
+            d.voice_signals.retry.emit('can you lower the volume', False)
+            self.assertIn('Heard (uncertain): can you lower the volume', d.panel.answer.toPlainText())
+            self.assertIn('No command was run', d.panel.answer.toPlainText())
+            self.assertIn('volume down', say.call_args.args[0])
+            d.voice_signals.retry.emit('', True)
+            self.assertIn('wait for you to say Lya', say.call_args.args[0])
+            self.assertNotIn('Heard (uncertain)', d.panel.answer.toPlainText())
+            self.assertEqual(say.call_count, 2)
+            respond.assert_not_called()
+        self.assertEqual(d.transcript, before)
+
+    def test_recognized_volume_question_reaches_native_brain_and_spoken_reply(self):
+        from brain.workflow import Answer
+        d = self.d
+        d.spoken = True
+        with patch.object(d.brain, 'respond', return_value=Answer('Volume down.', 'local-device')) as respond, \
+             patch.object(d.speech, 'say') as say:
+            d.on_voice('can you lower the volume')
+            for _ in range(100):
+                APP.processEvents()
+                if not d.brain_busy:
+                    break
+                QTest.qWait(10)
+        self.assertFalse(d.brain_busy)
+        self.assertEqual(respond.call_args.args[0], 'can you lower the volume')
+        d.panel.finish_spoken()  # The fake speaker has no real playback-completion callback.
+        self.assertIn('Volume down.', d.panel.answer.toPlainText())
+        say.assert_called_once()
+        self.assertIn('Volume down.', say.call_args.args[0])
+
+    def test_uncertain_retry_stays_silent_in_quiet_mode(self):
+        from audio import voice
+        self.d.spoken = True
+        with patch.dict(voice.QUIET, {'on': True}), patch.object(self.d.speech, 'say') as say:
+            self.d.voice_signals.retry.emit('synthetic unclear words', False)
+        say.assert_not_called()
+        self.assertIn('No command was run', self.d.panel.answer.toPlainText())
+
+    def test_voice_thinking_uses_orb_without_status_box_then_displays_answer(self):
+        from brain.workflow import Answer
+        started, release = threading.Event(), threading.Event()
+        def pending(text, cancelled):
+            started.set()
+            release.wait(3)
+            return Answer('Synthetic reply.', 'local')
+        with patch.object(self.d.brain, 'respond', side_effect=pending):
+            self.d.on_voice('synthetic question')
+            try:
+                self.assertTrue(started.wait(3))
+                self.assertFalse(self.d.panel.isVisible())
+                self.assertEqual(self.d.orb.voice_phase, 'thinking')
+            finally:
+                release.set()
+            for _ in range(100):
+                APP.processEvents()
+                if not self.d.brain_busy:
+                    break
+                QTest.qWait(10)
+        self.assertTrue(self.d.panel.isVisible())
+        self.assertIn('Synthetic reply.', self.d.panel.answer.toPlainText())
+
+    def test_active_orb_keeps_motion_until_state_ends_and_respects_reduced_motion(self):
+        d = self.d
+        d.dock(False)
+        d.orb.show()
+        d.orb.set_reduced_motion(False)
+        d.on_voice_phase('listening')
+        d.orb.motion_until = 0
+        d.orb.tick()
+        self.assertTrue(d.orb.timer.isActive())
+        d.orb.set_voice_phase('off')
+        d.orb.tick()
+        self.assertFalse(d.orb.timer.isActive())
+        d.orb.set_reduced_motion(True)
+        d.on_voice_phase('thinking')
+        self.assertFalse(d.orb.timer.isActive())
 
     def test_verified_admin_handoff_updates_brain_without_phone_approval(self):
         from security.policy import Session
@@ -112,15 +229,16 @@ class ExperienceChecks(unittest.TestCase):
     def test_only_current_completed_answer_is_spoken(self):
         from brain.workflow import Answer
         self.d.spoken = True
+        self.d.pending_question = 'example question'
         with patch.object(self.d.speech, 'say') as say:
             self.d.on_brain(self.d.generation - 1, Answer('Old answer', 'local'))
             say.assert_not_called()
             self.d.on_brain(self.d.generation, Answer('Current answer', 'local'))
             self.assertEqual(say.call_args.args[0], 'Current answer')
-            self.assertEqual(self.d.panel.answer.toPlainText(), '')
+            self.assertEqual(self.d.panel.answer.toPlainText(), 'You asked: example question\n\nLYA: ')
             self.d.panel.sync_caption('Current ', 120)
             self.d.panel.finish_spoken()
-            self.assertEqual(self.d.panel.answer.toPlainText(), 'Current answer')
+            self.assertEqual(self.d.panel.answer.toPlainText(), 'You asked: example question\n\nLYA: Current answer')
             self.d.brain_cancel.set()
             self.d.on_brain(self.d.generation, Answer('Cancelled answer', 'local'))
             self.assertEqual(say.call_count, 1)
@@ -240,9 +358,10 @@ class ExperienceChecks(unittest.TestCase):
         d.command('time')
         self.assertEqual(d.panel.mode, 'answer')
         self.assertTrue(d.panel.stack.isVisible())
-        self.assertFalse(d.panel.title_label.isVisible())
+        self.assertTrue(d.panel.title_label.isVisible())
         self.assertFalse(d.panel.entry.isVisible())
-        self.assertIn(':', d.panel.answer.toPlainText())
+        self.assertIn(':', d.panel.title_label.text())
+        self.assertTrue(d.panel.answer.toPlainText().strip())
         d.command('open chat')
         self.assertEqual(d.panel.mode, 'chat')
         d.command('stop')
@@ -354,6 +473,24 @@ class ExperienceChecks(unittest.TestCase):
         d.command('show files')
         self.assertEqual(d.panel.files.count(), 4)
 
+    def test_card_keeps_its_readable_height_near_top_edge(self):
+        from PySide6.QtCore import QRect
+        d = self.d
+        d.dock(False)
+        area = APP.primaryScreen().availableGeometry()
+        d.orb.move(area.left() + 12, area.top() + 12)
+        for mode, wanted in (('answer', 320), ('chat', 590), ('input', 100)):
+            d.panel.set_mode(mode)
+            target = d.panel_target()
+            self.assertEqual(target.height, min(wanted, area.height() - 24))
+            self.assertTrue(area.contains(QRect(target.x, target.y, target.width, target.height)))
+            d.open_panel()
+            self.assertTrue(area.contains(d.panel.geometry()))
+            if mode == 'input':
+                self.assertTrue(d.panel.rect().contains(d.panel.entry.geometry()))
+            else:
+                self.assertGreater(d.panel.answer.height(), 60)
+
     def test_animation_finishes_and_idle_does_not_repaint(self):
         d = self.d
         d.orb.set_reduced_motion(False)
@@ -404,6 +541,57 @@ class ExperienceChecks(unittest.TestCase):
         self.d.vision_dialog.answer_ready.emit(self.d.generation, 'I can see a bottle.')
         self.assertIn('bottle', self.d.panel.answer.toPlainText())
         self.d.vision_dialog.close()
+
+    def test_spoken_pointing_question_reaches_local_camera_without_brain_request(self):
+        from camera_eyes import VisionDialog
+        before = self.d.brain.session
+        with patch.object(VisionDialog, 'toggle_live'), \
+             patch.object(self.d.brain, 'respond') as brain:
+            self.d.on_voice('Lya, what am I pointing at?')
+            brain.assert_not_called()
+        self.assertEqual(self.d.vision_dialog.pending_question[1], 'Lya, what am I pointing at?')
+        self.d.vision_dialog.answer_ready.emit(self.d.generation, 'Along your pointing direction, I see a possible bottle.')
+        self.assertIn('possible bottle', self.d.panel.answer.toPlainText())
+        self.assertEqual(self.d.brain.session, before)
+
+    def test_bare_this_uses_the_existing_live_camera_context(self):
+        from PySide6.QtCore import QProcess
+        self.d.ensure_vision()
+        with patch.object(self.d.vision_dialog.process, 'state', return_value=QProcess.ProcessState.Running), \
+             patch.object(self.d.vision_dialog, 'ask') as ask, \
+             patch.object(self.d.brain, 'respond') as brain:
+            self.d.on_voice('Lya, what is this?')
+            ask.assert_called_once_with('Lya, what is this?', self.d.generation)
+            brain.assert_not_called()
+
+    def test_natural_open_and_see_me_bypasses_general_brain_action(self):
+        from camera_eyes import VisionDialog
+        from vision.answers import answer_scene
+        text = 'Open the camera and see me. You cover that.'
+        before = self.d.brain.session
+        with patch.object(VisionDialog, 'toggle_live') as start, \
+             patch.object(self.d.brain, 'respond') as brain:
+            self.d.on_voice(text)
+            start.assert_called_once()
+            brain.assert_not_called()
+        self.assertEqual(self.d.vision_dialog.pending_question[1], text)
+        reply = answer_scene(text, {'width': 640, 'height': 480, 'faces': [[10, 10, 50, 60]], 'objects': []})
+        self.d.vision_dialog.answer_ready.emit(self.d.generation, reply)
+        self.assertIn('1 person(s)', self.d.panel.answer.toPlainText())
+        self.assertEqual(self.d.brain.session, before)
+
+    def test_natural_camera_open_and_close_commands_use_the_same_local_control(self):
+        from camera_eyes import VisionDialog
+        with patch.object(VisionDialog, 'toggle_live') as start, \
+             patch.object(self.d.brain, 'respond') as brain:
+            self.d.on_voice('Please open the camera.')
+            start.assert_called_once()
+            brain.assert_not_called()
+        with patch.object(self.d.vision_dialog, 'close') as close, \
+             patch.object(self.d.brain, 'respond') as brain:
+            self.d.command('Lya, please close the camera.')
+            close.assert_called_once()
+            brain.assert_not_called()
 
     def test_chat_controls_and_independent_windows(self):
         d = self.d

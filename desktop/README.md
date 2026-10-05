@@ -1,5 +1,120 @@
 # LYA crystal desktop milestone
 
+Camera references (2026-10-05): local common-object analysis now accepts
+`what object is this?`, `what am I holding?`, and `what am I pointing at?`.
+Bare `what is this?` / `what's this?` uses an already-active camera only.
+Reopen LYA to load changes, say `open camera`, hold a bottle/cup in the center,
+then ask the bare question. For pointing, keep the extended index finger and
+target visible in the same image. Multiple/unclear targets request clarification.
+Say `close camera` or close the preview to release it; sessions remain bounded.
+Camera analysis stays local with no saved image/video or cloud image call.
+The detector supports common categories, not every object (pens unsupported).
+Pointing selects along a 2D image direction, not physical distance or a 3D target.
+Implemented and isolated/public-fixture tested; owner live accuracy pending.
+Voice/hearing, interface appearance, credential and startup behavior were preserved.
+See [camera review](../review/2026-10-05-camera-objects/README.md).
+
+Camera routing follow-up (2026-10-05): natural direct commands such as
+`please open the camera` and `open the camera and see me` now reach the local
+camera handler instead of the general brain action route. `Can you see me?`
+uses current person/face-presence detections, without claiming identity.
+`Please close the camera` uses the same local close control. Negations,
+how/why mentions and camera-settings requests do not activate it.
+Reopen LYA to load this follow-up. Live owner retry remains pending.
+
+Optional saved NVIDIA key (2026-10-05): open Windows **Credential Manager >
+Windows Credentials > Add a generic credential**. Use `LYA/NVIDIA_API_KEY` as
+the Internet/network address, `LYA` as the user name, and paste the NVIDIA API
+key in the password field. LYA now reads this entry when no session environment
+key is supplied; a missing/unreadable entry retains the existing key prompt.
+Manage or remove the saved key in Credential Manager. Do not put it in project
+files or the project brain. No owner credential was read/saved during development.
+The owner's new preserve-working-features rule is in `AGENTS.md`; no further
+voice, hearing, wake, interface or startup change is authorized by this update.
+See [key storage and owner rule](../review/2026-10-05-key-storage/README.md).
+
+Normal launch now uses a native masked NVIDIA key dialog (2026-10-05). Open
+`LYA.lnk` in the project folder for a direct windowed launch; `launch-lya.cmd`
+and `launch-lya.ps1` also use `pythonw` with `--gui`. A `.cmd` shell may briefly
+flash before exiting; the shortcut does not need that shell. The existing owned
+sign-in shortcut has been migrated to the same native prompt. Keys remain
+session-only. Cancel exits before the desktop/listener starts. The console
+launcher command below is retained for manual diagnostics.
+See [native launch review](../review/2026-10-05-native-launch/README.md).
+
+Current conversation and design status (2026-10-05): the normal launcher now uses
+NVIDIA Parakeet questions with a bounded NVIDIA-hosted Whisper backup and hidden
+session-only key entry. The owner reports a successful integrated conversation;
+Whisper has qualified accuracy acceptance. Offline owner hearing remains failed.
+Online questions follow the owner's ongoing online-mode choice. Private mode
+blocks online hearing and asks for text; enable it before confidential speech.
+
+During the existing 45-second conversation window, saying Lya inside a question
+preserves the complete sentence. A standalone address while awake no longer
+replays the greeting. A turn that starts awake remains a conversation turn even
+if capture/decoding exceeds that idle window. Explicit stop/sleep still ends it.
+
+The native panel now has faceted graphite surfaces, visible reply titles,
+paragraph and speaker styling, and readable placement beside the crystal when
+space above is limited. Listening uses diamond microdots, thinking uses crossing
+paths, and speaking uses a wave. State labels follow actual voice events. The
+existing crystal artwork, speaking voice and reduced-motion controls are retained.
+Restart LYA through `launch-lya.cmd` to load these changes. The new routing and
+design have isolated validation and synthetic previews; live owner acceptance
+is still pending. See [conversation/design review](../review/2026-10-05-conversation-design/README.md).
+The older dated milestones below describe their status at that time.
+
+Current voice implementation (2026-10-04): microphone wake is enabled at launch;
+command audio stays local unless `--cloud-voice` is explicitly passed. An installed
+Whisper English model can be selected experimentally; the owner recording did
+not pass its accuracy check, so it is not the default. Vosk still handles wake
+and spoken interruption. This is implementation status, not owner
+acceptance of recognition, noise handling or latency. Older milestones below are
+historical.
+
+Uncertain speech now gets one clarification, then returns to waiting for Lya
+after a second uncertain turn. The answer card shows the uncertain candidate
+without dispatching it or adding it to chat history; quiet mode keeps retries
+silent. A possible volume request receives a short-command suggestion.
+Recognized requests such as `lower the volume`, `volume up` and
+`can you make my volume low in this device` now use the local volume handler
+after the existing verified-session gate. Guest/color-only sessions cannot
+change volume. The handler sends one relative volume key step; mute uses the
+existing hardware toggle. It does not set an absolute percentage or read back
+the actual device level. No hearing accuracy or real volume outcome has been
+accepted from these isolated checks. Restart LYA to load source changes.
+See [retry/volume repair](../review/2026-10-04-volume-retry/README.md).
+
+The orb/tray menu has **Microphone** and **Command recognition (local)** choices.
+Selections last for this process only. Switching microphones waits for the old
+reader to close; selecting an unavailable input fails instead of using another
+microphone. Questions permit 2.5-second internal quiet gaps and up to 120 seconds;
+reaching the limit rejects the unfinished question.
+
+Free local model setup, from the project root:
+
+```powershell
+.\.venv-ui\Scripts\python.exe -m pip install -r audio\requirements-local-asr.txt
+.\.venv-ui\Scripts\python.exe tools\setup_local_asr.py --engine whisper
+.\.venv-ui\Scripts\python.exe desktop\app.py --command-asr whisper --skip-setup
+```
+
+The setup downloads public model files and verifies publisher LFS checksums.
+Recognition requires all model/tokenizer files and never downloads them at runtime.
+`--skip-setup` bypasses the first-run setup screen; it grants no authentication.
+Use `--no-voice` to start without microphone collection, `--microphone "Exact input name"`
+to select an input for this session, or `--command-asr vosk` for the legacy command
+recognizer. `--system-dictation --skip-setup` prepares the chat composer with
+LYA's microphone off. Enable Windows **Voice Access**, choose **English–India**
+and its input microphone, dictate into the composer, then say **press Enter**.
+This is an independent dictation fallback, not an embedded Voice Access API;
+its owner recognition and spoken-key-command accuracy remain untested. Windows
+Voice Access needs a one-time language download and works offline afterward.
+[Microsoft setup](https://support.microsoft.com/en-us/accessibility/windows/voice-access/set-up-voice-access).
+Local speech input does not alter the configured text-brain route or
+authorize private actions. See the latest dated project-brain voice entry for the
+actual acceptance status before enabling a candidate recognizer.
+
 Latest (2026-09-17): fixed circle clipping; ordinary answer-only cards; explicit
 chat open/close/full-screen/restore; independent project-file windows; one baked
 360-degree greeting rotation and persistent-crystal command. See
@@ -279,6 +394,33 @@ Type `open vision`, `look around`, or `scan room` to open the camera-off lens wi
 Type `open camera`, `look around`, or `scan room` to start a bounded live view. `open vision` opens the same window with camera off. Use Stop live view or close the window to end capture. The worker also ends after 90 seconds. Preview targets up to six frames/s and local object/face analysis at most two/s; actual startup depends on the webcam. Ask about a person or one of the detector's supported objects. LYA gives approximate on-screen position, never identity or permission. Small items such as pens are not in this model and will be reported as unsupported. No camera frame is saved or sent online. See `review/2026-09-23-vision/README.md` for measured checks and remaining limits.
 
 Visual questions typed in LYA's main command line, such as `can you see my pen?`, route to the Vision window and wait for a current analyzed frame. The lightweight model currently cannot detect pens and will say so. Microphone transcription is still pending.
+
+## Optional NVIDIA hearing (2026-10-05)
+
+Current update: owner selected online-only hearing after fresh local comparison
+failed. `launch-lya.cmd` and the existing project sign-in shortcut now use the
+NVIDIA session launcher with hidden key entry. Default Parakeet TDT has one Whisper
+backup on selected model/service errors; CTC 1.1B is a selectable spare. Private
+mode blocks speech recognition and requests text instead of a local guess. Full
+backup accuracy and integrated reply acceptance are pending. See
+`review/2026-10-05-hearing-plan/online-backups.md`; the earlier optional status below
+is historical.
+
+An ordinary speech-to-text check with hosted Parakeet passed by owner confirmation.
+The optional desktop connection uses `--cloud-voice --cloud-asr nvidia`; selecting
+the recognizer alone does not enable remote audio. The session launcher is:
+
+```powershell
+.\.venv-asr\Scripts\python.exe tools/start_nvidia_lya.py --allow-nvidia-questions
+```
+
+It asks for the API key locally without saving it. Close existing LYA first. Wake
+and stop remain local; complete questions go to NVIDIA while private mode is off.
+Enable private mode through text **before** confidential speech. Local private
+recognition remains unaccepted. Current speaking voice and security gates remain
+unchanged. Ongoing cloud use needs explicit permission; the first permission only
+covered a diagnostic question. See `review/2026-10-05-hearing-plan/nvidia-connection.md`
+for validation and the untested integrated reply/noise/interruption gates.
 
 ## Camera-only preview (2026-09-24)
 

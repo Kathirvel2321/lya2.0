@@ -365,7 +365,7 @@ class Voice:
                     # stream) must not turn a silent gap into an exported WAV.
                     if collected is not None and pcm:
                         collected.append(dsp.silence(chunk.paused_after_ms, 22050))
-                    if play:
+                    if play and chunk.index != plan.spans[-1].index:
                         if self._pcm_stream is not None and chunk.decoded:
                             self._write_pcm(dsp.silence(min(chunk.paused_after_ms, 1200),
                                                        chunk.sample_rate))
