@@ -209,6 +209,12 @@ class OrbDesktop(Desktop):
         self.speech.speaking.connect(self._speaking_changed)
         self.speech.caption.connect(self.panel.sync_caption)
         self.speech.completed.connect(self.panel.finish_spoken)
+        self.vision_tour = []
+        self.vision_reply_generation = None
+        self.vision_step_request = None
+        self.camera_panel_text = None
+        self.speech.completed.connect(self._vision_completed)
+        self.speech.unavailable.connect(self.cancel_vision)
         # The original fixed-size silhouette mask clipped the resized circle.
         self.orb.clearMask()
         self.orb.relocated.disconnect(self.position_panel)
@@ -421,6 +427,7 @@ class OrbDesktop(Desktop):
         low = ' '.join(text.casefold().split())
         from vision.answers import camera_control, is_visual_question
         if camera_control(text) or is_visual_question(text):
+            self.quiet_reply = quiet
             self.command(text)
             return
         if low in ('open vision', 'look around', 'scan room'):
@@ -582,6 +589,7 @@ class OrbDesktop(Desktop):
             self._speaking_changed(False)
 
     def close_panel(self):
+        self.cancel_vision()
         self.stop_wake_greeting()
         if hasattr(self, 'speech'):
             self.speech.stop(keep_warm=True)
@@ -601,6 +609,7 @@ class OrbDesktop(Desktop):
 
     def command(self, text):
         low = ' '.join(text.casefold().split())
+        self.cancel_vision(stop_speech=False)
         self.stop_wake_greeting()
         self.speech.stop(keep_warm=low not in ('voice off', 'stop speaking'))
         from vision.answers import camera_control, is_visual_question
@@ -619,9 +628,6 @@ class OrbDesktop(Desktop):
             self.pending_question = text
             self.request_quiet = getattr(self, 'quiet_reply', False)
             self.quiet_reply = False
-            if self.panel.mode == 'chat':
-                self.transcript.append('You: ' + text)
-                self.transcript = self.transcript[-12:]
             self.ensure_vision()
             self.vision_dialog.show()
             self.vision_dialog.ask(text, self.generation)
@@ -755,15 +761,96 @@ class OrbDesktop(Desktop):
     def ensure_vision(self):
         if not hasattr(self, 'vision_dialog'):
             from camera_eyes import VisionDialog
-            self.vision_dialog = VisionDialog()
+            self.vision_dialog = VisionDialog(access_check=self.camera_owner)
             self.vision_dialog.answer_ready.connect(self.on_vision_answer)
+            self.vision_dialog.session_ended.connect(self.end_vision_session)
+            self.vision_dialog.focus_cleared.connect(self.cancel_vision)
+
+    def camera_owner(self):
+        try:
+            self.brain._authorize('camera_view', 'Local camera view')
+            return self.brain.session
+        except Exception:
+            return None  # Guest, expired, revoked, changed role or unreadable store: fail closed.
+
+    def end_vision_session(self):
+        self.cancel_vision()
+        current = (self.panel.spoken_original or
+                   (self.panel.full_text if self.panel.reveal.isActive() else self.panel.answer.toPlainText()))
+        if self.camera_panel_text and current.endswith(self.camera_panel_text):
+            self.panel.spoken_original = self.panel.spoken_prefix = ''
+            self.panel.spoken_tokens = []
+            self.panel.show_answer('Camera off', 'Camera view and observations cleared.')
+        self.camera_panel_text = None
+
+    def cancel_vision(self, stop_speech=True):
+        was_active = self.vision_reply_generation is not None
+        self.vision_tour = []
+        self.vision_reply_generation = None
+        self.vision_step_request = None
+        if hasattr(self, 'vision_dialog'):
+            self.vision_dialog.pending_question = None
+            self.vision_dialog.clear_focus()
+        if was_active and stop_speech:
+            self.speech.stop(keep_warm=True)  # Clear state first: stop also emits completion.
+
+    def _vision_completed(self):
+        if self.vision_step_request is not None:
+            expected = self.vision_step_request
+            # An error completion precedes its unavailable signal; let both arrive first.
+            QTimer.singleShot(0, lambda: self._next_vision_item(expected))
+
+    def _next_vision_item(self, expected=None):
+        if expected is not None and expected != self.vision_step_request:
+            return
+        if expected is not None and expected[1] != self.speech.request:
+            self.cancel_vision()
+            return
+        if (self.vision_reply_generation is None or self.vision_reply_generation != self.generation or
+                self.brain_cancel.is_set() or (expected is not None and self.speech.cancelled) or not self.spoken or
+                not self.vision_dialog.focus_active or not self.vision_dialog.authorized()):
+            self.cancel_vision()
+            return
+        self.vision_step_request = None
+        if not self.vision_tour:
+            self.vision_reply_generation = None
+            self.vision_dialog.focus_item(None)
+            self.vision_dialog.status.setText('Checked frame · tour complete · local only')
+            return
+        item = self.vision_tour.pop(0)
+        self.vision_dialog.focus_item(item)
+        self.speak_reply(item['text'])
+        self.vision_step_request = (self.generation, self.speech.request)
 
     def on_vision_answer(self, generation, text):
         if generation != self.generation or self.brain_cancel.is_set():
             return
         from brain.workflow import Answer
-        self.on_brain(generation, Answer(text, 'local-vision'))
+        details = getattr(self.vision_dialog, 'answer_details', None)
+        tour = bool(details and details['request_id'] == generation and details['tour'] and
+                    self.spoken and not getattr(self, 'request_quiet', False))
+        quiet = getattr(self, 'request_quiet', False)
+        self.vision_reply_generation = generation if self.spoken and not quiet else None
+        if tour:
+            self.request_quiet = True  # Render the inventory once; narrate each item through the warm worker.
+        history = list(self.transcript)
+        try:
+            self.on_brain(generation, Answer(text, 'local-vision'))
+        finally:
+            self.request_quiet = quiet
+            self.transcript = history  # Camera observations never become chat history or model context.
+        self.panel.footnote.setText('LOCAL CAMERA · NO IMAGE UPLOADS')
+        self.camera_panel_text = text
         self.open_panel()
+        if tour:
+            self.vision_tour = list(details['items'])
+            self._next_vision_item()
+
+    def sleep(self):
+        self.cancel_vision()
+        if hasattr(self, 'vision_dialog'):
+            self.vision_dialog.close()
+        super().sleep()
 
     def show_files(self):
         self.panel.set_mode('files')
@@ -865,6 +952,7 @@ class OrbDesktop(Desktop):
                 self.panel.animate_answer(context + answer.text)
 
     def quit(self):
+        self.cancel_vision()
         self.stop_wake_greeting()
         self.speech.stop()
         if hasattr(self, 'recovery_dialog'):

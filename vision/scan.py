@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 
@@ -138,10 +139,33 @@ def scan_frame(frame):
     return {**encode_frame(frame), **VisionEngine(*frame.shape[1::-1]).analyze(frame)}
 
 
-def live_frames(camera_factory=None, max_seconds=90, max_frames=None):
+def _checked_frame(engine, frame):
+    return {**engine.analyze(frame), 'checked_image': encode_frame(frame)['image']}
+
+
+def camera_worker_guard(event, args):
+    """Defense in depth for the local worker; not an OS malware sandbox."""
+    if event in ('socket.connect', 'socket.bind', 'socket.sendto', 'socket.getaddrinfo',
+                 'urllib.Request', 'subprocess.Popen', 'os.system', 'os.posix_spawn'):
+        raise PermissionError('Camera worker blocks Python networking and child commands.')
+
+
+def renew_camera_lease(stream, lease):
+    while stream.readline(32) == b'lease\n':
+        lease['until'] = time.monotonic() + 3
+    lease['connected'] = False
+
+
+def camera_lease_valid(lease, expires_at):
+    return lease['connected'] and time.monotonic() < lease['until'] and time.time() < expires_at
+
+
+def live_frames(camera_factory=None, max_seconds=90, max_frames=None, authorized=None):
     """Preview at <=15 fps; analyze a small copy at <=2 fps with no backlog."""
     import cv2
     verify_models()
+    if authorized is not None and not authorized():
+        raise PermissionError('Current camera authorization required')
     backend = cv2.CAP_DSHOW if sys.platform == 'win32' else cv2.CAP_ANY
     camera = (camera_factory or cv2.VideoCapture)(0, backend)
     pool = None
@@ -161,30 +185,39 @@ def live_frames(camera_factory=None, max_seconds=90, max_frames=None):
         next_inference = start
         analysis = {'faces': [], 'objects': [], 'identity': 'unknown', 'ready': False, 'analyzed_at': 0.0}
         count = 0
-        while time.monotonic() - start < max_seconds:
+        while (time.monotonic() - start < max_seconds and
+               (authorized is None or authorized())):
             if time.monotonic() < next_frame:
                 time.sleep(min(0.02, next_frame - time.monotonic()))
                 continue
             ok, frame = camera.read()
             if not ok:
                 raise RuntimeError('Camera stopped delivering frames')
+            if frame.shape[1] > 1280 or frame.shape[0] > 720:
+                scale = min(1280 / frame.shape[1], 720 / frame.shape[0])
+                frame = cv2.resize(frame, (round(frame.shape[1] * scale), round(frame.shape[0] * scale)))
             now = time.monotonic()
+            checked_image = None
             if pending is not None and pending.done():
                 analysis = {**pending.result(), 'ready': True, 'analyzed_at': submitted_at}
+                checked_image = analysis.pop('checked_image')
                 pending = None
             if pending is None and now >= next_inference:
                 submitted_at = now
-                pending = pool.submit(engine.analyze, frame.copy())
+                pending = pool.submit(_checked_frame, engine, frame.copy())
                 next_inference = now + 0.5
-            yield {**encode_frame(frame), **analysis}
+            packet = {**encode_frame(frame), **analysis}
+            if checked_image is not None:
+                packet['checked_image'] = checked_image  # Send once per analysis, not at video frame rate.
+            yield packet
             count += 1
             if max_frames is not None and count >= max_frames:
                 break
             next_frame = max(next_frame + 1 / 15, time.monotonic())
     finally:
+        camera.release()
         if pool is not None:
             pool.shutdown(wait=True)
-        camera.release()
 
 
 def capture_once(camera_factory=None):
@@ -210,11 +243,16 @@ def capture_once(camera_factory=None):
 
 
 if __name__ == '__main__':
+    sys.addaudithook(camera_worker_guard)
     try:
-        if sys.argv[1:] == ['--camera-once']:
-            print(json.dumps(capture_once()))
-        elif sys.argv[1:] == ['--camera-live']:
-            for result in live_frames():
+        if len(sys.argv) == 3 and sys.argv[1] == '--camera-live':
+            expires_at = float(sys.argv[2])
+            if not 0 < expires_at - time.time() <= 86400:
+                raise RuntimeError('Current camera authorization required')
+            lease = {'until': time.monotonic() + 3, 'connected': True}
+            threading.Thread(target=renew_camera_lease, args=(sys.stdin.buffer, lease),
+                             daemon=True, name='lya-camera-lease').start()
+            for result in live_frames(authorized=lambda: camera_lease_valid(lease, expires_at)):
                 print(json.dumps(result), flush=True)
         else:
             raise RuntimeError('Explicit camera action required')

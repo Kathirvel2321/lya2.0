@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <linearGradient id="background" x2="1" y2="1"><stop stop-color="#142832"/><stop offset="1" stop-color="#080f16"/></linearGradient>
+    <linearGradient id="bottle" x2="1"><stop stop-color="#264e46"/><stop offset=".5" stop-color="#52837a"/><stop offset="1" stop-color="#1e433e"/></linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="#060d13"/>
+  <path d="M32 70 L62 40 H1138 L1168 70 V650 L1138 680 H62 L32 650 Z" fill="#0c1720" stroke="#34505c"/>
+  <path d="M52 76 L78 50 H242 M962 50 H1122 L1158 86" fill="none" stroke="#b89c61" stroke-width="1"/>
+  <g font-family="Segoe UI">
+    <text x="72" y="99" fill="#d7f6f6" font-size="22" letter-spacing="7">LYA</text>
+    <text x="177" y="98" fill="#81a5b2" font-size="15" letter-spacing="2">CAMERA FOCUS</text>
+    <circle cx="981" cy="91" r="4" fill="#6de9d5"/>
+    <text x="996" y="97" fill="#95bdc8" font-size="13">LOCAL · CHECKED VIEW</text>
+    <rect x="64" y="126" width="788" height="486" rx="10" fill="url(#background)" stroke="#24404b"/>
+    <path d="M66 479 H850 V611 H66Z" fill="#152a32"/>
+    <path d="M67 480 H850" stroke="#46616a"/>
+    <path d="M88 565 L799 526 M143 612 L754 568" stroke="#233e48"/>
+    <rect x="90" y="145" width="159" height="30" rx="5" fill="#0a1c25" stroke="#36525c"/>
+    <text x="104" y="165" fill="#98bec8" font-size="13">VIEW CHECKED 00:00</text>
+    <!-- Synthetic scene; these shapes are not a camera frame. -->
+    <g transform="translate(170 319) rotate(-8)">
+      <rect x="0" y="0" width="91" height="176" rx="12" fill="#172c35" stroke="#6b838b" stroke-width="2"/>
+      <rect x="7" y="10" width="77" height="153" rx="6" fill="#2b4753"/>
+      <rect x="30" y="12" width="30" height="4" rx="2" fill="#82949a"/>
+    </g>
+    <ellipse cx="479" cy="515" rx="67" ry="10" fill="#060e14" opacity=".6"/>
+    <path d="M448 251 H501 V289 Q501 307 518 324 L531 343 V492 Q531 511 513 511 H439 Q425 511 425 491 V343 L438 324 Q448 307 448 289 Z" fill="url(#bottle)" stroke="#688c85"/>
+    <rect x="447" y="235" width="55" height="23" rx="5" fill="#a9beb3"/>
+    <rect x="428" y="377" width="101" height="63" fill="#b5bb9e" opacity=".9"/>
+    <path d="M449 350 V477" stroke="#a1c9bd" stroke-width="4" opacity=".28"/>
+    <ellipse cx="699" cy="514" rx="61" ry="9" fill="#060e14" opacity=".6"/>
+    <path d="M652 405 H730 L722 489 Q721 502 708 502 H673 Q660 502 658 489 Z" fill="#8c9fa0" stroke="#bad2d1"/>
+    <ellipse cx="691" cy="405" rx="39" ry="10" fill="#bacccc"/>
+    <ellipse cx="691" cy="405" rx="32" ry="6" fill="#263a3f"/>
+    <path d="M730 423 C772 414 766 470 726 472" fill="none" stroke="#9fb5b7" stroke-width="10"/>
+    <!-- Quiet candidates use fine dashed frames; the current target gets corner brackets. -->
+    <rect x="151" y="303" width="112" height="208" rx="7" fill="none" stroke="#547a88" stroke-dasharray="4 7"/>
+    <rect x="641" y="391" width="129" height="122" rx="7" fill="none" stroke="#547a88" stroke-dasharray="4 7"/>
+    <text x="151" y="290" fill="#8baebc" font-size="14">01 · PHONE</text>
+    <text x="641" y="379" fill="#8baebc" font-size="14">03 · CUP</text>
+    <rect x="405" y="218" width="147" height="310" rx="8" fill="#6de9ef" fill-opacity=".025" stroke="#438c99"/>
+    <path d="M405 251 V218 H438 M519 218 H552 V251 M552 495 V528 H519 M438 528 H405 V495" fill="none" stroke="#87f4f0" stroke-width="3"/>
+    <rect x="404" y="180" width="177" height="29" rx="5" fill="#183b45" stroke="#61c3ce"/>
+    <text x="417" y="200" fill="#d2ffff" font-size="14" letter-spacing="1">02 · BOTTLE · FOCUS</text>
+    <path d="M478 542 V555 H547" fill="none" stroke="#9fd6dc"/>
+    <text x="560" y="560" fill="#acd8dc" font-size="13">Currently being described</text>
+    <text x="91" y="590" fill="#8ab3bf" font-size="13">MARKED VIEW · analysis and boxes refer to the same frame</text>
+    <rect x="879" y="126" width="258" height="486" rx="10" fill="#0d1e28" stroke="#294650"/>
+    <text x="901" y="164" fill="#d7efef" font-size="17" letter-spacing="2">SCENE TOUR</text>
+    <text x="901" y="191" fill="#88a8b5" font-size="13">3 illustrated items · left to right</text>
+    <path d="M901 208 H1113" stroke="#294650"/>
+    <text x="904" y="248" fill="#7c9ca8" font-size="14">01</text>
+    <text x="941" y="246" fill="#bdccd2" font-size="16">Phone</text>
+    <text x="941" y="269" fill="#7c9ca8" font-size="13">On the left</text>
+    <rect x="894" y="292" width="229" height="92" rx="7" fill="#19343f" stroke="#5ba6b6"/>
+    <text x="904" y="323" fill="#81efec" font-size="14">02</text>
+    <text x="941" y="321" fill="#d6ffff" font-size="16">Bottle</text>
+    <text x="941" y="345" fill="#a0c9d0" font-size="13">In the middle</text>
+    <text x="941" y="368" fill="#6bd5dc" font-size="11" letter-spacing="1.5">DESCRIBING THIS ITEM</text>
+    <text x="904" y="425" fill="#7c9ca8" font-size="14">03</text>
+    <text x="941" y="423" fill="#bdccd2" font-size="16">Cup</text>
+    <text x="941" y="447" fill="#7c9ca8" font-size="13">On the right</text>
+    <path d="M901 479 H1113" stroke="#294650"/>
+    <text x="902" y="506" fill="#87a9b8" font-size="13">Say “stop” to end the tour</text>
+    <rect x="901" y="534" width="111" height="36" rx="6" fill="#122a35" stroke="#395c69"/>
+    <text x="922" y="557" fill="#bdd8e0" font-size="13">LIVE VIEW</text>
+    <text x="68" y="647" fill="#b6a57e" font-size="13" letter-spacing="1">DESIGN STUDY · SYNTHETIC OBJECTS · NOT IMPLEMENTED</text>
+    <text x="966" y="647" fill="#74949f" font-size="12">NO CAMERA OPENED</text>
+  </g>
+</svg>

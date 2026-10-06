@@ -520,7 +520,8 @@ class ExperienceChecks(unittest.TestCase):
         self.assertEqual(d.vision_dialog.findChildren(QLineEdit), [])
         d.vision_dialog.close()
 
-    def test_visual_question_routes_to_camera_without_model_or_auth(self):
+    @patch.object(OrbDesktop, 'camera_owner', new=lambda self: 'synthetic-owner')
+    def test_visual_question_routes_without_general_model_or_identity_change(self):
         from camera_eyes import VisionDialog
         before = self.d.brain.session
         with patch.object(VisionDialog, 'toggle_live') as start:
@@ -533,6 +534,7 @@ class ExperienceChecks(unittest.TestCase):
         self.assertEqual(self.d.brain.session, before)
         self.d.vision_dialog.close()
 
+    @patch.object(OrbDesktop, 'camera_owner', new=lambda self: 'synthetic-owner')
     def test_what_do_you_see_uses_normal_answer_panel(self):
         from camera_eyes import VisionDialog
         with patch.object(VisionDialog, 'toggle_live'):
@@ -542,6 +544,7 @@ class ExperienceChecks(unittest.TestCase):
         self.assertIn('bottle', self.d.panel.answer.toPlainText())
         self.d.vision_dialog.close()
 
+    @patch.object(OrbDesktop, 'camera_owner', new=lambda self: 'synthetic-owner')
     def test_spoken_pointing_question_reaches_local_camera_without_brain_request(self):
         from camera_eyes import VisionDialog
         before = self.d.brain.session
@@ -564,6 +567,7 @@ class ExperienceChecks(unittest.TestCase):
             ask.assert_called_once_with('Lya, what is this?', self.d.generation)
             brain.assert_not_called()
 
+    @patch.object(OrbDesktop, 'camera_owner', new=lambda self: 'synthetic-owner')
     def test_natural_open_and_see_me_bypasses_general_brain_action(self):
         from camera_eyes import VisionDialog
         from vision.answers import answer_scene
@@ -592,6 +596,123 @@ class ExperienceChecks(unittest.TestCase):
             self.d.command('Lya, please close the camera.')
             close.assert_called_once()
             brain.assert_not_called()
+
+    def test_camera_owner_requires_verification_active_record_and_admin_role(self):
+        from security.policy import Session
+        self.d.brain.clock = lambda: 1000
+        valid = Session('admin', 'Synthetic', 'fake-session', 'fake-person', 1100)
+        for session, record, accepted in (
+                (Session(), None, False),
+                (Session('admin', 'Synthetic', 'fake-session', 'fake-person', 999), None, False),
+                (Session('friend', 'Synthetic', 'fake-session', 'fake-person', 1100), {'role': 'friend', 'active': True}, False),
+                (valid, {'role': 'admin', 'active': False}, False),
+                (valid, {'role': 'friend', 'active': True}, False),
+                (valid, {'person_id': 'fake-person', 'role': 'admin', 'active': True}, True)):
+            with self.subTest(session=session, record=record), patch('storage.store.get_person', return_value=record):
+                self.d.brain.bind_session(session)
+                self.assertEqual(bool(self.d.camera_owner()), accepted)
+        with patch('storage.store.get_person', side_effect=OSError('Synthetic locked store')):
+            self.assertIsNone(self.d.camera_owner())
+
+    def test_guest_camera_button_and_spoken_request_never_launch_worker(self):
+        from camera_eyes import VisionDialog
+        self.d.ensure_vision()
+        with patch.object(self.d.vision_dialog.process, 'start') as start:
+            self.d.vision_dialog.live_button.click()
+            self.d.on_voice('what all can you see?')
+        start.assert_not_called()
+        self.assertIsNone(self.d.vision_dialog.last_result)
+        self.assertIn('locked', self.d.vision_dialog.status.text())
+
+    def test_camera_observations_clear_in_reduced_mode_without_erasing_other_answers(self):
+        d = self.d
+        d.ensure_vision()
+        d.spoken = False
+        d.panel.reduced = True
+        d.on_vision_answer(d.generation, 'Synthetic camera observation.')
+        self.assertEqual(d.panel.footnote.text(), 'LOCAL CAMERA · NO IMAGE UPLOADS')
+        self.assertIn('Synthetic camera observation', d.panel.answer.toPlainText())
+        d.end_vision_session()
+        self.assertNotIn('Synthetic camera observation', d.panel.answer.toPlainText())
+        d.on_vision_answer(d.generation, 'Another synthetic camera observation.')
+        d.panel.show_answer('Time', 'Unrelated current answer.')
+        d.end_vision_session()
+        self.assertEqual(d.panel.answer.toPlainText(), 'Unrelated current answer.')
+
+    @patch.object(OrbDesktop, 'camera_owner', new=lambda self: 'synthetic-owner')
+    def test_scene_tour_matches_spoken_items_and_stop_cancels_later_completion(self):
+        from PySide6.QtCore import QProcess
+        from PySide6.QtGui import QPixmap
+        import time
+        d = self.d
+        d.ensure_vision()
+        dialog = d.vision_dialog
+        dialog.last_result = {'width': 640, 'height': 480, 'ready': True, 'analyzed_at': time.monotonic(),
+                              'faces': [], 'objects': [
+                                  {'label': 'cup', 'confidence': .9, 'box': [420, 180, 500, 300]},
+                                  {'label': 'bottle', 'confidence': .8, 'box': [80, 180, 140, 300]}]}
+        dialog.checked_at = dialog.last_result['analyzed_at']
+        dialog.checked_pixmap = QPixmap(640, 480)
+        dialog.checked_pixmap.fill(Qt.GlobalColor.black)
+        d.spoken = True
+        def say(*args, **kwargs):
+            d.speech.request += 1
+            d.speech.cancelled = False
+        with patch.object(dialog.process, 'state', return_value=QProcess.ProcessState.Running), patch.object(
+                dialog.process, 'kill'), patch.object(dialog.process, 'waitForFinished'), patch.object(
+                d.speech, 'say', side_effect=say) as spoken:
+            d.on_voice('what all can you see?')
+            self.assertIn('bottle', spoken.call_args.args[0])
+            self.assertFalse(any('possible bottle' in entry for entry in d.transcript))
+            self.assertEqual(dialog.scene.selected['label'], 'bottle')
+            d.speech.completed.emit()
+            d.speech.completed.emit()  # Duplicate completion must not skip a tour item.
+            APP.processEvents()
+            self.assertEqual(spoken.call_count, 2)
+            self.assertEqual(dialog.scene.selected['label'], 'cup')
+            d.on_voice('stop')
+            d.speech.completed.emit()
+            APP.processEvents()
+            self.assertEqual(spoken.call_count, 2)
+            self.assertEqual(d.vision_tour, [])
+            self.assertFalse(dialog.focus_active)
+            dialog.stop_camera()
+            self.assertIsNone(d.camera_panel_text)
+            self.assertNotIn('possible bottle', d.panel.full_text)
+
+    @patch.object(OrbDesktop, 'camera_owner', new=lambda self: 'synthetic-owner')
+    def test_camera_quiet_tour_does_not_speak_and_error_completion_does_not_advance(self):
+        from PySide6.QtCore import QProcess
+        from PySide6.QtGui import QPixmap
+        import time
+        d = self.d
+        d.ensure_vision()
+        dialog = d.vision_dialog
+        dialog.last_result = {'width': 640, 'height': 480, 'ready': True, 'analyzed_at': time.monotonic(),
+                              'faces': [], 'objects': [
+                                  {'label': 'cup', 'confidence': .9, 'box': [420, 180, 500, 300]},
+                                  {'label': 'bottle', 'confidence': .8, 'box': [80, 180, 140, 300]}]}
+        dialog.checked_at = dialog.last_result['analyzed_at']
+        dialog.checked_pixmap = QPixmap(640, 480)
+        dialog.checked_pixmap.fill(Qt.GlobalColor.black)
+        d.spoken = True
+        def say(*args, **kwargs):
+            d.speech.request += 1
+            d.speech.cancelled = False
+        with patch.object(dialog.process, 'state', return_value=QProcess.ProcessState.Running), patch.object(
+                dialog.process, 'kill'), patch.object(dialog.process, 'waitForFinished'), patch.object(
+                d.speech, 'say', side_effect=say) as spoken:
+            d.on_voice('what all can you see?', quiet=True)
+            spoken.assert_not_called()
+            self.assertTrue(dialog.focus_active)
+            d.on_voice('what all can you see?')
+            self.assertEqual(spoken.call_count, 1)
+            d.speech.completed.emit()
+            d.speech.cancelled = True
+            d.speech.unavailable.emit()
+            APP.processEvents()
+            self.assertEqual(spoken.call_count, 1)
+            self.assertFalse(dialog.focus_active)
 
     def test_chat_controls_and_independent_windows(self):
         d = self.d

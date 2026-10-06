@@ -1,0 +1,15 @@
+{
+  "scope": "Local VAD initialization only; no microphone, owner audio or provider call.",
+  "measurements": [
+    {
+      "stage": "first_load",
+      "milliseconds": 575.28,
+      "input_schema_valid": true
+    },
+    {
+      "stage": "cached_load",
+      "milliseconds": 0.03,
+      "input_schema_valid": true
+    }
+  ]
+}

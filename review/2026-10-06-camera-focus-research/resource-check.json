@@ -1,0 +1,23 @@
+{
+  "scope": "10s worker-only simulation with upstream public hand image and fake camera; no real sensor or GUI/voice load.",
+  "elapsed_seconds": 10.004,
+  "preview_frames": 150,
+  "analysis_jobs": 19,
+  "checked_image_packets": 19,
+  "model_load_ms": 191.64,
+  "analysis_median_ms": 170.38,
+  "analysis_max_ms": 243.95,
+  "cpu_percent_of_one_logical_core": 65.44,
+  "cpu_percent_of_logical_machine_capacity": 8.18,
+  "before_models": {
+    "working_mib": 46.1,
+    "peak_working_mib": 46.98
+  },
+  "after_run": {
+    "working_mib": 110.94,
+    "peak_working_mib": 126.13
+  },
+  "max_serialized_packet_bytes": 215494,
+  "camera_released": true,
+  "limits": "Not an end-to-end LYA, battery, thermal, prolonged-runtime or owner-room performance measurement."
+}

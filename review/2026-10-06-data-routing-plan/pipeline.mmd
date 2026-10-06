@@ -1,0 +1,23 @@
+flowchart TD
+  Input["Voice transcript or typed request"] --> Route["Native intent and privacy routing"]
+  Route --> Public["Public question - no personal memory"]
+  Route --> Local["Local calculation or public command"]
+  Route --> Gate["Protected request - verified owner and existing approval policy"]
+  Gate --> Memory["Read only authorized relevant local records"]
+  Gate --> Save["Explicit remember or correct request"]
+  Gate --> Tool["Bounded authorized tool"]
+  Memory --> Recall["Exact recall or qualified private local model"]
+  Save --> Store["Atomic encrypted SQLite and matching search index"]
+  Public --> Evidence["Current sources when required"]
+  Evidence --> Model["Existing public model route with limits"]
+  Model --> Check["Check evidence, tool result and cancellation"]
+  Recall --> Check
+  Tool --> Check
+  Local --> Check
+  Store --> Check
+  Check --> Reply["Native answer panel and accepted speaking voice"]
+  Later["Later experiment: Laya classification if measured useful"] -.-> Route
+  classDef native fill:#164454,color:#fff,stroke:#83b8c5
+  classDef pending fill:#655024,color:#fff,stroke:#dfbd6d
+  class Input,Route,Public,Local,Gate,Memory,Save,Tool,Recall,Store,Evidence,Model,Check,Reply native
+  class Later pending

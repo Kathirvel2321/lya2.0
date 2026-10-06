@@ -19,6 +19,8 @@ OWNER = frozenset({"files", "theme_apply", "memory_read", "memory_write",
 
 
 def allowed(session, action, phone_approved=False):
+    if action == 'camera_view':
+        return session.role == 'admin'  # Brain authorization also verifies expiry and the protected identity record.
     if action in PUBLIC:
         return True
     if action in TRUSTED:

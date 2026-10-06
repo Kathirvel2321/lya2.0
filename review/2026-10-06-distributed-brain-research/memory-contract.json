@@ -1,0 +1,27 @@
+{
+  "status": "review_draft_not_runtime_configuration",
+  "date": "2026-10-06",
+  "default_sensitivity": "private",
+  "memory_kinds": ["session", "task", "fact", "preference", "decision", "episode", "lesson", "skill", "research", "person", "security_case"],
+  "sensitivities": ["public", "private", "restricted"],
+  "required_record_fields": ["id", "owner_id", "project_id", "kind", "sensitivity", "source_id", "created_at", "updated_at", "revision", "retention", "approval_state"],
+  "retention_requires_explicit_expiry_or_permanent": true,
+  "excluded_from_memory": ["credentials", "authentication_material", "biometrics"],
+  "locations": {
+    "public": {"bulk": "verified_oracle_public_archive", "search": "scoped_remote_fts_initially", "local": "bounded_hot_cache"},
+    "private": {"small_records": "existing_encrypted_local_store", "bulk": "client_encrypted_archive_after_transfer_policy", "search": "authorized_local_catalog", "remote_decryption_key": false},
+    "restricted": {"small_records": "existing_protected_subsystem", "bulk": "client_encrypted_archive_after_transfer_policy", "search": "authorized_local_catalog", "remote_decryption_key": false}
+  },
+  "proposed_budgets": {"evictable_artifact_cache_bytes": 268435456, "existing_notes_per_person": 2000, "existing_retrieved_notes_limit": 6, "background_ingest_concurrency": 1},
+  "cache_identity_fields": ["owner_id", "project_id", "sensitivity", "content_revision", "index_revision", "permission_policy_revision"],
+  "skill_states": ["draft", "tested", "approved", "enabled", "failed", "stale", "revoked"],
+  "invariants": [
+    "Authorization precedes candidate search, ranking, prompts and caches",
+    "Public model requests contain only public or independently reviewed sanitized records",
+    "No code activation without checks, owner authorization and exact version binding",
+    "No eviction of identity, keys or unacknowledged critical writes to meet cache budget",
+    "Corrections, expiry, revocation and forgetting invalidate affected projections",
+    "Remote ciphertext does not imply remotely searchable private plaintext",
+    "No real transfer, automatic paid resource, enrollment or deployment is authorized by this draft"
+  ]
+}

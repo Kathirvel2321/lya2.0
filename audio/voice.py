@@ -406,11 +406,13 @@ def _wav(pcm):
 
 
 def _record_stream(max_seconds=25,silence=0.8,thresh=700,stop_event=None,clap_enabled=False,
-                   endpoint_model=None,on_state=None,use_vad=False):
+                   endpoint_model=None,on_state=None,use_vad=False,continuation_silence=None):
     import numpy as np
     import sounddevice as sd
     from collections import deque
     parts=[];pre=deque(maxlen=50);quiet=0;started=False
+    speech_blocks = 0
+    finish_silence = silence
     clap = DoubleClap(int(os.environ.get('LYA_CLAP_THRESHOLD', '150'))) if clap_enabled else None
     if _SPEAKING.is_set() or _THINKING.is_set():
         return None
@@ -467,14 +469,20 @@ def _record_stream(max_seconds=25,silence=0.8,thresh=700,stop_event=None,clap_en
                 if started:
                     parts.append(pcm)
                     speaking_now = speech if activity is not None else loud or recognized
+                    if speaking_now:
+                        speech_blocks += 1
+                        # ponytail: audio-only pause heuristic; semantic endpoints need streaming ASR.
+                        # 20ms blocks: resumed 0.8s pause or 8s of speech keeps the longer allowance.
+                        if continuation_silence is not None and (quiet >= 40 or speech_blocks >= 400):
+                            finish_silence = max(silence, continuation_silence)
                     quiet=0 if speaking_now else quiet+1
-                    if quiet>=silence/0.02 and not recognized:break
+                    if quiet>=finish_silence/0.02 and not recognized:break
                 else:pre.append(pcm)
                 # Allow a brief continuation after a finalized clause. Do not
                 # submit the question at the first internal recognizer endpoint.
                 if endpoint_quiet is not None:
                     endpoint_quiet += 1
-                    if started and endpoint_quiet >= silence / 0.02:
+                    if started and endpoint_quiet >= finish_silence / 0.02:
                         break
             else:
                 if parts:
@@ -798,6 +806,11 @@ def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=Tru
     engine = os.environ.get('LYA_COMMAND_ASR', 'vosk').strip().lower()
     if engine == 'whisper' and not cloud_only:
         local_whisper.load(str(local_whisper.model_path()))  # Warm before microphone readiness.
+    if cloud_provider == 'nvidia':
+        try:
+            SpeechActivity()  # Cache the existing VAD before wake readiness, not during the first question.
+        except (ImportError, FileNotFoundError, RuntimeError):
+            pass  # Same local Vosk fallback as command capture.
     last = 0.0
     failures = 0
     uncertain_turns = 0
@@ -830,9 +843,10 @@ def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=Tru
                 continue
             # Bound noise/dictation, but never forward a question chopped at the limit.
             wav = _record_stream(max_seconds=COMMAND_MAX_SECONDS,
-                                 silence=3.0 if cloud_provider == 'nvidia' else COMMAND_SILENCE,
+                                 silence=2.0 if cloud_provider == 'nvidia' else COMMAND_SILENCE,
                                  stop_event=stop_event, clap_enabled=clap_enabled,
-                                 endpoint_model=_local, on_state=on_state, use_vad=True)
+                                 endpoint_model=_local, on_state=on_state, use_vad=True,
+                                 **({'continuation_silence': 3.0} if cloud_provider == 'nvidia' else {}))
             if stop_event is not None and stop_event.is_set():
                 return
             if wav is None:

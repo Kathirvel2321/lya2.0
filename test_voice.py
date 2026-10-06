@@ -494,6 +494,32 @@ class VoicePipelineTests(unittest.TestCase):
             self.assertEqual(wav.readframes(wav.getnframes()), b''.join(blocks))
         self.assertEqual(stream.read.call_count, len(blocks))
 
+    def test_adaptive_endpoint_keeps_short_turns_fast_and_slow_turns_complete(self):
+        from unittest.mock import Mock, patch
+        # 20ms blocks: short speech, 8s speech, and a resumed 1.8s pause.
+        cases = ([True] * 25 + [False] * 100,
+                 [True] * 400 + [False] * 150,
+                 [True] * 25 + [False] * 90 + [True] * 25 + [False] * 140
+                 + [True] * 25 + [False] * 150)
+        for activity_blocks in cases:
+            with self.subTest(blocks=len(activity_blocks)):
+                stream = Mock()
+                stream.__enter__ = Mock(return_value=stream)
+                stream.__exit__ = Mock(return_value=False)
+                blocks = [np.full(320, 900 if active else 0, np.int16).tobytes()
+                          for active in activity_blocks]
+                stream.read.side_effect = [(block, False) for block in blocks]
+                activity = Mock()
+                activity.feed.side_effect = activity_blocks
+                with patch('sounddevice.RawInputStream', return_value=stream), patch.object(
+                        voice, '_input_device_name', return_value='Synthetic mic'), patch.object(
+                        voice, 'SpeechActivity', return_value=activity):
+                    capture = voice._record_stream(max_seconds=120, silence=2.0,
+                                                   continuation_silence=3.0, use_vad=True)
+                with wave.open(capture, 'rb') as wav:
+                    self.assertEqual(wav.readframes(wav.getnframes()), b''.join(blocks))
+                self.assertEqual(stream.read.call_count, len(blocks))
+
     def test_noise_alone_does_not_start_a_model_gated_question(self):
         import threading
         from unittest.mock import Mock, patch

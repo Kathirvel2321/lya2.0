@@ -1,5 +1,26 @@
 # LYA crystal desktop milestone
 
+Camera focus/security (2026-10-06): camera start and camera questions now require
+an existing verified LYA administrator session, checked against the protected
+active owner record and expiry. Guest or color-only sessions cannot open it.
+Owner sign-in is not live-verified; enrollment remains deferred, so this gate
+may deliberately keep the camera locked until existing verification succeeds.
+The normal launcher, accepted hearing and speaking voice were preserved.
+
+`find my bottle` / `what am I pointing at?` marks the same detected target used
+in the answer. `what all can you see?` shows up to 12 distinct numbered objects
+and describes them one by one with matching highlights. `stop` cancels narration;
+`Live view` resumes the preview; `close camera` clears it. Marking uses explicitly
+labeled checked pixels rather than presenting stale boxes as live tracking.
+Unclear targets request clarification and unsupported categories are not guessed.
+
+The existing local models, 15-FPS preview, two analyses/second and bounded session
+remain. Camera frames are transient/local, no image cloud calls or recording;
+camera observations stay out of chat history. Access loss, expiry, close/hide,
+minimize and sleep stop the view. Isolated/public-fixture tests and a short fake-
+camera resource check passed; owner-room accuracy and sustained device load are
+pending. See [implementation, limits and native synthetic previews](../review/2026-10-06-camera-focus-research/implementation.md).
+
 Camera references (2026-10-05): local common-object analysis now accepts
 `what object is this?`, `what am I holding?`, and `what am I pointing at?`.
 Bare `what is this?` / `what's this?` uses an already-active camera only.
@@ -22,16 +43,14 @@ uses current person/face-presence detections, without claiming identity.
 how/why mentions and camera-settings requests do not activate it.
 Reopen LYA to load this follow-up. Live owner retry remains pending.
 
-Optional saved NVIDIA key (2026-10-05): open Windows **Credential Manager >
-Windows Credentials > Add a generic credential**. Use `LYA/NVIDIA_API_KEY` as
-the Internet/network address, `LYA` as the user name, and paste the NVIDIA API
-key in the password field. LYA now reads this entry when no session environment
-key is supplied; a missing/unreadable entry retains the existing key prompt.
-Manage or remove the saved key in Credential Manager. Do not put it in project
-files or the project brain. No owner credential was read/saved during development.
+All provider keys use the existing project-root `.env` file. Put the NVIDIA key
+on its own line as `NVIDIA_API_KEY=...`; LYA reads it at launch, alongside the
+other provider settings. The current process environment still takes precedence.
+The masked key prompt appears only when no key is configured. `.env` is excluded
+from Git; never put keys in source code or the project brain.
 The owner's new preserve-working-features rule is in `AGENTS.md`; no further
 voice, hearing, wake, interface or startup change is authorized by this update.
-See [key storage and owner rule](../review/2026-10-05-key-storage/README.md).
+See [key storage](../review/2026-10-05-key-storage/README.md).
 
 Normal launch now uses a native masked NVIDIA key dialog (2026-10-05). Open
 `LYA.lnk` in the project folder for a direct windowed launch; `launch-lya.cmd`

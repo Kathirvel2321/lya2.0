@@ -13,7 +13,7 @@ from tools import start_nvidia_lya as launcher
 
 class NvidiaLauncherTests(unittest.TestCase):
     def setUp(self):
-        self.read_saved_key = launcher.saved_key
+        self.read_configured_key = launcher.configured_key
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.root = Path(folder.name)
@@ -26,7 +26,7 @@ class NvidiaLauncherTests(unittest.TestCase):
                         patch.object(sys, 'path', list(sys.path)),
                         patch.dict(sys.modules, {'riva': riva, 'riva.client': riva.client}),
                         patch.dict(os.environ, {'NVIDIA_API_KEY': ''}),
-                        patch.object(launcher, 'saved_key', return_value='')):
+                        patch.object(launcher, 'configured_key', return_value='')):
             context.start()
             self.addCleanup(context.stop)
         desktop_patch = patch.object(launcher.runpy, 'run_path')
@@ -62,21 +62,20 @@ class NvidiaLauncherTests(unittest.TestCase):
             self.assertEqual(self.run_launcher(), 1)
         self.desktop.assert_not_called()
 
-    def test_saved_windows_key_skips_input_and_remains_out_of_arguments(self):
+    def test_project_env_key_skips_input_and_remains_out_of_arguments(self):
         def desktop(*args, **kwargs):
-            self.assertEqual(os.environ['NVIDIA_API_KEY'], 'fake-saved-key')
-            self.assertNotIn('fake-saved-key', sys.argv)
+            self.assertEqual(os.environ['NVIDIA_API_KEY'], 'fake-project-env-key')
+            self.assertNotIn('fake-project-env-key', sys.argv)
         self.desktop.side_effect = desktop
-        with patch.object(launcher, 'saved_key', return_value='fake-saved-key'), \
+        with patch.object(launcher, 'configured_key', return_value='fake-project-env-key'), \
              patch.object(launcher, 'gui_key') as prompt:
             self.assertEqual(self.run_launcher(), 0)
             prompt.assert_not_called()
         self.assertNotIn('NVIDIA_API_KEY', os.environ)
 
-    def test_saved_key_access_failure_keeps_the_existing_prompt(self):
-        from security import api_credentials
-        with patch.object(api_credentials, 'nvidia_key', side_effect=RuntimeError('fake-private-detail')):
-            self.assertEqual(self.read_saved_key(), '')
+    def test_missing_project_env_key_keeps_the_existing_prompt(self):
+        with patch.object(launcher, 'configured_key', return_value=''):
+            self.assertEqual(self.read_configured_key(), '')
 
     def test_existing_session_key_skips_prompt(self):
         with patch.dict(os.environ, {'NVIDIA_API_KEY': 'fake-existing-key'}), \

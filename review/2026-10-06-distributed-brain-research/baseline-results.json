@@ -1,0 +1,132 @@
+{
+  "scope": "12 hand-authored queries over six synthetic facts; existing notes retrieval only",
+  "runtime_integration_test": false,
+  "boundary_assertions_passed": 6,
+  "groups": {
+    "exact": {
+      "hits": 6,
+      "queries": 6
+    },
+    "paraphrase": {
+      "hits": 3,
+      "queries": 6
+    }
+  },
+  "results": [
+    {
+      "group": "exact",
+      "query": "coffee",
+      "expected": "daily_drink",
+      "retrieved": [
+        "daily_drink"
+      ],
+      "hit": true,
+      "milliseconds": 5.663
+    },
+    {
+      "group": "exact",
+      "query": "FastAPI",
+      "expected": "backend_framework",
+      "retrieved": [
+        "backend_framework"
+      ],
+      "hit": true,
+      "milliseconds": 5.186
+    },
+    {
+      "group": "exact",
+      "query": "DHL",
+      "expected": "shipment_courier",
+      "retrieved": [
+        "shipment_courier"
+      ],
+      "hit": true,
+      "milliseconds": 5.084
+    },
+    {
+      "group": "exact",
+      "query": "GTX 1650",
+      "expected": "graphics_card",
+      "retrieved": [
+        "graphics_card"
+      ],
+      "hit": true,
+      "milliseconds": 6.212
+    },
+    {
+      "group": "exact",
+      "query": "English",
+      "expected": "preferred_language",
+      "retrieved": [
+        "preferred_language"
+      ],
+      "hit": true,
+      "milliseconds": 5.96
+    },
+    {
+      "group": "exact",
+      "query": "October",
+      "expected": "release_date",
+      "retrieved": [
+        "release_date"
+      ],
+      "hit": true,
+      "milliseconds": 25.763
+    },
+    {
+      "group": "paraphrase",
+      "query": "Which beverage do I prefer?",
+      "expected": "daily_drink",
+      "retrieved": [],
+      "hit": false,
+      "milliseconds": 6.852
+    },
+    {
+      "group": "paraphrase",
+      "query": "Which stack powers the web API?",
+      "expected": "backend_framework",
+      "retrieved": [
+        "backend_framework"
+      ],
+      "hit": true,
+      "milliseconds": 7.955
+    },
+    {
+      "group": "paraphrase",
+      "query": "Who is delivering my parcel?",
+      "expected": "shipment_courier",
+      "retrieved": [],
+      "hit": false,
+      "milliseconds": 4.553
+    },
+    {
+      "group": "paraphrase",
+      "query": "Which GPU is installed?",
+      "expected": "graphics_card",
+      "retrieved": [],
+      "hit": false,
+      "milliseconds": 4.351
+    },
+    {
+      "group": "paraphrase",
+      "query": "Which language do I prefer?",
+      "expected": "preferred_language",
+      "retrieved": [
+        "preferred_language"
+      ],
+      "hit": true,
+      "milliseconds": 22.759
+    },
+    {
+      "group": "paraphrase",
+      "query": "When does the release happen?",
+      "expected": "release_date",
+      "retrieved": [
+        "release_date",
+        "backend_framework"
+      ],
+      "hit": true,
+      "milliseconds": 4.146
+    }
+  ]
+}

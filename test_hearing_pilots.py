@@ -248,6 +248,25 @@ class NvidiaSpeechTests(unittest.TestCase):
 
 
 class HearingIntegrationTests(unittest.TestCase):
+    def test_vad_warms_before_wake_readiness_and_missing_vad_keeps_fallback(self):
+        from audio import voice
+        for unavailable in (False, True):
+            with self.subTest(unavailable=unavailable):
+                warmed = []
+                def warm():
+                    warmed.append(True)
+                    if unavailable:
+                        raise RuntimeError('Synthetic unavailable VAD')
+                def wake(*args):
+                    self.assertEqual(warmed, [True])
+                    return False
+                with tempfile.TemporaryDirectory() as folder, patch.dict(os.environ, {
+                        'LYA_VOSK_MODEL': folder, 'LYA_COMMAND_ASR': 'vosk'}), patch.object(
+                        voice, '_local', object()), patch.object(voice, 'SpeechActivity', side_effect=warm), patch.object(
+                        voice, '_wait_for_wake', side_effect=wake):
+                    voice.wake_loop(lambda *a: None, offline_required=False,
+                                    cloud_provider='nvidia', cloud_only=True)
+
     def test_online_service_failure_stops_without_repeated_question_capture(self):
         from audio import voice
         stopped = threading.Event()
@@ -301,7 +320,8 @@ class HearingIntegrationTests(unittest.TestCase):
         stopped = threading.Event()
         private = [False]
         def record(**kwargs):
-            self.assertEqual(kwargs['silence'], 3.0)
+            self.assertEqual(kwargs['silence'], 2.0)
+            self.assertEqual(kwargs['continuation_silence'], 3.0)
             private[0] = True
             return io.BytesIO(wav())
         def decoded(*args, **kwargs):

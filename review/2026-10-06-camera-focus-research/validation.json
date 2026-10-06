@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-06",
+  "scope": "Camera focus/scene tour and verified-owner gate; no real sensor, owner data, credential or online model call.",
+  "vision_camera_pointing": {
+    "run": 40,
+    "passed": 40
+  },
+  "isolated_desktop_ui": {
+    "run": 69,
+    "passed": 69
+  },
+  "isolated_brain_workflow": {
+    "run": 44,
+    "passed": 44
+  },
+  "synthetic_voice_hearing": {
+    "run": 80,
+    "passed": 79,
+    "designed_online_skip": 1
+  },
+  "passed_total": 232,
+  "skipped_total": 1,
+  "compilation": "passed",
+  "scoped_whitespace": "passed",
+  "native_widget_previews": "Rendered with synthetic shapes/fake detections and visually inspected.",
+  "resource_check": "resource-check.json",
+  "live_owner_sign_in_and_camera_accuracy": "not verified; no camera activation or enrollment"
+}

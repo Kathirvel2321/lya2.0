@@ -10,12 +10,13 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def saved_key():
-    from security.api_credentials import nvidia_key
+def configured_key():
+    from cloud.probe_models import load_values
     try:
-        return nvidia_key()
-    except (ImportError, RuntimeError):
-        # Keep the established session prompt available if the vault is unavailable.
+        values = load_values()
+        return (values.get('NVIDIA_API_KEY') or values.get('NVAPI_KEY') or '').strip()
+    except (ImportError, ValueError):
+        # Malformed optional config retains the existing masked prompt.
         return ''
 
 
@@ -92,7 +93,7 @@ def main():
         import riva.client
         key = os.environ.get('NVIDIA_API_KEY', '').strip()
         if not key:
-            key = saved_key()
+            key = configured_key()
         if not key:
             key = gui_key() if args.gui else getpass.getpass('NVIDIA key (hidden; this session only): ').strip()
     except (KeyboardInterrupt, EOFError):

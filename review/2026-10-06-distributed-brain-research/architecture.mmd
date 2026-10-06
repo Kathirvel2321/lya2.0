@@ -1,0 +1,25 @@
+flowchart TD
+  Q["Request through accepted LYA voice or text"] --> G["Existing session and operation authorization"]
+  G --> R["Proposed memory router: owner, project, sensitivity, expiry"]
+  R --> P{"Public or explicitly sanitized?"}
+  P -->|Yes| H["Bounded local public artifact cache"]
+  H --> S["Oracle public corpus and scoped FTS search"]
+  S --> E["Public source selection and evidence"]
+  E --> A["Existing public answer route; new grounding planned"]
+  P -->|No| L["Existing encrypted local notes plus proposed compact catalog"]
+  L --> C["Proposed Oracle ciphertext archive: no private keys"]
+  C --> D["Authorized fetch and local verification and decryption"]
+  L --> V["Private deterministic recall or qualified local reasoning"]
+  D --> V
+  S --> K["Proposed skills: draft, test, approve, enable exact version"]
+  K --> E
+  S --> B["Proposed independent encrypted recovery copy"]
+  C --> B
+  L --> B
+  E -.-> N["Optional sanitized Obsidian, Notion and Excel views"]
+  classDef existing fill:#174c38,color:#fff,stroke:#80ba9f
+  classDef mixed fill:#584321,color:#fff,stroke:#ddb868
+  classDef planned fill:#253951,color:#fff,stroke:#93b8dd,stroke-dasharray:5
+  class Q,G existing
+  class L,A mixed
+  class R,P,H,S,E,C,D,V,K,B,N planned

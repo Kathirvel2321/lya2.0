@@ -1,0 +1,4 @@
+2026-10-06; five warm reads per size; fake keys and disposable encrypted stores only.
+ 100 notes  median=  2.05 ms  max=  2.19 ms  encrypted_db=181.4 KiB
+1000 notes  median=  4.13 ms  max=  4.77 ms  encrypted_db=693.4 KiB
+2000 notes  median=  6.48 ms  max=  7.39 ms  encrypted_db=1237.4 KiB
