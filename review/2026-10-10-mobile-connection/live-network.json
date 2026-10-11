@@ -1,0 +1,8 @@
+{
+  "private_https_reachable": true,
+  "certificate_verified": true,
+  "page_no_store": true,
+  "unsigned_chat_rejected": true,
+  "real_phone": false,
+  "provider_call": false
+}

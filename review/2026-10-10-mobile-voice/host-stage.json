@@ -1,0 +1,16 @@
+{
+  "staged": true,
+  "linux_checks": {
+    "tests": 18,
+    "success": true,
+    "failures": 0,
+    "errors": 0,
+    "provider_call": false
+  },
+  "sdk_import": {
+    "sdk": "2.27.0",
+    "peak_mib": 34.1
+  },
+  "provider_call": false,
+  "service_restarted": false
+}

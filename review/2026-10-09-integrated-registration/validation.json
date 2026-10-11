@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-09",
+  "tests": 86,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "success": true,
+  "modules": [
+    "test_owner_profiles",
+    "test_passkeys",
+    "test_approval",
+    "desktop.check_experience",
+    "test_legacy_retirement"
+  ],
+  "browser_javascript_syntax": true,
+  "active_widget_cpu_percent_one_core": 4.846,
+  "owner_store": false,
+  "owner_sensors": false,
+  "live_enrollment": false,
+  "provider_inference": false,
+  "note": "Synthetic signed owner/profile/action checks and native widget only; live phone/voice and full-app load unverified."
+}

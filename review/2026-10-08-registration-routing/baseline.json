@@ -1,0 +1,13 @@
+{
+  "tests": 1,
+  "failures": 13,
+  "errors": 0,
+  "success": false,
+  "date": "2026-10-08",
+  "modules": [
+    "desktop.check_experience.ExperienceChecks.test_spoken_and_typed_owner_requests_open_setup_without_inference"
+  ],
+  "real_owner_store": false,
+  "sensors": false,
+  "live_provider_calls": false
+}

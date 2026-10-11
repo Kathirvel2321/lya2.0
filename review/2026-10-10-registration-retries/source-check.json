@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-10",
+  "syntax": true,
+  "whitespace": true,
+  "usual_launcher_import": true,
+  "files": [
+    "desktop/owner_setup.py",
+    "desktop/owner_biometrics.py",
+    "desktop/owner_scan.py",
+    "security/owner_capture.py",
+    "security/owner_profiles.py",
+    "test_owner_profiles.py",
+    "review/2026-10-10-registration-retries/check_retries.py",
+    "review/2026-10-10-registration-retries/check_sources.py"
+  ],
+  "real_owner_store": false,
+  "real_sensors": false,
+  "app_started": false
+}

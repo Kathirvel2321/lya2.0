@@ -1,0 +1,16 @@
+{
+  "tests": 72,
+  "failures": 0,
+  "errors": 1,
+  "success": false,
+  "date": "2026-10-08",
+  "modules": [
+    "test_legacy_retirement",
+    "desktop.check_experience",
+    "test_passkeys",
+    "test_approval"
+  ],
+  "real_owner_store": false,
+  "sensors": false,
+  "live_provider_calls": false
+}

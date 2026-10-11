@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-09",
+  "tests": 85,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "success": true,
+  "modules": [
+    "test_owner_profiles",
+    "test_passkeys",
+    "test_approval",
+    "desktop.check_experience",
+    "test_legacy_retirement"
+  ],
+  "real_owner_data": false,
+  "real_sensors": false,
+  "live_provider_calls": false
+}

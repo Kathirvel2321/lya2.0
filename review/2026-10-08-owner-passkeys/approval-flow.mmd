@@ -1,0 +1,24 @@
+flowchart TD
+    Voice["Existing accepted hearing / menu"] --> Screen["Native voice-guided owner screen"]
+    Screen --> Check["Encrypted owner record check"]
+    Check -->|"Legacy, ambiguous or unavailable"| Lock["Locked: separate trusted migration"]
+    Check -->|"Empty / passkey owner"| Browser["Temporary loopback browser ceremony"]
+    Browser --> Phone["Phone passkey user verification"]
+    Phone --> Verify["Exact origin, RP, challenge, UV, UP, signature"]
+    Verify -->|"New owner"| Confirm["Second fresh signed assertion"]
+    Confirm --> Store["Atomic encrypted public credential + first owner"]
+    Verify -->|"Returning owner"| Session["Five-minute owner session"]
+    Store --> Session
+    Session --> Camera["Existing camera active-owner and expiry checks"]
+    Session --> Gate["Existing ApprovalGate: exact action + parameters"]
+    Gate --> Review["Native and browser exact-action review"]
+    Review --> Browser
+    Verify -->|"Pending exact action"| One["One-use Challenge returned to gate"]
+    One --> Execute["Existing protected operation"]
+    Cancel["Cancel / hidden / minimized / expiry / revocation"] --> Deny["Deny and close ceremony"]
+    classDef wired fill:#163d39,color:#ecf6f3,stroke:#7db6ad
+    classDef pending fill:#674c1a,color:#fff,stroke:#c8ab74
+    classDef locked fill:#3d2935,color:#fff,stroke:#a07591
+    class Voice,Screen,Check,Browser,Verify,Confirm,Store,Session,Camera,Gate,Review,One,Execute,Cancel,Deny wired
+    class Phone pending
+    class Lock locked

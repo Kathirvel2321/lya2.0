@@ -1,0 +1,14 @@
+{
+  "deployed": true,
+  "one_restart": true,
+  "pairing_file_preserved": true,
+  "protected_sources_unchanged": true,
+  "unsigned_session_rejected": true,
+  "timing_header_present": true,
+  "provider_call": false,
+  "service": {
+    "MemoryCurrent": "17846272",
+    "MemoryMax": "268435456",
+    "ActiveState": "active"
+  }
+}

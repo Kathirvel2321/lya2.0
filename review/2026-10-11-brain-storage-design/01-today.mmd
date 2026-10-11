@@ -1,0 +1,12 @@
+flowchart TD
+  LAP["Laptop interface"] --> NATIVE["Native brain and memory commands"]
+  NATIVE --> LOCAL["Local encrypted notes and vault"]
+  NATIVE --> ARCHIVE["Separate public Oracle archive"]
+  PHONE["Phone interface"] --> CHAT["Public chat and temporary session"]
+  CHAT --> ANSWER["Public answer model and Amy voice"]
+  GAP["Shared lasting phone memory: unfinished"]
+  CHAT -.-> GAP
+  classDef existing fill:#185c48,color:#fff,stroke:#41ba91
+  classDef unfinished fill:#78531a,color:#fff,stroke:#e7b04b
+  class LAP,NATIVE,LOCAL,ARCHIVE,PHONE,CHAT,ANSWER existing
+  class GAP unfinished

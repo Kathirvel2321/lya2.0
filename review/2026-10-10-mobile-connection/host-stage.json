@@ -1,0 +1,8 @@
+{
+  "staged": true,
+  "separate_account": true,
+  "fido2_import": true,
+  "temporary_store_check": true,
+  "inference_unchanged": true,
+  "service_started": false
+}

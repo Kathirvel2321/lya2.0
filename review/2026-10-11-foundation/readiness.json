@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-11",
+  "read_only": true,
+  "oracle": {
+    "architecture": "aarch64",
+    "logical_cpus": 4,
+    "memory_bytes": {
+      "MemTotal": 25139408896,
+      "MemAvailable": 24403304448,
+      "SwapTotal": 0,
+      "SwapFree": 0
+    },
+    "disk_bytes": {
+      "total": 206900281344,
+      "used": 3723878400,
+      "free": 203159625728
+    },
+    "mobile_service": {
+      "MemoryCurrent": "21299200",
+      "TasksCurrent": "1",
+      "MemoryMax": "268435456",
+      "TasksMax": "40",
+      "ActiveState": "active"
+    },
+    "read_only": true,
+    "billing_and_tenancy_not_inspected": true
+  },
+  "deployed_source": {
+    "hashes": {
+      "cloud/mobile.py": "b3e452edbb576e52d5a329679a3434f50fb55a3e4b941b4e1a64635822b028d5",
+      "cloud/mobile.html": "a9bd399ef039e0f49c2ded8c831e8f62a4d10027c3aba3ab0c42b7c2b0794482",
+      "cloud/mobile_runtime.py": "861fccc82b854888391449e93079037406ec3b01614d59030a69657062911cb7",
+      "cloud/mobile_speech.py": "e43915e182cdfdf8f27d9bbdca38978109cfced37ee7a35e9387c7a14d29631f",
+      "cloud/mobile_tts.py": "b5aae73b1249ddfcb2aee214811842bd224276e85059de959d124c2eb16ce0e7"
+    },
+    "timing_present": false
+  },
+  "laptop_disk_bytes": {
+    "total": 510392602624,
+    "free": 268942352384
+  },
+  "gates": {
+    "billing_eligibility": "unverified; machine counters are not account entitlement",
+    "independent_recovery": "not configured by this phase",
+    "shared_memory": "not enabled"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-08",
+  "tests": 66,
+  "failures": 0,
+  "errors": 0,
+  "success": true,
+  "modules": [
+    "test_passkeys",
+    "test_approval",
+    "desktop.check_experience"
+  ],
+  "owner_store": false,
+  "owner_sensors": false,
+  "live_phone_enrollment": false,
+  "active_widget_process_cpu_percent_one_core": 3.67,
+  "browser_javascript_syntax": true,
+  "asset_bytes": 2060652
+}

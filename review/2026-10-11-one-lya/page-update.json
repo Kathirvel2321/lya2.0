@@ -1,0 +1,14 @@
+{
+  "deployed": true,
+  "page_sha256": "a9bd399ef039e0f49c2ded8c831e8f62a4d10027c3aba3ab0c42b7c2b0794482",
+  "script_unchanged": true,
+  "controls_unchanged": true,
+  "service_restarted": false,
+  "auth_file_preserved": true,
+  "runtime_sources_unchanged": true,
+  "inference_unchanged": true,
+  "backup_created": true,
+  "no_store": true,
+  "camera_disabled": true,
+  "provider_call": false
+}

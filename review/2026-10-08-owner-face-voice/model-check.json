@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-09",
+  "models_ready": true,
+  "face_dimension": 128,
+  "voice_dimension": 256,
+  "public_face_consistent": true,
+  "synthetic_voice_consistent": true,
+  "camera_released": true,
+  "microphone_closed": true,
+  "events": {
+    "preview": 4,
+    "meter": 200
+  },
+  "load_seconds": 8.266,
+  "total_seconds": 10.907,
+  "cpu_percent_one_core": 95.695,
+  "working_mib": 436.33,
+  "peak_mib": 440.87,
+  "raw_owner_data": false,
+  "real_sensors": false,
+  "network_during_capture": false,
+  "note": "Model/worker fixture check only; self-consistency is not accuracy, liveness or live owner qualification."
+}

@@ -1,0 +1,17 @@
+flowchart TD
+  LAP["Laptop: familiar native interface"] --> ACCESS["Private HTTPS and verified identity"]
+  PHONE["Phone: same visual language"] --> ACCESS
+  ACCESS --> BRAIN["One LYA conversation brain<br/>Same owner, style and memory rules"]
+  BRAIN <--> TEMP["Temporary working context<br/>Bounded RAM, no transcript archive"]
+  BRAIN --> RECALL["Authorized recall<br/>Person, project, privacy and expiry filters"]
+  RECALL <--> STORE["Shared encrypted memory on Oracle<br/>Only approved new saved records"]
+  BRAIN --> SAVE["Explicit save, correct or forget<br/>Validate scope and commit revision"]
+  SAVE --> STORE
+  BRAIN --> REPLY["Direct recall or reasoning<br/>Personal records excluded from public models"]
+  REPLY --> VOICE["Verified answer and familiar Amy voice<br/>Return to the requesting device"]
+  LAP --> PRIVATE["Laptop-only private memory and actions<br/>Local authorization and local reasoning"]
+  STORE -.-> BACKUP["Encrypted recovery copies outside Oracle<br/>Separate recovery key and tested restore"]
+  classDef planned fill:#78531a,color:#fff,stroke:#e7b04b
+  classDef retained fill:#185c48,color:#fff,stroke:#41ba91
+  class ACCESS,BRAIN,TEMP,RECALL,STORE,SAVE,REPLY,BACKUP planned
+  class LAP,PHONE,VOICE,PRIVATE retained

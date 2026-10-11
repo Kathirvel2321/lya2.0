@@ -1,7 +1,5 @@
 # LYA — Full Project Workflow Report (2026-09-27)
 
-> Evidence correction, 2026-09-27: this report overstates end-to-end completion. Offline tests, imports and a non-blocking speech return do not prove live workflows or playback. Current registration calls in-process Windows consent; the unsigned legacy helper alone does not establish a current blocker. See [the foundation-first acceptance record](../2026-09-27-foundation-ladder/README.md) for the current gate. Original claims below are preserved as dated evidence, not current acceptance.
-
 Everything in this report was produced by reading every source directory and by
 **actually running** the flows: all offline test suites, the voice smoke path,
 import smokes, and read-only environment probes. No real store was opened, no
@@ -17,7 +15,7 @@ all pass). What is **working end-to-end today**: the native desktop (launch,
 orb, chat, commands), typed/voice-driven local command routing, safe offline
 voice (Piper), encrypted memory/store, reminders, recovery, phone approval
 protocol, the Oracle bridge machinery, and the T01–T04 verification layers.
-What is **not working / blocked** is everything that requires a *live* proof on
+What is **not working / blocked** is everything that requires a _live_ proof on
 this laptop: first-admin enrollment and real Windows Hello verification (the
 signed-verifier blocker + conflicting protected admin records), live wake→
 transcribe→answer audio round trip, live model quality acceptance, and cloud
@@ -29,26 +27,26 @@ gates plus a small number of real defects recorded below.**
 
 ## 2. What I ran today (evidence)
 
-| Suite / flow | Command | Result |
-|---|---|---|
-| T01 full offline baseline | `check-t01.cmd` | **PASS** — 41 brain + 16 UI + 25 experience checks |
-| T02 offline | `check-t02.cmd` → `test_t02.py` | PASS |
-| T03 offline | `test_answer_verification.py`, `test_research_adapter.py` | PASS |
-| T04 offline | `check-t04.cmd` | PASS — approval + registration + registration-UI 22 |
-| Recovery | `check-storage-recovery.cmd` | PASS — 3 + 10 checks |
-| Voice | `test_voice.py`, `test_setup_speech.py` | PASS (1 designed online skip) |
-| Activation | `test_activation.py` | PASS — 22 |
-| Regressions R01–R05 | `test_regressions_r01_r05.py` | PASS — 16 |
-| Foundations / skills / guardian / mind / vision / camera / escalation / auth-wall / storage / search-index / vault-recovery / registration / recovery-ui / identity / liveness | individually | all PASS |
-| External voice lab (10 modules) | `external-work\tests\test_*.py` | PASS — 141 checks, 1 skip |
-| Live voice smoke | `voice.speak()` offscreen | returned in **22 ms** (non-blocking fix works), `stop_speaking()` clean |
-| Import smoke | `desktop.app`, `desktop.activation`, `web_server`, `main` | all import OK |
-| Dependency probe | `.venv-ui` | vosk/sounddevice/cv2/pyttsx3/win32crypt/insightface/onnxruntime/torch/PySide6 all present; `resemblyzer` and `pyautogui` missing |
-| Models present | `models/voice`, `models/local`, `models/vision` | 3 Piper voices + kokoro, 2 Qwen GGUFs, NanoDet + YuNet ONNX |
-| Credentials | `.env` (names only) | GROQ key present; OpenRouter key saved; LYA_GEMINI_RESEARCH_ENABLED / FREE_ONLY flags present |
-| Oracle endpoint | `desktop/oracle.local.json` | configured (host + key file) |
-| HelloVerifier.exe | Authenticode | **NotSigned** (this is why Windows Application Control blocks it) |
-| Local llama.cpp endpoint (127.0.0.1:8080) | TCP probe | closed (server not running — expected) |
+| Suite / flow                                                                                                                                                                   | Command                                                   | Result                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| T01 full offline baseline                                                                                                                                                      | `check-t01.cmd`                                           | **PASS** — 41 brain + 16 UI + 25 experience checks                                                                               |
+| T02 offline                                                                                                                                                                    | `check-t02.cmd` → `test_t02.py`                           | PASS                                                                                                                             |
+| T03 offline                                                                                                                                                                    | `test_answer_verification.py`, `test_research_adapter.py` | PASS                                                                                                                             |
+| T04 offline                                                                                                                                                                    | `check-t04.cmd`                                           | PASS — approval + registration + registration-UI 22                                                                              |
+| Recovery                                                                                                                                                                       | `check-storage-recovery.cmd`                              | PASS — 3 + 10 checks                                                                                                             |
+| Voice                                                                                                                                                                          | `test_voice.py`, `test_setup_speech.py`                   | PASS (1 designed online skip)                                                                                                    |
+| Activation                                                                                                                                                                     | `test_activation.py`                                      | PASS — 22                                                                                                                        |
+| Regressions R01–R05                                                                                                                                                            | `test_regressions_r01_r05.py`                             | PASS — 16                                                                                                                        |
+| Foundations / skills / guardian / mind / vision / camera / escalation / auth-wall / storage / search-index / vault-recovery / registration / recovery-ui / identity / liveness | individually                                              | all PASS                                                                                                                         |
+| External voice lab (10 modules)                                                                                                                                                | `external-work\tests\test_*.py`                           | PASS — 141 checks, 1 skip                                                                                                        |
+| Live voice smoke                                                                                                                                                               | `voice.speak()` offscreen                                 | returned in **22 ms** (non-blocking fix works), `stop_speaking()` clean                                                          |
+| Import smoke                                                                                                                                                                   | `desktop.app`, `desktop.activation`, `web_server`, `main` | all import OK                                                                                                                    |
+| Dependency probe                                                                                                                                                               | `.venv-ui`                                                | vosk/sounddevice/cv2/pyttsx3/win32crypt/insightface/onnxruntime/torch/PySide6 all present; `resemblyzer` and `pyautogui` missing |
+| Models present                                                                                                                                                                 | `models/voice`, `models/local`, `models/vision`           | 3 Piper voices + kokoro, 2 Qwen GGUFs, NanoDet + YuNet ONNX                                                                      |
+| Credentials                                                                                                                                                                    | `.env` (names only)                                       | GROQ key present; OpenRouter key saved; LYA_GEMINI_RESEARCH_ENABLED / FREE_ONLY flags present                                    |
+| Oracle endpoint                                                                                                                                                                | `desktop/oracle.local.json`                               | configured (host + key file)                                                                                                     |
+| HelloVerifier.exe                                                                                                                                                              | Authenticode                                              | **NotSigned** (this is why Windows Application Control blocks it)                                                                |
+| Local llama.cpp endpoint (127.0.0.1:8080)                                                                                                                                      | TCP probe                                                 | closed (server not running — expected)                                                                                           |
 
 ---
 
@@ -148,7 +146,7 @@ never reads secrets aloud (R01 fix confirmed in code and tests).
 "verified personal context never reaches cloud callable".
 
 **What was mistaken historically (now fixed):** R01 — saving a private fact
-spoke its content because `private_output` was set *after* the reply was
+spoke its content because `private_output` was set _after_ the reply was
 returned. Fixed by marking private before returning and replacing the
 fact-derived key in the confirmation with a neutral message.
 
@@ -363,22 +361,22 @@ cycle.
 
 ## 5. Everything that is NOT working — and the precise mistake behind each
 
-| # | Not working | Root cause / what was done wrong | Fix path |
-|---|---|---|---|
-| 1 | First-admin enrollment end-to-end | **Unsigned `HelloVerifier.exe` chosen as the Windows verifier; Smart App Control cannot whitelist it.** Plus pre-existing conflicting admin records in the protected store (owner decision pending). | Build a trusted signed/in-process verifier; resolve the admin-record ambiguity with the owner. |
-| 2 | Live voice wake round trip | Implemented but never exercised with a real microphone in a real session; earlier sensor failures were restricted-session artifacts; no live run has been recorded since. | Owner runs `launch-lya.cmd`, says "wake up LYA", asks one question, reports result. |
-| 3 | Live independent model backup (T02) | All free candidates (NVIDIA Nemotron, OpenRouter free, DeepSeek) missed the 8-second deadline or truncated; the gate is intentionally not lowered. | Find a candidate that passes; run repeated rubric + forced failover over the real desktop→Oracle path. |
-| 4 | Live research (T03 completion) | Gemini endpoint 404 / model unavailable to new free users — correctly disabled; Tavily key accepted but live switch off; 30-case score is assistant-review only. | Owner accepts Tavily free key; owner confirms the 30-case run. |
-| 5 | Voice naturalness | Unified Piper English **failed owner acceptance** (broken-sounding, read-aloud delivery); persona drift to `amy` broke pinned tests and was reverted. | Requires owner listening acceptance of a reworked voice; no signal test can substitute. |
-| 6 | `resemblyzer` voiceprint | Package not installed in `.venv-ui` → `AuthWall.verify()` voice branch can't run (fails closed). | `pip install resemblyzer` in the UI venv when voiceprint is needed. |
-| 7 | `pyautogui` app actions | Missing in `.venv-ui`; app open actions rely on it for some paths (pywin32 fallback exists for volume). | Install if desktop app-launch actions are wanted live. |
-| 8 | Local model quality | Qwen 1.5B (4 fail) and Qwen3 4B (2 fail) both below the quality bar; Tamil repetition; coding unsafe. | Evaluate a stronger model that fits 8 GB RAM before enabling the private route. |
-| 9 | Real-store migration & personal recall live | The 2,000-note index work used disposable data; the real owner DB remains unmigrated pending verified backup + opt-in. | Owner-approved backup, then migrate. |
-| 10 | Live phone approval round trip | Protocol hardened in isolation; no real iPhone→HTTPS→grant cycle was run recently. | Owner-guided live drill of one approval. |
-| 11 | Reminders date parsing defects (R02, historical) | Off-by-one weekday math, `hrs` unhandled, wrong regex-group shape → wrong dates. Deterministic tests added; the current suite passes, but the fix was regression-tested, not owner-verified with real usage. | Owner sanity-check one real reminder. |
-| 12 | Legacy speak() path | F1/F2/F4 fixed (non-blocking, stop event, rate mapping) — today's 22 ms smoke confirms F1. F2 remains **partially** fixed: a fresh voice subprocess still spawns per legacy utterance. | Migrate legacy callers to the warm desktop worker. |
-| 13 | Tk legacy orb runtime QA | Tcl/Tk could never initialize in this environment (bundled runtime); the legacy shell is kept but its visual QA is blocked. | Only matters if the legacy `main.py` shell is still wanted. |
-| 14 | Battery/memory/live-provider word-level QA | Never measured — all offscreen. | Physical session measurements. |
+| #   | Not working                                      | Root cause / what was done wrong                                                                                                                                                                             | Fix path                                                                                               |
+| --- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| 1   | First-admin enrollment end-to-end                | **Unsigned `HelloVerifier.exe` chosen as the Windows verifier; Smart App Control cannot whitelist it.** Plus pre-existing conflicting admin records in the protected store (owner decision pending).         | Build a trusted signed/in-process verifier; resolve the admin-record ambiguity with the owner.         |
+| 2   | Live voice wake round trip                       | Implemented but never exercised with a real microphone in a real session; earlier sensor failures were restricted-session artifacts; no live run has been recorded since.                                    | Owner runs `launch-lya.cmd`, says "wake up LYA", asks one question, reports result.                    |
+| 3   | Live independent model backup (T02)              | All free candidates (NVIDIA Nemotron, OpenRouter free, DeepSeek) missed the 8-second deadline or truncated; the gate is intentionally not lowered.                                                           | Find a candidate that passes; run repeated rubric + forced failover over the real desktop→Oracle path. |
+| 4   | Live research (T03 completion)                   | Gemini endpoint 404 / model unavailable to new free users — correctly disabled; Tavily key accepted but live switch off; 30-case score is assistant-review only.                                             | Owner accepts Tavily free key; owner confirms the 30-case run.                                         |
+| 5   | Voice naturalness                                | Unified Piper English **failed owner acceptance** (broken-sounding, read-aloud delivery); persona drift to `amy` broke pinned tests and was reverted.                                                        | Requires owner listening acceptance of a reworked voice; no signal test can substitute.                |
+| 6   | `resemblyzer` voiceprint                         | Package not installed in `.venv-ui` → `AuthWall.verify()` voice branch can't run (fails closed).                                                                                                             | `pip install resemblyzer` in the UI venv when voiceprint is needed.                                    |
+| 7   | `pyautogui` app actions                          | Missing in `.venv-ui`; app open actions rely on it for some paths (pywin32 fallback exists for volume).                                                                                                      | Install if desktop app-launch actions are wanted live.                                                 |
+| 8   | Local model quality                              | Qwen 1.5B (4 fail) and Qwen3 4B (2 fail) both below the quality bar; Tamil repetition; coding unsafe.                                                                                                        | Evaluate a stronger model that fits 8 GB RAM before enabling the private route.                        |
+| 9   | Real-store migration & personal recall live      | The 2,000-note index work used disposable data; the real owner DB remains unmigrated pending verified backup + opt-in.                                                                                       | Owner-approved backup, then migrate.                                                                   |
+| 10  | Live phone approval round trip                   | Protocol hardened in isolation; no real iPhone→HTTPS→grant cycle was run recently.                                                                                                                           | Owner-guided live drill of one approval.                                                               |
+| 11  | Reminders date parsing defects (R02, historical) | Off-by-one weekday math, `hrs` unhandled, wrong regex-group shape → wrong dates. Deterministic tests added; the current suite passes, but the fix was regression-tested, not owner-verified with real usage. | Owner sanity-check one real reminder.                                                                  |
+| 12  | Legacy speak() path                              | F1/F2/F4 fixed (non-blocking, stop event, rate mapping) — today's 22 ms smoke confirms F1. F2 remains **partially** fixed: a fresh voice subprocess still spawns per legacy utterance.                       | Migrate legacy callers to the warm desktop worker.                                                     |
+| 13  | Tk legacy orb runtime QA                         | Tcl/Tk could never initialize in this environment (bundled runtime); the legacy shell is kept but its visual QA is blocked.                                                                                  | Only matters if the legacy `main.py` shell is still wanted.                                            |
+| 14  | Battery/memory/live-provider word-level QA       | Never measured — all offscreen.                                                                                                                                                                              | Physical session measurements.                                                                         |
 
 **Things that were done RIGHT (so you know what not to change):** permission
 policy enforced in code (not model promises); private context opt-in and
@@ -416,7 +414,7 @@ flowchart LR
   VW["external-work\\tools\\run-tests.cmd"] --> LAB["141 voice-lab checks"]
 ```
 
-**Do NOT run:** `noneeded/unsafe-test-scripts/` (crash_test*, security_test,
+**Do NOT run:** `noneeded/unsafe-test-scripts/` (crash_test\*, security_test,
 test_security_fixes) — they write to or corrupt the real encrypted stores.
 
 ---

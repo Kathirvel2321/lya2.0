@@ -1,0 +1,44 @@
+flowchart TB
+  subgraph PHONEZONE["iPhone trust boundary"]
+    IPHONE["Existing thin web interface<br/>Transient text and audio"]
+    PASSKEY["OS-managed passkey<br/>Private key never sent to LYA"]
+    IPHONE --> PASSKEY
+  end
+  subgraph LAPZONE["Windows trust boundary"]
+    NATIVE["Existing native LYA"]
+    SECRET["Existing local vault and keys"]
+    CPU["Private local model when available"]
+    ACTION["Allowlisted local actions"]
+    NATIVE --> SECRET
+    SECRET --> CPU
+    NATIVE --> ACTION
+  end
+  subgraph ORACLEZONE["Oracle trusted server - proposed personal-data boundary"]
+    HTTPS["Existing private HTTPS ingress"]
+    MOBILE["Existing phone service<br/>256 MiB cap retained"]
+    API["New shared brain / memory service<br/>Separate account and resource budget"]
+    DB["New PostgreSQL candidate<br/>Local socket; encrypted volume"]
+    WORKER["Separate bounded indexing worker"]
+    ARCHIVE["Existing public-only archive"]
+    HTTPS --> MOBILE
+    MOBILE --> API
+    API --> DB
+    DB --> WORKER
+    API --> ARCHIVE
+  end
+  IPHONE --> HTTPS
+  NATIVE --> HTTPS
+  subgraph EXTERNALZONE["External providers - outside personal memory boundary"]
+    SPEECH["Consented public speech provider"]
+    LLM["Existing public answer provider"]
+  end
+  MOBILE --> SPEECH
+  API --> EGRESS["Public-context egress gate"] --> LLM
+  DB --> EXPORT["Consistent encrypted recovery export"]
+  EXPORT --> INDEPENDENT["Independent backup destination<br/>Owner-controlled recovery key"]
+  classDef retained fill:#145744,color:#fff,stroke:#38b997
+  classDef planned fill:#243c65,color:#fff,stroke:#6ca4ff
+  classDef gated fill:#714f17,color:#fff,stroke:#e8b558
+  class IPHONE,PASSKEY,NATIVE,SECRET,CPU,ACTION,HTTPS,MOBILE,ARCHIVE,SPEECH,LLM retained
+  class API,WORKER,EGRESS planned
+  class DB,EXPORT,INDEPENDENT gated

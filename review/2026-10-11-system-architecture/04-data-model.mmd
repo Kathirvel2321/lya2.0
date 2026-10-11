@@ -1,0 +1,113 @@
+erDiagram
+  PRINCIPAL ||--o{ PROJECT : owns
+  PRINCIPAL ||--o{ DEVICE_GRANT : authorizes
+  PRINCIPAL ||--o{ MEMORY : owns
+  PROJECT ||--o{ MEMORY : scopes
+  MEMORY ||--|{ REVISION : versions
+  REVISION ||--o{ EVIDENCE_LINK : supported_by
+  SOURCE ||--o{ EVIDENCE_LINK : supports
+  MEMORY ||--o{ ENTITY_LINK : mentions
+  ENTITY ||--o{ ENTITY_LINK : linked_from
+  ENTITY ||--o{ RELATION : subject
+  ENTITY ||--o{ RELATION : object
+  MEMORY ||--o{ EMBEDDING : projects
+  MEMORY ||--o{ OBJECT_REF : attaches
+  MEMORY ||--o{ TOMBSTONE : invalidates
+  MEMORY ||--o{ OUTBOX_JOB : schedules
+  PRINCIPAL {
+    uuid principal_id PK
+    string status
+    int policy_version
+  }
+  PROJECT {
+    uuid project_id PK
+    uuid principal_id FK
+    string label
+  }
+  DEVICE_GRANT {
+    uuid grant_id PK
+    uuid principal_id FK
+    string scope
+    timestamp expires_at
+    timestamp revoked_at
+  }
+  MEMORY {
+    uuid memory_id PK
+    uuid principal_id FK
+    uuid project_id FK
+    string kind
+    string sensitivity
+    string storage_domain
+    int active_revision
+    timestamp expires_at
+    timestamp deleted_at
+  }
+  REVISION {
+    uuid memory_id FK
+    int revision
+    json payload
+    string approval_state
+    timestamp recorded_at
+    timestamp valid_from
+    timestamp valid_to
+  }
+  SOURCE {
+    uuid source_id PK
+    uuid principal_id FK
+    string source_kind
+    string protected_reference
+    string content_hash
+  }
+  EVIDENCE_LINK {
+    uuid memory_id FK
+    int revision
+    uuid source_id FK
+  }
+  ENTITY {
+    uuid entity_id PK
+    uuid principal_id FK
+    uuid project_id FK
+    string type
+    string label
+  }
+  ENTITY_LINK {
+    uuid memory_id FK
+    uuid entity_id FK
+  }
+  RELATION {
+    uuid relation_id PK
+    uuid subject_id FK
+    uuid object_id FK
+    string predicate
+    uuid source_id FK
+    timestamp valid_from
+    timestamp valid_to
+  }
+  EMBEDDING {
+    uuid memory_id FK
+    int revision
+    string model_revision
+    int dimensions
+    vector value
+  }
+  OBJECT_REF {
+    uuid object_id PK
+    uuid memory_id FK
+    string encrypted_path
+    string sha256
+    bigint size_bytes
+    string key_version
+  }
+  TOMBSTONE {
+    uuid memory_id FK
+    int deletion_revision
+    timestamp deleted_at
+  }
+  OUTBOX_JOB {
+    uuid job_id PK
+    uuid memory_id FK
+    int expected_revision
+    string operation
+    string state
+    timestamp lease_until
+  }

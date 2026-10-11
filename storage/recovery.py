@@ -72,23 +72,27 @@ def _authorize(action, params, get_session, approve, db_path, clock):
 
 def _validate(data):
     if (type(data) is not dict or set(data) != {"format", "created_at", "notes", "links"}
-            or data["format"] != "lya-selected-notes/v1"
+            or data["format"] not in ("lya-selected-notes/v1", "lya-selected-notes/v2")
             or type(data["created_at"]) not in (int, float)
             or not math.isfinite(data["created_at"])):
         raise ValueError("Unsupported or malformed backup format.")
     rows, links = data["notes"], data["links"]
     if type(rows) is not list or not 1 <= len(rows) <= MAX_NOTES:
         raise ValueError("Invalid note count.")
-    ids, labels = set(), set()
+    ids, labels, projects = set(), set(), {}
+    project_format = data["format"] == "lya-selected-notes/v2"
     for row in rows:
-        if type(row) is not dict or set(row) != FIELDS:
+        if type(row) is not dict or set(row) != FIELDS | ({"project_id"} if project_format else set()):
             raise ValueError("Unexpected note fields.")
+        project_id = store.normalize_project_id(row.get("project_id", ""))
+        if project_id != row.get("project_id", ""):
+            raise ValueError("Project IDs in archives must be canonical.")
         for field, limit in (("key", 160), ("value", 2000), ("source", 64),
                              ("created_at", 64), ("updated_at", 64)):
             if type(row[field]) is not str or not row[field].strip() or len(row[field]) > limit:
                 raise ValueError("Invalid note text.")
         if (type(row["id"]) is not int or row["id"] <= 0 or row["id"] in ids
-                or row["key"].strip().casefold() in labels
+                or (project_id, row["key"].strip().casefold()) in labels
                 or type(row["revision"]) is not int or not 1 <= row["revision"] <= 2147483647
                 or type(row["kind"]) is not str or row["kind"] not in KINDS
                 or row["retention"] not in ("short", "long", "until", "permanent")):
@@ -100,7 +104,8 @@ def _validate(data):
         elif type(expiry) not in (int, float) or not math.isfinite(expiry):
             raise ValueError("Timed note must have a finite expiry.")
         ids.add(row["id"])
-        labels.add(row["key"].strip().casefold())
+        labels.add((project_id, row["key"].strip().casefold()))
+        projects[row["id"]] = project_id
     if type(links) is not list or len(links) > MAX_LINKS:
         raise ValueError("Invalid link count.")
     seen = set()
@@ -108,7 +113,8 @@ def _validate(data):
         if (type(edge) is not list or len(edge) != 3 or type(edge[0]) is not int
                 or type(edge[2]) is not int or type(edge[1]) is not str
                 or edge[0] not in ids or edge[2] not in ids or edge[0] == edge[2]
-                or edge[1] not in RELATIONS or tuple(edge) in seen):
+                or edge[1] not in RELATIONS or tuple(edge) in seen
+                or projects[edge[0]] != projects[edge[2]]):
             raise ValueError("Invalid note relationship.")
         seen.add(tuple(edge))
 
@@ -138,14 +144,14 @@ def export_notes(note_ids, recovery_key, *, get_session, db_path, approve=None,
         now = _now(clock)
         for mid in ids:
             row = db.execute("""SELECT id,kind,key_enc,value_enc,source,created_at,updated_at,
-                retention,expires_at,revision FROM memories WHERE id=? AND person_id=?""",
+                retention,expires_at,revision,project_id FROM memories WHERE id=? AND person_id=?""",
                              (mid, s.person_id)).fetchone()
             if not row or row[1] not in KINDS or (row[8] is not None and row[8] <= now):
                 raise PermissionError("Selection includes unavailable or protected notes.")
             values = list(row)
             values[2], values[3] = vault.decrypt_text(row[2]), vault.decrypt_text(row[3])
             rows.append(dict(zip(("id", "kind", "key", "value", "source", "created_at",
-                                  "updated_at", "retention", "expires_at", "revision"), values)))
+                                  "updated_at", "retention", "expires_at", "revision", "project_id"), values)))
         selected = set(ids)
         links = []
         for a, relation, b in db.execute("""SELECT src,relation,dst FROM memory_links
@@ -154,7 +160,12 @@ def export_notes(note_ids, recovery_key, *, get_session, db_path, approve=None,
                 links.append([a, relation, b])
                 if len(links) > MAX_LINKS:
                     raise ValueError("Too many relationships for one backup.")
-        data = {"format": "lya-selected-notes/v1", "created_at": now, "notes": rows, "links": links}
+        project_format = any(row["project_id"] for row in rows)
+        if not project_format:
+            for row in rows:
+                row.pop("project_id")
+        data = {"format": "lya-selected-notes/v2" if project_format else "lya-selected-notes/v1",
+                "created_at": now, "notes": rows, "links": links}
         _validate(data)
         raw = _encode(data)
         if len(raw) > MAX_BYTES // 2:
@@ -191,10 +202,10 @@ def restore_notes(blob, recovery_key, *, get_session, db_path, approve=None,
         mapping = {}
         for row in rows:
             cur = db.execute("""INSERT INTO memories (person_id,kind,key_enc,value_enc,source,
-                created_at,updated_at,retention,expires_at,revision) VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                created_at,updated_at,retention,expires_at,revision,project_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
                 (s.person_id, row["kind"], vault.encrypt_text(row["key"]), vault.encrypt_text(row["value"]),
                  row["source"], row["created_at"], row["updated_at"], row["retention"],
-                 row["expires_at"], row["revision"]))
+                 row["expires_at"], row["revision"], row.get("project_id", "")))
             mapping[row["id"]] = cur.lastrowid
         for a, relation, b in data["links"]:
             if a in mapping and b in mapping:
@@ -204,7 +215,7 @@ def restore_notes(blob, recovery_key, *, get_session, db_path, approve=None,
         if cancelled() or any(r["expires_at"] is not None and r["expires_at"] <= _now(clock) for r in rows):
             raise PermissionError("Restore cancelled or note expired during restore.")
         db.execute("INSERT INTO audit_events(time,action_type,outcome,person_id) VALUES (?,?,?,?)",
-                   (str(now), "notes_restored", "portable_v1", s.person_id))
+                   (str(now), "notes_restored", "portable_v2" if data["format"].endswith("/v2") else "portable_v1", s.person_id))
     return {"restored": len(rows), "expired_skipped": len(data["notes"]) - len(rows)}
 
 
@@ -226,12 +237,12 @@ def list_notes(*, get_session, db_path, approve=None, cancelled=lambda: False, c
                    get_session, approve, db_path, clock)
     with store.store_connection(db_path, read_only=True) as db:
         _owner(db, s)
-        rows = db.execute("""SELECT id,kind,key_enc,retention,expires_at FROM memories
+        rows = db.execute("""SELECT id,kind,key_enc,retention,expires_at,project_id FROM memories
             WHERE person_id=? AND (expires_at IS NULL OR expires_at>?) LIMIT ?""",
             (s.person_id, _now(clock), MAX_NOTES + 1)).fetchall()
         if len(rows) > MAX_NOTES:
             raise ValueError("Note budget exceeded.")
-        result = [{"id": r[0], "label": vault.decrypt_text(r[2]), "retention": r[3],
+        result = [{"id": r[0], "label": (f"[project:{r[5]}] " if r[5] else "") + vault.decrypt_text(r[2]), "retention": r[3],
                    "expires_at": r[4]} for r in rows if r[1] in KINDS]
         _session(get_session, clock, s)
         if cancelled():

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#091016"><meta name="referrer" content="no-referrer">
+<title>LYA</title>
+<style nonce="__NONCE__">
+:root{color-scheme:dark;font:16px "Segoe UI",system-ui,sans-serif;background:#091016;color:#d8e2e8;--accent:#9cdfe8}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#15232e 0, #091016 70%)}
+main{width:min(100%,560px);min-width:0;display:flex;flex-direction:column;gap:18px}.panel{position:relative;max-height:calc(100dvh - 212px);overflow:auto;scrollbar-width:thin;padding:22px 24px 24px;border:1px solid #526571;border-radius:24px;background:linear-gradient(135deg,#1b2935f5,#0d1620fa);box-shadow:0 0 0 4px #a2c9d00a,0 0 0 8px #a2c9d005,0 18px 64px #0005}
+.panel:before{content:"";position:absolute;top:-1px;left:32px;width:116px;height:1px;background:var(--accent)}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{font-size:14px;letter-spacing:.34em;margin:0;font-weight:600;color:#b7e7eb}.heading{font-size:23px;font-weight:600;color:#f1f4f3;margin:0 0 20px}p{line-height:1.6;margin:0}.muted{font-size:13px;color:#a4b8c3}
+.presence{display:flex;flex-direction:column;align-items:center;gap:8px}.sphere{width:104px;height:104px;color:#68e5f2;display:block;filter:drop-shadow(0 0 12px #68e5f21a)}.sphere .rim{fill:#091118;stroke:currentColor;stroke-opacity:.4}.sphere .cuts{fill:none;stroke:currentColor;stroke-opacity:.7}
+.sphere .dots{fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-dasharray:.1 6;opacity:.55}.sphere .thought,.sphere .wave{display:none}.sphere .core{fill:none;stroke:currentColor;stroke-opacity:.75}
+body[data-state=listening] .sphere .diamond{opacity:1;animation:listen 2s ease-in-out infinite}body[data-state=thinking] .sphere{color:#b69bff}body[data-state=speaking] .sphere{color:#78e1bf}
+body[data-state=thinking] .sphere .diamond,body[data-state=thinking] .sphere .core,body[data-state=speaking] .sphere .diamond,body[data-state=speaking] .sphere .core{display:none}
+body[data-state=thinking] .sphere .thought,body[data-state=speaking] .sphere .wave{display:block;opacity:1;animation:flow 3s linear infinite}
+@keyframes listen{50%{opacity:.5}}@keyframes flow{to{stroke-dashoffset:-24}}
+@media(prefers-reduced-motion:reduce){body .sphere *{animation:none!important}}
+button,textarea{font:inherit;color:inherit;border:1px solid #bed9e32e;background:#96cddc0a;border-radius:10px}
+button{min-height:48px;padding:12px 16px;cursor:pointer}button:hover:not(:disabled){background:#78d7e623;border-color:var(--accent)}button:active:not(:disabled){background:#5abeD241}button:disabled{opacity:.45;cursor:default}button:focus-visible,textarea:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#sign{border-color:#96d7e38c;background:#1c3542}label{line-height:1.6}
+#status{text-align:center;min-height:26px;color:#afc5d4;font-size:13px;max-width:100%;overflow-wrap:anywhere}#answer{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;min-height:80px;padding-top:4px}#question{color:#afc5d4;white-space:pre-wrap;overflow-wrap:anywhere;border-top:1px solid #c8e1f018;padding-top:16px}
+#answer:empty,#question:empty{display:none}
+#auth{text-align:left;display:grid;gap:20px}#auth[hidden],#chat[hidden],button[hidden]{display:none}#chat{display:flex;flex-direction:column;gap:16px}form{display:grid;gap:12px;padding-top:12px}#lock{font-size:12px;padding:8px 12px;min-height:44px}details{border-top:1px solid #c8e1f018;padding-top:10px}summary{color:#b7e7eb;cursor:pointer;min-height:44px;padding:10px 0;font-size:14px}
+@media(max-width:380px){.panel{padding:18px}.controls button{flex:1;padding:12px}.heading{font-size:21px}}
+@media(max-height:650px){body{align-items:flex-start}.sphere{width:80px;height:80px}.panel{max-height:calc(100dvh - 188px)}}
+</style></head><body data-state="listening"><main>
+<div class="panel">
+<header><h1>LYA</h1><button id="lock">Lock</button></header>
+<h2 class="heading">Right here with you.</h2>
+<section id="auth" hidden><p>One LYA. Your devices.</p><button id="sign">Sign in with passkey</button><p class="muted">First visit? Say “connect my phone” in the laptop LYA and approve pairing there.</p></section>
+<section id="chat"><p class="muted">Temporary LYA conversation. Private memory, files and device actions are not connected to this phone route.</p>
+<p id="hearing" class="muted">Synthetic preview · automatic listening.</p>
+<p id="question">Can we continue the LYA project?</p><div id="answer" role="log" aria-live="polite">Right here with you. This is a synthetic layout preview, with no microphone, sign-in or saved personal information.</div>
+<p id="identity" class="muted">Public voice session.</p><button id="owner" type="button">Verify owner</button></section>
+</div>
+<div class="presence">
+<svg class="sphere" viewBox="0 0 160 160" aria-hidden="true">
+<circle class="rim" cx="80" cy="80" r="69"/>
+<path class="cuts" d="M80 14v5M80 141v5M14 80h5M141 80h5"/>
+<g class="dots diamond"><path d="M80 37 118 80 80 123 42 80Z"/><path d="M80 47 109 80 80 113 51 80Z"/><path d="M80 57 100 80 80 103 60 80Z"/></g>
+<path class="core" d="m80 74 6 6-6 6-6-6Z"/>
+<g class="dots thought"><path d="M41 80C41 40 119 120 119 80S41 120 41 80"/><path d="M44 75C44 39 116 111 116 75S44 111 44 75"/><path d="M44 85C44 49 116 121 116 85S44 121 44 85"/></g>
+<g class="dots wave"><path d="M38 70C52 70 53 52 66 61S88 88 101 70 115 70 122 70"/><path d="M38 80C52 80 53 62 66 71S88 98 101 80 115 80 122 80"/><path d="M38 90C52 90 53 72 66 81S88 108 101 90 115 90 122 90"/></g>
+</svg>
+<p id="status" role="status" aria-live="polite">Synthetic preview · Listening.</p>
+</div>
+</main></body></html>

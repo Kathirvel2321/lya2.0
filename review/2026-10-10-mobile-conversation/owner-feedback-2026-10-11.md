@@ -1,0 +1,22 @@
+# Phone conversation feedback - 2026-10-11
+
+Owner reports the new phone conversation works neatly/cleanly, with missing lasting memory, generic owner interaction and some answer delay. This is owner-reported general live conversation acceptance; specific Stop, internal-pause, fresh-owner-proof and laptop-asleep checks were not individually confirmed.
+
+Read-only source findings:
+- cloud/mobile.py Connection.chat retains only four messages (two exchanges), in session RAM. No persistent facts are saved. Authentication metadata is separate.
+- Fresh owner proof sets bounded owner_until, but chat uses a generic public prompt without owner status or registered name. Desktop private memory remains unconnected.
+- cloud/mobile.html TurnEnd waits approximately 1.8-3.6 seconds for silence, then transcription precedes chat.
+- Connection.chat waits for inference and full Amy synthesis before returning the response. cloud/mobile_runtime.py speak launches a worker for each reply; cloud/mobile_tts.py synthesize imports libraries and loads the model per reply. These are possible delay contributors, not measured attribution for the reported phone/network/provider run.
+
+Asked owner to choose explicit remember requests, automatic facts/preferences or full conversation history. Recommended first scope: explicit facts/preferences with list/correct/forget controls. Storage location, encryption/key lifecycle and provider disclosure need concrete design before retention. Do not copy desktop private memory or claim shared memory exists. Owner personalization should use authenticated identity/approved preferences while preserving authority limits. Measure safe synthetic stage timings before choosing latency changes; preserve accepted Amy voice and pause handling.
+
+Documentation only: no runtime/source/auth/default/retention/deployment change, private data read, sensor or provider call. No tests needed. Next: settle retention scope, then implement only the chosen follow-up and measure reply stages.
+## Existing neural-schema clarification - 2026-10-11
+
+Owner answered the new retention-choice question by referring to the previously discussed neural schema: what to store/not store, duration, location and person ownership. Treat this as a request to recover that design, not a selection of a new automatic-retention policy. Earlier pending three-choice question is superseded by this clarification.
+
+Recovered sources: lya-external-work/lya-brain/07-NEURAL-SCHEMA.md (2026-09-24 proposal); review/2026-09-24-brain-strategy/README.md (adopt principles incrementally); review/2026-10-06-distributed-brain-research/README.md (later distributed contract); review/2026-10-07-project-memory-foundation/implementation.md and review/2026-10-07-public-archive/implementation.md (implemented stages); brain/notes.py and cloud/mobile.py (current source).
+
+Recorded design: temporary speech/conversation stays bounded/transient; explicit confirmed facts/preferences/decisions and verified lessons are separate durable records; model inferences remain unverified candidates. Records are person/project scoped with provenance/revision/retention/sensitivity; no mixed unrestricted people memories. Native retention supports short 7 days, long 90 days, exact deadline and permanent; deliberately permanent memories do not disappear from age/ranking. Correction/forgetting and backup retention need explicit handling. Private identity/compact notes stay in the encrypted laptop store; public approved bulk research uses the deployed Oracle archive and bounded cache. Client-encrypted private remote archive and phone access while laptop sleeps require a separately completed key/access/recovery design. Credentials/biometrics are outside ordinary conversational memory; no raw transcript/recording archive by default. Reviewed skills are versioned, tested and approval-gated; arbitrary skill activation and nightly consolidation are not active integrations.
+
+The eight-layer neural schema is conceptual/proposed; selected native memory foundations and public archive stages are implemented, but mobile chat does not use them. Next: adapt the existing contract to authenticated mobile memory without silently exporting private laptop data or inventing a new retention policy. No runtime changes, private store access, provider calls, deployment or tests in this documentation/source review.

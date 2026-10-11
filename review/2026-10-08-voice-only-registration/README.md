@@ -1,0 +1,1 @@
+Historical single-dot intermediate: 66 isolated checks passed; owner clarified that the mark should use many coloured dots forming shapes. Superseded by ../2026-10-08-voice-particle-registration/README.md. Existing captures are preserved as dated evidence.

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-09",
+  "normal_cancel": {
+    "ready": true,
+    "failed": false,
+    "stopped": true,
+    "seconds": 9.171,
+    "capture_requested": false,
+    "provider_environment_excluded": true
+  },
+  "parent_lease_loss": {
+    "ready": true,
+    "failed": true,
+    "stopped": true,
+    "seconds": 12.625,
+    "capture_requested": false,
+    "provider_environment_excluded": true
+  },
+  "real_sensors": false,
+  "owner_store": false
+}

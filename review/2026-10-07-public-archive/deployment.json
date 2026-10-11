@@ -1,0 +1,36 @@
+{
+  "status": "deployed_synthetic_live_checks_passed",
+  "worker_sha256": "6edd0719a3873cf4157eaed26b9b237a4991d109979272c6ce246190106f7931",
+  "free_allowance": "owner_confirmed",
+  "forced_command_verified": true,
+  "filesystem_permissions": true,
+  "independent_synthetic_snapshot_restored": true,
+  "remote_private_data_transferred": false,
+  "synthetic_document_deleted": true,
+  "provider_api_called": false,
+  "background_service_added": false,
+  "ssh_operation_ms": [
+    557.682,
+    788.425,
+    808.049,
+    673.284,
+    1348.399,
+    524.612,
+    501.726
+  ],
+  "operations": [
+    "put",
+    "put",
+    "get",
+    "search",
+    "search",
+    "delete",
+    "get"
+  ],
+  "limitations": [
+    "Actual LYA owner authorization not live accepted",
+    "Full archive backup automation not implemented",
+    "Semantic retrieval not implemented",
+    "Restricted account is not an OS sandbox or a complete penetration test"
+  ]
+}

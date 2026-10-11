@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "public_source_matches": true,
+  "deployed_amy_reply": true,
+  "short_encoded_audio_bytes": 189840,
+  "service_active": true,
+  "memory_limit_mib": 256,
+  "service_idle_mib": 17.95,
+  "service_restarts": 0,
+  "public_funnel": false,
+  "provider_call": false,
+  "real_audio": false
+}

@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "tests": 7,
+  "modules": [
+    "test_t02.SessionChecks",
+    "test_oracle.OracleChecks.test_non_session_exchange_completes_after_stdin_eof",
+    "test_oracle.OracleChecks.test_non_session_exchange_cancels_local_child",
+    "test_public_archive.ArchiveChecks.test_fake_ssh_roundtrip_and_outage_never_claims_success_or_uses_stale_cache"
+  ],
+  "fake_secrets": true,
+  "temporary_storage": true,
+  "provider_call": false,
+  "counts_overlap": true
+}

@@ -32,6 +32,13 @@ class ApprovalGate:
         with self._lock:
             self._pending = None
 
+    def is_pending(self, challenge):
+        """Trusted phone UI may close when its exact request is cancelled or expires."""
+        with self._lock:
+            return (type(challenge) is Challenge and self._pending == challenge
+                    and self.clock() < challenge.deadline
+                    and self.wall_clock() < challenge.session.verified_until)
+
     def __call__(self, action, parameters, session):
         if (self.verifier is None or action not in OWNER or session.role != 'admin'
                 or not session.id or not session.person_id

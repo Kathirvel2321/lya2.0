@@ -1,0 +1,13 @@
+{
+  "ready": true,
+  "failed": false,
+  "stopped": true,
+  "seconds": 11.266,
+  "capture_requested": false,
+  "provider_environment_excluded": true,
+  "date": "2026-10-09",
+  "initial_step": 3,
+  "real_models_loaded": true,
+  "real_sensors": false,
+  "real_owner_store": false
+}

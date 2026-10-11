@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "peak_mib": 216.87,
+  "elapsed_seconds": 17.76,
+  "wav_bytes": 3508780,
+  "response_bytes": 4678389,
+  "provider_call": false,
+  "enforced_memory_limit_mib": 192
+}

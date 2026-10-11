@@ -8,6 +8,14 @@ from app import Desktop, GlassPanel, WINDOW_FLAGS, HERE, DOCUMENTS, read_project
 from layout import Box, place_panel
 
 
+def is_owner_access_request(text):
+    command = ' '.join(text.casefold().split()).strip(' .,!?:;')
+    return re.fullmatch(
+        r'(?:lya[, ]+)?(?:please )?(?:open |start )?'
+        r'(?:register (?:admin|administrator|admijn)|(?:admin|administrator) (?:setup|registration)|'
+        r'setup admin|set up admin|sign in|unlock lya)(?: please)?', command) is not None
+
+
 class CompactPanel(GlassPanel):
     resized_mode = Signal()
     drag_started = Signal()
@@ -257,6 +265,13 @@ class OrbDesktop(Desktop):
         self.transcript = []
         self.first_run_setup = False
         self.pending_question = ''
+        self.quitting=False
+        self.startup_observation_done=False
+        self.face_observation=None
+        self.camera_badge=None
+        self.visitor_expiry=QTimer(self)
+        self.visitor_expiry.setSingleShot(True)
+        self.visitor_expiry.timeout.connect(self.brain.visitors.end_presence)
         self.panel.set_mode('input')
 
     def spin_next(self):
@@ -315,6 +330,9 @@ class OrbDesktop(Desktop):
                 self.dock(False)
 
     def start_intro(self):
+        if not self.startup_observation_done:
+            self.startup_observation_done=True
+            QTimer.singleShot(0,self.startup_recognition)
         self.close_panel()
         self.docking.stop()
         self.morph.stop()
@@ -340,6 +358,85 @@ class OrbDesktop(Desktop):
             self.intro_timer.timeout.disconnect()
             self.intro_timer.timeout.connect(self.finish_expansion)
             self.intro_timer.start(1150)
+
+    def startup_recognition(self):
+        if (self.quitting or not self.orb.isVisible() or self.brain._identified()
+                or (hasattr(self,'owner_dialog') and self.owner_dialog.isVisible())):
+            return
+        try:
+            from storage.visitors import recognition_people
+            people=recognition_people(self.brain.db_path)
+            if not people:
+                return
+            if hasattr(self,'vision_dialog') and self.vision_dialog.process.state()!=QProcess.ProcessState.NotRunning:
+                return
+            from desktop.familiarity import FaceObservation
+            self.face_observation=FaceObservation(self)
+            self.face_observation.camera.connect(self.show_camera_badge)
+            self.face_observation.result.connect(lambda vector:self.observed_person(vector,people))
+            self.show_camera_badge(preparing=True)
+            self.face_observation.start()
+        except Exception:
+            self.stop_observation()
+            self.brain.visitors.end_presence()
+
+    def show_camera_badge(self,preparing=False):
+        if self.quitting:
+            return
+        if self.camera_badge is None:
+            self.camera_badge=QLabel('',None,WINDOW_FLAGS)
+        self.camera_badge.setText('CAMERA CHECK · PREPARING' if preparing else 'CAMERA · ONE LOCAL CHECK')
+        self.camera_badge.setAccessibleName('Preparing local camera check' if preparing else 'Camera active for one local recognition check')
+        self.camera_badge.setStyleSheet(self.greeting.styleSheet())
+        self.camera_badge.resize(280,44)
+        area=(self.app.screenAt(self.orb.geometry().center()) or self.app.primaryScreen()).availableGeometry()
+        self.camera_badge.move(max(area.left(),min(self.orb.x()-108,area.right()-280)),
+                               max(area.top(),self.orb.y()-54))
+        self.camera_badge.show()
+
+    def observed_person(self,vector,people):
+        if self.camera_badge is not None:
+            self.camera_badge.close()
+            self.camera_badge=None
+        if self.quitting or (hasattr(self,'owner_dialog') and self.owner_dialog.isVisible()):
+            return
+        try:
+            person=self.brain.visitors.observe(vector,people)
+        except Exception:
+            self.brain.visitors.end_presence()
+            return
+        self.visitor_expiry.start(600000)
+        if person is not None:
+            address = person['display_name']
+            self.greeting.setText('Welcome back, '+address+'.')
+            self.orb.set_state(person='admin' if person['role']=='admin' else 'friend',task='idle')
+            if (not self.brain_busy and not self.speech.busy
+                    and self.listener_phase not in ('hearing','transcribing')):
+                self.speak_reply('Welcome back, '+address+'. What shall we work on?' if person['role']=='admin' else 'Hi, '+address+'.')
+
+    def stop_observation(self):
+        if self.face_observation is not None:
+            self.face_observation.stop()
+        if self.camera_badge is not None:
+            self.camera_badge.close()
+            self.camera_badge=None
+
+    def review_visitors(self):
+        try:
+            from storage import store,visitors
+            session=self.brain.session
+            if getattr(self,'passkey_session_id',None)!=session.id:
+                raise PermissionError('Phone proof required.')
+            with store.store_connection(self.brain.db_path,read_only=True) as db:
+                visitors.owner_check(db,session)
+        except Exception:
+            self.open_owner_access()
+            return
+        from desktop.familiarity import VisitorReview
+        if not hasattr(self,'visitor_review') or not self.visitor_review.isVisible():
+            self.visitor_review=VisitorReview(self)
+        self.visitor_review.show()
+        self.visitor_review.raise_()
 
     def finish_expansion(self):
         self.intro_timer.timeout.disconnect()
@@ -411,6 +508,11 @@ class OrbDesktop(Desktop):
     def on_voice_phase(self, phase):
         self.listener_phase = 'thinking' if phase == 'transcribing' else phase
         self.refresh_voice_phase()
+        approval = getattr(self, 'passkey_approval', None)
+        dialog = (approval.dialog if approval and approval.dialog and approval.dialog.isVisible()
+                  else getattr(self, 'owner_dialog', None))
+        if dialog is not None and dialog.isVisible():
+            dialog.set_input_phase(phase)
 
     def on_voice_retry(self, candidate='', paused=False):
         from audio import voice
@@ -425,6 +527,12 @@ class OrbDesktop(Desktop):
 
     def on_voice(self, text, quiet=False):
         low = ' '.join(text.casefold().split())
+        phone_approval = getattr(self, 'passkey_approval', None)
+        owner_dialog = (phone_approval.dialog if phone_approval and phone_approval.dialog
+                        and phone_approval.dialog.isVisible() else getattr(self, 'owner_dialog', None))
+        if owner_dialog is not None and owner_dialog.isVisible():
+            owner_dialog.handle_voice(text)
+            return
         from vision.answers import camera_control, is_visual_question
         if camera_control(text) or is_visual_question(text):
             self.quiet_reply = quiet
@@ -433,7 +541,7 @@ class OrbDesktop(Desktop):
         if low in ('open vision', 'look around', 'scan room'):
             self.command(text)
             return
-        if low in ('register admin', 'admin setup', 'setup admin', 'sign in', 'unlock lya'):
+        if is_owner_access_request(text):
             self.command(text)
             return
         if hasattr(self, 'registration_dialog') and self.registration_dialog.isVisible():
@@ -469,16 +577,47 @@ class OrbDesktop(Desktop):
         self.first_run_setup = True
         self.close_panel()
         self.orb.hide()
-        from activation import ActivationDialog
-        if (not hasattr(self, 'activation_dialog')
-                or not self.activation_dialog.isVisible()):
-            self.activation_dialog = ActivationDialog(
-                reduced_motion=self.orb.reduced_motion, db_path=self.brain.db_path)
-            self.activation_dialog.authenticated.connect(self.on_admin_authenticated)
-            self.activation_dialog.rejected.connect(self.on_setup_dismissed)
-        self.activation_dialog.show()
-        self.activation_dialog.raise_()
-        self.activation_dialog.activateWindow()
+        self.open_owner_access()
+
+    def open_owner_access(self):
+        self.stop_observation()
+        from desktop.owner_setup import OwnerSetupDialog
+        approval = getattr(self, 'passkey_approval', None)
+        if approval and approval.dialog and approval.dialog.isVisible():
+            approval.dialog.raise_()
+            return
+        if not hasattr(self, 'owner_dialog') or not self.owner_dialog.isVisible():
+            self.owner_dialog = OwnerSetupDialog(
+                reduced_motion=self.orb.reduced_motion, db_path=self.brain.db_path,
+                profile_setup=True, listener=self)
+            self.owner_dialog.speech.speaking.connect(self._speaking_changed)
+            self.owner_dialog.authenticated.connect(self.on_passkey_authenticated)
+            self.owner_dialog.rejected.connect(self.on_setup_dismissed)
+            screen = self.app.screenAt(self.orb.geometry().center()) or self.app.primaryScreen()
+            area = screen.availableGeometry()
+            if self.orb.isVisible():
+                target = place_panel(Box(self.orb.x(), self.orb.y(), self.orb.width(), self.orb.height()),
+                                     Box(area.x(), area.y(), area.width(), area.height()), (460, 390))
+                self.owner_dialog.setGeometry(target.x, target.y, target.width, target.height)
+            else:
+                self.owner_dialog.move(area.center() - self.owner_dialog.rect().center())
+        self.owner_dialog.show()
+        self.owner_dialog.raise_()
+        self.owner_dialog.activateWindow()
+
+    def start_voice(self, allow_cloud=False):
+        dialog = getattr(self, 'owner_dialog', None)
+        if dialog is not None and dialog.private_capture:
+            return  # A tray toggle or queued restart cannot overlap private enrollment.
+        super().start_voice(allow_cloud)
+
+    def on_passkey_authenticated(self, session):
+        from desktop.owner_setup import PasskeyApproval
+        if not hasattr(self, 'passkey_approval'):
+            self.passkey_approval = PasskeyApproval(self)
+        self.brain.approve.verifier = self.passkey_approval.verify
+        self.passkey_session_id = session.id
+        self.on_admin_authenticated(session)
 
     def on_setup_dismissed(self):
         """Closing setup leaves a usable guest orb, never a locked window."""
@@ -494,6 +633,18 @@ class OrbDesktop(Desktop):
         self.orb.set_state(person='admin', task='idle')
         self.greeting.setText(f'LYA online · {session.person}')
         def welcome():
+            if getattr(self, 'passkey_session_id', None) == session.id:
+                if getattr(self, 'first_run_setup', False):
+                    self.first_run_setup = False
+                    self.orb.show()
+                    self.start_intro()
+                self.panel.set_mode('answer')
+                message = (f'Welcome back, {session.person}. Your phone passkey verified owner access for five minutes. '
+                           'Private actions still require separate phone approval of the exact request.')
+                self.panel.show_answer('Owner verified', message)
+                self.open_panel()
+                self.speak_reply(f'Welcome back, {session.person}. I am ready. What shall we work on?')
+                return
             if hasattr(self, 'activation_dialog') and self.activation_dialog.isVisible():
                 return  # The activation's ONLINE act already greets the owner.
             self.panel.set_mode('answer')
@@ -510,8 +661,13 @@ class OrbDesktop(Desktop):
                 'Face and voice are not enrolled. Private actions still need separate phone approval.')
             self.open_panel()
         QTimer.singleShot(0, welcome)
+        if getattr(self,'passkey_session_id',None)==session.id and any(self.brain.visitors.counts.values()):
+            QTimer.singleShot(0,self.review_visitors)
 
     def open_panel(self):
+        if hasattr(self, 'owner_dialog') and self.owner_dialog.isVisible():
+            self.owner_dialog.raise_()
+            return
         if hasattr(self, 'activation_dialog') and self.activation_dialog.isVisible():
             self.activation_dialog.raise_()
             return
@@ -609,6 +765,18 @@ class OrbDesktop(Desktop):
 
     def command(self, text):
         low = ' '.join(text.casefold().split())
+        if low in ('visitor review','review visitors',"i'm back",'i am back'):
+            self.review_visitors()
+            return
+        if low in ('sleep','guest mode'):
+            self.stop_observation()
+            self.brain.visitors.end_presence()
+            if low=='guest mode':
+                from security.policy import Session
+                self.brain.bind_session(Session(id='guest'))
+                self.transcript.clear()
+                self.panel.show_answer('Ready.','Private access is locked.')
+                return
         self.cancel_vision(stop_speech=False)
         self.stop_wake_greeting()
         self.speech.stop(keep_warm=low not in ('voice off', 'stop speaking'))
@@ -674,35 +842,9 @@ class OrbDesktop(Desktop):
             if (camera_action == 'open' or low in ('look around', 'scan room')) and self.vision_dialog.process.state() == self.vision_dialog.process.ProcessState.NotRunning:
                 self.vision_dialog.toggle_live()
             return
-        if low in ('register admin', 'admin setup', 'setup admin', 'sign in', 'unlock lya'):
+        if is_owner_access_request(text):
             self.close_panel()
-            first_setup = low in ('register admin', 'admin setup', 'setup admin')
-            if first_setup:
-                try:
-                    from storage.store import get_primary_admin
-                    first_setup = get_primary_admin(self.brain.db_path) is None
-                except Exception:
-                    first_setup = False  # An unreadable store must never start first-owner setup.
-            if first_setup:
-                from activation import ActivationDialog
-                if (not hasattr(self, 'activation_dialog')
-                        or not self.activation_dialog.isVisible()):
-                    self.activation_dialog = ActivationDialog(
-                        reduced_motion=self.orb.reduced_motion, db_path=self.brain.db_path)
-                    self.activation_dialog.authenticated.connect(self.on_admin_authenticated)
-                self.activation_dialog.show()
-                self.activation_dialog.raise_()
-                self.activation_dialog.activateWindow()
-                return
-            from registration import RegistrationDialog
-            if not hasattr(self, 'registration_dialog'):
-                self.registration_dialog = RegistrationDialog(reduced_motion=self.orb.reduced_motion,
-                                                               db_path=self.brain.db_path)
-                self.registration_dialog.speech.speaking.connect(self._speaking_changed)
-                self.registration_dialog.authenticated.connect(self.on_admin_authenticated)
-            self.registration_dialog.show()
-            self.registration_dialog.raise_()
-            self.registration_dialog.activateWindow()
+            self.open_owner_access()
             return
         if low in ('stay as a crystal', 'stay as crystal', 'stay crystal', 'show crystal'):
             self.keep_crystal = True
@@ -847,6 +989,9 @@ class OrbDesktop(Desktop):
             self._next_vision_item()
 
     def sleep(self):
+        self.stop_observation()
+        self.visitor_expiry.stop()
+        self.brain.visitors.end_presence()
         self.cancel_vision()
         if hasattr(self, 'vision_dialog'):
             self.vision_dialog.close()
@@ -919,6 +1064,10 @@ class OrbDesktop(Desktop):
 
     def on_brain(self, generation, answer):
         valid = generation == self.generation and not self.brain_cancel.is_set()
+        if valid and answer.route=='mobile-pairing':
+            from PySide6.QtCore import QUrl
+            from PySide6.QtGui import QDesktopServices
+            QDesktopServices.openUrl(QUrl(answer.evidence[0]['url']))
         in_chat = valid and self.panel.mode == 'chat'
         self.panel.preserve_chat = in_chat
         try:
@@ -952,6 +1101,17 @@ class OrbDesktop(Desktop):
                 self.panel.animate_answer(context + answer.text)
 
     def quit(self):
+        self.quitting = True
+        self.stop_observation()
+        self.visitor_expiry.stop()
+        self.brain.visitors.discard()
+        self.brain.visitors.end_presence()
+        if hasattr(self,'visitor_review'):
+            self.visitor_review.reject()
+        if hasattr(self, 'owner_dialog'):
+            self.owner_dialog.reject()
+        if hasattr(self, 'passkey_approval'):
+            self.passkey_approval.close()
         self.cancel_vision()
         self.stop_wake_greeting()
         self.speech.stop()

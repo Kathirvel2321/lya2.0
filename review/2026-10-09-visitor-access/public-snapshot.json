@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-09",
+  "public_fixture": true,
+  "face_dimension": 128,
+  "fake_camera_reads": 3,
+  "camera_released": true,
+  "seconds": 0.313,
+  "cpu_percent_one_core": 84.864,
+  "peak_mib": 98.7,
+  "real_sensor": false,
+  "writes_or_network_during_capture": false,
+  "note": "One public fixture through real face models; not live owner accuracy or full-app resource acceptance."
+}

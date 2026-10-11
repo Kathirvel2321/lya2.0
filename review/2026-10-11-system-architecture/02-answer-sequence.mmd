@@ -1,0 +1,32 @@
+sequenceDiagram
+  participant U as Owner device
+  participant G as Auth and turn controller
+  participant R as Memory retrieval
+  participant D as Shared store
+  participant M as Eligible reasoning lane
+  participant V as Response and Amy
+  U->>G: Request with device session and request ID
+  G->>G: Verify scope, privacy, deadline and current turn
+  G->>R: Authorized query and context budget
+  R->>D: Scoped exact / keyword / qualified vector search
+  D-->>R: Active facts, source IDs, revisions and valid times
+  R-->>G: Bounded evidence packet or no reliable match
+  alt Exact fact or deterministic command
+    G->>V: Verified direct response
+  else Public model is eligible
+    G->>G: Exclude all personal records from public payload
+    G->>M: Public context only, bounded generation
+    M-->>G: Incremental answer candidates
+    G->>V: Checked sentence chunks with request ID
+  else Private reasoning unavailable
+    G->>V: Explain limitation or ask focused clarification
+  end
+  V-->>U: Text and first playable audio
+  opt User stops or a newer turn supersedes this one
+    U->>G: Cancel request ID
+    G->>M: Cancel best effort
+    G->>V: Stop playback and discard stale chunks
+    G->>R: Cancel pending retrieval
+  end
+  Note over G,D: Retrieval never grants write or device-action authority
+  Note over G,V: Proposed streaming, existing full-reply path retained until accepted

@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-09",
+  "tests": 93,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "success": true,
+  "modules": [
+    "test_owner_profiles",
+    "test_passkeys",
+    "test_approval",
+    "desktop.check_experience",
+    "test_legacy_retirement"
+  ],
+  "public_fixture_detector_to_validated_native_preview": true,
+  "actual_landmarks": 5,
+  "preview_dimensions": [
+    320,
+    240
+  ],
+  "preview_max_fps": 2,
+  "widget_max_fps": 10,
+  "active_widget_cpu_percent_one_core": 9.441,
+  "real_owner_store": false,
+  "real_sensors": false,
+  "live_phone": false,
+  "provider_inference": false,
+  "note": "Public fixture through existing detector/strict preview bridge, synthetic owner suites and widget only; not live enrollment or whole-app resource acceptance."
+}

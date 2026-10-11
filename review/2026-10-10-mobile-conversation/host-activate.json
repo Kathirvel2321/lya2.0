@@ -1,0 +1,12 @@
+{
+  "deployed": true,
+  "pairing_preserved": true,
+  "inference_unchanged": true,
+  "credential_files_unchanged": true,
+  "service": {
+    "MemoryMax": "268435456",
+    "TasksMax": "40",
+    "ActiveState": "active"
+  },
+  "provider_call": false
+}

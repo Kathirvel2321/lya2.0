@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-10",
+  "tests": 195,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "success": true,
+  "modules": [
+    "test_passkeys",
+    "test_approval",
+    "test_visitors",
+    "test_owner_profiles",
+    "desktop.check_experience",
+    "test_legacy_retirement",
+    "test_brain_workflow",
+    "test_mobile",
+    "test_mobile_voice"
+  ],
+  "syntax": true,
+  "whitespace": true,
+  "usual_launcher_import": true,
+  "browser_javascript_syntax": true,
+  "installer_program_syntax": true,
+  "real_owner_data": false,
+  "real_sensors": false,
+  "real_phone": false,
+  "app_launch": false,
+  "provider_call": false,
+  "cloud_upload": false
+}

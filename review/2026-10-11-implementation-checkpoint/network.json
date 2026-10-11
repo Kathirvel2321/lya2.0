@@ -1,0 +1,8 @@
+{
+  "private_tls": true,
+  "page_matches_source": true,
+  "unsigned_session_rejected": true,
+  "timing_through_private_proxy": true,
+  "provider_called": false,
+  "real_phone_tested": false
+}

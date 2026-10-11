@@ -1,0 +1,15 @@
+{
+  "documents": 1000,
+  "read_samples": 7,
+  "warm_keyword_median_ms": 2.111,
+  "warm_keyword_max_ms": 3.683,
+  "ingest_total_ms": 8354.215,
+  "database_kib": 2652.0,
+  "exclusions": [
+    "SSH/network",
+    "full application",
+    "semantic quality",
+    "owner data",
+    "sustained CPU/RAM"
+  ]
+}

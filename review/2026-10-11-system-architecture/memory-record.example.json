@@ -1,0 +1,21 @@
+{
+  "example_only": true,
+  "schema_version": 1,
+  "memory_id": "00000000-0000-4000-8000-000000000001",
+  "principal_id": "00000000-0000-4000-8000-000000000002",
+  "project_id": "00000000-0000-4000-8000-000000000003",
+  "kind": "preference",
+  "key": "answer_length",
+  "value": {"style": "concise", "language": "en"},
+  "sensitivity": "personal",
+  "storage_domain": "shared_personal",
+  "approval_state": "owner_confirmed",
+  "revision": 1,
+  "source": {"kind": "explicit_user_save", "reference": "synthetic-request-001"},
+  "recorded_at": "2026-10-11T00:00:00Z",
+  "valid_from": "2026-10-11T00:00:00Z",
+  "valid_to": null,
+  "retention": "permanent",
+  "expires_at": null,
+  "deleted_at": null
+}

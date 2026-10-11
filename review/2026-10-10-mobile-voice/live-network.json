@@ -1,0 +1,9 @@
+{
+  "private_tls": true,
+  "live_page_matches_source": true,
+  "no_store": true,
+  "camera_disabled": true,
+  "microphone_requires_permission": true,
+  "unsigned_session_denied": true,
+  "real_phone": false
+}

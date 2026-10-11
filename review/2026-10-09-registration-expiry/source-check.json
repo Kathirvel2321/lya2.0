@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-09",
+  "sources": 6,
+  "syntax": true,
+  "trailing_whitespace": false,
+  "usual_launcher_import": true,
+  "real_sensors": false,
+  "real_owner_store": false
+}

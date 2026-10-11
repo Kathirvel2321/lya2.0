@@ -94,7 +94,7 @@ class BrainChecks(unittest.TestCase):
         self.assertEqual(self.brain.respond('is that meeting still on').route, 'abstain')
         self.assertEqual(self.calls, [])
         self.assertIn('Research is blocked for private context',
-                      self.brain.respond('Open-source models for LYA').text)
+                      self.brain.respond('private: Open-source models for LYA').text)
 
     def test_time_and_capability_help_do_not_call_model(self):
         self.assertEqual(self.brain.respond('what time is it').route, 'local-time')
@@ -231,7 +231,7 @@ class BrainChecks(unittest.TestCase):
 
         self.brain.local_client = pending_model
         worker = threading.Thread(target=lambda: answers.append(
-            self.brain.respond('Explain the stars', cancelled)))
+            self.brain.respond('Using my memory explain the stars', cancelled)))
         worker.start()
         try:
             self.assertTrue(started.wait(3), answers)
@@ -290,7 +290,7 @@ class BrainChecks(unittest.TestCase):
                 seen.append(policy)
                 return 'Fixture response'
         self.brain.local_client = Client()
-        self.assertEqual(self.brain.respond('debug this code').route, 'proposed-code')
+        self.assertEqual(self.brain.respond('private: debug this code').route, 'proposed-code')
         self.assertEqual(seen[-1], {'task': 'coding', 'sensitivity': 'private'})
         sources=[{'id':'source-1','url':'https://example.invalid/a','retrieved_at':'2026-09-19T00:00:00Z','claim':'Fixture','excerpt':'Fixture fact.'}]
         class ResearchClient:
@@ -422,7 +422,7 @@ class BrainChecks(unittest.TestCase):
         self.brain.respond('remember permanent laptop = low resource machine')
         store.remember(self.alice, 'auth', 'FAKE_HASH', kind='credential', db_path=self.db)
         notes.save(self.bob, 'laptop', 'BOB_ONLY', db_path=self.db, now=self.now)
-        answer = self.brain.respond('Plan work for my laptop')
+        answer = self.brain.respond('Using my memory plan work for my laptop')
         self.assertEqual(answer.route, 'private-local')
         prompt = str(self.calls[-1])
         self.assertIn('low resource machine', prompt)
@@ -500,7 +500,7 @@ class BrainChecks(unittest.TestCase):
             self.brain.bind_session(self.session(self.bob))
             return 'DO NOT DISPLAY'
         self.brain.local_client = switch
-        self.assertEqual(self.brain.respond('hello').route, 'cancelled')
+        self.assertEqual(self.brain.respond('using my memory say hello').route, 'cancelled')
         event = threading.Event()
         event.set()
         self.assertEqual(self.brain.respond('remember short bad = value', event).route, 'cancelled')
@@ -511,7 +511,7 @@ class BrainChecks(unittest.TestCase):
             self.now += 2
             return 'STALE ANSWER'
         self.brain.local_client = slow
-        answer = self.brain.respond('laptop advice')
+        answer = self.brain.respond('Using my memory give laptop advice')
         self.assertEqual(answer.route, 'blocked')
         self.assertNotIn('STALE ANSWER', answer.text)
 
@@ -554,7 +554,7 @@ class BrainChecks(unittest.TestCase):
                 db.execute('UPDATE people SET active=0 WHERE person_id=?', (self.alice,))
             return 'REVOKED RESULT'
         self.brain.local_client = revoke
-        answer = self.brain.respond('hello')
+        answer = self.brain.respond('using my memory say hello')
         self.assertEqual(answer.route, 'blocked')
         self.assertNotIn('REVOKED RESULT', answer.text)
 

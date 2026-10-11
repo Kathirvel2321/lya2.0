@@ -4,6 +4,7 @@ security/HelloVerifier.exe
 .venv/
 .venv-ui/
 .venv-asr/
+.venv-owner/
 .uv-cache/
 venv/
 
@@ -16,6 +17,8 @@ security/.lya_key
 oracle_known_hosts.local
 .env
 desktop/oracle.local.json
+desktop/mobile.local.json
+security/public-archive-identity.local/
 cloud/provider.json
 cloud/router-state.sqlite*
 security/*.lya
@@ -64,6 +67,7 @@ models/local/*.bin
 models/biometric/*.onnx
 models/biometric/*.bin
 models/biometric/*.pt
+models/biometric/*.part
 tools/llama-runtime/
 skills/forge_draft.py
 skills/forge_meta.json

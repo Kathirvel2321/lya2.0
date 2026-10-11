@@ -1,0 +1,1 @@
+Historical glossy proposal: owner rejected the crystal/artwork direction. 66 isolated checks and synthetic previews passed at that stage; this presentation is superseded by ../2026-10-08-voice-particle-registration/README.md. Its artwork is not loaded by the current runtime. Existing artifacts are preserved; do not rerun the old helper expecting a source snapshot.

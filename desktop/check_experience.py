@@ -19,6 +19,16 @@ for font in ('segoeui.ttf', 'segoeuib.ttf'):
 
 
 class ExperienceChecks(unittest.TestCase):
+    def test_mobile_pairing_opens_only_current_authorized_result_not_stale_reply(self):
+        from brain.workflow import Answer
+        self.d.generation=10
+        self.d.brain_cancel.clear()
+        answer=Answer('Synthetic pairing guidance.','mobile-pairing',[{'url':'https://lya.synthetic.ts.net/#synthetic'}])
+        with patch('PySide6.QtGui.QDesktopServices.openUrl',return_value=True) as opened:
+            self.d.on_brain(9,answer);opened.assert_not_called()
+            self.d.on_brain(10,answer);self.assertEqual(opened.call_count,1)
+            self.d.brain_cancel.set();self.d.on_brain(10,answer);self.assertEqual(opened.call_count,1)
+
     def test_system_dictation_prepares_composer_and_leaves_lya_microphone_off(self):
         with patch.object(self.d, 'start_voice') as start, \
              patch('sounddevice.RawInputStream', side_effect=AssertionError('unexpected recording')):
@@ -55,16 +65,44 @@ class ExperienceChecks(unittest.TestCase):
     def test_admin_setup_opens_without_granting_session(self):
         before = self.d.brain.session
         self.d.open_panel()
-        with patch('storage.store.get_primary_admin', return_value=None), \
+        with patch('storage.store.get_owner_passkey', return_value=None), \
              patch('desktop.setup_speech.SetupSpeech.say'):
             self.d.command('register admin')
         self.assertFalse(self.d.panel.isVisible())
         self.d.open_panel()
         self.assertFalse(self.d.panel.isVisible())
-        self.assertTrue(self.d.activation_dialog.isVisible())
-        self.assertEqual(self.d.activation_dialog.act, 0)
+        self.assertTrue(self.d.owner_dialog.isVisible())
+        self.assertEqual(self.d.owner_dialog.stage, 'intro')
         self.assertEqual(self.d.brain.session, before)
-        self.d.activation_dialog.reject()
+        self.d.owner_dialog.reject()
+
+    def test_spoken_and_typed_owner_requests_open_setup_without_inference(self):
+        from app import Desktop
+        before = self.d.brain.session
+        with patch('storage.store.get_owner_passkey', return_value=None), \
+             patch('desktop.setup_speech.SetupSpeech.say'), \
+             patch.object(Desktop, 'on_voice') as ordinary_voice, \
+             patch.object(self.d, 'ask_brain') as submit:
+            for dispatch in (self.d.on_voice, self.d.command):
+                for phrase in ('Register admin.', 'register admijn', 'Lya, register admin!',
+                               'Please open admin registration.', 'sign in.', 'unlock LYA!'):
+                    with self.subTest(dispatch=dispatch.__name__, phrase=phrase):
+                        dispatch(phrase)
+                        self.assertTrue(hasattr(self.d, 'owner_dialog'))
+                        self.assertTrue(self.d.owner_dialog.isVisible())
+                        self.assertEqual(self.d.owner_dialog.stage, 'intro')
+                        self.assertEqual(self.d.brain.session, before)
+                        self.d.owner_dialog.reject()
+            ordinary_voice.assert_not_called()
+            submit.assert_not_called()
+
+    def test_owner_route_does_not_extract_commands_from_questions_or_negation(self):
+        from experience import is_owner_access_request
+        for phrase in ('Do not register admin.', 'Why should I sign in?',
+                       'Explain admin registration', 'register admin and delete my notes',
+                       'Please open camera.', 'Tell me how to unlock lya.'):
+            with self.subTest(phrase=phrase):
+                self.assertFalse(is_owner_access_request(phrase))
 
     def test_bare_voice_wake_opens_intro_instead_of_help(self):
         with patch.object(self.d, 'wake') as wake, patch.object(self.d, 'command') as command:

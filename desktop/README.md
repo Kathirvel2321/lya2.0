@@ -1,5 +1,33 @@
 # LYA crystal desktop milestone
 
+Old owner registration (2026-10-08): the owner explicitly requested removal for
+an entirely new signup. The tested offline maintenance retired the old login
+records after a verified protected encrypted backup. Old memories/vault data stay
+bound to inactive identities; new signup does not inherit them. API keys and the
+encryption key were preserved. Fully quit/reopen LYA and say `register admin`;
+fresh signed phone enrollment is still required. This is not a voice-reset feature.
+See [retirement checks and limits](../review/2026-10-08-legacy-owner-retirement/README.md).
+
+Owner walkthrough presentation (2026-10-08): registration now uses a plain,
+voice-led screen with coloured native particles: rounded listening rings,
+speaking waves and crossing thinking paths. No diamond, bitmap artwork or routine
+text is rendered. Repeat/continue/cancel symbols retain keyboard and screen-reader
+names. Phone verification still uses the browser's secure prompt; exact protected
+action details remain reviewable there before signing. This presentation replaces
+the earlier registration artwork; the ordinary LYA interface is unchanged.
+See [current previews and isolated checks](../review/2026-10-08-voice-particle-registration/README.md).
+
+Owner access (2026-10-08): `register admin` / `sign in` now opens LYA's
+voice-guided phone-passkey screen, without a Windows identity prompt. New owners
+on an empty store create and verify a passkey before any profile is saved;
+returning owners get a five-minute session. Private operations still need a
+fresh phone proof for the exact action. Legacy or ambiguous profiles remain
+locked for separate trusted migration; no identity data or key was replaced.
+Camera/voice/hearing/startup defaults are preserved. Synthetic integration is
+checked; actual iPhone/browser enrollment and migration remain unverified.
+Install the pinned UI requirements and reopen the existing launcher to load it.
+See [implementation, research, limits and screen previews](../review/2026-10-08-owner-passkeys/README.md).
+
 Camera focus/security (2026-10-06): camera start and camera questions now require
 an existing verified LYA administrator session, checked against the protected
 active owner record and expiry. Guest or color-only sessions cannot open it.

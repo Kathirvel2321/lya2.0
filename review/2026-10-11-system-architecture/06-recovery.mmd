@@ -1,0 +1,15 @@
+flowchart TD
+  LIVE["Live authoritative database and objects"] --> SNAP["Consistent snapshot or qualified base backup<br/>Schema version and object manifest"]
+  SNAP --> ENC["Encrypted backup repository<br/>Independent credentials and key recovery"]
+  ENC --> OFFSITE["Copy outside Oracle failure domain"]
+  OFFSITE --> OFFLINE["Periodically disconnected recovery copy"]
+  OFFSITE --> TEST["Restore into isolated empty environment"]
+  TEST --> INTEGRITY["Verify database, manifests and keys"]
+  INTEGRITY --> DELETE["Apply newest independent deletion register<br/>Enforce expiry at current time"]
+  DELETE --> ACCEPT["Read-only recall and isolation checks<br/>Measure recovery time and data-loss window"]
+  ACCEPT --> PROMOTE["Authorize recovered service<br/>Revoke old sessions and prevent dual writers"]
+  PROMOTE --> LIVE
+  DELETE --> MISSING["Deletion register missing or incomplete<br/>Hold recovery for reconciliation"]
+  ENC --> ROTATE["Expire generations and prune safely<br/>Forgotten values may remain until then"]
+  classDef planned fill:#243c65,color:#fff,stroke:#6ca4ff
+  class LIVE,SNAP,ENC,OFFSITE,OFFLINE,TEST,INTEGRITY,DELETE,ACCEPT,PROMOTE,MISSING,ROTATE planned

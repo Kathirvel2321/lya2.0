@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-09",
+  "public_fixture": true,
+  "preview_dimensions": [
+    640,
+    480
+  ],
+  "preview_max_fps": 10,
+  "preview_jpeg_bytes": 32679,
+  "active_native_widget_cpu_percent_one_core": 20.489,
+  "hidden_timer_stopped": true,
+  "hidden_frame_cleared": true,
+  "real_sensors": false,
+  "real_owner_data": false,
+  "note": "Three-second offscreen native widget only; not live camera, full LYA or sustained system load."
+}

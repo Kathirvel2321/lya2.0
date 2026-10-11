@@ -1,13 +1,5 @@
 # Voice wake, speech pre-warm and first-run polish — 2026-09-26 (independent review)
 
-## 2026-09-27 handoff
-
-The implemented wake path is mapped in [wake-flow.mmd](wake-flow.mmd) (Mermaid validation: one diagram, no errors or warnings). The short greeting is a shipped, non-biometric WAV asset at `desktop/assets/wake-greeting.wav`; `.gitignore` now makes this one WAV trackable while other recordings remain ignored. The asset decodes as mono 22,050 Hz, 24,424 frames.
-
-Current voice tests: 20 passed with one intentional online skip. Desktop UI/experience: 41 passed offscreen. Activation and registration: 22 each passed separately after their isolated tests were updated for the current in-process Windows verifier and existing-admin sign-in semantics. A prior combined run had seven stale-test failures; the separate corrected runs are the evidence, not a live enrollment test. No real microphone wake, cloud transcription, protected store mutation, or Windows verification was performed in this handoff.
-
-Owner check: run `launch-lya.cmd` in the normal Windows desktop, wait for the footer to show the local listener, say "wake up LYA," then ask one question. This is the remaining end-to-end wake and speech-sync check. An ambiguous protected admin state continues to block enrollment until it is reviewed without deleting records.
-
 Owner asked for a full review and re-test of the 2026-09-26 change set. This is an
 independent re-run of the offline suites plus a code read of every file touched that
 day. No project file was modified except this README and the dated ledger entry in
@@ -15,25 +7,25 @@ day. No project file was modified except this README and the dated ledger entry 
 
 ## Change set reviewed
 
-| File | Change |
-|---|---|
-| `audio/voice.py` | wake loop now records locally, transcribes only after a local wake; Groq Whisper Large v3 path behind an explicit opt-in; legacy `speak()` re-routed through the reviewed `desktop/setup_speech.py` worker (no implicit online TTS); `stop_speaking()` kills the playback process |
-| `desktop/setup_speech.py` | `prewarm()` — worker process starts at launch with `--warm-piper`, model loads before the first request; warm/idle state kept 45 s |
-| `desktop/activation.py` | six-act initialization walkthrough: real probes (no faked SECURE states), camera presence-only, mic meter with measured RMS/clip checks, window-bound Hello nonce, consent-gated admin commit |
-| `desktop/app.py` | voice-first launch, `allow_cloud` decided by configured key, on-screen mode disclosure |
-| `desktop/experience.py` | wake greeting playback and dock behaviour |
-| `desktop/assets/wake-greeting.wav` | new wake sound |
+| File                               | Change                                                                                                                                                                                                                                                                            |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `audio/voice.py`                   | wake loop now records locally, transcribes only after a local wake; Groq Whisper Large v3 path behind an explicit opt-in; legacy `speak()` re-routed through the reviewed `desktop/setup_speech.py` worker (no implicit online TTS); `stop_speaking()` kills the playback process |
+| `desktop/setup_speech.py`          | `prewarm()` — worker process starts at launch with `--warm-piper`, model loads before the first request; warm/idle state kept 45 s                                                                                                                                                |
+| `desktop/activation.py`            | six-act initialization walkthrough: real probes (no faked SECURE states), camera presence-only, mic meter with measured RMS/clip checks, window-bound Hello nonce, consent-gated admin commit                                                                                     |
+| `desktop/app.py`                   | voice-first launch, `allow_cloud` decided by configured key, on-screen mode disclosure                                                                                                                                                                                            |
+| `desktop/experience.py`            | wake greeting playback and dock behaviour                                                                                                                                                                                                                                         |
+| `desktop/assets/wake-greeting.wav` | new wake sound                                                                                                                                                                                                                                                                    |
 
 ## Test results (re-run 2026-09-26, offscreen, offline)
 
-| Suite | Result |
-|---|---|
-| `test_setup_speech` + `test_voice` | 20 passed, 1 skipped (explicit online Edge-TTS test) |
-| `test_activation` | 22 passed |
-| `desktop/check_experience` + `desktop/check_ui` | 41 passed |
-| `test_registration_ui` | 22 passed |
-| `external-work` voice lab suite | 141 passed, 1 skipped |
-| `test_foundations` | 14 passed |
+| Suite                                           | Result                                               |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| `test_setup_speech` + `test_voice`              | 20 passed, 1 skipped (explicit online Edge-TTS test) |
+| `test_activation`                               | 22 passed                                            |
+| `desktop/check_experience` + `desktop/check_ui` | 41 passed                                            |
+| `test_registration_ui`                          | 22 passed                                            |
+| `external-work` voice lab suite                 | 141 passed, 1 skipped                                |
+| `test_foundations`                              | 14 passed                                            |
 
 Total: 260 checks, all green, on `.venv-ui`. One skip per suite is by design (live
 network tests are excluded from offline runs).

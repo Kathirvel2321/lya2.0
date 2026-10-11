@@ -1,0 +1,18 @@
+{
+  "tests": 68,
+  "failures": 0,
+  "errors": 0,
+  "success": true,
+  "date": "2026-10-08",
+  "modules": [
+    "desktop.check_experience",
+    "test_passkeys",
+    "test_approval"
+  ],
+  "real_owner_store": false,
+  "sensors": false,
+  "live_provider_calls": false,
+  "python_compilation": true,
+  "scoped_whitespace": true,
+  "live_owner_acceptance": false
+}

@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-11",
+  "configured_key_exists": true,
+  "key_within_project": true,
+  "key_git_ignored": true,
+  "key_git_tracked": false,
+  "pinned_ssh_connection_verified": true,
+  "key_contents_displayed": false,
+  "billing_access_checked": false,
+  "owner_budget": "Oracle free tier only; no paid resource provisioning or resize authorized",
+  "runtime_changed": false
+}

@@ -1,0 +1,12 @@
+flowchart TD
+    Phone["iPhone: lightweight LYA interface"]
+    Shared["Planned always-on LYA service: identity, routing and approved shared memory"]
+    Laptop["Laptop: existing native LYA and approved Windows tools"]
+    Private["Existing protected local vault: available while laptop is online"]
+    Phone <-->|"Private HTTPS and passkey"| Shared
+    Laptop <-->|"Authenticated connection"| Shared
+    Laptop --- Private
+    classDef planned fill:#805d16,color:#fff,stroke:#d9b763
+    classDef existing fill:#174a56,color:#fff,stroke:#65c4d3
+    class Phone,Shared planned
+    class Laptop,Private existing

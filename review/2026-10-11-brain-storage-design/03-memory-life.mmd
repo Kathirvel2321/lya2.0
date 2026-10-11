@@ -1,0 +1,12 @@
+flowchart TD
+  TALK["Ordinary conversation"] --> RAM["Temporary context<br/>Discard at session end or expiry"]
+  TALK --> INTENT["You explicitly ask to remember<br/>Or confirm a proposed lesson"]
+  INTENT --> CHECK["Check person, project, sensitivity<br/>Source, approval and retention"]
+  CHECK --> COMMIT["Encrypted transaction<br/>Record, revision and search index together"]
+  COMMIT --> ACK["Confirm saved only after commit<br/>Both devices see the same revision"]
+  COMMIT --> RECOVERY["Consistent encrypted snapshot<br/>Independent recovery copy"]
+  ACK --> CHANGE["Correction, forgetting or expiry<br/>Invalidate recall caches"]
+  CHANGE --> COMMIT
+  RECOVERY --> RESTORE["Restore into isolation and verify<br/>Apply latest deletions and expiry before use"]
+  classDef planned fill:#78531a,color:#fff,stroke:#e7b04b
+  class TALK,RAM,INTENT,CHECK,COMMIT,ACK,RECOVERY,CHANGE,RESTORE planned

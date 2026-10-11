@@ -1,0 +1,17 @@
+# Explicit old-registration retirement — 2026-10-08
+
+The owner explicitly requested an entirely new registration and removal of the old one. Applied a one-time, offline legacy-only operator maintenance tool after isolated checks. This is not a voice command, browser API or automatic reset bypass. Existing phone-passkey registrations are refused. Missing/unreadable stores or missing existing encryption keys fail without creating replacement stores/keys.
+
+Before changing anything, the tool makes a byte-verified, still-encrypted rollback copy in the existing protected LYA runtime directory under registration-archive. Its unique directory has a protected Windows ACL allowing only the current user and SYSTEM, inherited by the backup file. No identity material is copied into this repository or uploaded. The existing encryption key is preserved; this rollback copy relies on that key and Windows account and is not independent portable recovery.
+
+Active legacy owner profiles are disabled; their face/voice login template rows and old recovery-code rows are removed from the live store. Profile rows remain as inactive anchors for retained memories/vault references. Memories, memory links, vault entries, friend records, API keys, external archive configuration and encryption key are preserved. New signup creates a new identity with a signed iPhone passkey proof; it does not inherit another identity's private notes or external archive namespace. Data transfer would be a separate requested operation. Old authentication records remain encrypted in the rollback copy, so this is not a claim of secure erasure.
+
+## Validation
+
+72 isolated checks exercised: first batch 71 passed with one host-side loopback HTTP connection abort; that boundary test passed on targeted retry. Final four retirement checks passed after adding Windows ACL assertions. Coverage includes verified backup read/restore integrity, auth removal versus friend preservation, unchanged private-data rows, old-session camera denial without capture, fresh synthetic signed enrollment with a distinct identity, backup failure/no mutation, idempotent no-op, phone-passkey owner refusal and missing-store refusal. Source compilation and scoped whitespace passed.
+
+Live application of the requested legacy retirement completed after the preflight and tests. Read-only post-checks confirmed readable encrypted backup, revoked old access, removed old login rows, unchanged memory/link/vault rows, protected backup ACL and an empty active-owner registration gate. Names, profile IDs, credential material, biometric material, private contents and exact runtime archive filenames are deliberately not in this report.
+
+Source: ../../tools/retire_legacy_owner.py and ../../test_legacy_retirement.py. Reproducible fake-key/temp-store check: check_retirement.py. Dated results: validation.json (initial batch), http-retry.json, retirement-validation.json and result-summary.json. The maintenance tool defaults to a read-only compatibility check; --apply is destructive operator maintenance and must never be invoked by ordinary LYA commands. Do not rerun against an owner setup casually.
+
+No real face/microphone capture, cloud/provider call, key reset, new owner enrollment or application restart occurred. Full tray Quit and reopening the existing launcher clears the stale dialog and loads current code. Say register admin for the new voice-led particle walkthrough. Actual iPhone/browser transport and owner speech acceptance remain pending; completing the phone's signed proof is still required.

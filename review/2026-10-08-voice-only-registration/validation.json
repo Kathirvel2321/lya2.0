@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-08",
+  "tests": 66,
+  "failures": 0,
+  "errors": 0,
+  "success": true,
+  "modules": [
+    "test_passkeys",
+    "test_approval",
+    "desktop.check_experience"
+  ],
+  "owner_store": false,
+  "owner_sensors": false,
+  "live_phone_enrollment": false,
+  "active_widget_process_cpu_percent_one_core": 0.459,
+  "browser_javascript_syntax": true,
+  "runtime_bitmap_assets": 0,
+  "visible_native_labels": 0,
+  "actual_phone_and_owner_voice": "not tested"
+}

@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-11",
+  "scope": "four_recent_slices_and_selected_existing_regressions",
+  "checks": {
+    "unittest": {
+      "passed": true,
+      "exit_code": 0,
+      "duration_s": 31.828,
+      "tests_run": 82
+    },
+    "client": {
+      "passed": true,
+      "exit_code": 0,
+      "duration_s": 0.164
+    },
+    "http_baseline": {
+      "passed": true,
+      "exit_code": 0,
+      "duration_s": 1.217
+    },
+    "layout": {
+      "passed": true,
+      "exit_code": 0,
+      "duration_s": 41.459
+    },
+    "private_https": {
+      "passed": true,
+      "exit_code": 0,
+      "duration_s": 0.501
+    }
+  },
+  "success": true,
+  "checked_source_hashes_unchanged": true,
+  "source_sha256": {
+    "brain/conversation.py": "2b9f3381fc6af93013409eff2bbfe0f62692d130ba349b0a7d4c24e9388e6a2e",
+    "brain/memory_prototype.py": "9ebe97f002b33d3beb912c8053cb5007f08be45bdafc203bbfc6194262cbcff7",
+    "brain/memory_recovery.py": "ce29b5698c8d7ea85be7ca458202c7798b793cf4e848c809d76ad23ed5094c62",
+    "brain/workflow.py": "9fdb2f692b7ad39682e530058f0f5a16aec52bcb24f78deb11a4963102f0e709",
+    "cloud/mobile.py": "db4e60a7123b83fefc617dad2ca71cc908fb9092c945af9241477cb3b7f5cda0",
+    "cloud/mobile.html": "a9bd399ef039e0f49c2ded8c831e8f62a4d10027c3aba3ab0c42b7c2b0794482",
+    "cloud/mobile_runtime.py": "e39912448fe73d0dfe80bf826c0e7c7f607ce20837c9522c7f7739d55c700378",
+    "cloud/mobile_speech.py": "e43915e182cdfdf8f27d9bbdca38978109cfced37ee7a35e9387c7a14d29631f",
+    "cloud/mobile_tts.py": "fe6f7ff2426255b4df476e5e00a0b383dd5fc532850b5506943d53edd7c849ee",
+    "cloud/ssh_session.py": "d865759094190a07e30b10d92ffd79799ea03d0afd63f165352442f762965cc1",
+    "desktop/experience.py": "56c968bc4d29de59e0a29aeabb9c136382aaa898c91dc281f3ac7a6a26f1a394",
+    "security/passkeys.py": "00be2c7b5f57c51fcfb75761e7d031d40cd68d6d4d8494fdd3b3f12fca496e37",
+    "storage/store.py": "86e2ec469933cac360e2c6a712e4f9d0e380901d1b4c908878959e7dfd0c2d2f",
+    "storage/recovery.py": "6770759e4f69b5e8c1b9bbbb38e498538e3e6af6ea683d1856be08073778cfca"
+  },
+  "real_owner_stores_or_credentials_used": false,
+  "real_enrollment": false,
+  "human_audio_or_sensors_used": false,
+  "provider_called": false,
+  "deployed_or_runtime_changed": false,
+  "paid_resources_added": false,
+  "live_shared_memory_connected": false,
+  "real_phone_acceptance": false,
+  "full_repository_suite": false
+}

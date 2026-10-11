@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-09",
+  "models_ready": true,
+  "face_dimension": 128,
+  "voice_dimension": 256,
+  "public_face_consistent": true,
+  "synthetic_voice_consistent": true,
+  "camera_released": true,
+  "microphone_closed": true,
+  "events": {"preview": 18, "meter": 200},
+  "load_seconds": 7.203,
+  "total_seconds": 9.391,
+  "cpu_percent_one_core": 87.185,
+  "working_mib": 437.99,
+  "peak_mib": 441.57,
+  "raw_owner_data": false,
+  "real_sensors": false,
+  "network_during_capture": false,
+  "command": ".venv-owner/Scripts/python.exe -B review/2026-10-08-owner-face-voice/check_models.py",
+  "note": "Observed current worker fixture run; existing model startup dominates this short test. Fake camera, public image and synthetic greeting, not owner accuracy or live device qualification."
+}

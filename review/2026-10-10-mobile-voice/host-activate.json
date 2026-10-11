@@ -1,0 +1,16 @@
+{
+  "deployed": true,
+  "speech_enabled": true,
+  "pairing_preserved": true,
+  "inference_unchanged": true,
+  "key_read_denied": true,
+  "arbitrary_command_denied": true,
+  "unsigned_audio_denied": true,
+  "service_stats": {
+    "MemoryCurrent": "17899520",
+    "TasksCurrent": "1",
+    "MemoryMax": "268435456",
+    "ActiveState": "active"
+  },
+  "provider_call": false
+}

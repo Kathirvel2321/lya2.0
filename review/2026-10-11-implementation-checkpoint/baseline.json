@@ -1,0 +1,643 @@
+{
+  "date": "2026-10-11",
+  "mode": "synthetic_loopback",
+  "providers_called": false,
+  "real_audio": false,
+  "counts": {
+    "attempts": 48,
+    "http_2xx": 32,
+    "http_errors": 16,
+    "voice_fallback": 8
+  },
+  "conditions": {
+    "network": "loopback",
+    "model_state": "fake callbacks; cold/warm model latency unmeasured",
+    "excluded": [
+      "endpointing",
+      "real upload/download",
+      "provider latency",
+      "audio playback",
+      "owner accuracy"
+    ]
+  },
+  "scenarios": {
+    "asr": {
+      "http_total": {
+        "samples": 8,
+        "p50_ms": 13.351,
+        "p95_ms": 16.873
+      },
+      "http_headers": {
+        "samples": 8,
+        "p50_ms": 13.137,
+        "p95_ms": 16.253
+      }
+    },
+    "cancelled": {
+      "http_total": {
+        "samples": 8,
+        "p50_ms": 4.268,
+        "p95_ms": 5.765
+      },
+      "http_headers": {
+        "samples": 8,
+        "p50_ms": 4.037,
+        "p95_ms": 5.465
+      }
+    },
+    "provider_failure": {
+      "http_total": {
+        "samples": 8,
+        "p50_ms": 3.681,
+        "p95_ms": 4.77
+      },
+      "http_headers": {
+        "samples": 8,
+        "p50_ms": 3.478,
+        "p95_ms": 4.454
+      }
+    },
+    "spoken": {
+      "http_total": {
+        "samples": 8,
+        "p50_ms": 7.675,
+        "p95_ms": 18.59
+      },
+      "http_headers": {
+        "samples": 8,
+        "p50_ms": 7.51,
+        "p95_ms": 18.464
+      }
+    },
+    "text": {
+      "http_total": {
+        "samples": 8,
+        "p50_ms": 3.053,
+        "p95_ms": 3.903
+      },
+      "http_headers": {
+        "samples": 8,
+        "p50_ms": 2.939,
+        "p95_ms": 3.809
+      }
+    },
+    "voice_fallback": {
+      "http_total": {
+        "samples": 8,
+        "p50_ms": 4.272,
+        "p95_ms": 9.174
+      },
+      "http_headers": {
+        "samples": 8,
+        "p50_ms": 4.178,
+        "p95_ms": 9.089
+      }
+    }
+  },
+  "samples": [
+    {
+      "scenario": "text",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 3.158,
+      "http_total_ms": 3.3,
+      "server_ms": {
+        "inference": 0.003,
+        "request": 1.889
+      }
+    },
+    {
+      "scenario": "text",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 2.825,
+      "http_total_ms": 2.897,
+      "server_ms": {
+        "inference": 0.002,
+        "request": 1.723
+      }
+    },
+    {
+      "scenario": "text",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 3.052,
+      "http_total_ms": 3.208,
+      "server_ms": {
+        "inference": 0.003,
+        "request": 2.096
+      }
+    },
+    {
+      "scenario": "text",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 3.216,
+      "http_total_ms": 3.308,
+      "server_ms": {
+        "inference": 0.002,
+        "request": 2.071
+      }
+    },
+    {
+      "scenario": "text",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 2.749,
+      "http_total_ms": 2.831,
+      "server_ms": {
+        "inference": 0.002,
+        "request": 1.671
+      }
+    },
+    {
+      "scenario": "text",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 2.765,
+      "http_total_ms": 2.837,
+      "server_ms": {
+        "inference": 0.002,
+        "request": 1.793
+      }
+    },
+    {
+      "scenario": "text",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 2.621,
+      "http_total_ms": 2.702,
+      "server_ms": {
+        "inference": 0.002,
+        "request": 1.599
+      }
+    },
+    {
+      "scenario": "text",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 3.809,
+      "http_total_ms": 3.903,
+      "server_ms": {
+        "inference": 0.003,
+        "request": 2.014
+      }
+    },
+    {
+      "scenario": "spoken",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 18.464,
+      "http_total_ms": 18.59,
+      "server_ms": {
+        "inference": 0.004,
+        "tts": 0.013,
+        "request": 3.931
+      }
+    },
+    {
+      "scenario": "spoken",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 5.946,
+      "http_total_ms": 6.104,
+      "server_ms": {
+        "inference": 0.003,
+        "tts": 0.019,
+        "request": 4.182
+      }
+    },
+    {
+      "scenario": "spoken",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 7.849,
+      "http_total_ms": 8.016,
+      "server_ms": {
+        "inference": 0.004,
+        "tts": 0.016,
+        "request": 6.032
+      }
+    },
+    {
+      "scenario": "spoken",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 5.557,
+      "http_total_ms": 5.885,
+      "server_ms": {
+        "inference": 0.004,
+        "tts": 0.021,
+        "request": 3.807
+      }
+    },
+    {
+      "scenario": "spoken",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 6.664,
+      "http_total_ms": 7.06,
+      "server_ms": {
+        "inference": 0.005,
+        "tts": 0.024,
+        "request": 4.533
+      }
+    },
+    {
+      "scenario": "spoken",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 8.315,
+      "http_total_ms": 8.522,
+      "server_ms": {
+        "inference": 0.005,
+        "tts": 0.023,
+        "request": 6.0
+      }
+    },
+    {
+      "scenario": "spoken",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 12.712,
+      "http_total_ms": 12.863,
+      "server_ms": {
+        "inference": 0.005,
+        "tts": 0.023,
+        "request": 5.611
+      }
+    },
+    {
+      "scenario": "spoken",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 7.171,
+      "http_total_ms": 7.335,
+      "server_ms": {
+        "inference": 0.005,
+        "tts": 0.027,
+        "request": 4.97
+      }
+    },
+    {
+      "scenario": "asr",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 14.548,
+      "http_total_ms": 14.704,
+      "server_ms": {
+        "asr": 0.031,
+        "request": 11.8
+      }
+    },
+    {
+      "scenario": "asr",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 16.253,
+      "http_total_ms": 16.873,
+      "server_ms": {
+        "asr": 0.03,
+        "request": 13.901
+      }
+    },
+    {
+      "scenario": "asr",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 13.416,
+      "http_total_ms": 13.628,
+      "server_ms": {
+        "asr": 0.017,
+        "request": 11.25
+      }
+    },
+    {
+      "scenario": "asr",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 12.859,
+      "http_total_ms": 13.073,
+      "server_ms": {
+        "asr": 0.03,
+        "request": 11.355
+      }
+    },
+    {
+      "scenario": "asr",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 9.444,
+      "http_total_ms": 9.598,
+      "server_ms": {
+        "asr": 0.023,
+        "request": 7.501
+      }
+    },
+    {
+      "scenario": "asr",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 9.713,
+      "http_total_ms": 9.887,
+      "server_ms": {
+        "asr": 0.026,
+        "request": 8.268
+      }
+    },
+    {
+      "scenario": "asr",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 10.094,
+      "http_total_ms": 10.259,
+      "server_ms": {
+        "asr": 0.027,
+        "request": 8.009
+      }
+    },
+    {
+      "scenario": "asr",
+      "status": 200,
+      "voice_unavailable": false,
+      "headers_ms": 13.974,
+      "http_total_ms": 14.077,
+      "server_ms": {
+        "asr": 0.027,
+        "request": 10.924
+      }
+    },
+    {
+      "scenario": "provider_failure",
+      "status": 503,
+      "voice_unavailable": false,
+      "headers_ms": 4.454,
+      "http_total_ms": 4.77,
+      "server_ms": {
+        "inference": 0.017,
+        "request": 1.744
+      }
+    },
+    {
+      "scenario": "provider_failure",
+      "status": 503,
+      "voice_unavailable": false,
+      "headers_ms": 4.06,
+      "http_total_ms": 4.238,
+      "server_ms": {
+        "inference": 0.009,
+        "request": 2.082
+      }
+    },
+    {
+      "scenario": "provider_failure",
+      "status": 503,
+      "voice_unavailable": false,
+      "headers_ms": 3.492,
+      "http_total_ms": 3.782,
+      "server_ms": {
+        "inference": 0.007,
+        "request": 1.546
+      }
+    },
+    {
+      "scenario": "provider_failure",
+      "status": 503,
+      "voice_unavailable": false,
+      "headers_ms": 3.283,
+      "http_total_ms": 3.579,
+      "server_ms": {
+        "inference": 0.007,
+        "request": 1.883
+      }
+    },
+    {
+      "scenario": "provider_failure",
+      "status": 503,
+      "voice_unavailable": false,
+      "headers_ms": 3.784,
+      "http_total_ms": 3.876,
+      "server_ms": {
+        "inference": 0.012,
+        "request": 2.088
+      }
+    },
+    {
+      "scenario": "provider_failure",
+      "status": 503,
+      "voice_unavailable": false,
+      "headers_ms": 3.322,
+      "http_total_ms": 3.43,
+      "server_ms": {
+        "inference": 0.008,
+        "request": 1.35
+      }
+    },
+    {
+      "scenario": "provider_failure",
+      "status": 503,
+      "voice_unavailable": false,
+      "headers_ms": 3.253,
+      "http_total_ms": 3.342,
+      "server_ms": {
+        "inference": 0.021,
+        "request": 1.778
+      }
+    },
+    {
+      "scenario": "provider_failure",
+      "status": 503,
+      "voice_unavailable": false,
+      "headers_ms": 3.465,
+      "http_total_ms": 3.561,
+      "server_ms": {
+        "inference": 0.006,
+        "request": 1.937
+      }
+    },
+    {
+      "scenario": "cancelled",
+      "status": 409,
+      "voice_unavailable": false,
+      "headers_ms": 3.968,
+      "http_total_ms": 4.176,
+      "server_ms": {
+        "inference": 0.009,
+        "request": 2.398
+      }
+    },
+    {
+      "scenario": "cancelled",
+      "status": 409,
+      "voice_unavailable": false,
+      "headers_ms": 4.105,
+      "http_total_ms": 4.196,
+      "server_ms": {
+        "inference": 0.006,
+        "request": 2.09
+      }
+    },
+    {
+      "scenario": "cancelled",
+      "status": 409,
+      "voice_unavailable": false,
+      "headers_ms": 4.436,
+      "http_total_ms": 4.65,
+      "server_ms": {
+        "inference": 0.008,
+        "request": 2.29
+      }
+    },
+    {
+      "scenario": "cancelled",
+      "status": 409,
+      "voice_unavailable": false,
+      "headers_ms": 5.465,
+      "http_total_ms": 5.765,
+      "server_ms": {
+        "inference": 0.031,
+        "request": 3.09
+      }
+    },
+    {
+      "scenario": "cancelled",
+      "status": 409,
+      "voice_unavailable": false,
+      "headers_ms": 4.492,
+      "http_total_ms": 4.655,
+      "server_ms": {
+        "inference": 0.014,
+        "request": 3.089
+      }
+    },
+    {
+      "scenario": "cancelled",
+      "status": 409,
+      "voice_unavailable": false,
+      "headers_ms": 3.861,
+      "http_total_ms": 4.341,
+      "server_ms": {
+        "inference": 0.009,
+        "request": 2.255
+      }
+    },
+    {
+      "scenario": "cancelled",
+      "status": 409,
+      "voice_unavailable": false,
+      "headers_ms": 2.895,
+      "http_total_ms": 3.092,
+      "server_ms": {
+        "inference": 0.005,
+        "request": 1.734
+      }
+    },
+    {
+      "scenario": "cancelled",
+      "status": 409,
+      "voice_unavailable": false,
+      "headers_ms": 3.051,
+      "http_total_ms": 3.191,
+      "server_ms": {
+        "inference": 0.005,
+        "request": 1.66
+      }
+    },
+    {
+      "scenario": "voice_fallback",
+      "status": 200,
+      "voice_unavailable": true,
+      "headers_ms": 3.576,
+      "http_total_ms": 3.671,
+      "server_ms": {
+        "inference": 0.002,
+        "tts": 0.016,
+        "request": 2.338
+      }
+    },
+    {
+      "scenario": "voice_fallback",
+      "status": 200,
+      "voice_unavailable": true,
+      "headers_ms": 4.802,
+      "http_total_ms": 5.031,
+      "server_ms": {
+        "inference": 0.003,
+        "tts": 0.018,
+        "request": 2.901
+      }
+    },
+    {
+      "scenario": "voice_fallback",
+      "status": 200,
+      "voice_unavailable": true,
+      "headers_ms": 4.169,
+      "http_total_ms": 4.264,
+      "server_ms": {
+        "inference": 0.002,
+        "tts": 0.017,
+        "request": 2.361
+      }
+    },
+    {
+      "scenario": "voice_fallback",
+      "status": 200,
+      "voice_unavailable": true,
+      "headers_ms": 4.187,
+      "http_total_ms": 4.281,
+      "server_ms": {
+        "inference": 0.003,
+        "tts": 0.025,
+        "request": 2.771
+      }
+    },
+    {
+      "scenario": "voice_fallback",
+      "status": 200,
+      "voice_unavailable": true,
+      "headers_ms": 4.129,
+      "http_total_ms": 4.205,
+      "server_ms": {
+        "inference": 0.002,
+        "tts": 0.014,
+        "request": 2.204
+      }
+    },
+    {
+      "scenario": "voice_fallback",
+      "status": 200,
+      "voice_unavailable": true,
+      "headers_ms": 6.309,
+      "http_total_ms": 6.372,
+      "server_ms": {
+        "inference": 0.002,
+        "tts": 0.016,
+        "request": 2.555
+      }
+    },
+    {
+      "scenario": "voice_fallback",
+      "status": 200,
+      "voice_unavailable": true,
+      "headers_ms": 3.596,
+      "http_total_ms": 3.646,
+      "server_ms": {
+        "inference": 0.002,
+        "tts": 0.015,
+        "request": 2.463
+      }
+    },
+    {
+      "scenario": "voice_fallback",
+      "status": 200,
+      "voice_unavailable": true,
+      "headers_ms": 9.089,
+      "http_total_ms": 9.174,
+      "server_ms": {
+        "inference": 0.002,
+        "tts": 0.026,
+        "request": 2.991
+      }
+    }
+  ]
+}

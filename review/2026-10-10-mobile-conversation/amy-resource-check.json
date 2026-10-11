@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "elapsed_seconds": 3.55,
+  "audio_seconds": 3.48,
+  "strict_memory_limit_mib": 192,
+  "one_cpu_thread": true,
+  "stats": {
+    "Result": "success",
+    "MemoryPeak": "[not set]",
+    "CPUUsageNSec": "[not set]"
+  },
+  "service_restarted": false,
+  "provider_call": false
+}

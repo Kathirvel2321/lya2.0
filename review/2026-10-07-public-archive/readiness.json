@@ -1,0 +1,7 @@
+{
+  "fts5": true,
+  "sudo_available": true,
+  "archive_account_exists": false,
+  "archive_path_exists": false,
+  "onnxruntime_present": false
+}

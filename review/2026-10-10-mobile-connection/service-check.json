@@ -1,0 +1,7 @@
+{
+  "service_running": true,
+  "memory_current_mib": 16.59,
+  "memory_limit_mib": 256,
+  "tasks_current": 1,
+  "funnel_disabled": true
+}

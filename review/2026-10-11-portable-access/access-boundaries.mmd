@@ -1,0 +1,21 @@
+flowchart TD
+    GH["GitHub: code and safe templates only"]
+    HOME["Personal laptop: accepted native LYA and local private vault"]
+    PHONE["Personal iPhone: existing passkey and public LYA client"]
+    WORK["Work-managed laptop: proposed limited browser session; IT permission required"]
+    API["Existing Oracle service: private HTTPS and public inference"]
+    PROVIDER["Provider credentials: existing protected server account"]
+    SHARED["Planned: encrypted selected memory and scoped device sessions"]
+    RECOVERY["Planned: independent encrypted backup and separately recoverable keys"]
+    GH --> HOME
+    HOME -->|"Existing configured SSH inference"| API
+    PHONE -->|"Existing private HTTPS and passkey"| API
+    WORK -. "Only with permitted private network access" .-> API
+    PHONE -. "Cross-device sign-in where supported; no key copy" .-> WORK
+    API --> PROVIDER
+    API -.-> SHARED
+    SHARED -.-> RECOVERY
+    classDef existing fill:#123d37,color:#fff,stroke:#58bea7
+    classDef proposed fill:#594220,color:#fff,stroke:#dba955,stroke-dasharray:5
+    class GH,HOME,PHONE,API,PROVIDER existing
+    class WORK,SHARED,RECOVERY proposed

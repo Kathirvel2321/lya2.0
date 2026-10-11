@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-11",
+  "mermaid_version": "11.12.0",
+  "renderer_sha256": "07e37dfa97b337ccc85365d57eddf99b9706f09db3b59b260d0333b23b343c4b",
+  "diagrams": [
+    {
+      "diagram": "01-whole-system",
+      "svg_rendered": true,
+      "width": 3664.6171875,
+      "height": 2884
+    },
+    {
+      "diagram": "02-answer-sequence",
+      "svg_rendered": true,
+      "width": 1846.5,
+      "height": 1273
+    },
+    {
+      "diagram": "03-memory-lifecycle",
+      "svg_rendered": true,
+      "width": 2948.234375,
+      "height": 389.625
+    },
+    {
+      "diagram": "04-data-model",
+      "svg_rendered": true,
+      "width": 2985.984375,
+      "height": 1740
+    },
+    {
+      "diagram": "05-platform-trust",
+      "svg_rendered": true,
+      "width": 2494.171875,
+      "height": 1085.5
+    },
+    {
+      "diagram": "06-recovery",
+      "svg_rendered": true,
+      "width": 876,
+      "height": 1277.5
+    },
+    {
+      "diagram": "07-model-routing",
+      "svg_rendered": true,
+      "width": 1444.9765625,
+      "height": 1214.5
+    },
+    {
+      "diagram": "08-fast-workflow",
+      "svg_rendered": true,
+      "width": 1809.42578125,
+      "height": 969.25
+    }
+  ],
+  "calculator_assertions": 5,
+  "browser_checks": {
+    "tabs": 8,
+    "zoom_fit": true,
+    "capacity_100k_and_1m": true,
+    "invalid_input": true,
+    "desktop_no_horizontal_overflow": true,
+    "phone_no_horizontal_overflow": true,
+    "page_errors": []
+  },
+  "network_requests_blocked": true,
+  "runtime_system_tested": false
+}

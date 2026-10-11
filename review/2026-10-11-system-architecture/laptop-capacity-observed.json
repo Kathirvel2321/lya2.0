@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-11",
+  "processor": [
+    {
+      "Name": "12th Gen Intel(R) Core(TM) i3-1215U",
+      "NumberOfCores": 6,
+      "NumberOfLogicalProcessors": 8
+    }
+  ],
+  "memory": {
+    "TotalVisibleMemorySize": 8075000,
+    "FreePhysicalMemory": 1212184
+  },
+  "disk": {
+    "Used": 241228431360,
+    "Free": 269164171264
+  }
+}

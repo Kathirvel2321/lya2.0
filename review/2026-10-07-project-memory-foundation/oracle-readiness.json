@@ -1,0 +1,16 @@
+{
+  "configuration_present": true,
+  "pinned_ssh_ready": true,
+  "reachable": true,
+  "provider_called": false,
+  "remote_changes": false,
+  "free_quota_verified": false,
+  "status": "read_only_resource_check_passed",
+  "resources": {
+    "logical_cpus": 4,
+    "memory_total_mib": 23974,
+    "memory_available_mib": 23279,
+    "home_free_mib": 194334,
+    "inference_file_present": true
+  }
+}

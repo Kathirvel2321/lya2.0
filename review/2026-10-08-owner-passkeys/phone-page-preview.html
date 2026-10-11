@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LYA · Owner verification</title>
+<style>
+:root{color-scheme:dark;font:16px 'Segoe UI',sans-serif;background:#071017;color:#eaf3f4}
+body{margin:0;min-height:100vh;display:grid;place-items:center}
+main{max-width:600px;margin:24px;padding:40px;border:1px solid #32545e;background:#0e1c24;border-radius:24px}
+header{letter-spacing:.35em;color:#b1e7e0;font-size:13px}h1{font-weight:500;font-size:32px}
+p{color:#b8cbd1;line-height:1.6}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;border-left:2px solid #b1e7e0;padding:16px;background:#071017}
+button{font:inherit;border:1px solid #92cbc6;border-radius:12px;padding:15px 24px;background:#b1e7e0;color:#071017;cursor:pointer}
+button:focus-visible{outline:3px solid #e8c88b;outline-offset:5px}button:disabled{opacity:.6;cursor:wait}
+small{display:block;margin-top:28px;color:#92aab4}
+</style><main><header>L Y A / OWNER PROOF</header><h1 id="title">Use your phone passkey</h1>
+<p>Choose “Use another device” or the phone / tablet option in your browser, then scan its QR with your iPhone. Keep Bluetooth on and the phone nearby.</p>
+<pre id="context" hidden></pre><button id="go">Continue with phone</button>
+<p id="status" role="status" aria-live="polite">Your phone verifies you. LYA receives a signed proof.</p>
+<small>No LYA face scan, microphone capture, recording or private phone key is sent by this page. Your browser may offer other passkey devices; LYA requires user verification.</small></main>
+<script nonce="synthetic-preview">
+const token=location.hash.slice(1);history.replaceState(null,'',location.pathname);
+const go=document.querySelector('#go'),status=document.querySelector('#status');
+const dec=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+const enc=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+async function api(path,data){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-LYA-Ceremony':token},body:JSON.stringify(data)});if(!r.ok)throw Error('Verification failed or expired. Return to LYA and retry.');return r.json()}
+go.onclick=async()=>{go.disabled=true;try{
+ if(!window.isSecureContext||!navigator.credentials)throw Error('Use a current Chrome or Edge browser on this laptop.');
+ const x=await api('/options',{}),o=x.publicKey;
+ document.querySelector('#title').textContent=x.title;
+ const context=document.querySelector('#context');context.textContent=x.context;context.hidden=!x.context;
+ // Review the exact operation before opening the authenticator, never approve from load.
+ if(x.context&&!go.dataset.reviewed){go.dataset.reviewed='yes';go.textContent='Approve this exact action';status.textContent='Read the action above, then approve with your phone.';go.disabled=false;return}
+ o.challenge=dec(o.challenge);o.hints=['hybrid'];
+ if(o.user)o.user.id=dec(o.user.id);
+ for(const k of ['allowCredentials','excludeCredentials'])if(o[k])o[k]=o[k].map(c=>({...c,id:dec(c.id),transports:['hybrid']}));
+ status.textContent='Waiting for your phone. LYA cannot approve this for you.';
+ const c=x.phase==='create'?await navigator.credentials.create({publicKey:o}):await navigator.credentials.get({publicKey:o});
+ if(!c)throw Error('Phone verification cancelled.');
+ const r=c.response,b={id:c.id,rawId:enc(c.rawId),type:c.type,response:{clientDataJSON:enc(r.clientDataJSON)},clientExtensionResults:c.getClientExtensionResults()};
+ if(x.phase==='create')b.response.attestationObject=enc(r.attestationObject);
+ else Object.assign(b.response,{authenticatorData:enc(r.authenticatorData),signature:enc(r.signature),userHandle:r.userHandle?enc(r.userHandle):null});
+ const done=await api('/complete',b);
+ if(done.confirm){go.textContent='Verify the new passkey';status.textContent='Passkey created. Verify it once more before LYA saves your owner profile.';go.disabled=false}
+ else{status.textContent='Verified. Return to LYA. You can close this tab.';go.textContent='Verified'}
+ }catch(e){try{await api('/cancel',{})}catch(_){}status.textContent=e.name==='NotAllowedError'?'Cancelled or unavailable. Return to LYA and retry.':e.message;go.textContent='Return to LYA';go.disabled=true}};
+</script></html>

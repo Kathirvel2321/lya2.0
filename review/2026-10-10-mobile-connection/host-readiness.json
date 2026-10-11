@@ -1,0 +1,13 @@
+{
+  "pinned_ssh": true,
+  "python_fido2": false,
+  "venv_available": true,
+  "tailscale_installed": false,
+  "tailscale_running": false,
+  "tailscale_dns_configured": false,
+  "memory_headroom_256_mib": true,
+  "disk_headroom_1_gib": true,
+  "inference_source_exists": true,
+  "mobile_install_exists": false,
+  "sudo_available": true
+}

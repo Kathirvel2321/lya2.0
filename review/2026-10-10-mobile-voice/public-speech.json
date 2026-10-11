@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "generated_public_audio": true,
+  "owner_audio": false,
+  "provider_call": true,
+  "elapsed_seconds": 1.76,
+  "text": "I'm Herr. Take your time and tell me what you need.",
+  "service_stats": {
+    "MemoryCurrent": "17514496",
+    "TasksCurrent": "1",
+    "ActiveState": "active"
+  }
+}

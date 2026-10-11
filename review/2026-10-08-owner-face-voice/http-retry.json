@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-09",
+  "tests": 1,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "success": true,
+  "modules": [
+    "test_passkeys.PasskeyChecks.test_http_capability_origin_host_content_boundaries"
+  ],
+  "real_owner_data": false,
+  "real_sensors": false,
+  "live_provider_calls": false
+}

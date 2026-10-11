@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-11",
+  "engine": "stdlib_sqlite_plaintext_fake_only",
+  "sqlite_version": "3.53.1",
+  "corpus_records": 1000,
+  "timings": {
+    "save": {
+      "samples": 1000,
+      "p50_ms": 12.008,
+      "p95_ms": 18.591
+    },
+    "get": {
+      "samples": 60,
+      "p50_ms": 3.552,
+      "p95_ms": 4.517
+    },
+    "search": {
+      "samples": 60,
+      "p50_ms": 3.88,
+      "p95_ms": 5.286
+    },
+    "correct": {
+      "samples": 60,
+      "p50_ms": 13.192,
+      "p95_ms": 16.617
+    },
+    "retry": {
+      "samples": 60,
+      "p50_ms": 3.53,
+      "p95_ms": 5.567
+    },
+    "forget": {
+      "samples": 60,
+      "p50_ms": 13.576,
+      "p95_ms": 18.115
+    }
+  },
+  "database_bytes": 1175552,
+  "counts": {
+    "memories": 1000,
+    "memory_search": 940,
+    "outbox": 1120,
+    "requests": 1120,
+    "deletions": 60
+  },
+  "restart_checked": true,
+  "integrity_checked": true,
+  "foreign_keys_checked": true,
+  "authentication": "injected_synthetic_context_not_native_auth_cost",
+  "encrypted": false,
+  "real_phone_latency_qualified": false,
+  "provider_called": false,
+  "engine_comparison_complete": false,
+  "optional_drivers": {
+    "psycopg": false,
+    "psycopg2": false,
+    "sqlcipher3": false,
+    "pysqlcipher3": false
+  },
+  "run_context": "concurrent_isolated_checks_uncontrolled_desktop_load"
+}

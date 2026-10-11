@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-07",
+  "fixture_notes": 2000,
+  "scopes": {
+    "legacy": 1000,
+    "alpha": 500,
+    "beta": 500
+  },
+  "warm_reads": 7,
+  "retrieval_median_ms": 15.984,
+  "retrieval_max_ms": 18.134,
+  "encrypted_database_kib": 1296.1,
+  "profile_and_retrieval_disk_unchanged": true,
+  "scope": "Synthetic keyword lookup in existing encrypted store; excludes full app, owner corpus, cloud, inference and voice load."
+}

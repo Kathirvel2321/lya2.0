@@ -1,0 +1,10 @@
+{
+  "staged": true,
+  "checks": {
+    "success": true,
+    "tests": 4,
+    "provider_call": false
+  },
+  "source_sha256": "db4e60a7123b83fefc617dad2ca71cc908fb9092c945af9241477cb3b7f5cda0",
+  "live_changed": false
+}

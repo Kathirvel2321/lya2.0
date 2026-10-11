@@ -1,0 +1,7 @@
+# Isolated owner-profile worker; never install into the working voice environment.
+# Install Resemblyzer separately with --no-deps; this older release names a
+# typing backport and source-built webrtcvad despite neither being used here.
+# The CPU WebRTC wheel below supplies the same importable `webrtcvad` module.
+# Reuse CPU torch, OpenCV, numpy, scipy and sounddevice from .venv-ui.
+librosa==0.11.0
+webrtcvad-wheels==2.0.14

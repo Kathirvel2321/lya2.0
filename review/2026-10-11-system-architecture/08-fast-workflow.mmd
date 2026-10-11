@@ -1,0 +1,26 @@
+flowchart TD
+    U["Existing laptop and phone interfaces"] --> A["Private HTTPS and passkey session"]
+    A --> G["Proposed shared gate: identity, scope, deadline, turn ID"]
+    G --> R{"Route the request"}
+    R -->|"Recall"| M["Selected scoped memory and evidence"]
+    R -->|"Explicit save, correct or forget"| W["Validate revision and atomically commit"]
+    R -->|"Reasoning"| P["Privacy gate and eligible model"]
+    M --> V["Supported answer or clarify uncertainty"]
+    P --> V
+    W --> C["Return committed revision"]
+    V --> S["Qualified text and sentence-audio streaming"]
+    C --> U
+    S --> U
+    W --> O["Committed outbox: bounded background worker"]
+    O --> I["Optional search indexes"]
+    O --> N["Approved Notion or file export"]
+    W -.-> B["Scheduled consistent encrypted backup"]
+    B --> D["Independent destination and tested restore"]
+    T["Content-free stage timing and failure counters"] -.-> G
+    T -.-> S
+    classDef existing fill:#163e35,stroke:#38b997,color:#ecfff9
+    classDef planned fill:#172c4b,stroke:#6ca4ff,color:#eef5ff
+    classDef gated fill:#493819,stroke:#e8b558,color:#fff3dc
+    class U,A existing
+    class G,R,M,W,P,V,C,O,T planned
+    class S,I,N,B,D gated

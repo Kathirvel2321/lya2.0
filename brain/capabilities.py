@@ -20,6 +20,10 @@ COMMANDS = {
     "time": Capability("what time is it / date", exact=
                        ("time", "what time is it", "date", "what date is it", "day")),
     "identity": Capability("who am i", exact=("who am i",)),
+    "registration_data": Capability("show my saved data / show my registration", "memory_read", exact=
+                                    ("show my saved data", "show my registration", "show my profiles")),
+    "mobile_connect": Capability("connect my phone / disconnect my phone", "mobile_connect", exact=
+                                 ("connect my phone", "pair my phone", "disconnect my phone")),
     "status": Capability("brain status", exact=("brain status",)),
     "privacy_on": Capability("private mode", exact=
                              ("private mode", "private mode on", "go private")),
@@ -38,6 +42,8 @@ COMMANDS = {
     "note_recall": Capability("recall words / show memories / show graph", "memory_read", exact=
                               ("show memories", "show graph"), prefixes=("recall ",)),
     "note_link": Capability("link 1 depends_on 2", "memory_write", prefixes=("link ",)),
+    "project_memory": Capability("project atlas: remember short label = note / recall words", "memory_read", prefixes=("project ",)),
+    "public_archive": Capability("public archive atlas: find words / read document-id revision (requires configured remote archive)", "memory_read", prefixes=("public archive ",)),
     "task_add": Capability("task add <what to do>", "tasks", prefixes=("task add ",)),
     "task_list": Capability("tasks / tasks all", "tasks", exact=("tasks", "tasks all", "show tasks")),
     "task_done": Capability("task done <number>", "tasks", prefixes=("task done ",)),

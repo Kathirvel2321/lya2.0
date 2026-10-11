@@ -6,7 +6,9 @@ from types import SimpleNamespace
 
 
 def exchange(command, body, cancelled=None, popen=subprocess.Popen, timeout=30,
-             close_stdin=False):
+             close_stdin=False, output_limit=65536):
+    if type(output_limit) is not int or not 1<=output_limit<=12000000:
+        raise ValueError('Invalid output limit.')
     if cancelled is not None and cancelled.is_set():
         raise InterruptedError()
     process = popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -18,7 +20,7 @@ def exchange(command, body, cancelled=None, popen=subprocess.Popen, timeout=30,
             process.stdin.flush()
             if close_stdin:
                 process.stdin.close()
-            result.append(process.stdout.read(65537))
+            result.append(process.stdout.read(output_limit+1))
         except (OSError, ValueError):
             result.append(b'')
     worker = threading.Thread(target=communicate, daemon=True)

@@ -1,0 +1,20 @@
+flowchart TD
+  REQUEST["New turn"] --> AUTH["Authenticate and classify sensitivity"]
+  AUTH --> COMMAND["Exact fact or fixed action?"]
+  COMMAND -->|Yes| DIRECT["Authorized deterministic execution<br/>No model call needed"]
+  COMMAND -->|No| PRIVATE["Does reasoning require personal context?"]
+  PRIVATE -->|Yes| LOCAL["Local private inference eligible and online?"]
+  LOCAL -->|Yes| PRIVATEANSWER["Private local model<br/>Bounded context and verified evidence"]
+  LOCAL -->|No| UNAVAILABLE["Explain unavailable capability<br/>No public fallback"]
+  PRIVATE -->|No| PUBLIC["Public-only model payload"]
+  PUBLIC --> PRIMARY["Existing qualified public route"]
+  PRIMARY --> RETRY["Failure within remaining deadline?"]
+  RETRY -->|Eligible fallback exists| BACKUP["Only an independently qualified backup<br/>Matching privacy and cost rules"]
+  RETRY -->|No eligible fallback| FAIL["Report failure or return direct evidence"]
+  DIRECT --> CHECK["Validate result and provenance"]
+  PRIVATEANSWER --> CHECK
+  PRIMARY --> CHECK
+  BACKUP --> CHECK
+  CHECK --> OUTPUT["Reply under active request ID"]
+  classDef planned fill:#243c65,color:#fff,stroke:#6ca4ff
+  class REQUEST,AUTH,COMMAND,DIRECT,PRIVATE,LOCAL,PRIVATEANSWER,UNAVAILABLE,PUBLIC,PRIMARY,RETRY,BACKUP,FAIL,CHECK,OUTPUT planned

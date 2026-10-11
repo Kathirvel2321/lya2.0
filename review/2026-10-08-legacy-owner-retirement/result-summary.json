@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-08",
+  "authorisation": "Owner explicitly requested removal of old registration for entirely new setup.",
+  "implementation": "Legacy-only offline maintenance; no runtime voice/browser reset endpoint.",
+  "isolated_checks": 72,
+  "initial_batch": "71 passed; one loopback HTTP connection aborted.",
+  "http_retry": "passed",
+  "final_retirement_checks": 4,
+  "compilation": true,
+  "scoped_whitespace": true,
+  "live_retirement": "completed",
+  "encrypted_backup_verification": "passed",
+  "preserved_data_comparison": "passed",
+  "backup_permissions": "user and SYSTEM only; protected inheritance",
+  "fresh_registration_gate": "ready",
+  "real_phone_enrollment": "not performed",
+  "protected_backup_location": "Existing LYA runtime data directory / registration-archive; no copy in source or cloud.",
+  "limitations": [
+    "Old notes and vault entries remain bound to retired identities; new identity does not inherit them.",
+    "Encrypted rollback copy still contains prior authentication records; needs existing Windows encryption key.",
+    "Current open dialog needs closing/reopening; full app restart loads latest source."
+  ]
+}

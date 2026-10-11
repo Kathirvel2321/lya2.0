@@ -13,6 +13,7 @@ import datetime
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import sqlite3
@@ -22,6 +23,12 @@ import time
 from security import vault
 
 _store_lock = threading.RLock()
+
+
+def normalize_project_id(project_id):
+    if type(project_id) is not str or (project_id and not re.fullmatch(r"[a-zA-Z0-9_-]{1,64}", project_id)):
+        raise ValueError("Use a project ID of up to 64 letters, numbers, underscores or hyphens.")
+    return project_id.casefold()
 
 
 def get_data_dir() -> Path:
@@ -124,6 +131,12 @@ def store_connection(db_path: Path | None = None, *, read_only: bool = False):
 
 def _init_schema(db: sqlite3.Connection, *, use_search: bool = True):
     """Initialize person-scoped database schemas."""
+    db.execute('''CREATE TABLE IF NOT EXISTS recognition_preferences(
+        owner_id TEXT PRIMARY KEY REFERENCES people(person_id), credential_digest TEXT NOT NULL,
+        enabled INTEGER NOT NULL CHECK(enabled IN (0,1)))''')
+    db.execute('''CREATE TABLE IF NOT EXISTS visitor_grants(
+        person_id TEXT PRIMARY KEY REFERENCES people(person_id), owner_id TEXT NOT NULL REFERENCES people(person_id),
+        credential_digest TEXT NOT NULL)''')
     db.executescript("""
         CREATE TABLE IF NOT EXISTS people (
             person_id TEXT PRIMARY KEY,
@@ -156,6 +169,15 @@ def _init_schema(db: sqlite3.Connection, *, use_search: bool = True):
             code_hash TEXT NOT NULL,
             created_at TEXT NOT NULL,
             used_at TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS owner_passkeys (
+            person_id TEXT PRIMARY KEY REFERENCES people(person_id),
+            credential TEXT NOT NULL,
+            user_handle TEXT NOT NULL,
+            counter INTEGER NOT NULL,
+            backup_eligible INTEGER NOT NULL,
+            created_at TEXT NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS pending_faces (
@@ -202,7 +224,8 @@ def _init_schema(db: sqlite3.Connection, *, use_search: bool = True):
     # Additive migration: existing rows retain their previous, non-expiring policy.
     columns = {r[1] for r in db.execute("PRAGMA table_info(memories)")}
     for name, definition in (("retention", "TEXT NOT NULL DEFAULT 'permanent'"),
-                             ("expires_at", "REAL"), ("revision", "INTEGER NOT NULL DEFAULT 1")):
+                             ("expires_at", "REAL"), ("revision", "INTEGER NOT NULL DEFAULT 1"),
+                             ("project_id", "TEXT NOT NULL DEFAULT ''")):
         if name not in columns:
             db.execute(f"ALTER TABLE memories ADD COLUMN {name} {definition}")
     db.execute("""CREATE TABLE IF NOT EXISTS memory_links (
@@ -211,6 +234,7 @@ def _init_schema(db: sqlite3.Connection, *, use_search: bool = True):
         relation TEXT NOT NULL,
         PRIMARY KEY(src, dst, relation))""")
     db.execute("CREATE INDEX IF NOT EXISTS memory_owner_expiry ON memories(person_id, expires_at)")
+    db.execute("CREATE INDEX IF NOT EXISTS memory_owner_project ON memories(person_id, project_id, expires_at)")
 
     if not use_search:
         return
@@ -267,7 +291,7 @@ def create_person(display_name: str, role: str = "friend", db_path: Path | None 
 
 def get_person(person_id: str, db_path: Path | None = None) -> dict | None:
     """Fetch person record by ID."""
-    with store_connection(db_path) as db:
+    with store_connection(db_path, read_only=True) as db:
         row = db.execute(
             "SELECT person_id, display_name, role, created_at, active FROM people WHERE person_id = ?",
             (person_id,),
@@ -373,6 +397,150 @@ def register_device_admin(display_name: str, db_path: Path | None = None) -> str
 
 
 # ---------------------------------------------------------- Face Templates
+
+def get_owner_passkey(db_path: Path | None = None) -> dict | None:
+    """Read the unique active owner and public credential; legacy owners stay locked."""
+    with store_connection(db_path, read_only=True) as db:
+        owners = db.execute("SELECT person_id,display_name FROM people WHERE role='admin' AND active=1 LIMIT 2").fetchall()
+        if len(owners) > 1:
+            raise PermissionError("Multiple owner profiles need a separate trusted migration.")
+        if not owners:
+            return None
+        row = db.execute("SELECT credential,user_handle,counter,backup_eligible FROM owner_passkeys WHERE person_id=?",
+                         (owners[0][0],)).fetchone()
+        if row is None:
+            raise PermissionError("Existing owner has no passkey. Trusted migration is required; nothing was replaced.")
+        return dict(person_id=owners[0][0], display_name=owners[0][1], credential=row[0],
+                    user_handle=row[1], counter=row[2], backup_eligible=bool(row[3]))
+
+
+def register_passkey_owner(display_name, credential, user_handle, counter, backup_eligible, db_path=None):
+    """Trusted WebAuthn adapter only: commit after a fresh UV signed assertion."""
+    name = display_name.strip()
+    if not name or len(name) > 80 or any(ord(c) < 32 for c in name):
+        raise ValueError("Use a printable owner name of 1 to 80 characters.")
+    _validate_public_passkey(credential, user_handle, counter, backup_eligible)
+    person_id = 'p_' + secrets.token_urlsafe(12)
+    now = datetime.datetime.now().isoformat()
+    with store_connection(db_path) as db:
+        if db.execute("SELECT 1 FROM people WHERE role='admin' AND active=1").fetchone():
+            raise PermissionError("An owner already exists; registration cannot overwrite it.")
+        db.execute("INSERT INTO people VALUES(?,?,'admin',?,1)", (person_id, name, now))
+        db.execute("INSERT INTO owner_passkeys VALUES(?,?,?,?,?,?)",
+                   (person_id, credential, user_handle, counter, int(backup_eligible), now))
+        db.execute("INSERT INTO audit_events(time,action_type,outcome,person_id) VALUES(?,?,?,?)",
+                   (now, 'primary_admin_registered', 'phone_passkey_uv', person_id))
+    return person_id
+
+
+def _validate_public_passkey(credential, user_handle, counter, backup_eligible):
+    if (type(credential) is not str or not 1 <= len(credential) <= 12000
+            or type(user_handle) is not str or not 1 <= len(user_handle) <= 128
+            or type(counter) is not int or not 0 <= counter <= 0xffffffff
+            or type(backup_eligible) is not bool):
+        raise ValueError("Invalid public passkey record.")
+
+
+def accept_passkey_assertion(expected, counter, backup_eligible, db_path=None):
+    """CAS the verified credential/counter and recheck owner revocation atomically."""
+    _validate_public_passkey(expected['credential'], expected['user_handle'], counter, backup_eligible)
+    with store_connection(db_path) as db:
+        owners = db.execute("SELECT person_id FROM people WHERE role='admin' AND active=1 LIMIT 2").fetchall()
+        row = db.execute("SELECT credential,user_handle,counter,backup_eligible FROM owner_passkeys WHERE person_id=?",
+                         (expected['person_id'],)).fetchone()
+        if (owners != [(expected['person_id'],)] or row is None
+                or row != (expected['credential'], expected['user_handle'], expected['counter'], int(expected['backup_eligible']))
+                or backup_eligible != expected['backup_eligible']):
+            raise PermissionError("Owner or credential changed during verification.")
+        # Synced passkeys commonly use zero counters; fresh challenges still prevent replay.
+        if (row[2] or counter) and counter <= row[2]:
+            raise PermissionError("Passkey counter did not advance. Verify with a fresh credential.")
+        db.execute("UPDATE owner_passkeys SET counter=? WHERE person_id=?", (counter, expected['person_id']))
+
+
+def owner_profiles(session, db_path=None, *, expected_credential=None):
+    """Read only the signed-in owner's supported secondary recognition profiles."""
+    with store_connection(db_path, read_only=True) as db:
+        _profile_owner(db, session, expected_credential)
+        result = {}
+        from security.owner_profiles import FACE_MODEL, VOICE_MODEL, checked_vector
+        for kind, model in (('face', FACE_MODEL), ('voice', VOICE_MODEL)):
+            rows = db.execute(f'SELECT embedding_enc,model_version FROM {kind}_templates WHERE person_id=?',
+                              (session.person_id,)).fetchall()
+            if rows and (len(rows) != 3 or any(row[1] != model for row in rows)):
+                raise PermissionError('Existing recognition profiles need trusted review; nothing is replaced.')
+            result[kind] = [checked_vector(json.loads(vault.decrypt_text(row[0])), model) for row in rows]
+        if bool(result['face']) != bool(result['voice']):
+            raise PermissionError('Incomplete recognition profiles need trusted review.')
+        return result
+
+
+def owner_profile_summary(session, db_path=None):
+    """Owner-only metadata; never export credentials or recognition vectors."""
+    from security.owner_profiles import FACE_MODEL, VOICE_MODEL
+    with store_connection(db_path, read_only=True) as db:
+        _profile_owner(db, session)
+        result = {}
+        for kind, model in (('face', FACE_MODEL), ('voice', VOICE_MODEL)):
+            result[kind] = db.execute(f'SELECT COUNT(*) FROM {kind}_templates WHERE person_id=? AND model_version=?',
+                                     (session.person_id, model)).fetchone()[0]
+        result['consent'] = db.execute("SELECT MAX(time) FROM audit_events WHERE person_id=? AND action_type='owner_profile_consent' AND outcome='local_face_voice_v1'",
+                                      (session.person_id,)).fetchone()[0]
+        result['memories'] = db.execute('SELECT COUNT(*) FROM memories WHERE person_id=?', (session.person_id,)).fetchone()[0]
+        return result
+
+
+def _profile_owner(db, session, expected=None):
+    from security.policy import Session
+    import math
+    if (type(session) is not Session or session.role != 'admin' or not session.id or not session.person_id
+            or not math.isfinite(session.verified_until) or session.verified_until <= time.time()):
+        raise PermissionError('Fresh phone verification required for owner profiles.')
+    owners = db.execute("SELECT person_id FROM people WHERE role='admin' AND active=1 LIMIT 2").fetchall()
+    row = db.execute('SELECT credential FROM owner_passkeys WHERE person_id=?', (session.person_id,)).fetchone()
+    if owners != [(session.person_id,)] or row is None or (expected is not None and row[0] != expected):
+        raise PermissionError('The verified owner changed. Nothing was saved.')
+    return row[0]
+
+
+def save_owner_profiles(session, expected_credential, profiles, *, consent=False, db_path=None, startup_recognition=False):
+    """Trusted native enrollment only: atomic face+voice save after explicit review."""
+    from security.owner_profiles import FACE_MODEL, VOICE_MODEL, checked_vector, matches
+    if consent is not True or type(expected_credential) is not str or type(profiles) is not dict or set(profiles) != {'face', 'voice'}:
+        raise PermissionError('Explicit profile consent and signed owner binding required.')
+    if type(startup_recognition) is not bool:
+        raise ValueError('Explicit startup recognition consent required.')
+    checked = {}
+    for kind, model in (('face', FACE_MODEL), ('voice', VOICE_MODEL)):
+        samples = profiles[kind]
+        if type(samples) is not list or len(samples) != 3:
+            raise ValueError('Three usable samples of each profile are required.')
+        checked[kind] = [checked_vector(v, model) for v in samples]
+        if not all(matches(v, [checked[kind][0]], model) for v in checked[kind][1:]):
+            raise ValueError('Recognition samples are inconsistent. Nothing was saved.')
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    target = Path(db_path) if db_path is not None else get_data_dir()/'lya.db.enc'
+    if target.parent.is_symlink() or target.parent.is_junction():
+        raise PermissionError('Owner profile directory cannot be a link.')
+    with store_connection(db_path) as db:
+        _profile_owner(db, session, expected_credential)
+
+        if startup_recognition:
+            from storage.visitors import enable_in_transaction
+            enable_in_transaction(db,session.person_id,expected_credential)
+        for kind in checked:
+            if db.execute(f'SELECT 1 FROM {kind}_templates WHERE person_id=?', (session.person_id,)).fetchone():
+                raise PermissionError('Owner recognition profiles cannot be overwritten by registration.')
+        from tools.retire_legacy_owner import protect_directory
+        protect_directory(target.parent)
+        for kind, model in (('face', FACE_MODEL), ('voice', VOICE_MODEL)):
+            db.executemany(f'INSERT INTO {kind}_templates(person_id,embedding_enc,model_version,quality,created_at) VALUES(?,?,?,?,?)',
+                [(session.person_id, vault.encrypt_text(json.dumps(v)), model, 1.0, now) for v in checked[kind]])
+        # Quality denotes accepted capture, not a fabricated identity confidence or PAD score.
+        db.execute('INSERT INTO audit_events(time,action_type,outcome,person_id) VALUES(?,?,?,?)',
+                   (now, 'owner_profile_consent', 'local_face_voice_v1', session.person_id))
+        _profile_owner(db, session, expected_credential)
+
 
 def add_face_template(
     person_id: str,
@@ -601,14 +769,16 @@ def recall(
     db_path: Path | None = None,
     context_only: bool = False,
     now: float | None = None,
+    project_id: str = "",
 ) -> list[dict]:
-    """Recall memories strictly scoped to the specified person_id."""
+    """Recall memories scoped to a person and project; empty project is legacy memory."""
+    project_id = normalize_project_id(project_id)
     if not person_id:
         return []
     with store_connection(db_path, read_only=True) as db:
         now = time.time() if now is None else now
-        q = "SELECT id, kind, key_enc, value_enc, source, importance, hits, created_at, retention, expires_at, revision FROM memories WHERE person_id = ? AND (expires_at IS NULL OR expires_at > ?) AND EXISTS (SELECT 1 FROM people WHERE person_id = memories.person_id AND active = 1)"
-        args: list = [person_id, now]
+        q = "SELECT id, kind, key_enc, value_enc, source, importance, hits, created_at, retention, expires_at, revision FROM memories WHERE person_id = ? AND project_id = ? AND (expires_at IS NULL OR expires_at > ?) AND EXISTS (SELECT 1 FROM people WHERE person_id = memories.person_id AND active = 1)"
+        args: list = [person_id, project_id, now]
         if context_only:
             q += " AND kind IN ('fact', 'preference', 'lesson', 'decision', 'private')"
         if kind:
@@ -648,13 +818,14 @@ def recall(
         return results
 
 
-def forget(person_id: str, exact_key: str, db_path: Path | None = None) -> int:
-    """Delete memories matching exact key for the given person_id."""
+def forget(person_id: str, exact_key: str, db_path: Path | None = None, *, project_id: str = "") -> int:
+    """Delete matching labels only within the specified person and project."""
+    project_id = normalize_project_id(project_id)
     if not person_id:
         return 0
     deleted_count = 0
     with store_connection(db_path) as db:
-        rows = db.execute("SELECT id, key_enc FROM memories WHERE person_id = ?", (person_id,)).fetchall()
+        rows = db.execute("SELECT id, key_enc FROM memories WHERE person_id = ? AND project_id = ?", (person_id, project_id)).fetchall()
         for mid, k_enc in rows:
             try:
                 k = vault.decrypt_text(k_enc)

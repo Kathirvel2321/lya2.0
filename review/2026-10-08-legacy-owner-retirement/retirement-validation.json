@@ -1,0 +1,13 @@
+{
+  "tests": 4,
+  "failures": 0,
+  "errors": 0,
+  "success": true,
+  "date": "2026-10-08",
+  "modules": [
+    "test_legacy_retirement"
+  ],
+  "real_owner_store": false,
+  "sensors": false,
+  "live_provider_calls": false
+}

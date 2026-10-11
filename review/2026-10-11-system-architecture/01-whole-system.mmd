@@ -1,0 +1,102 @@
+flowchart TB
+  subgraph DEVICES["1. DEVICE EXPERIENCE - existing interfaces, shared behavior proposed"]
+    LAP["Windows native orb and panels<br/>PySide6, local device actions"]
+    PHONE["iPhone Safari / Home Screen<br/>Foreground voice, no retained LYA content"]
+    INPUT["Text or consented speech<br/>Same identity and interaction contract"]
+    LAP --> INPUT
+    PHONE --> INPUT
+  end
+  subgraph ACCESS["2. IDENTITY AND REQUEST CONTROL"]
+    GATE["Private Tailscale HTTPS<br/>Passkey and device session"]
+    AUTH["Resolve owner and project<br/>Check scope, expiry and revocation"]
+    TURN["Turn controller<br/>Request ID, deadline, cancellation"]
+    GATE --> AUTH --> TURN
+  end
+  INPUT --> GATE
+  subgraph BRAIN["3. ONE LOGICAL LYA - proposed shared orchestration"]
+    ROUTE["Intent and privacy router<br/>Direct answer / recall / task / research"]
+    CONTEXT["Context compiler<br/>Approved style + bounded evidence + current turn"]
+    DIRECT["Deterministic lane<br/>Commands, arithmetic, exact saved facts"]
+    MODEL["Reasoning lane<br/>Eligible model, token and time budget"]
+    VERIFY["Evidence and result checks<br/>Answer / clarify / abstain"]
+    OUTPUT["Response stream and Amy audio<br/>Only the active request may speak"]
+    TURN --> ROUTE
+    ROUTE --> DIRECT --> VERIFY
+    ROUTE --> CONTEXT --> MODEL --> VERIFY --> OUTPUT
+  end
+  subgraph READ["4. AUTHORIZED RETRIEVAL - proposed"]
+    FILTER["Owner, project, sensitivity<br/>Active revision and valid time"]
+    EXACT["Exact keys and keyword search"]
+    SEMANTIC["Optional qualified vector search"]
+    GRAPH["Bounded entity / relationship traversal"]
+    RANK["Merge, deduplicate, temporal rank<br/>Evidence IDs and calibrated no-answer"]
+    FILTER --> EXACT --> RANK
+    FILTER --> SEMANTIC --> RANK
+    FILTER --> GRAPH --> RANK
+  end
+  ROUTE --> FILTER
+  RANK --> CONTEXT
+  subgraph WRITE["5. SELECTIVE MEMORY WRITES - proposed"]
+    INTENT["Explicit remember / correct / forget<br/>Or owner-confirmed lesson"]
+    VALIDATE["Validate schema, provenance, placement<br/>Conflict check and requested retention"]
+    COMMIT["One database transaction<br/>Revision + keyword index + outbox"]
+    ACK["Acknowledge committed revision<br/>Never claim queued work is saved"]
+    INTENT --> VALIDATE --> COMMIT --> ACK
+  end
+  ROUTE --> INTENT
+  subgraph DATA["6. SHARED AUTHORITY - new store proposed; placement not approved"]
+    PG["PostgreSQL + pgvector candidate<br/>Facts, sources, links, jobs and deletions"]
+    FILES["Approved encrypted attachments<br/>Opaque IDs, hashes and manifests"]
+    PUBLIC["Existing public archive<br/>Separate credentials and data boundary"]
+    RAM["Bounded session context and caches<br/>No default conversation archive"]
+  end
+  FILTER --> PG
+  COMMIT --> PG
+  CONTEXT <--> RAM
+  PG --> FILES
+  EXACT --> PUBLIC
+  subgraph WORK["7. BACKGROUND WORK - outside ordinary reply latency"]
+    JOB["Durable job worker<br/>Leases, retries, idempotency"]
+    INDEX["Embedding and index refresh<br/>Versioned, rebuildable projections"]
+    LESSON["Consolidation proposals<br/>Never self-authorize facts or skills"]
+    EXPIRY["Expiry, deletion propagation<br/>Cache and object cleanup"]
+    JOB --> INDEX
+    JOB --> LESSON
+    JOB --> EXPIRY
+  end
+  COMMIT --> JOB
+  INDEX --> PG
+  LESSON --> INTENT
+  EXPIRY --> PG
+  subgraph LOCAL["8. LAPTOP PRIVATE DOMAIN - retained"]
+    VAULT["Existing encrypted vault and notes<br/>Fernet + Windows DPAPI"]
+    LOCALMODEL["Local llama.cpp when available<br/>Private content stays local"]
+    EXECUTOR["Allowlisted device executor<br/>Fresh authorization and result check"]
+    VAULT --> LOCALMODEL
+  end
+  LAP --> VAULT
+  LAP --> EXECUTOR
+  subgraph PROVIDERS["9. EXTERNAL COMPUTE - existing routes; changes require qualification"]
+    ASR["NVIDIA speech path<br/>Only consented eligible audio"]
+    PUBLICMODEL["Configured public model route<br/>No personal memory in payload"]
+  end
+  INPUT -.-> ASR
+  MODEL --> PUBLICMODEL
+  subgraph OPS["10. RECOVERY AND QUALITY - proposed integration"]
+    BACKUP["Consistent backup + recovery key<br/>Independent encrypted destination"]
+    RESTORE["Isolated restore and deletion replay<br/>Integrity and recovery-time checks"]
+    METRICS["Redacted stage timings and failures<br/>No prompt or secret logging"]
+    EVAL["Held-out memory, safety and voice tests<br/>Promote versions only after gates"]
+    BACKUP --> RESTORE --> EVAL
+    METRICS --> EVAL
+  end
+  PG --> BACKUP
+  FILES --> BACKUP
+  TURN -.-> METRICS
+  VERIFY -.-> METRICS
+  classDef retained fill:#145744,color:#fff,stroke:#38b997
+  classDef planned fill:#243c65,color:#fff,stroke:#6ca4ff
+  classDef gated fill:#714f17,color:#fff,stroke:#e8b558
+  class LAP,PHONE,VAULT,LOCALMODEL,EXECUTOR,PUBLIC,ASR,PUBLICMODEL retained
+  class INPUT,GATE,AUTH,TURN,ROUTE,CONTEXT,DIRECT,MODEL,VERIFY,OUTPUT,FILTER,EXACT,RANK,GRAPH,INTENT,VALIDATE,COMMIT,ACK,RAM,JOB,INDEX,LESSON,EXPIRY,METRICS,EVAL planned
+  class PG,FILES,SEMANTIC,BACKUP,RESTORE gated

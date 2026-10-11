@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-10",
+  "tests": 22,
+  "success": true,
+  "failures": 0,
+  "errors": 0,
+  "modules": [
+    "test_mobile_voice",
+    "test_hearing_pilots.NvidiaSpeechTests"
+  ],
+  "fake_clients": true,
+  "synthetic_audio": true,
+  "provider_call": false,
+  "syntax": true,
+  "whitespace": true,
+  "deployment_program_syntax": true
+}

@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-11",
+  "oracle": {
+    "architecture": "aarch64",
+    "logical_cpus": 4,
+    "memory_bytes": {
+      "MemTotal": 25139408896,
+      "MemAvailable": 24405745664,
+      "SwapTotal": 0,
+      "SwapFree": 0
+    },
+    "disk_bytes": {
+      "total": 206900281344,
+      "used": 3723153408,
+      "free": 203160350720
+    },
+    "mobile_service": {
+      "MemoryCurrent": "21299200",
+      "TasksCurrent": "1",
+      "MemoryMax": "268435456",
+      "TasksMax": "40",
+      "ActiveState": "active"
+    },
+    "read_only": true,
+    "billing_and_tenancy_not_inspected": true
+  }
+}

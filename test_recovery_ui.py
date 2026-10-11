@@ -132,6 +132,15 @@ class RecoveryInterfaceChecks(unittest.TestCase):
         self.assertNotIn('1 available notes', self.dialog.status.text())
         self.assertEqual(self.dialog.notes.count(), 0)
 
+    def test_project_note_survives_the_native_file_restore_journey(self):
+        store.forget(self.pid, "Synthetic project", db_path=self.db)
+        self.mid = notes.save(self.pid, "Synthetic project", "Fixture only", "permanent",
+                              project_id="atlas", db_path=self.db, now=self.now)["id"]
+        self.test_real_ui_file_to_new_key_restore_drill()
+        self.assertEqual(notes.retrieve(self.pid, db_path=self.db, now=self.now), [])
+        restored = notes.retrieve(self.pid, project_id="atlas", db_path=self.db, now=self.now)
+        self.assertEqual(restored[0]["value"], "Fixture only")
+
     def test_default_gate_denies_even_with_session(self):
         self.dialog.approve = None
         self.dialog.load_notes()

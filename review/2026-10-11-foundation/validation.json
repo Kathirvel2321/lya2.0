@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-11",
+  "phase": "foundation_server_timing",
+  "local_regressions": {
+    "fake_data": true,
+    "passed": 34,
+    "tests": 34
+  },
+  "synthetic_client_scenarios": 18,
+  "synthetic_http": {
+    "attempts": 48,
+    "expected_voice_fallbacks": 8,
+    "expected_errors_or_cancellations": 16,
+    "expected_2xx": 32
+  },
+  "linux_stage_tests": 4,
+  "deployed": true,
+  "private_https_checked": true,
+  "real_phone_latency_qualified": false,
+  "provider_called": false,
+  "billing_verified": false,
+  "dependencies_added": false
+}

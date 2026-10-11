@@ -1,0 +1,7 @@
+{
+  "tests": 2,
+  "success": true,
+  "installer_syntax": true,
+  "whitespace": true,
+  "fake_configuration_only": true
+}

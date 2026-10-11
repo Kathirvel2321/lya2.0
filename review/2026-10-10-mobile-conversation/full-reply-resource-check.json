@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "elapsed_seconds": 17.85,
+  "encoded_audio_bytes": 4696808,
+  "parent_peak_mib": 44.41,
+  "cgroup_peak_bytes": 208015360,
+  "enforced_memory_limit_mib": 256,
+  "provider_call": false,
+  "synthetic_identity": true
+}

@@ -1,0 +1,10 @@
+{
+  "deployed_source_matches": true,
+  "funnel_disabled": true,
+  "service": {
+    "NRestarts": "0",
+    "MemoryMax": "268435456",
+    "TasksMax": "40",
+    "ActiveState": "active"
+  }
+}

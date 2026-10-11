@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-07",
+  "status": "implemented_deployed_synthetic_remote_checked_native_owner_pending",
+  "focused_regression_passes": 89,
+  "final_archive_checks_after_expiry_cleanup": 8,
+  "failures_remaining": 0,
+  "compilation_passed": true,
+  "scoped_whitespace_passed": true,
+  "native_fake_owner_approval_checked": true,
+  "native_actual_owner_acceptance": false,
+  "free_vm_and_storage": "owner_confirmed_not_billing_api_audited",
+  "remote_deployment": "explicitly_owner_approved_after_automatic_review_rejections",
+  "local_identity_acl": {
+    "inheritance_removed": true,
+    "current_identity_only": true,
+    "private_key_contents_printed": false
+  },
+  "owner_private_corpus_transferred": false,
+  "owner_sensors_activated": false,
+  "provider_inference_called": false,
+  "existing_inference_service_changed": false,
+  "accepted_voice_hearing_interface_startup_changed": false,
+  "models_or_dependencies_installed": false,
+  "ongoing_full_archive_backup": false,
+  "semantic_search": false,
+  "generated_skill_activation": false
+}

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#091016"><meta name="referrer" content="no-referrer">
+<link rel="manifest" href="/manifest.webmanifest"><title>LYA</title>
+<style nonce="__NONCE__">
+:root{color-scheme:dark;font:16px "Segoe UI",system-ui,sans-serif;background:#091016;color:#d8e2e8;--accent:#9cdfe8}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#15232e 0, #091016 70%)}
+main{width:min(100%,560px);min-width:0;display:flex;flex-direction:column;gap:18px}.panel{position:relative;max-height:calc(100dvh - 212px);overflow:auto;scrollbar-width:thin;padding:22px 24px 24px;border:1px solid #526571;border-radius:24px;background:linear-gradient(135deg,#1b2935f5,#0d1620fa);box-shadow:0 0 0 4px #a2c9d00a,0 0 0 8px #a2c9d005,0 18px 64px #0005}
+.panel:before{content:"";position:absolute;top:-1px;left:32px;width:116px;height:1px;background:var(--accent)}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{font-size:14px;letter-spacing:.34em;margin:0;font-weight:600;color:#b7e7eb}.heading{font-size:23px;font-weight:600;color:#f1f4f3;margin:0 0 20px}p{line-height:1.6;margin:0}.muted{font-size:13px;color:#a4b8c3}
+.presence{display:flex;flex-direction:column;align-items:center;gap:8px}.sphere{width:104px;height:104px;color:#68e5f2;display:block;filter:drop-shadow(0 0 12px #68e5f21a)}.sphere .rim{fill:#091118;stroke:currentColor;stroke-opacity:.4}.sphere .cuts{fill:none;stroke:currentColor;stroke-opacity:.7}
+.sphere .dots{fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-dasharray:.1 6;opacity:.55}.sphere .thought,.sphere .wave{display:none}.sphere .core{fill:none;stroke:currentColor;stroke-opacity:.75}
+body[data-state=listening] .sphere .diamond{opacity:1;animation:listen 2s ease-in-out infinite}body[data-state=thinking] .sphere{color:#b69bff}body[data-state=speaking] .sphere{color:#78e1bf}
+body[data-state=thinking] .sphere .diamond,body[data-state=thinking] .sphere .core,body[data-state=speaking] .sphere .diamond,body[data-state=speaking] .sphere .core{display:none}
+body[data-state=thinking] .sphere .thought,body[data-state=speaking] .sphere .wave{display:block;opacity:1;animation:flow 3s linear infinite}
+@keyframes listen{50%{opacity:.5}}@keyframes flow{to{stroke-dashoffset:-24}}
+@media(prefers-reduced-motion:reduce){body .sphere *{animation:none!important}}
+button,textarea{font:inherit;color:inherit;border:1px solid #bed9e32e;background:#96cddc0a;border-radius:10px}
+button{min-height:48px;padding:12px 16px;cursor:pointer}button:hover:not(:disabled){background:#78d7e623;border-color:var(--accent)}button:active:not(:disabled){background:#5abeD241}button:disabled{opacity:.45;cursor:default}button:focus-visible,textarea:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#sign{border-color:#96d7e38c;background:#1c3542}label{line-height:1.6}
+#status{text-align:center;min-height:26px;color:#afc5d4;font-size:13px;max-width:100%;overflow-wrap:anywhere}#answer{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;min-height:80px;padding-top:4px}#question{color:#afc5d4;white-space:pre-wrap;overflow-wrap:anywhere;border-top:1px solid #c8e1f018;padding-top:16px}
+#answer:empty,#question:empty{display:none}
+#auth{text-align:left;display:grid;gap:20px}#auth[hidden],#chat[hidden],button[hidden]{display:none}#chat{display:flex;flex-direction:column;gap:16px}form{display:grid;gap:12px;padding-top:12px}#lock{font-size:12px;padding:8px 12px;min-height:44px}details{border-top:1px solid #c8e1f018;padding-top:10px}summary{color:#b7e7eb;cursor:pointer;min-height:44px;padding:10px 0;font-size:14px}
+@media(max-width:380px){.panel{padding:18px}.controls button{flex:1;padding:12px}.heading{font-size:21px}}
+@media(max-height:650px){body{align-items:flex-start}.sphere{width:80px;height:80px}.panel{max-height:calc(100dvh - 188px)}}
+</style></head><body data-state="locked"><main>
+<div class="panel">
+<header><h1>LYA</h1><button id="lock" hidden>Lock</button></header>
+<h2 class="heading">Right here with you.</h2>
+<section id="auth"><p>One LYA. Your devices.</p><button id="sign">Sign in with passkey</button><p class="muted">First visit? Say “connect my phone” in the laptop LYA and approve pairing there.</p></section>
+<section id="chat" hidden><p class="muted">Temporary LYA conversation. Private memory, files and device actions are not connected to this phone route.</p>
+<p id="hearing" class="muted">LYA will listen automatically after sign-in and answer after you pause.</p>
+<p id="question"></p><div id="answer" role="log" aria-live="polite"></div>
+<p id="identity" class="muted">Public voice session.</p><button id="owner" type="button">Verify owner</button></section>
+</div>
+<div class="presence">
+<svg class="sphere" viewBox="0 0 160 160" aria-hidden="true">
+<circle class="rim" cx="80" cy="80" r="69"/>
+<path class="cuts" d="M80 14v5M80 141v5M14 80h5M141 80h5"/>
+<g class="dots diamond"><path d="M80 37 118 80 80 123 42 80Z"/><path d="M80 47 109 80 80 113 51 80Z"/><path d="M80 57 100 80 80 103 60 80Z"/></g>
+<path class="core" d="m80 74 6 6-6 6-6-6Z"/>
+<g class="dots thought"><path d="M41 80C41 40 119 120 119 80S41 120 41 80"/><path d="M44 75C44 39 116 111 116 75S44 111 44 75"/><path d="M44 85C44 49 116 121 116 85S44 121 44 85"/></g>
+<g class="dots wave"><path d="M38 70C52 70 53 52 66 61S88 88 101 70 115 70 122 70"/><path d="M38 80C52 80 53 62 66 71S88 98 101 80 115 80 122 80"/><path d="M38 90C52 90 53 72 66 81S88 108 101 90 115 90 122 90"/></g>
+</svg>
+<p id="status" role="status" aria-live="polite">Your private connection.</p>
+</div>
+</main><script nonce="__NONCE__">
+'use strict';
+let invite=location.hash.slice(1);history.replaceState(null,'',location.pathname);
+const $=id=>document.getElementById(id),status=$('status');let pending=null,request=null,generation=0,sessionTimer=null,ownerTimer=null;
+let available=false,stream=null,recorder=null,audioContext=null,recordTimer=null,requestId=null;
+let conversation=false,vadTimer=null,playerContext=null,playerSource=null,lastAudio=null;
+const dec=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+const enc=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+async function api(path,data,signal){const r=await fetch(path,{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),signal});const body=await r.json();if(!r.ok)throw Error(body.error||'Connection unavailable.');return body}
+function silence(){window.speechSynthesis?.cancel();if(playerSource){playerSource.onended=null;try{playerSource.stop()}catch(_){}playerSource.disconnect();playerSource=null}}
+function stopCapture(){clearInterval(vadTimer);vadTimer=null;clearTimeout(recordTimer);stream?.getTracks().forEach(t=>t.stop());stream=null;if(recorder?.state==='recording')recorder.stop();recorder=null;audioContext?.close().catch(()=>{});audioContext=null}
+function controls(busy=false){$('owner').disabled=busy||conversation}
+function locked(){conversation=false;generation++;request?.abort();request=null;requestId=null;stopCapture();silence();playerContext?.close().catch(()=>{});playerContext=null;lastAudio=null;clearTimeout(sessionTimer);clearTimeout(ownerTimer);pending=null;available=false;$('auth').hidden=false;$('chat').hidden=true;$('lock').hidden=true;$('question').textContent='';$('answer').textContent='';clearTimeout(recordTimer);document.body.dataset.state='locked';$('sign').disabled=false;$('sign').textContent=invite?'Pair with phone passkey':'Sign in with passkey';controls()}
+function connected(s){$('auth').hidden=true;$('chat').hidden=false;$('lock').hidden=false;available=s.voice_available&&!!navigator.mediaDevices?.getUserMedia&&!!window.MediaRecorder&&!!window.AudioContext&&!!window.OfflineAudioContext;
+ $('hearing').textContent=available?'Listening starts automatically. Speak naturally and pause for your reply.':'Phone hearing is not ready.';
+ $('identity').textContent=s.owner_verified?'Owner verified for this connection. Confidential actions still require their own approval and are not connected here.':'Public chat session. Owner verification is available below.';
+ clearTimeout(sessionTimer);sessionTimer=setTimeout(()=>{locked();status.textContent='Session expired. Sign in again.'},s.expires_in*1000);
+ clearTimeout(ownerTimer);if(s.owner_verified)ownerTimer=setTimeout(()=>{$('identity').textContent='Owner verification expired. Public chat session.'},s.owner_expires_in*1000);
+ document.body.dataset.state='ready';status.textContent='Connected. I’m here.';controls();if(available)beginConversation()}
+async function restore(){if(invite)return;const turn=generation;try{const s=await api('/session',{});if(turn===generation)connected(s)}catch(_){if(turn===generation){locked();status.textContent='Sign in to your private connection.'}}}
+locked();restore();
+async function authenticate(mode){if(request||recorder)return;const turn=++generation;$('sign').disabled=true;$('owner').disabled=true;silence();try{
+ playerContext?.close().catch(()=>{});playerContext=null;
+ if(!window.isSecureContext||!navigator.credentials)throw Error('Use the configured private HTTPS address in a supported browser.');
+ const x=pending||await api('/auth/begin',mode==='owner'?{mode:'owner'}:invite?{mode:'pair',token:invite}:{mode:'login'});pending=null;
+ if(turn!==generation)return;const o=x.publicKey;o.challenge=dec(o.challenge);if(o.user)o.user.id=dec(o.user.id);
+ for(const k of ['allowCredentials','excludeCredentials'])if(o[k])o[k]=o[k].map(c=>({...c,id:dec(c.id)}));
+ if(invite)o.hints=['hybrid'];status.textContent='Waiting for your passkey.';
+ const c=x.phase==='create'?await navigator.credentials.create({publicKey:o}):await navigator.credentials.get({publicKey:o});
+ if(turn!==generation||!c)return;const r=c.response,b={id:c.id,rawId:enc(c.rawId),type:c.type,response:{clientDataJSON:enc(r.clientDataJSON)},clientExtensionResults:c.getClientExtensionResults()};
+ if(x.phase==='create')b.response.attestationObject=enc(r.attestationObject);else Object.assign(b.response,{authenticatorData:enc(r.authenticatorData),signature:enc(r.signature),userHandle:r.userHandle?enc(r.userHandle):null});
+ const done=await api('/auth/complete',{ticket:x.ticket,response:b});if(turn!==generation)return;
+ if(done.confirm){pending=done;$('sign').textContent='Verify the new passkey';status.textContent='Verify once more to finish pairing.';$('sign').disabled=false;return}
+ invite='';const s=await api('/session',{});if(turn===generation)connected(s);
+ }catch(e){pending=null;status.textContent=e.name==='NotAllowedError'?'Passkey cancelled. Try again.':e.message;$('sign').disabled=false}finally{if(turn===generation)$('owner').disabled=false}}
+$('sign').onclick=()=>authenticate('login');$('owner').onclick=()=>authenticate('owner');
+function ownerPhrase(text){return /^(?:(?:hey\s+)?(?:lya|liya|laya)[,\s]+)?(?:owner mode|verify owner)[.!?]*$/i.test(text.trim())}
+function ownerRequest(){conversation=false;controls();status.textContent='Use Verify owner to ask your iPhone for passkey verification.';$('owner').focus()}
+function speak(text){if(!window.speechSynthesis)return;silence();const u=new SpeechSynthesisUtterance(text);u.lang='en-IN';u.voice=speechSynthesis.getVoices().find(v=>v.lang==='en-IN')||speechSynthesis.getVoices().find(v=>v.lang.startsWith('en'))||null;
+ u.onstart=()=>{document.body.dataset.state='speaking'};u.onend=u.onerror=()=>{if(!request){document.body.dataset.state='ready'}};speechSynthesis.speak(u)}
+async function ensurePlayer(){if(!playerContext)playerContext=new AudioContext();await playerContext.resume();if(playerContext.state==='suspended')throw Error('Tap Read reply to enable audio.')}
+async function playReply(audio,turn){if(!playerContext||playerContext.state!=='running')throw Error('LYA voice is unavailable in this browser.');const decoded=await playerContext.decodeAudioData(dec(audio).buffer);if(turn!==generation)return;silence();const source=playerContext.createBufferSource();playerSource=source;source.buffer=decoded;source.connect(playerContext.destination);source.onended=()=>{if(playerSource!==source)return;playerSource=null;source.disconnect();if(turn===generation){document.body.dataset.state='ready';controls();if(conversation)startCapture()}};source.start();document.body.dataset.state='speaking'}
+async function submitQuestion(text){if(request||!text)return;
+ if(ownerPhrase(text)){ownerRequest();return}silence();
+ const turn=++generation,id=crypto.randomUUID().replaceAll('-','');requestId=id;request=new AbortController();controls(true);$('question').textContent=text;$('answer').textContent='';status.textContent='Thinking…';document.body.dataset.state='thinking';
+ try{const body=await api('/chat',{id,text,spoken:true},request.signal);if(turn===generation){$('answer').textContent=body.text;lastAudio=body.audio||null;status.textContent='Ready.';if(lastAudio)await playReply(lastAudio,turn);else{conversation=false;status.textContent='LYA voice is unavailable for this reply.'}}}
+ catch(e){if(turn===generation){conversation=false;status.textContent=e.name==='AbortError'?'Stopped.':e.message}}
+ finally{if(turn===generation){request=null;requestId=null;controls();if(!playerSource&&!window.speechSynthesis?.speaking)document.body.dataset.state='ready'}}}
+async function stop(){const id=requestId;conversation=false;generation++;request?.abort();request=null;requestId=null;stopCapture();silence();playerContext?.close().catch(()=>{});playerContext=null;controls();document.body.dataset.state='ready';status.textContent='LYA paused.';if(id)try{await api('/stop',{id})}catch(_){status.textContent='LYA paused locally; the reply was discarded.'}}
+function wav(samples){const buffer=new ArrayBuffer(44+samples.length*2),v=new DataView(buffer),word=(offset,s)=>{for(let i=0;i<s.length;i++)v.setUint8(offset+i,s.charCodeAt(i))};word(0,'RIFF');v.setUint32(4,36+samples.length*2,true);word(8,'WAVE');word(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,16000,true);v.setUint32(28,32000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);word(36,'data');v.setUint32(40,samples.length*2,true);for(let i=0;i<samples.length;i++){const x=Math.max(-1,Math.min(1,samples[i]));v.setInt16(44+i*2,x<0?x*32768:x*32767,true)}return buffer}
+// shortcut: acoustic pauses cannot prove sentence meaning or isolate another speaker.
+class TurnEnd {constructor(now){this.start=now;this.last=now;this.noise=.001;this.speech=0;this.gap=0;this.active=false;this.previous=now}
+ feed(level,now){const dt=Math.min(200,Math.max(0,now-this.previous));this.previous=now;const gate=Math.max(.003,this.noise*2.5);
+  if(level>gate){if(this.active&&now-this.last<1600)this.gap=Math.max(this.gap,now-this.last);this.active=true;this.speech+=dt;this.last=now}
+  else this.noise=Math.max(.0002,this.noise*.97+level*.03);
+  if(!this.active&&now-this.start>20000)return 'idle';
+  const pause=Math.max(this.speech>8000?2800:1800,Math.min(3600,this.gap*1.6+400));
+  return this.speech>=240&&now-this.last>=pause?'end':null}}
+async function beginConversation(){if(request||recorder||conversation||!available||document.hidden)return;const turn=generation;try{try{await ensurePlayer()}catch(_){/* Browser may require the first reply to use its own voice gesture. */}if(turn!==generation||document.hidden)return;conversation=true;await startCapture()}catch(e){conversation=false;controls();status.textContent=e.message}}
+async function startCapture(){if(request||recorder||!available||document.hidden)return;
+ const auto=conversation,limit=auto?120:45;
+ const turn=++generation;silence();controls(true);status.textContent='Opening microphone…';let context=null;
+ try{context=new AudioContext();audioContext=context;await context.resume();const mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false});if(turn!==generation){mic.getTracks().forEach(t=>t.stop());return}stream=mic;
+ const mime=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(m=>MediaRecorder.isTypeSupported(m));const rec=new MediaRecorder(mic,mime?{mimeType:mime}:{});recorder=rec;let chunks=[],size=0;
+ rec.ondataavailable=e=>{if(turn!==generation)return;size+=e.data.size;if(size>6000000){stop();status.textContent='Recording too large. Try a shorter question.';chunks=[];return}chunks.push(e.data)};
+ rec.onerror=()=>{if(turn===generation){stop();status.textContent='Microphone failed. Please try again.'}};
+ rec.onstop=async()=>{clearTimeout(recordTimer);clearInterval(vadTimer);mic.getTracks().forEach(t=>t.stop());if(turn!==generation){chunks=[];return}stream=null;recorder=null;controls(true);status.textContent='Transcribing…';document.body.dataset.state='thinking';let recognized=null;try{
+   const blob=new Blob(chunks,{type:rec.mimeType});chunks=[];const decoded=await context.decodeAudioData(await blob.arrayBuffer());if(turn!==generation)return;
+   if(decoded.duration<.1||decoded.duration>limit+.5)throw Error('Question exceeds the recording limit.');const frames=Math.min(limit*16000,Math.floor(decoded.duration*16000));const offline=new OfflineAudioContext(1,frames,16000),source=offline.createBufferSource();source.buffer=decoded;source.connect(offline.destination);source.start();const pcm=await offline.startRendering();if(turn!==generation)return;
+   const id=crypto.randomUUID().replaceAll('-','');requestId=id;request=new AbortController();const r=await fetch('/transcribe',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'audio/wav','X-LYA-Request':id},body:wav(pcm.getChannelData(0)),signal:request.signal});const body=await r.json();if(turn!==generation)return;if(!r.ok)throw Error(body.error||'Phone hearing unavailable.');recognized=body.text;status.textContent='I heard you. Thinking…';if(ownerPhrase(body.text)){ownerRequest();recognized=null}
+  }catch(e){if(turn===generation){conversation=false;status.textContent=e.name==='AbortError'?'Stopped.':e.message}}finally{context.close().catch(()=>{});if(turn===generation){audioContext=null;request=null;requestId=null;controls();document.body.dataset.state='ready';if(auto&&conversation&&recognized){if(/^(stop|cancel|stop listening)[.!?]*$/i.test(recognized.trim()))stop();else submitQuestion(recognized)}}}};
+ rec.start(250);document.body.dataset.state='listening';status.textContent='Listening. Take your time.';
+ if(auto){const input=context.createMediaStreamSource(mic),analyser=context.createAnalyser();analyser.fftSize=2048;input.connect(analyser);const values=new Float32Array(analyser.fftSize),end=new TurnEnd(performance.now());vadTimer=setInterval(()=>{if(turn!==generation)return;analyser.getFloatTimeDomainData(values);let sum=0;for(const v of values)sum+=v*v;const result=end.feed(Math.sqrt(sum/values.length),performance.now());if(result==='idle'){stop();status.textContent='No speech heard. Conversation paused.'}else if(result==='end'){clearInterval(vadTimer);rec.stop();mic.getTracks().forEach(t=>t.stop());recorder=null;stream=null}},80)}
+ recordTimer=setTimeout(()=>{if(turn===generation&&rec.state==='recording'){if(auto){stop();status.textContent='Two-minute safety limit reached. No unfinished question sent.'}else{rec.stop();mic.getTracks().forEach(t=>t.stop());recorder=null;stream=null}}},limit*1000);
+ }catch(e){if(turn===generation){conversation=false;stopCapture();controls();status.textContent=e.name==='NotAllowedError'?'Allow microphone access in Safari to let LYA listen.':e.message}}}
+$('lock').onclick=async()=>{const done=api('/logout',{});locked();try{await done}finally{status.textContent='Locked.'}};
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(conversation||request||stream||audioContext||playerContext)stop();else silence();lastAudio=null;$('answer').textContent='';$('question').textContent=''}else if(!pending&&!request&&$('auth').hidden)restore()});
+window.addEventListener('pagehide',()=>{conversation=false;generation++;request?.abort();request=null;requestId=null;stopCapture();silence();playerContext?.close().catch(()=>{});playerContext=null});
+</script></body></html>

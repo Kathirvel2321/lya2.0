@@ -1,0 +1,18 @@
+flowchart LR
+  CHAT["Ordinary chat<br/>Temporary session RAM"] --> REQUEST["Explicit save request<br/>or confirmed proposal"]
+  REQUEST --> POLICY["Authenticate and classify<br/>Scope, source, location, retention"]
+  POLICY --> CONFLICT["Check expected revision<br/>Resolve contradictory values"]
+  CONFLICT --> TX["Atomic transaction<br/>Fact + source + revision + outbox"]
+  TX --> ACK["Return committed revision<br/>Retry key returns same result"]
+  TX --> INDEX["Async embedding and projection<br/>Retry safely; keyword recall works first"]
+  INDEX --> RECALL["Authorized recall<br/>Filter deleted and expired data"]
+  ACK --> RECALL
+  RECALL --> CORRECT["Owner correction<br/>New active revision"]
+  CORRECT --> CONFLICT
+  RECALL --> FORGET["Forget or expiry<br/>Tombstone and revoke visibility"]
+  FORGET --> PURGE["Remove content and derived copies<br/>Bounded backup expiry"]
+  TX --> SNAP["Encrypted independent backup<br/>Consistent content manifest"]
+  SNAP --> RESTORE["Restore in isolation<br/>Latest tombstones and expiry first"]
+  PURGE -.-> RESTORE
+  classDef planned fill:#243c65,color:#fff,stroke:#6ca4ff
+  class CHAT,REQUEST,POLICY,CONFLICT,TX,ACK,INDEX,RECALL,CORRECT,FORGET,PURGE,SNAP,RESTORE planned

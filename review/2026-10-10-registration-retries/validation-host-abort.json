@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-10",
+  "tests": 169,
+  "failures": 0,
+  "errors": 1,
+  "skipped": 0,
+  "success": false,
+  "modules": [
+    "test_visitors",
+    "test_owner_profiles",
+    "test_passkeys",
+    "test_approval",
+    "desktop.check_experience",
+    "test_legacy_retirement",
+    "test_brain_workflow"
+  ],
+  "real_owner_data": false,
+  "real_sensors": false,
+  "real_phone": false,
+  "real_app_launch": false,
+  "provider_inference": false,
+  "cloud_upload": false
+}

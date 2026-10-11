@@ -65,7 +65,7 @@ class Answer:
 
 class Brain:
     def __init__(self, session=None, *, approve=None, client=None, local_client=None,
-                 researcher=None, db_path=None, clock=time.time):
+                 researcher=None, db_path=None, clock=time.time, archive=None):
         self.session = session or Session(id="guest")
         from security.approval import ApprovalGate
         self.approve = approve if approve is not None else ApprovalGate(wall_clock=clock)
@@ -75,11 +75,14 @@ class Brain:
         self.client = client
         self.local_client = local_client or (client if isinstance(client, LocalModel) else LocalModel())
         self.researcher = researcher
+        self.archive = archive
         self.db_path, self.clock = db_path, clock
         self.session_notes = {}
         self.history = []
         self.last_activity = clock()
         self.private_mode = False
+        from security.visitors import Visitors
+        self.visitors = Visitors(clock)
 
     def clear_temporary(self):
         self.session_notes.clear()
@@ -133,6 +136,8 @@ class Brain:
 
     def respond(self, text, cancelled=None):
         text = text.strip()
+        if self.session.person_id and self.session.verified_until <= self.clock():
+            self.bind_session(Session(id='guest'))
         request_session = self.session
         stages = ["identify", "classify"]
         def check():
@@ -145,11 +150,15 @@ class Brain:
                 raise InterruptedError("Cancelled.")
         def result(body, route="local", evidence=None):
             check()
+            if not self._identified() and route=='blocked':
+                self.visitors.record('blocked')
             return Answer(body, route, evidence or [], stages + ["answer"])
         try:
             check()
             if not text or len(text) > 4000:
                 return result("Use a message between 1 and 4,000 characters.")
+            if not self._identified():
+                self.visitors.record('requests')
             now = self.clock()
             if now - self.last_activity >= 900 or not self._identified():
                 self.clear_temporary()
@@ -157,6 +166,78 @@ class Brain:
             low = text.casefold()
             if matches("help", low):
                 return result(self.capability_help())
+            mobile_command=low.rstrip('.!?')
+            if matches('mobile_connect',mobile_command):
+                self._authorize('mobile_connect',text)
+                check()
+                from cloud.mobile_client import control
+                operation='revoke' if mobile_command=='disconnect my phone' else 'invite'
+                connection=control(operation,self.session,self.db_path,cancelled)
+                check()
+                if operation=='revoke':return result('Mobile access is revoked. Your laptop owner registration is unchanged.')
+                return result('Phone connection is opening in your browser. Use your phone passkey and verify it once more to finish pairing. '
+                    'Then open '+connection['origin']+' on your connected iPhone and add it to the Home Screen. '
+                    'This first connection supports public text conversation; private files and device tools stay locked.',
+                    'mobile-pairing',[{'url':connection['url']}])
+            if matches('registration_data', low):
+                self._authorize('memory_read', text)
+                check()
+                from storage import store
+                from pathlib import Path
+                summary = store.owner_profile_summary(self.session, self.db_path)
+                location = Path(self.db_path) if self.db_path is not None else store.get_data_dir()/'lya.db.enc'
+                return result(f"{self.session.person}, your encrypted data is stored at:\n{location}\n\n"
+                    f"Face profiles: {summary['face']} of 3. Voice profiles: {summary['voice']} of 3.\n"
+                    f"Profile consent saved: {'yes' if summary['consent'] else 'no'}. Saved notes: {summary['memories']}.\n"
+                    "Registration stores recognition features, not photos or voice recordings. "
+                    "Say show memories to review your notes with phone approval. Keep the encrypted database and its protected key together; neither is a browsable photo album.")
+            if low in ('enable startup recognition','disable startup recognition'):
+                self._authorize('memory_write',text)
+                check()
+                from storage import visitors
+                visitors.set_enabled(self.session,low.startswith('enable'),self.db_path)
+                self.visitors.end_presence()
+                return result('Startup recognition '+('enabled after consent; one local check on the next launch.'
+                    if low.startswith('enable') else 'disabled. No camera was opened.'))
+            registration = re.fullmatch(r'register (?:visitor|friend|family member) (.{1,80})',text,re.I)
+            removal = re.fullmatch(r'remove (?:visitor|friend|family member) (.{1,80})',text,re.I)
+            if registration:
+                material=self.visitors.material()
+                name=registration.group(1).strip()
+                self._authorize('memory_write',f'Register visitor {name}; observation {material["token"]}; limited apps only')
+                check()
+                if self.visitors.material()['token']!=material['token']:
+                    raise PermissionError('The observed visitor changed. Nothing was registered.')
+                from storage import visitors
+                visitors.register(self.session,name,material['vector'],self.db_path)
+                self.visitors.pending=None
+                return result('Registered '+name+' for limited everyday tools. No new camera check, owner authority or private memory access was granted.')
+            if removal:
+                self._authorize('memory_forget',text)
+                check()
+                from storage import visitors
+                visitors.remove(self.session,removal.group(1).strip(),self.db_path)
+                self.visitors.end_presence()
+                return result('Visitor access and face profile removed. Existing encrypted backups, if any, are separate.')
+            if low in ('open calculator','open youtube'):
+                if self._identified():
+                    self._authorize('open_app',text)
+                else:
+                    from storage import visitors
+                    familiar=self.visitors.current()
+                    permitted=familiar is not None and any(p['person_id']==familiar['person_id'] and p['role']==familiar['role']
+                        for p in visitors.recognition_people(self.db_path))
+                    if not permitted:
+                        return result('I can help with questions. This device action needs a registered person or owner sign-in.','blocked')
+                check()
+                from skills.limited_apps import launch
+                try:
+                    reply=launch(low.removeprefix('open '))
+                except (OSError,ValueError):
+                    return result('That limited app could not be opened. No alternate browser or command was tried.','blocked')
+                if not self._identified():
+                    self.visitors.record('limited_apps')
+                return result(reply,'limited-app')
             volume_direction = volume_action(low)
             if volume_direction:
                 stages.append("authorize")
@@ -245,6 +326,55 @@ class Brain:
                 return result("I can't reveal secrets through chat. Use a protected vault action with fresh authorization.", "blocked")
             if low in {"activate skill", "confirm skill"}:
                 return result("No skill was activated. Skill review and activation are not connected in this desktop flow.", "blocked")
+            if low.startswith('public archive '):
+                if self.private_mode:
+                    return result('Public archive uses external storage. Turn off private mode before an explicit public request.', 'blocked')
+                scoped = re.fullmatch(r'public archive ([a-zA-Z0-9_-]{1,64}):\s*(find|read|save|delete)\s+(.+)',
+                                      text, re.IGNORECASE | re.DOTALL)
+                if not scoped:
+                    return result('Use public archive atlas: find words / read document-id revision / save document-id previous-revision permanent-or-ISO-expiry | title | source | public text / delete document-id revision.', 'blocked')
+                project, operation, body = scoped.groups()
+                project, operation = project.casefold(), operation.casefold()
+                action = 'memory_write' if operation == 'save' else 'memory_forget' if operation == 'delete' else 'memory_read'
+                pid = self._authorize(action, text)
+                check()
+                from cloud.public_archive import configured_archive, ArchiveUnavailable
+                import hashlib
+                owner = hashlib.sha256(pid.encode()).hexdigest()
+                try:
+                    archive = self.archive if self.archive is not None else configured_archive()
+                    if operation == 'find':
+                        hits = archive.search(owner, project, body.strip(), cancelled=cancelled)['records']
+                        return result('\n\n'.join(f"{hit['id']} · revision {hit['revision']} · {hit['title']}\nSource: {hit['source']}\n{hit['text']}" for hit in hits)
+                                      or 'No matching public archive documents.', 'public-archive', hits)
+                    fields = body.split('|', 3) if operation == 'save' else [body]
+                    identity = fields[0].strip().split()
+                    if len(identity) != (3 if operation == 'save' else 2) or not identity[1].isascii() or not identity[1].isdecimal():
+                        raise ValueError('Use a document ID and exact revision (0 for a new save); saves also require permanent or an ISO expiry with timezone.')
+                    doc_id, version = identity[0], int(identity[1])
+                    if operation == 'save':
+                        if len(fields) != 4:
+                            raise ValueError('Save requires document-id previous-revision permanent-or-ISO-expiry | title | source | public text.')
+                        expiry = None
+                        if identity[2].casefold() != 'permanent':
+                            deadline = datetime.fromisoformat(identity[2])
+                            if deadline.tzinfo is None:
+                                raise ValueError('Include a timezone in the public document expiry.')
+                            expiry = deadline.timestamp()
+                        item = dict(owner=owner, project=project, id=doc_id, revision=version+1,
+                                    title=fields[1].strip(), source=fields[2].strip(), text=fields[3].strip(),
+                                    expires_at=expiry, sensitivity='public')
+                        archive.put(item, expected_revision=version, reviewed_public=True, cancelled=cancelled)
+                        return result(f'Public document {doc_id}, revision {version+1}, saved with explicit retention. Source material is unverified.', 'public-archive')
+                    if operation == 'delete':
+                        archive.delete(owner, project, doc_id, expected_revision=version, cancelled=cancelled)
+                        return result(f'Public document {doc_id} deleted; revision is now {version+1}. Existing backups may still contain it.', 'public-archive')
+                    item = archive.get(owner, project, doc_id, version, cancelled=cancelled)['record']
+                    if item is None:
+                        return result('That public document revision is missing, changed, deleted or expired.', 'public-archive')
+                    return result(f"Public source material (unverified): {item['title']}\nSource: {item['source']}\n{item['text']}", 'public-archive', [item])
+                except ArchiveUnavailable as exc:
+                    return result(str(exc), 'blocked')
             if low.startswith("remind me "):
                 return result("Reminders are not connected in this desktop flow. Nothing was saved.", "blocked")
             if (re.match(r'^(?:open|launch|run|install|delete|send|upload|post)\b', low)
@@ -270,10 +400,19 @@ class Brain:
                 return result(f"{row['value']} (saved as {row['key']}; user-provided, revision {row['revision']}).",
                               "saved-fact", [row])
 
-            from_memory = (matches("note_recall", low)
-                           or bool(re.search(r'\b(show|list|read|reveal)\b.*\b(saved )?(memory|memories)\b', low)))
-            write = any(matches(name, low) for name in ("note_save", "note_correct", "note_link"))
-            forget = matches("note_forget", low)
+            project_id, memory_text, memory_low = "", text, low
+            if re.match(r"project\s+\S+:", text, re.IGNORECASE):
+                scoped = re.fullmatch(r"project ([a-zA-Z0-9_-]{1,64}):\s*(.+)", text, re.IGNORECASE | re.DOTALL)
+                if not scoped:
+                    return result("Use project atlas: remember short label = note, recall words, correct label = note, forget label, link IDs or show graph.", "blocked")
+                project_id, memory_text = scoped.groups()
+                project_id, memory_low = project_id.casefold(), memory_text.casefold()
+                if not any(matches(name, memory_low) for name in ("note_save", "note_correct", "note_forget", "note_recall", "note_link")):
+                    return result("Project commands support saved memory only. No other action was run.", "blocked")
+            from_memory = (matches("note_recall", memory_low)
+                           or bool(re.search(r'\b(show|list|read|reveal)\b.*\b(saved )?(memory|memories)\b', memory_low)))
+            write = any(matches(name, memory_low) for name in ("note_save", "note_correct", "note_link"))
+            forget = matches("note_forget", memory_low)
             if write or forget or from_memory:
                 action = "memory_forget" if forget else "memory_write" if write else "memory_read"
                 stages.append("authorize")
@@ -282,14 +421,16 @@ class Brain:
                 now = self.clock()
                 from brain import notes
                 from storage import store
-                if matches("note_save", low):
-                    head, sep, value = text[9:].partition("=")
+                if matches("note_save", memory_low):
+                    head, sep, value = memory_text[9:].partition("=")
                     if not sep:
                         return result("Use remember short label = note. See brain help for memory lifetimes.")
                     policy, _, key = head.strip().partition(" ")
                     policy = policy.casefold()
                     key = key.strip()
                     if policy == "session":
+                        if project_id:
+                            return result("Project notes use short, long, until or permanent retention. Session notes remain in the existing session memory.", "blocked")
                         if not key.strip() or len(key) > 160 or not value.strip() or len(value) > 2000:
                             raise ValueError("Use a short label and a note up to 2,000 characters.")
                         if len(self.session_notes) >= 20 and key.casefold() not in self.session_notes:
@@ -303,40 +444,46 @@ class Brain:
                         if deadline.tzinfo is None:
                             raise ValueError("Include the timezone, for example +05:30.")
                         until = deadline.timestamp()
-                    saved = notes.save(pid, key, value, policy, until=until, db_path=self.db_path, now=now)
+                    saved = notes.save(pid, key, value, policy, until=until, db_path=self.db_path, now=now, project_id=project_id)
                     stages.append("save_explicit")
-                    return result(f"Saved note #{saved['id']} ({saved['retention']}). Source: you. This is not independently verified knowledge.")
-                if matches("note_correct", low):
-                    key, sep, value = text[8:].partition("=")
+                    scope = f" Project: {project_id}." if project_id else ""
+                    return result(f"Saved note #{saved['id']} ({saved['retention']}).{scope} Source: you. This is not independently verified knowledge.")
+                if matches("note_correct", memory_low):
+                    key, sep, value = memory_text[8:].partition("=")
                     if not sep:
                         raise ValueError("Use correct label = replacement.")
-                    saved = notes.save(pid, key, value, db_path=self.db_path, now=now, correct=True)
+                    saved = notes.save(pid, key, value, db_path=self.db_path, now=now, correct=True, project_id=project_id)
                     self.clear_temporary()  # Old statements must not survive in model history.
                     return result(f"Corrected note #{saved['id']}; revision increased and expiry preserved. Temporary context cleared.")
                 if forget:
-                    key = text[7:].strip()
+                    key = memory_text[7:].strip()
                     # Do not allow the conversational interface to delete auth records.
-                    records = store.recall(pid, limit=notes.MAX_NOTES, db_path=self.db_path, now=now)
+                    records = store.recall(pid, limit=notes.MAX_NOTES, db_path=self.db_path, now=now, project_id=project_id)
                     matching = [r for r in records if r['key'].casefold() == key.casefold()]
                     if any(r['kind'] not in notes.KINDS for r in matching):
                         raise PermissionError("That label belongs to a protected record.")
-                    count = store.forget(pid, key, db_path=self.db_path)
+                    count = store.forget(pid, key, db_path=self.db_path, project_id=project_id)
                     self.clear_temporary()
                     return result(f"Forgot {count} saved note(s). Linked edges and temporary context are cleared. Existing backups, if any, are separate.")
-                if matches("note_link", low):
-                    parts = text.split()
+                if matches("note_link", memory_low):
+                    parts = memory_text.split()
                     if len(parts) != 4:
                         raise ValueError("Use link 1 depends_on 2.")
-                    notes.link(pid, int(parts[1]), parts[2], int(parts[3]), db_path=self.db_path, now=now)
+                    notes.link(pid, int(parts[1]), parts[2], int(parts[3]), db_path=self.db_path, now=now, project_id=project_id)
                     return result("Relationship saved. It is a user-declared connection, not proof of causation.")
                 stages.append("retrieve")
                 notes.expire(pid, db_path=self.db_path, now=now)
-                if low == "show graph":
-                    edges = notes.graph(pid, db_path=self.db_path, now=now)
+                if memory_low == "show graph":
+                    edges = notes.graph(pid, db_path=self.db_path, now=now, project_id=project_id)
                     return result("\n".join(f"{a} — {r} → {b}" for a, r, b in edges) or "No relationships saved.")
-                rows = notes.retrieve(pid, text[7:] if low.startswith("recall ") else "", db_path=self.db_path, now=now)
+                rows = notes.retrieve(pid, memory_text[7:] if memory_low.startswith("recall ") else "", db_path=self.db_path, now=now, project_id=project_id)
                 lines = [f"#{r['id']} {r['key']}: {r['value']} [{r['retention']}; revision {r['revision']}; source: {r['source']}]" for r in rows]
-                lines += [f"[session] {k}: {v}" for k, v in self.session_notes.items() if not low.startswith("recall ") or text[7:].casefold() in (k+' '+v).casefold()]
+                if not project_id:
+                    lines += [f"[session] {k}: {v}" for k, v in self.session_notes.items() if not low.startswith("recall ") or text[7:].casefold() in (k+' '+v).casefold()]
+                if project_id:
+                    lines.insert(0, f"Project: {project_id}")
+                    if not rows:
+                        lines.append("No matching active memories. I won't invent a saved fact.")
                 return result("\n".join(lines) or "No matching active memories. I won't invent a saved fact.", "recall", rows)
 
             one_shot_private = low.startswith("private:") or low.startswith("secret:")
@@ -356,7 +503,8 @@ class Brain:
             pid = None
             if serious:
                 self._authorize("council", text)
-            if self._identified():
+            use_memory = private_request or serious or re.search(r'\b(saved|memory|memories)\b',low)
+            if self._identified() and use_memory:
                 stages.append("authorize")
                 pid = self._authorize("memory_read", text)
                 check()
@@ -389,6 +537,19 @@ class Brain:
                       "Do not invent performance measurements, free-tier entitlements, download URLs or deployment results. Mark estimates as unmeasured. "
                       "Security examples must use a trusted authenticated session, never treat a caller-supplied identity header as authentication. "
                       "Important decisions need current reliable evidence; ask for missing facts. Never reveal hidden reasoning.\nEVIDENCE DATA:\n" + evidence)
+            familiar = self.visitors.current()
+            address = None
+            if self._identified() and self.session.role == 'admin':
+                address = self.session.person
+                prompt += ("\nCONVERSATION STYLE: You are speaking with LYA's phone-verified owner. Be warm, familiar and capable; "
+                           "when natural, address them sparingly using the literal placeholder {LYA_OWNER_NAME}; their registered name will be substituted locally. "
+                           "Never invent a name or use Boss or Sir. Avoid repetitive greetings, flattery and robotic permission recitals. "
+                           "This tone grants no additional permissions. Private actions still require their exact approval.")
+            elif familiar is not None and familiar['role'] == 'admin':
+                address = familiar['display_name']
+                prompt += ("\nCONVERSATION STYLE: A recent local face check suggests the familiar owner. Use a warm, familiar tone; "
+                           "use the literal placeholder {LYA_OWNER_NAME} sparingly when addressing them; the registered name will be substituted locally. Never invent a name or use Boss or Sir. "
+                           "Face familiarity is approximate and does not verify owner authority. Never claim protected access is unlocked or reveal private data.")
             if re.search(r'\b(plan|planning|choose|order|prioritize|migration|database|zero[- ]spend)\b', low):
                 prompt += ("\nPLANNING BOUNDARY: Use only requirements stated by the user. Ask for workload, concurrency, recovery and budget facts before a firm technology choice. "
                            "For an ordered plan, put reliable launch, recovery and security foundations before biometrics or cosmetics. Preserve rollback. "
@@ -455,12 +616,16 @@ class Brain:
                 raise PermissionError("Identity expired while thinking. Verify again to view a personal answer.")
             if not isinstance(answer, str) or not answer.strip():
                 raise ModelUnavailable("The model returned no answer.")
+            if address is not None:
+                answer = answer.replace('{LYA_OWNER_NAME}', address)
             if rows:
                 answer += "\n\nSaved context: " + ", ".join(f"#{r['id']} (revision {r['revision']})" for r in rows) + ". User-provided; not independently verified."
             return result(answer[:12000], route, research_records or rows)
         except InterruptedError:
             return Answer("Cancelled.", "cancelled", stages=stages)
         except (PermissionError, ValueError, ModelUnavailable) as exc:
+            if not self._identified():
+                self.visitors.record('blocked')
             return Answer(str(exc), "blocked", stages=stages)
         except Exception:
             return Answer("The brain could not complete this request. No fallback to another person's memory was attempted.", "error", stages=stages)
