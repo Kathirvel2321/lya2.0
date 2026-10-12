@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#091016"><meta name="referrer" content="no-referrer">
+<title>LYA</title>
+<style nonce="__NONCE__">
+/* The crystal remains the voice presence; conversation controls are contextual. */
+:root{color-scheme:dark;font:16px "Segoe UI",system-ui,sans-serif;background:#091016;color:#d8e2e8;--accent:#9cdfe8}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;padding:max(24px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 45%,#14232d 0,#091016 70%)}
+main{width:min(100%,560px);min-width:0;display:flex;flex-direction:column;gap:24px}.panel{position:relative;padding:24px;border:1px solid #52657155;border-radius:24px;background:linear-gradient(135deg,#1b29358c,#0d16209c);box-shadow:0 18px 64px #0003}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:32px}h1{font-size:14px;letter-spacing:.34em;margin:0;font-weight:600;color:#b7e7eb}.heading{font-size:27px;line-height:1.3;font-weight:500;color:#f1f4f3;margin:0 0 24px;letter-spacing:-.03em}p{line-height:1.6;margin:0}.muted{font-size:13px;color:#a4b8c3}
+.presence{display:flex;flex-direction:column;align-items:center;gap:12px}.sphere{width:112px;height:112px;color:#68e5f2;display:block;filter:drop-shadow(0 0 12px #68e5f21a)}.sphere .rim{fill:#091118;stroke:currentColor;stroke-opacity:.4}.sphere .cuts{fill:none;stroke:currentColor;stroke-opacity:.7}
+.sphere .dots{fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-dasharray:.1 6;opacity:.55}.sphere .thought,.sphere .wave{display:none}.sphere .core{fill:none;stroke:currentColor;stroke-opacity:.75}
+body[data-state=listening] .sphere .diamond{opacity:1;animation:listen 2s ease-in-out infinite}body[data-state=thinking] .sphere{color:#b69bff}body[data-state=speaking] .sphere{color:#78e1bf}
+body[data-state=thinking] .sphere .diamond,body[data-state=thinking] .sphere .core,body[data-state=speaking] .sphere .diamond,body[data-state=speaking] .sphere .core{display:none}
+body[data-state=thinking] .sphere .thought,body[data-state=speaking] .sphere .wave{display:block;opacity:1;animation:flow 3s linear infinite}body[data-state=paused] .sphere{color:#81949f}
+@keyframes listen{50%{opacity:.5}}@keyframes flow{to{stroke-dashoffset:-24}}@media(prefers-reduced-motion:reduce){body .sphere *{animation:none!important}}
+button,input{font:inherit;color:inherit;border:1px solid #bed9e32e;background:#96cddc0a;border-radius:12px}button{min-height:44px;padding:10px 16px;cursor:pointer}button:hover:not(:disabled){background:#78d7e623;border-color:var(--accent)}button:disabled{opacity:.45;cursor:default}button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.presence-control,.presence-control:hover:not(:disabled){padding:0;border:0;border-radius:50%;background:transparent}.presence-control:disabled{opacity:.65}
+#status{text-align:center;min-height:42px;color:#afc5d4;font-size:13px;max-width:100%;overflow-wrap:anywhere}#answer{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.75;padding-top:4px}#question{color:#afc5d4;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;border-bottom:1px solid #c8e1f018;padding-bottom:16px}
+#answer:empty,#question:empty{display:none}#auth{display:grid;gap:20px}#chat{display:flex;flex-direction:column;gap:16px;max-height:36dvh;overflow:auto;scrollbar-width:thin}
+[hidden]{display:none!important}#sign{border-color:#96d7e38c;background:#1c3542}
+#composer{margin:0;width:100%}#text{width:100%;min-width:0;min-height:52px;padding:14px 18px;background:#0e1921aa;border-color:#52657155}#text::placeholder{color:#81949f}
+#session{position:relative;flex-shrink:0}summary{color:#a4b8c3;cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:12px}summary::-webkit-details-marker{display:none}.session-content{position:absolute;right:0;top:44px;z-index:2;width:min(260px,calc(100vw - 88px));padding:16px;border:1px solid #526571;border-radius:16px;background:#10212b;display:grid;gap:12px;box-shadow:0 12px 40px #0008}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:380px){.panel{padding:20px}.heading{font-size:25px}main{gap:18px}}@media(max-height:650px){body{align-items:flex-start;padding-top:max(12px,env(safe-area-inset-top))}main{gap:12px}.panel{padding:18px}header{margin-bottom:16px}.heading{margin-bottom:16px;font-size:23px}.sphere{width:64px;height:64px}#chat{max-height:27dvh}#status{min-height:24px}}
+</style></head><body data-state="listening"><main>
+<div class="panel">
+<header><h1>LYA</h1><details id="session"><summary aria-label="Connection settings">Connection</summary><div class="session-content"><p id="identity" class="muted">Public conversation.</p><button id="owner" type="button">Verify owner</button><button id="lock" type="button">Lock</button></div></details></header>
+<h2 class="heading">Right here with you.</h2>
+<section id="auth" hidden><p>One LYA. Your devices.</p><button id="sign">Sign in with passkey</button><p class="muted">First visit? Say “connect my phone” in the laptop LYA and approve pairing there.</p></section>
+<section id="chat">
+<p id="question">Can we continue our conversation?</p><div id="answer" role="log" aria-live="polite">I’m here. Take your time—tell me what’s on your mind.</div>
+</section>
+</div>
+<div class="presence">
+<button id="presence" class="presence-control" type="button" aria-label="Resume LYA voice conversation" aria-pressed="true"><svg class="sphere" viewBox="0 0 160 160" aria-hidden="true">
+<circle class="rim" cx="80" cy="80" r="69"/>
+<path class="cuts" d="M80 14v5M80 141v5M14 80h5M141 80h5"/>
+<g class="dots diamond"><path d="M80 37 118 80 80 123 42 80Z"/><path d="M80 47 109 80 80 113 51 80Z"/><path d="M80 57 100 80 80 103 60 80Z"/></g>
+<path class="core" d="m80 74 6 6-6 6-6-6Z"/>
+<g class="dots thought"><path d="M41 80C41 40 119 120 119 80S41 120 41 80"/><path d="M44 75C44 39 116 111 116 75S44 111 44 75"/><path d="M44 85C44 49 116 121 116 85S44 121 44 85"/></g>
+<g class="dots wave"><path d="M38 70C52 70 53 52 66 61S88 88 101 70 115 70 122 70"/><path d="M38 80C52 80 53 62 66 71S88 98 101 80 115 80 122 80"/><path d="M38 90C52 90 53 72 66 81S88 108 101 90 115 90 122 90"/></g>
+</svg></button>
+<p id="status" role="status" aria-live="polite">Design preview · no microphone or server connection.</p>
+</div>
+<form id="composer" autocomplete="off"><label class="sr-only" for="text">Message LYA. Press return to send.</label><input id="text" name="message" type="text" maxlength="4000" placeholder="Or type to LYA…" enterkeyhint="send" autocomplete="off" spellcheck="true"></form>
+</main><script>
+const el=id=>document.getElementById(id);el('presence').onclick=()=>{const paused=document.body.dataset.state==='paused';document.body.dataset.state=paused?'listening':'paused';el('status').textContent='Design preview · '+(paused?'Listening.':'Paused.');el('presence').setAttribute('aria-pressed',String(paused));el('presence').setAttribute('aria-label',paused?'Pause preview':'Resume preview')};el('text').onfocus=()=>{document.body.dataset.state='typing'};el('composer').onsubmit=e=>{e.preventDefault();if(!el('text').value.trim())return;el('question').textContent=el('text').value;el('text').value='';el('answer').textContent='Preview only. Your message stays on this page; no model or microphone is connected.';el('status').textContent='Design preview · Typing.'};el('lock').onclick=()=>{el('question').textContent='';el('answer').textContent='';el('text').value='';el('status').textContent='Design preview · cleared.'};el('owner').disabled=true;
+</script></body></html>
