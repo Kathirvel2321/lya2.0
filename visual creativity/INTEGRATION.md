@@ -64,14 +64,16 @@ comparison confirms 126 existing definitions are unchanged across app/experience
 including input handlers and voice, camera, identity and visitor flows. This is
 preservation evidence, not full behavioral qualification. Python syntax passes.
 
-`desktop/check_body_qt.py` provides three real Qt acceptance tests for widget
-painting, click/keyboard activation, artwork rollback, live timer and hidden
-stop. Attempting it here stops at `ModuleNotFoundError: PySide6`; it has **not
-passed**. Run it in the owner's installed PySide6 environment before merging.
-Then check the running widget against the approved body at intro/docked size,
-on light and dark backgrounds, and exercise actual click/drag/voice/typing,
-approval/cancellation and resource behavior. No native screenshot or real device
-success is claimed. Earlier browser/model structural checks remain separate.
+`desktop/check_body_qt.py` has now passed all three real Qt checks on a Windows
+GitHub Actions runner with PySide6 6.8.3, including widget rendering at intro
+and dock sizes, click/keyboard activation, legacy rollback, live timer and
+hidden stop. Run: https://github.com/Kathirvel2321/lya2.0/actions/runs/38430346138.
+`desktop/render_body_ci.py` generated five synthetic UI screenshots in the
+`native-body-previews` run artifact. They have not been visually inspected in
+this workspace. The owner's laptop still needs visual comparison against the
+approved body on light/dark backgrounds and actual drag/voice/typing, approval,
+cancellation and resource checks. Windows CI is not measured laptop performance
+or finished glass fidelity. Earlier browser/model checks remain separate.
 
 This implementation displays derived raster artwork. Exact reference likeness,
 finished all-side 3D glass/refraction and accepted rotation frames remain pending.

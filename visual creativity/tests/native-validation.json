@@ -5,13 +5,16 @@
   "python_js_frames_compared": 1008,
   "preserved_existing_definitions": 126,
   "python_syntax": "pass",
-  "real_qt_acceptance": "blocked: ModuleNotFoundError: PySide6",
+  "real_qt_acceptance": "passed: 3 tests on GitHub Actions windows-latest offscreen with PySide6 6.8.3",
   "real_qt_tests_supplied": 3,
-  "native_rendering_verified": false,
+  "native_rendering_verified": true,
   "device_performance_measured": false,
   "finished_glass_model": false,
   "mobile_or_deployment_changed": false,
   "real_sensors_providers_private_stores_used": false,
   "tests": "python desktop/check_body.py",
-  "native_acceptance_command": "python desktop/check_body_qt.py"
+  "native_acceptance_command": "python desktop/check_body_qt.py",
+  "windows_ci_run": "https://github.com/Kathirvel2321/lya2.0/actions/runs/38430346138",
+  "native_screenshots": "five synthetic states uploaded as native-body-previews artifact; not visually inspected here",
+  "owner_device_qualified": false
 }
