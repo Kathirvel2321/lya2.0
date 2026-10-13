@@ -716,7 +716,8 @@ class Desktop(QObject):
     def __init__(self, application, reduced_motion=False):
         super().__init__()
         self.app = application
-        self.orb = Crystal()
+        from living_body import create_body_type
+        self.orb = create_body_type(Crystal)()
         self.panel = self.panel_type()
         self.generation = 0
         self.pool = QThreadPool(self)
@@ -792,6 +793,24 @@ class Desktop(QObject):
             model_art.blockSignals(False)
         self.orb.artwork_changed.connect(reflect_artwork)
         menu.addAction(model_art)
+        body_art = QAction("Use approved LYA body", menu, checkable=True)
+        body_art.setChecked(self.orb.body_enabled)
+        body_art.setEnabled(self.orb.body_config is not None)
+        body_art.toggled.connect(self.orb.set_body_enabled)
+        def reflect_body(enabled):
+            body_art.blockSignals(True)
+            body_art.setChecked(enabled)
+            body_art.blockSignals(False)
+        self.orb.body_changed.connect(reflect_body)
+        menu.addAction(body_art)
+        effects = menu.addMenu("Preview LYA effects (appearance only)")
+        if self.orb.body_config:
+            phases = effects.addMenu("Interaction")
+            for phase, spec in self.orb.body_config['interaction'].items():
+                phases.addAction(spec['label'], lambda checked=False, value=phase: self.orb.preview_effect(value))
+            accents = effects.addMenu("Task accent (no authority)")
+            for task, spec in self.orb.body_config['tasks'].items():
+                accents.addAction(spec['label'], lambda checked=False, value=task: self.orb.preview_effect(task=value))
         persons = menu.addMenu("Preview person color (no authentication)")
         for person in PERSON_COLORS:
             persons.addAction(person.title(), lambda checked=False, p=person: self.set_state(person=p))
@@ -944,6 +963,7 @@ class Desktop(QObject):
         self.fade.stop()
         self.panel.hide()
         self.panel.show_answer("Right here with you.", "The previous result is closed. Type help or show files.")
+        self.orb.set_visual_task('none')
         self.set_state(task="idle")
 
     def wake(self):
@@ -1190,6 +1210,8 @@ class Desktop(QObject):
         if self.brain_busy:
             self.panel.show_answer("A request is running.", "Close the panel to cancel it. The current network call, if any, may take up to its timeout to finish.")
             return
+        from body_style import requested_task
+        self.orb.set_visual_task(requested_task(text), pending=True)
         import threading
         self.brain_cancel = threading.Event()
         self.brain_busy = True
@@ -1207,6 +1229,7 @@ class Desktop(QObject):
         voice._THINKING.clear()
         if generation != self.generation or self.brain_cancel.is_set():
             return
+        self.orb.set_visual_task('none')
         self.set_state(task="approval" if answer.route == "blocked" else "error" if answer.route == "error" else "idle")
         titles = {"demo": "Brain workflow · synthetic demo", "blocked": "One step is missing.", "council": "Council review", "recall": "Your active memories"}
         self.panel.show_answer(titles.get(answer.route, "LYA"), answer.text)
@@ -1314,6 +1337,7 @@ def main():
     from experience import OrbDesktop
     desktop = OrbDesktop(app, args.reduced_motion)
     desktop.orb.set_artwork(not args.original_art)
+    desktop.orb.set_body_enabled(not (args.original_art or args.model_art))
     if args.microphone:
         os.environ['LYA_MICROPHONE'] = args.microphone
     if args.command_asr:
@@ -1333,3 +1357,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

@@ -1,6 +1,6 @@
-# LYA visual creativity — first build
+# LYA visual creativity — prototype and native adapter
 
-2026-10-13. Isolated design prototype based on GitHub main 1d7b5c1c497b7b848ea70f5cac5c25aa9efffda7. Does not import or modify the production assistant.
+2026-10-13. Prototype based on GitHub main 1d7b5c1c497b7b848ea70f5cac5c25aa9efffda7. The offline preview remains isolated. A native reference-artwork adapter is now implemented in the same draft branch; see **INTEGRATION.md** for live state mapping, checks and rollback. Not merged or deployed. Real Qt acceptance and finished 3D glass matching remain pending.
 
 ## What is built
 
@@ -57,6 +57,6 @@ Active drawing capped at 30 frames/s, canvas pixel ratio capped at 2. Static idl
 
 ## Next acceptance step
 
-Inspect reference-mode likeness at actual widget size and on navy/grey. Then render the editable 3D candidate in Blender and compare silhouette, broad planes, crest, core/glow and mantle against the approved reference. Refine geometry and lights until the owner accepts the match. Only then bake final rotation/state frames and build a separately approved native PySide6 adapter with preserved click/drag/voice/approval behavior and measured device resource limits.
+Inspect reference-mode likeness at actual widget size and on navy/grey. Then render the editable 3D candidate in Blender and compare silhouette, broad planes, crest, core/glow and mantle against the approved reference. Refine geometry and lights until the owner accepts the match. The native adapter now displays the reference artwork with preserved input/voice/approval hooks; real Qt acceptance remains pending. After owner acceptance of the finished 3D match, bake final rotation frames and qualify them separately. See INTEGRATION.md for the current native checks and device acceptance steps.
 
 Primary format references: https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_transmission and KHR_materials_volume; https://docs.blender.org/manual/en/5.3/addons/scene_gltf2.html. Documentation describes material interchange, not qualified LYA runtime compatibility.
