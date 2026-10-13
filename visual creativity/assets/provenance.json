@@ -1,0 +1,10 @@
+{
+ "approved_reference":"approved-body-reference.png",
+ "selected_pose":"top-right Listening",
+ "anchor":"lya-body-anchor.png",
+ "anchor_method":"built-in ImageGen derivative, transparent-background request",
+ "anchor_prompt":"Prepare one transparent standalone asset from only the top-right Listening body; preserve shape, pose, proportions, sapphire glass facets, white-cyan core and lighting; remove all background, floor shadow, captions and other poses. No external effects or redesign.",
+ "pixel_exact_extraction":false,
+ "geometry_approval":false,
+ "state_effects_separate":true
+}
