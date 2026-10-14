@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-12",
+  "parsed_python_sources": 4,
+  "source_sha256": {
+    "brain/memory_authority.py": "f3e26239a95ec3ec2283d8bc39719baa15498f5ee8a28005d2da46ec4dfeb58b",
+    "test_memory_authority.py": "b5c8d5bbe22f6b59de579c20a2814aff6ea176884fe52ba613af44f9502c0a78",
+    "test_memory_reactivation.py": "444347381c5860e6dac797eda238d8be4862df1785d95113a5a7d0ca833fc05e",
+    "review/2026-10-12-memory-reactivation/check.py": "de75d21c42d594979668a1b9d5f873e0e0f6b3391ea61fd353daaf7d90f9c70f"
+  },
+  "previous_seven_source_files_preserved": {
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "test_memory_hardening.py": true,
+    "test_memory_encrypted.py": true,
+    "review/2026-10-12-memory-hardening/check.py": true,
+    "review/2026-10-12-memory-hardening/qualify.py": true
+  },
+  "previous_authority_runner_preserved": true,
+  "checked_documents": [
+    "lya-project-brain.md",
+    "docs/README.md",
+    "review/2026-10-12-memory-reactivation/README.md",
+    "review/2026-10-12-memory-authority/README.md",
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md"
+  ],
+  "checked_local_links": 104,
+  "missing_links": [],
+  "scoped_git_diff_check_passed": true,
+  "scoped_trailing_whitespace_passed": true,
+  "production_caller_found": false,
+  "temporary_fixture_directories": [],
+  "regression_evidence": {
+    "date": "2026-10-12",
+    "distinct_checks_verified": 114,
+    "passed": true,
+    "validation_mode": "113 checks passed in combined run; corrected concurrency test passed in targeted recheck. No implementation change between these runs.",
+    "single_combined_run_passed": false,
+    "initial_combined_run": {
+      "artifact": "combined-before-test-fix-validation.json",
+      "date": "2026-10-12",
+      "tests_run": 114,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": false,
+      "fake_data_only": true,
+      "independent_off_host": false,
+      "production_paths_connected": false,
+      "external_service_called": false,
+      "deployed": false
+    },
+    "corrected_concurrency_recheck": {
+      "artifact": "concurrency-recheck-validation.json",
+      "date": "2026-10-12",
+      "tests_run": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "fake_data_only": true,
+      "independent_off_host": false,
+      "production_paths_connected": false,
+      "external_service_called": false,
+      "deployed": false
+    },
+    "fake_data_only": true,
+    "independent_off_host": false,
+    "production_paths_connected": false,
+    "external_service_called": false,
+    "deployed": false
+  },
+  "deployment_or_external_service_tested": false
+}

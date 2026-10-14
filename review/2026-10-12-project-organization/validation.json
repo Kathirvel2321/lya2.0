@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "date": "2026-10-12",
+  "moved_files": 424,
+  "archived_original_hashes": 414,
+  "retained_file_hashes": 480,
+  "active_python_files_parsed": 232,
+  "maintained_markdown_files_checked": 61,
+  "new_broken_markdown_links": 0,
+  "desktop_documents_read": 4,
+  "desktop_allowlist_preserved": true,
+  "archive_is_not_a_test_discovery_package": true,
+  "pytest_archive_excluded": true,
+  "isolated_launcher_tests": 9,
+  "synthetic_mobile_client_checks": 40,
+  "real_sensors": false,
+  "provider_call": false,
+  "deployed": false
+}

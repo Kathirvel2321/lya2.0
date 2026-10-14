@@ -1,0 +1,18 @@
+# Project documentation
+
+Read [the current project brain](../lya-project-brain.md) and [owner requirements](../LYA_VISION.md) before using a plan. Plans record intentions and dated evidence, not proof of current integration.
+
+| Area | Documents |
+| --- | --- |
+| Architecture | [System map](architecture/LYA_ARCHITECTURE.md), [brain workflow](architecture/LYA_BRAIN_WORKFLOW.md) |
+| Plans | [Delivery roadmap](plans/LYA_TASK_ROADMAP.md), [implementation checklist](plans/LYA_IMPLEMENTATION_CHECKLIST.md), [advanced brain](plans/LYA_ADVANCED_BRAIN_PLAN.md), [model strategy](plans/LYA_MODEL_STRATEGY.md), [storage/security](plans/LYA_STORAGE_SECURITY_PLAN.md), [camera/voice decisions](plans/LYA_CAMERA_VOICE_DECISION.md) |
+| Guides | [Test guide](guides/LYA_TEST_GUIDE.md), [reasoning-level assignment guide](guides/LYA_TASK_REASONING_LEVELS.md), [desktop guide](../desktop/README.md), [cloud guide](../cloud/README.md) |
+| Current design/evidence | [System architecture and final roadmap](../review/2026-10-11-system-architecture/README.md), [shared conversation contract](../review/2026-10-11-conversation-contract/README.md), [memory prototype](../review/2026-10-11-memory-prototype/README.md), [recovery prototype](../review/2026-10-11-memory-recovery/README.md), [recovery acknowledgement](../review/2026-10-12-memory-acknowledgement/README.md), [memory hardening and encrypted candidate](../review/2026-10-12-memory-hardening/README.md), [canonical authority and writer fencing](../review/2026-10-12-memory-authority/README.md), [verified recovery and owner reactivation](../review/2026-10-12-memory-reactivation/README.md), [Oracle memory screen and fresh-process recovery](../review/2026-10-12-memory-placement/README.md), [Oracle Linux encrypted qualification](../review/2026-10-13-memory-linux/README.md), [Sealed recovery keys and latest-state witness](../review/2026-10-13-memory-custody/README.md), [local WSL memory lab](../review/2026-10-13-memory-wsl/README.md), [latest mobile additions](../review/2026-10-12-mobile-history/README.md) |
+| History | [Archive index](../archive/README.md), [complete earlier project brain](../archive/history/continuity/project-brain-through-2026-10-12.md) |
+| Latest memory integration | [Witness-confirmed authority and interrupted-commit reconciliation](../review/2026-10-13-memory-witness-ack/README.md) |
+
+[Foundation decisions](../LYA_FOUNDATION_DECISIONS.md) and [the earlier rebuild plan](../LYA_REBUILD_PLAN.md) remain at the root because the desktop reads those exact filenames. The vision, current brain, README and AGENTS entry points also remain at the root. Internal references in maintained Markdown were updated for moved documents and evidence.
+
+`review/` holds newer work and still-referenced fixtures/helpers. Historical reviews through 2026-10-09 moved into the archive, except `2026-10-03-voice-conversation` (an existing speech-check fixture location) and `2026-10-05-conversation-design` (the supported design-renderer's output location). Their age alone does not make them unused.
+
+Add new explanations in the appropriate `docs/` section and new validation evidence in a dated `review/` folder. Keep runtime code, private data and large generated outputs out of the project brain. Append short dated continuity entries with links instead of duplicating entire reports.

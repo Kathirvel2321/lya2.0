@@ -1,0 +1,88 @@
+# LYA crystal concept materials
+newmtl OuterIce
+Kd 0.5200 0.8600 1.0000
+d 0.4800
+Ns 810
+Pm 0.0800
+Pr 0.1000
+illum 4
+
+newmtl OuterHighlight
+Kd 0.8800 0.9700 1.0000
+d 0.6200
+Ns 837
+Pm 0.0500
+Pr 0.0700
+illum 4
+
+newmtl OuterBlue
+Kd 0.0800 0.4000 0.7000
+d 0.4400
+Ns 783
+Pm 0.1200
+Pr 0.1300
+illum 4
+
+newmtl OuterDeep
+Kd 0.0150 0.1000 0.1800
+d 0.6000
+Ns 792
+Pm 0.2000
+Pr 0.1200
+illum 4
+
+newmtl OuterAqua
+Kd 0.1200 0.6600 0.8800
+d 0.5000
+Ns 810
+Pm 0.1000
+Pr 0.1000
+illum 4
+
+newmtl WarmFacet
+Kd 1.0000 0.6500 0.1800
+d 0.7200
+Ns 801
+Pm 0.1000
+Pr 0.1100
+illum 4
+
+newmtl EdgeLight
+Kd 0.9200 0.9900 1.0000
+d 0.7000
+Ns 846
+Pm 0.0400
+Pr 0.0600
+illum 4
+
+newmtl CoreDeep
+Kd 0.0120 0.0800 0.1400
+d 0.7400
+Ns 756
+Pm 0.1500
+Pr 0.1600
+illum 4
+
+newmtl CoreBlue
+Kd 0.0300 0.2500 0.4800
+d 0.6800
+Ns 774
+Pm 0.1000
+Pr 0.1400
+illum 4
+
+newmtl CoreCyan
+Kd 0.0800 0.5400 0.7600
+d 0.6000
+Ns 792
+Pm 0.0800
+Pr 0.1200
+illum 4
+
+newmtl CoreShadow
+Kd 0.0050 0.0350 0.0700
+d 0.7800
+Ns 738
+Pm 0.2200
+Pr 0.1800
+illum 4

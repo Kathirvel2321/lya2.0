@@ -1,0 +1,3273 @@
+{
+  "date": "2026-10-12",
+  "status": "verified",
+  "moves": [
+    {
+      "source": "BUILD_PROGRESS.md",
+      "destination": "archive/history/documentation/BUILD_PROGRESS.md",
+      "category": "documentation",
+      "sha256": "f86a428da5b058c29670fe45a59e976d70a980c758a52f9d6f2a3dcc6376132e"
+    },
+    {
+      "source": "LYA_ADVANCED_BRAIN_PLAN.md",
+      "destination": "docs/plans/LYA_ADVANCED_BRAIN_PLAN.md",
+      "category": "documentation",
+      "sha256": "6a9c2ef9a06ef16b05d4e4f5aa4954634c9312d132beff89ad848a416e081c5c"
+    },
+    {
+      "source": "LYA_ARCHITECTURE.md",
+      "destination": "docs/architecture/LYA_ARCHITECTURE.md",
+      "category": "documentation",
+      "sha256": "248eaa3f678e923618d54a20b3d3df9289270fc0fdc92e0ba1fde5ff85c9ad99"
+    },
+    {
+      "source": "LYA_BRAIN_WORKFLOW.md",
+      "destination": "docs/architecture/LYA_BRAIN_WORKFLOW.md",
+      "category": "documentation",
+      "sha256": "0b6fe327ec8183f939e98a830b06432676aa0a7c34abc11b680a634c5171401c"
+    },
+    {
+      "source": "LYA_CAMERA_VOICE_DECISION.md",
+      "destination": "docs/plans/LYA_CAMERA_VOICE_DECISION.md",
+      "category": "documentation",
+      "sha256": "8c49277aabea2b2b7426c470ac0cab865ef1c1cd41092222396ffd95e9efec7a"
+    },
+    {
+      "source": "LYA_IMPLEMENTATION_CHECKLIST.md",
+      "destination": "docs/plans/LYA_IMPLEMENTATION_CHECKLIST.md",
+      "category": "documentation",
+      "sha256": "de37ae52dbe1cb2eb38f6315bcbe959c5a9dcc06faf983e906bca5a1ad5a825a"
+    },
+    {
+      "source": "LYA_MODEL_STRATEGY.md",
+      "destination": "docs/plans/LYA_MODEL_STRATEGY.md",
+      "category": "documentation",
+      "sha256": "7594b1f1d42aa197236544827f55fc71115c4b481f586ed17e5a4f06361a6919"
+    },
+    {
+      "source": "LYA_STORAGE_SECURITY_PLAN.md",
+      "destination": "docs/plans/LYA_STORAGE_SECURITY_PLAN.md",
+      "category": "documentation",
+      "sha256": "431cae105a857410309d60902a65db9efd28af8871e11e0cf7fc07837950a31f"
+    },
+    {
+      "source": "LYA_TASK_REASONING_LEVELS.md",
+      "destination": "docs/guides/LYA_TASK_REASONING_LEVELS.md",
+      "category": "documentation",
+      "sha256": "65365b873e80f0a026866e558ae34d948755421c42747b3d9a32a5dd81061b68"
+    },
+    {
+      "source": "LYA_TASK_ROADMAP.md",
+      "destination": "docs/plans/LYA_TASK_ROADMAP.md",
+      "category": "documentation",
+      "sha256": "e9efcaf45c7f68ce1142581db3892c4c23886a2c52b04988086177fc50fda342"
+    },
+    {
+      "source": "LYA_TEST_GUIDE.md",
+      "destination": "docs/guides/LYA_TEST_GUIDE.md",
+      "category": "documentation",
+      "sha256": "44f81326921f7e12782e31218376a4afbb7ace0e2d32f9f33bf51997f550e4f6"
+    },
+    {
+      "source": "README.md",
+      "destination": "archive/history/documentation/README-before-organization.md",
+      "category": "replaced-document",
+      "sha256": "343822e3931f5c0efecfa725be8c345bbc3fefffecf34738f05b04ed8fbdfd7f"
+    },
+    {
+      "source": "desktop/qa/2026-09-15-orb/README.md",
+      "destination": "archive/history/desktop-qa/2026-09-15-orb/README.md",
+      "category": "historical-layout",
+      "sha256": "8a9206154e9d5398d6c72e58720da98d5f78259c7ad27ccf3af784c95c8f6f93"
+    },
+    {
+      "source": "desktop/qa/2026-09-15-orb/comparison.json",
+      "destination": "archive/history/desktop-qa/2026-09-15-orb/comparison.json",
+      "category": "historical-layout",
+      "sha256": "99b3cb021f5e7039ec0b39c64dcd91707bea6e6bc75b946eef8bc0fbe75a29c1"
+    },
+    {
+      "source": "desktop/qa/2026-09-15-orb/dark-desktop.png",
+      "destination": "archive/history/desktop-qa/2026-09-15-orb/dark-desktop.png",
+      "category": "historical-layout",
+      "sha256": "00f8572e90df0f0593d9335d34c267bb06294a6a3ad03fa82894424fb2a47745"
+    },
+    {
+      "source": "desktop/qa/2026-09-15-orb/light-desktop.png",
+      "destination": "archive/history/desktop-qa/2026-09-15-orb/light-desktop.png",
+      "category": "historical-layout",
+      "sha256": "ede4baa1ba39012156418535fbe4372d268c69b7a440f26f62bb6da7d0bf8f9a"
+    },
+    {
+      "source": "desktop/qa/2026-09-15-orb/repeated-comparison.json",
+      "destination": "archive/history/desktop-qa/2026-09-15-orb/repeated-comparison.json",
+      "category": "historical-layout",
+      "sha256": "9db618b95fb582752338fe60f34f7a15d09d7e24a5f06c156a57040bf381ec73"
+    },
+    {
+      "source": "desktop/qa/2026-09-16-compact/README.md",
+      "destination": "archive/history/desktop-qa/2026-09-16-compact/README.md",
+      "category": "historical-layout",
+      "sha256": "3ea484b300ce51ae74aa56abc176be029fdbeca6b164ddf60e905e40d7b5b5f2"
+    },
+    {
+      "source": "desktop/qa/2026-09-16-compact/answer.png",
+      "destination": "archive/history/desktop-qa/2026-09-16-compact/answer.png",
+      "category": "historical-layout",
+      "sha256": "656f9f7e210ddd2e09f462cea8a8aa1e04292f7f69456d73b0eefaf52b87e4b4"
+    },
+    {
+      "source": "desktop/qa/2026-09-16-compact/chat.png",
+      "destination": "archive/history/desktop-qa/2026-09-16-compact/chat.png",
+      "category": "historical-layout",
+      "sha256": "101c8b8f780b382ab88c11da636fbb4614f40c27d3f011c92caa006939cb84b3"
+    },
+    {
+      "source": "desktop/qa/2026-09-16-compact/input.png",
+      "destination": "archive/history/desktop-qa/2026-09-16-compact/input.png",
+      "category": "historical-layout",
+      "sha256": "00a5a3c3744d2bf7fe4018f0f67a37cc116aabc20e4584e49e3b97dca89ec377"
+    },
+    {
+      "source": "desktop/qa/2026-09-17-bottom-center/README.md",
+      "destination": "archive/history/desktop-qa/2026-09-17-bottom-center/README.md",
+      "category": "historical-layout",
+      "sha256": "5755355a5a4343489ae1a6bc9211eeab5786646fd718c2f6a545dded4da1759f"
+    },
+    {
+      "source": "desktop/qa/2026-09-17-bottom-center/answer.png",
+      "destination": "archive/history/desktop-qa/2026-09-17-bottom-center/answer.png",
+      "category": "historical-layout",
+      "sha256": "a8b30ea00393a3d6e5822072c822ef463a26fce27c92a831fc7f5a14f5cc31d7"
+    },
+    {
+      "source": "desktop/qa/2026-09-17-bottom-center/chat.png",
+      "destination": "archive/history/desktop-qa/2026-09-17-bottom-center/chat.png",
+      "category": "historical-layout",
+      "sha256": "c859c24751138bb0df3d5852d8e3536bd54878ebd931b7c53f6b348092926443"
+    },
+    {
+      "source": "desktop/qa/2026-09-17-bottom-center/input.png",
+      "destination": "archive/history/desktop-qa/2026-09-17-bottom-center/input.png",
+      "category": "historical-layout",
+      "sha256": "fd21cc19f506151d5687d7dbe8e7f512eb030020c051a45351d94e0a94d81118"
+    },
+    {
+      "source": "lya-project-brain.md",
+      "destination": "archive/history/continuity/project-brain-through-2026-10-12.md",
+      "category": "replaced-document",
+      "sha256": "9f4122f1f21d8f3bf14d2486c82306cf385d73bf758d30e1810ef3f9be20afa3"
+    },
+    {
+      "source": "noneeded/MANIFEST.md",
+      "destination": "archive/retired/MANIFEST.md",
+      "category": "retired",
+      "sha256": "fb2671fbf70a0dff04156469e590930d179c031af6f3157a80d2276e72e93aa4"
+    },
+    {
+      "source": "noneeded/dead-tools/bake_crystal.py",
+      "destination": "archive/retired/dead-tools/bake_crystal.py",
+      "category": "retired",
+      "sha256": "27d63a2035240307801cf3db42ec604403d3f1460b706ae167a14bc8c92d25f9"
+    },
+    {
+      "source": "noneeded/dead-tools/check-biometric-stack.py",
+      "destination": "archive/retired/dead-tools/check-biometric-stack.py",
+      "category": "retired",
+      "sha256": "1f48fed59881bbfbf576668ebfcb68fdc7db192a8d44c8d504da6135e3a596c3"
+    },
+    {
+      "source": "noneeded/dead-tools/extract_books.py",
+      "destination": "archive/retired/dead-tools/extract_books.py",
+      "category": "retired",
+      "sha256": "c477f9258845993dd33b124ac39e0fae00ae7d635fffe7fd5a23ba47b49d54e8"
+    },
+    {
+      "source": "noneeded/dead-tools/install-voice-models.py",
+      "destination": "archive/retired/dead-tools/install-voice-models.py",
+      "category": "retired",
+      "sha256": "bff59caff8bcf3126d6b09caa649e0b12be4217d2a29c5f71ac45fa0cc8b6e54"
+    },
+    {
+      "source": "noneeded/dead-tools/test-local-model.py",
+      "destination": "archive/retired/dead-tools/test-local-model.py",
+      "category": "retired",
+      "sha256": "43e29275513bc5504b1f5cb86a77eeb4ed651ad12225a8785f9e6d40af90a855"
+    },
+    {
+      "source": "noneeded/dead-tools/test_native_ui.py",
+      "destination": "archive/retired/dead-tools/test_native_ui.py",
+      "category": "retired",
+      "sha256": "ca2f63c71678c7aa5ea7584e9171926ed18095a9c1c5c05d6e97be33100e945a"
+    },
+    {
+      "source": "noneeded/dead-tools/test_synthesis.py",
+      "destination": "archive/retired/dead-tools/test_synthesis.py",
+      "category": "retired",
+      "sha256": "c184c2d79a1a329b5b46a99aaa3eaa87edc5c8f22fe0f449e963c7df061e0666"
+    },
+    {
+      "source": "noneeded/legacy-audio/synthesis.py",
+      "destination": "archive/retired/legacy-audio/synthesis.py",
+      "category": "retired",
+      "sha256": "97ccfa2ed804e58028e5248ad1cbe0df78f802955f4927e93e2b25183a6b33c5"
+    },
+    {
+      "source": "noneeded/legacy-skills/_probe.py",
+      "destination": "archive/retired/legacy-skills/_probe.py",
+      "category": "retired",
+      "sha256": "c29d5105117f6535d8ecd0706078dbcca7bebce272abfbd737b9a2145c6f059e"
+    },
+    {
+      "source": "noneeded/legacy-skills/allskills.py",
+      "destination": "archive/retired/legacy-skills/allskills.py",
+      "category": "retired",
+      "sha256": "c601ad3934b99b9e31135195c093e8c341033b234e23cfd040a9fe6f6e71cdb5"
+    },
+    {
+      "source": "noneeded/legacy-skills/autonomous.py",
+      "destination": "archive/retired/legacy-skills/autonomous.py",
+      "category": "retired",
+      "sha256": "30df3e81069a83c47233260150ab5f416498c4a2dd5370b75e0ff4aed3f92de1"
+    },
+    {
+      "source": "noneeded/legacy-skills/build_knowledge.py",
+      "destination": "archive/retired/legacy-skills/build_knowledge.py",
+      "category": "retired",
+      "sha256": "1deda76188d736c0f92cbbeae7a4d3f8ca3a3ddcb291b9a13827cfce24e2027e"
+    },
+    {
+      "source": "noneeded/legacy-skills/cooking.py",
+      "destination": "archive/retired/legacy-skills/cooking.py",
+      "category": "retired",
+      "sha256": "a59464d05c3fbc6b3420ca53306aa24ae76038508a1c0d2a81674517edd51953"
+    },
+    {
+      "source": "noneeded/legacy-skills/general.py",
+      "destination": "archive/retired/legacy-skills/general.py",
+      "category": "retired",
+      "sha256": "51e8aeb8bd66c4a8eefc98cc0b93d6443c312889b89a3e4da60a6388f7acafa0"
+    },
+    {
+      "source": "noneeded/legacy-skills/guiding.py",
+      "destination": "archive/retired/legacy-skills/guiding.py",
+      "category": "retired",
+      "sha256": "d050f0605140712d6cd1e2fee1df4b6d94ad593c1544ee54611f88d5402fd003"
+    },
+    {
+      "source": "noneeded/legacy-skills/hacker.py",
+      "destination": "archive/retired/legacy-skills/hacker.py",
+      "category": "retired",
+      "sha256": "405e95e6c1af09bb356efdab64d47c3ff45d3b66e22231d6968d1e9789c71325"
+    },
+    {
+      "source": "noneeded/legacy-skills/home.py",
+      "destination": "archive/retired/legacy-skills/home.py",
+      "category": "retired",
+      "sha256": "5cbaa84095bd245a2dc7c711e532553edc1453b31d45d9df6e23390791679061"
+    },
+    {
+      "source": "noneeded/legacy-skills/kali.py",
+      "destination": "archive/retired/legacy-skills/kali.py",
+      "category": "retired",
+      "sha256": "6369529f1390e7fde51b5773f40f4853fa21e3ccf4ecd758e07293f6062194b2"
+    },
+    {
+      "source": "noneeded/legacy-skills/learnhack.py",
+      "destination": "archive/retired/legacy-skills/learnhack.py",
+      "category": "retired",
+      "sha256": "8b6e6614a9a9d22b0eeb104bbe010f05c6e29dd5debfda2d7dae3ab8215d4db1"
+    },
+    {
+      "source": "noneeded/legacy-skills/passwords.py",
+      "destination": "archive/retired/legacy-skills/passwords.py",
+      "category": "retired",
+      "sha256": "cf051aefad7676cbddf5f9eadc58019f41601955bfabddfe17b8661556ade11a"
+    },
+    {
+      "source": "noneeded/legacy-skills/phone.py",
+      "destination": "archive/retired/legacy-skills/phone.py",
+      "category": "retired",
+      "sha256": "56cc02f18290944e24891592cc71ebf0d4ee234ea18d9fdbed9edbef0ea0c603"
+    },
+    {
+      "source": "noneeded/legacy-skills/security_brain.py",
+      "destination": "archive/retired/legacy-skills/security_brain.py",
+      "category": "retired",
+      "sha256": "3828d079cc782904b111512420fda3e797a2b004276b1a4387738b05c5405db3"
+    },
+    {
+      "source": "noneeded/legacy-skills/skillbook.py",
+      "destination": "archive/retired/legacy-skills/skillbook.py",
+      "category": "retired",
+      "sha256": "4f60b8ad7157b367d34e100eb93e7e52bd62bca2da5e0da5bbaeaf9b6bdc2eb7"
+    },
+    {
+      "source": "noneeded/legacy-skills/teaching.py",
+      "destination": "archive/retired/legacy-skills/teaching.py",
+      "category": "retired",
+      "sha256": "089acfee84b96562ee72be791ca9512159d5a22da1f2816ba06c747e659f274e"
+    },
+    {
+      "source": "noneeded/legacy-skills/techno.py",
+      "destination": "archive/retired/legacy-skills/techno.py",
+      "category": "retired",
+      "sha256": "72b2b5f7ebd104a386ae0d59bf3d011755ac7bea2e29fe9e0bf0862abdc80112"
+    },
+    {
+      "source": "noneeded/legacy-skills/trap.py",
+      "destination": "archive/retired/legacy-skills/trap.py",
+      "category": "retired",
+      "sha256": "29e7e6d4ae51a22812b159888053fa4dfbc11001f60f30e7d2c94440a2a91d5c"
+    },
+    {
+      "source": "noneeded/legacy-ui/jarvis_server.py",
+      "destination": "archive/retired/legacy-ui/jarvis_server.py",
+      "category": "retired",
+      "sha256": "373838dbdd3004bf28ef52d275b969fffe9f17b93c238b71c5d45258c1fad5aa"
+    },
+    {
+      "source": "noneeded/stray-artifacts/external-cmd-artifact.txt",
+      "destination": "archive/retired/stray-artifacts/external-cmd-artifact.txt",
+      "category": "retired",
+      "sha256": "79d584a3cdd8965e755894dbb7658e90f1cc844faa075393506cbaa842a8c017"
+    },
+    {
+      "source": "noneeded/stray-artifacts/probe.txt",
+      "destination": "archive/retired/stray-artifacts/probe.txt",
+      "category": "retired",
+      "sha256": "5757eeb3a76bfcac19e692a3576cc6648e14ed0d11e558088956bb2f9e109ab8"
+    },
+    {
+      "source": "noneeded/unsafe-test-scripts/crash_test.py",
+      "destination": "archive/unsafe-tests/crash_test.py",
+      "category": "unsafe-tests",
+      "sha256": "d90e7b59f5d1047aea0b84d6266fc8debf0c6ea9e31b955ea2bcf594753f3f04"
+    },
+    {
+      "source": "noneeded/unsafe-test-scripts/crash_test2.py",
+      "destination": "archive/unsafe-tests/crash_test2.py",
+      "category": "unsafe-tests",
+      "sha256": "8afbda6a90bf66180ae5eb3eb76e6499d141d938cd1c7862094785c1b84125f7"
+    },
+    {
+      "source": "noneeded/unsafe-test-scripts/security_test.py",
+      "destination": "archive/unsafe-tests/security_test.py",
+      "category": "unsafe-tests",
+      "sha256": "a4070f0be971da6e3f170611c58dcfa98b055b8755fe1b7667e44c31d3dbf98b"
+    },
+    {
+      "source": "noneeded/unsafe-test-scripts/test_security_fixes.py",
+      "destination": "archive/unsafe-tests/test_security_fixes.py",
+      "category": "unsafe-tests",
+      "sha256": "02d7cb8a263a8b8652d1f7d638a7fa8a7371410a72a90d2cb54f57f98fe73099"
+    },
+    {
+      "source": "review/2026-09-13-brain/dark-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13-brain/dark-desktop.png",
+      "category": "historical-review",
+      "sha256": "e76de04967f8e1a0708f3bf37c767bc29ea56ee5fd00ba3260a5f6d7f6656737"
+    },
+    {
+      "source": "review/2026-09-13-brain/desktop-check_ui.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/desktop-check_ui.py.txt",
+      "category": "historical-review",
+      "sha256": "6993a7cfff17cbc1c39fb5e60487aa31d45b01bf3c9b6606c1abbe616a5a6862"
+    },
+    {
+      "source": "review/2026-09-13-brain/light-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13-brain/light-desktop.png",
+      "category": "historical-review",
+      "sha256": "5629bd976e195c33b90f0559c1a49612385770fad2fb8fd5357cad76bdb14295"
+    },
+    {
+      "source": "review/2026-09-13-brain/measurement.json",
+      "destination": "archive/history/reviews/2026-09-13-brain/measurement.json",
+      "category": "historical-review",
+      "sha256": "4086f6950fbcff052af9e0639601c96ea39149d076bb307973db971457b5ff30"
+    },
+    {
+      "source": "review/2026-09-13-brain/message-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13-brain/message-desktop.png",
+      "category": "historical-review",
+      "sha256": "5f63002f6cb77fa61cb40d72e1a59859ff9065672b2510a304ec401806b72cbb"
+    },
+    {
+      "source": "review/2026-09-13-brain/results.json",
+      "destination": "archive/history/reviews/2026-09-13-brain/results.json",
+      "category": "historical-review",
+      "sha256": "0298189fe4f2f26ed2b85b62a85f81195413d5c53d8ba5069162ec591e44716b"
+    },
+    {
+      "source": "review/2026-09-13-brain/review_probes.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/review_probes.py.txt",
+      "category": "historical-review",
+      "sha256": "9eb99642b6e5daa4a1acbe4a844c8ac2f2ca42b2af723a183e03d6b337376da1"
+    },
+    {
+      "source": "review/2026-09-13-brain/test_brain_workflow.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/test_brain_workflow.py.txt",
+      "category": "historical-review",
+      "sha256": "5bfeeea8b2708ef4fe906e27358812277e4577b551138d79a36c349cbed57a0a"
+    },
+    {
+      "source": "review/2026-09-13-brain/test_foundations.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/test_foundations.py.txt",
+      "category": "historical-review",
+      "sha256": "5e2ae02cdcdb30883000a3cb9431b2504b02d2c8965f2b10b3ec1facbfb71f28"
+    },
+    {
+      "source": "review/2026-09-13-brain/test_identity.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/test_identity.py.txt",
+      "category": "historical-review",
+      "sha256": "512ed808714285cafa7acd546a183a7f3a21e1ca83cdcb1a6d3276a1eea814a8"
+    },
+    {
+      "source": "review/2026-09-13-brain/test_mind.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/test_mind.py.txt",
+      "category": "historical-review",
+      "sha256": "6975cc9c6e0df83c50f0a79ca53c0ef096bd7bde84e9073e0cce78d316debb8a"
+    },
+    {
+      "source": "review/2026-09-13-brain/test_regressions_r01_r05.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/test_regressions_r01_r05.py.txt",
+      "category": "historical-review",
+      "sha256": "576a15cd3521a8d5d437c94603cea8dd34c6a9f934df70930a5ca69c9762dad3"
+    },
+    {
+      "source": "review/2026-09-13-brain/test_storage.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/test_storage.py.txt",
+      "category": "historical-review",
+      "sha256": "9a391b9f37cbf829a644b7b3238581b6113e617aed5505ef55dcc05111e6c24e"
+    },
+    {
+      "source": "review/2026-09-13-brain/test_voice.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-brain/test_voice.py.txt",
+      "category": "historical-review",
+      "sha256": "0249e2118d46717b8b6e4ffb8c5855c86a72fb078351a65f72f95a476ed28703"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/dark-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/dark-desktop.png",
+      "category": "historical-review",
+      "sha256": "e76de04967f8e1a0708f3bf37c767bc29ea56ee5fd00ba3260a5f6d7f6656737"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/desktop-check_ui.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/desktop-check_ui.py.txt",
+      "category": "historical-review",
+      "sha256": "70976c860f48b09c591b45ebaef48194b9a973e5e43426f842ae222fe1adc6df"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/light-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/light-desktop.png",
+      "category": "historical-review",
+      "sha256": "5629bd976e195c33b90f0559c1a49612385770fad2fb8fd5357cad76bdb14295"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/measurement.json",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/measurement.json",
+      "category": "historical-review",
+      "sha256": "c8028536936b8ba7d418ca5fca51d3ba51e8e8c6de357d3b72d8dc3ebf4d19bd"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/message-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/message-desktop.png",
+      "category": "historical-review",
+      "sha256": "5f63002f6cb77fa61cb40d72e1a59859ff9065672b2510a304ec401806b72cbb"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/results.json",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/results.json",
+      "category": "historical-review",
+      "sha256": "0298189fe4f2f26ed2b85b62a85f81195413d5c53d8ba5069162ec591e44716b"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/review_probes.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/review_probes.py.txt",
+      "category": "historical-review",
+      "sha256": "9eb99642b6e5daa4a1acbe4a844c8ac2f2ca42b2af723a183e03d6b337376da1"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/test_brain_workflow.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/test_brain_workflow.py.txt",
+      "category": "historical-review",
+      "sha256": "b1ce6609360921e5bcb62b7b9c1144b1959d1cf300fffac255a92b8ae5b6b310"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/test_foundations.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/test_foundations.py.txt",
+      "category": "historical-review",
+      "sha256": "edd4683780b413a911102b7cd5807ed12555a4838ba2b1038ee4b1c4798c5923"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/test_identity.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/test_identity.py.txt",
+      "category": "historical-review",
+      "sha256": "beb12e3eb367ee968f19a3dd4eaf4902fce9980724c400b9883923035261732d"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/test_mind.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/test_mind.py.txt",
+      "category": "historical-review",
+      "sha256": "78138920f08f5cbe60c8bb7dc265876ffda3ce97df271f38ecefe51cf6c2ac9f"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/test_regressions_r01_r05.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/test_regressions_r01_r05.py.txt",
+      "category": "historical-review",
+      "sha256": "576a15cd3521a8d5d437c94603cea8dd34c6a9f934df70930a5ca69c9762dad3"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/test_storage.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/test_storage.py.txt",
+      "category": "historical-review",
+      "sha256": "910ad328a228ee4576ebd95d1921ba21e4c55978f0b22627b26e6f8226af9f27"
+    },
+    {
+      "source": "review/2026-09-13-retrieval/test_voice.py.txt",
+      "destination": "archive/history/reviews/2026-09-13-retrieval/test_voice.py.txt",
+      "category": "historical-review",
+      "sha256": "489a4e4e6dfef5e0da1695719569e026ac389ac335ebe457288472ed9e36d854"
+    },
+    {
+      "source": "review/2026-09-13/REVIEW.md",
+      "destination": "archive/history/reviews/2026-09-13/REVIEW.md",
+      "category": "historical-review",
+      "sha256": "31fc2907cd44b2b7e797b175095a92c7869a679ca6f8739fbedf191a767b6d05"
+    },
+    {
+      "source": "review/2026-09-13/dark-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13/dark-desktop.png",
+      "category": "historical-review",
+      "sha256": "e76de04967f8e1a0708f3bf37c767bc29ea56ee5fd00ba3260a5f6d7f6656737"
+    },
+    {
+      "source": "review/2026-09-13/desktop-check_ui.py.txt",
+      "destination": "archive/history/reviews/2026-09-13/desktop-check_ui.py.txt",
+      "category": "historical-review",
+      "sha256": "e2b27c969ae8aa416b4fffbea580dae3c329ad53c8dbae485f8202e311d2007d"
+    },
+    {
+      "source": "review/2026-09-13/light-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13/light-desktop.png",
+      "category": "historical-review",
+      "sha256": "5629bd976e195c33b90f0559c1a49612385770fad2fb8fd5357cad76bdb14295"
+    },
+    {
+      "source": "review/2026-09-13/measurement.json",
+      "destination": "archive/history/reviews/2026-09-13/measurement.json",
+      "category": "historical-review",
+      "sha256": "100687c5032a525734ddc24560a95f92df346852ac388df37e8f31f20d5d6aea"
+    },
+    {
+      "source": "review/2026-09-13/message-desktop.png",
+      "destination": "archive/history/reviews/2026-09-13/message-desktop.png",
+      "category": "historical-review",
+      "sha256": "5f63002f6cb77fa61cb40d72e1a59859ff9065672b2510a304ec401806b72cbb"
+    },
+    {
+      "source": "review/2026-09-13/results.json",
+      "destination": "archive/history/reviews/2026-09-13/results.json",
+      "category": "historical-review",
+      "sha256": "24fda92287da853c5e3360e9f0ad8331476e7dbe154a1e6dbcf35a4ac473af37"
+    },
+    {
+      "source": "review/2026-09-13/review_probes.py.txt",
+      "destination": "archive/history/reviews/2026-09-13/review_probes.py.txt",
+      "category": "historical-review",
+      "sha256": "4c81fe5539484e85da1cbeb592ebf948aed1f379db08bc3f19b577ea10ffd75b"
+    },
+    {
+      "source": "review/2026-09-13/test_identity.py.txt",
+      "destination": "archive/history/reviews/2026-09-13/test_identity.py.txt",
+      "category": "historical-review",
+      "sha256": "84b27f3222dbc154c7e6d57e37ed30e906490ebc162520d31f8f7903f5f2c6ff"
+    },
+    {
+      "source": "review/2026-09-13/test_mind.py.txt",
+      "destination": "archive/history/reviews/2026-09-13/test_mind.py.txt",
+      "category": "historical-review",
+      "sha256": "c35ea4531d338a1c3e222c42609d1e45f7064e4cb2e2006e0cca9c369a48b0c1"
+    },
+    {
+      "source": "review/2026-09-13/test_storage.py.txt",
+      "destination": "archive/history/reviews/2026-09-13/test_storage.py.txt",
+      "category": "historical-review",
+      "sha256": "f341ddc195944370b7a328bef77f8eb89ecdf9387f8cadc4e38b2938fa387ac3"
+    },
+    {
+      "source": "review/2026-09-13/test_voice.py.txt",
+      "destination": "archive/history/reviews/2026-09-13/test_voice.py.txt",
+      "category": "historical-review",
+      "sha256": "0be46b23700ce805c072b9880d1f345edb6864ee8b7c4540e31399d3968cb031"
+    },
+    {
+      "source": "review/2026-09-14-live-models/README.md",
+      "destination": "archive/history/reviews/2026-09-14-live-models/README.md",
+      "category": "historical-review",
+      "sha256": "796f4fe79ad5a4fd99c9da896c88070868b9fd920dc6acbc4940e4c05b9c78ec"
+    },
+    {
+      "source": "review/2026-09-14-live-models/desktop-live-check.json",
+      "destination": "archive/history/reviews/2026-09-14-live-models/desktop-live-check.json",
+      "category": "historical-review",
+      "sha256": "87d3e6f971e2eadec7862f6b5afd8f74e4e8a1aae49d74743e74c96b84770498"
+    },
+    {
+      "source": "review/2026-09-14-live-models/groq-120b-bounded-reviewed.json",
+      "destination": "archive/history/reviews/2026-09-14-live-models/groq-120b-bounded-reviewed.json",
+      "category": "historical-review",
+      "sha256": "c763aa96e4c4122a5614b2a70837499777d61740f8d66545843764c5498ce0a2"
+    },
+    {
+      "source": "review/2026-09-14-live-models/groq-120b-bounded.json",
+      "destination": "archive/history/reviews/2026-09-14-live-models/groq-120b-bounded.json",
+      "category": "historical-review",
+      "sha256": "ddf24cf84a60dca334ff65537c63fd27a1dc9b16276bd3580edac9a04da2022a"
+    },
+    {
+      "source": "review/2026-09-14-live-models/groq-120b-evidence-policy.json",
+      "destination": "archive/history/reviews/2026-09-14-live-models/groq-120b-evidence-policy.json",
+      "category": "historical-review",
+      "sha256": "b2420503c73c7fb1e0221a4324e537685780f7cfcee1614d0a0c848bc3f1602e"
+    },
+    {
+      "source": "review/2026-09-14-live-models/groq-120b.json",
+      "destination": "archive/history/reviews/2026-09-14-live-models/groq-120b.json",
+      "category": "historical-review",
+      "sha256": "2c2619c00d6f68fe2c7fb29290ec4a0dd3ecd52fcb0131b73bf7433536a08680"
+    },
+    {
+      "source": "review/2026-09-14-live-models/groq-qwen38.json",
+      "destination": "archive/history/reviews/2026-09-14-live-models/groq-qwen38.json",
+      "category": "historical-review",
+      "sha256": "9b05bf90c802494ef16d0473e71858ee53427bee2e5b9f58cec5fe476d24d4b9"
+    },
+    {
+      "source": "review/2026-09-14-live-models/live-glass-response.png",
+      "destination": "archive/history/reviews/2026-09-14-live-models/live-glass-response.png",
+      "category": "historical-review",
+      "sha256": "8774e95d400a7a7d70ab583d5ac99dc23841ed21278f51b072caa7b220fa29be"
+    },
+    {
+      "source": "review/2026-09-14-live-models/nvidia-20b.json",
+      "destination": "archive/history/reviews/2026-09-14-live-models/nvidia-20b.json",
+      "category": "historical-review",
+      "sha256": "a7c6d3269251fae4375f8d6e7587b3c2fa752b26d6975b712fcd28e81f8bec0c"
+    },
+    {
+      "source": "review/2026-09-14-live-models/nvidia-nemotron.json",
+      "destination": "archive/history/reviews/2026-09-14-live-models/nvidia-nemotron.json",
+      "category": "historical-review",
+      "sha256": "01c6e0bf89376f8dfe1819fb17ec3f6e89ca002dcd1eef5f82e5618e8a830e33"
+    },
+    {
+      "source": "review/2026-09-14-live-models/reviewed_character_function.py",
+      "destination": "archive/history/reviews/2026-09-14-live-models/reviewed_character_function.py",
+      "category": "historical-review",
+      "sha256": "8a066538bfccd1010518b3911c20eea4c7f77a434b69659ebc53be31b4ffb262"
+    },
+    {
+      "source": "review/2026-09-14-live-models/reviewed_character_function_policy.py",
+      "destination": "archive/history/reviews/2026-09-14-live-models/reviewed_character_function_policy.py",
+      "category": "historical-review",
+      "sha256": "840ad15e74de670ad0ae08c1863137536cc1ccac8f2a6de3658fed14714d68a1"
+    },
+    {
+      "source": "review/2026-09-16-T01-baseline/README.md",
+      "destination": "archive/history/reviews/2026-09-16-T01-baseline/README.md",
+      "category": "historical-review",
+      "sha256": "baf752e3dd1efe397c6c72a7a5b01dfee9c0632c2d474f2d5ee28a86c39841e9"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/README.md",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/README.md",
+      "category": "historical-review",
+      "sha256": "c783b3ad06eecaee06ef276a9bb9cd34a066c48829210c46474b64afa85def23"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/acceptance.md",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/acceptance.md",
+      "category": "historical-review",
+      "sha256": "5e27e53f46a8dcfa2331c2b5fbbee49abf00785441f972f3f69c37c965432d1a"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/groq-120b.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/groq-120b.json",
+      "category": "historical-review",
+      "sha256": "d94f7cb58a93761d35a91c81eac23f0bff0c01d9f8e313c1fd1fffb3bb8e304e"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/nvidia-20b.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/nvidia-20b.json",
+      "category": "historical-review",
+      "sha256": "9d9db584e37043ee32f2480c64d9ee7b9682effe311421449d4fe9c944a3484a"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/nvidia-first.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/nvidia-first.json",
+      "category": "historical-review",
+      "sha256": "d0c2523e4e5fdf180f4f435c01845fbe403b14a0affcbb050eeb56345f974db2"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/oracle-inventory.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/oracle-inventory.json",
+      "category": "historical-review",
+      "sha256": "2c383b44d367aa9a848e250ef0d5135de507df1352b2702e7d0120912cd6b781"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/oracle-nvidia-20b.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/oracle-nvidia-20b.json",
+      "category": "historical-review",
+      "sha256": "aef12682f6bf1f5af241faf00d8c83390f7298c672ea6693cc2c3f7a2d4ec279"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/oracle-nvidia-deepseek.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/oracle-nvidia-deepseek.json",
+      "category": "historical-review",
+      "sha256": "88daa543c715310889dad9a3ed6d6d889f56766729db86ed4d523853877f0e8c"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/oracle-protocol-smoke.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/oracle-protocol-smoke.json",
+      "category": "historical-review",
+      "sha256": "f08326a9531131c0fde859c05d70ac4866d14cb70f9fa3b473b20e2dbfa333d9"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/oracle-session-cancel.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/oracle-session-cancel.json",
+      "category": "historical-review",
+      "sha256": "393c9ac4403e63f66cbf93ed2a0811df84edb53fa6e1707a4d8a98aca52efd41"
+    },
+    {
+      "source": "review/2026-09-17-T02-backup/oracle-session-success.json",
+      "destination": "archive/history/reviews/2026-09-17-T02-backup/oracle-session-success.json",
+      "category": "historical-review",
+      "sha256": "00c33a741f8ddc666b52771b8e04550b6bb66940980dfa146a741ef8247fea40"
+    },
+    {
+      "source": "review/2026-09-18-free-provider-candidates/README.md",
+      "destination": "archive/history/reviews/2026-09-18-free-provider-candidates/README.md",
+      "category": "historical-review",
+      "sha256": "9821d3dc210b8aa315955634fa1b8a0dd9fe9b413803f10856c8a1278845bc0e"
+    },
+    {
+      "source": "review/2026-09-19-T03-foundation/README.md",
+      "destination": "archive/history/reviews/2026-09-19-T03-foundation/README.md",
+      "category": "historical-review",
+      "sha256": "3873283f6b55a88fc04d917c194808501ce75da28576052ddf58044563736f5d"
+    },
+    {
+      "source": "review/2026-09-19-nvidia-lightning/README.md",
+      "destination": "archive/history/reviews/2026-09-19-nvidia-lightning/README.md",
+      "category": "historical-review",
+      "sha256": "849346aade40262df97d722975daef13330e3990f0c62585f7eb4a031570698b"
+    },
+    {
+      "source": "review/2026-09-19-nvidia-lightning/laptop-no-thinking.json",
+      "destination": "archive/history/reviews/2026-09-19-nvidia-lightning/laptop-no-thinking.json",
+      "category": "historical-review",
+      "sha256": "7404327b35e77c7c3705ee42c72174eae3c705c1aa4c9010a7fd81e324fa9a9a"
+    },
+    {
+      "source": "review/2026-09-19-nvidia-lightning/laptop.json",
+      "destination": "archive/history/reviews/2026-09-19-nvidia-lightning/laptop.json",
+      "category": "historical-review",
+      "sha256": "3678d643406e58c41cf24bcc247cb5965918c120b047f2c72fdd5aff6591519b"
+    },
+    {
+      "source": "review/2026-09-19-nvidia-lightning/oracle.json",
+      "destination": "archive/history/reviews/2026-09-19-nvidia-lightning/oracle.json",
+      "category": "historical-review",
+      "sha256": "fc68fb42920036fd0e1b9ada7fc057214a916690e49cece228b0f7d64c474ce1"
+    },
+    {
+      "source": "review/2026-09-19-openrouter-live/README.md",
+      "destination": "archive/history/reviews/2026-09-19-openrouter-live/README.md",
+      "category": "historical-review",
+      "sha256": "f674b290dc0e8c4ab599e3ce6c96551adb690c2993cc2d2d92efa042381518fc"
+    },
+    {
+      "source": "review/2026-09-19-openrouter-live/deepseek-open-inference-v3.json",
+      "destination": "archive/history/reviews/2026-09-19-openrouter-live/deepseek-open-inference-v3.json",
+      "category": "historical-review",
+      "sha256": "5900e0f2f3daba27b574e94f33adca9c852de2185a64556ebb9a3c07b1552744"
+    },
+    {
+      "source": "review/2026-09-19-openrouter-live/deepseek-open-inference-v4.json",
+      "destination": "archive/history/reviews/2026-09-19-openrouter-live/deepseek-open-inference-v4.json",
+      "category": "historical-review",
+      "sha256": "4e5d6537f54b985ab4c02d04bdce9194cbc069a4064c6b371da75bc10c0457a6"
+    },
+    {
+      "source": "review/2026-09-19-openrouter-live/deepseek-open-inference.json",
+      "destination": "archive/history/reviews/2026-09-19-openrouter-live/deepseek-open-inference.json",
+      "category": "historical-review",
+      "sha256": "fccb49d41c56f864e842a91832bec8e56628e7f89e9b534682755386e77fbfcf"
+    },
+    {
+      "source": "review/2026-09-19-openrouter-live/deepseek-openinference-v2.json",
+      "destination": "archive/history/reviews/2026-09-19-openrouter-live/deepseek-openinference-v2.json",
+      "category": "historical-review",
+      "sha256": "498d1b17017e6c3a93e13a5c1f140c43b99328fa41172c99401a62abc82f831a"
+    },
+    {
+      "source": "review/2026-09-19-openrouter-live/laptop-metadata.json",
+      "destination": "archive/history/reviews/2026-09-19-openrouter-live/laptop-metadata.json",
+      "category": "historical-review",
+      "sha256": "334d0b2790f3a18326d276df321d108093b35868209d551dd4beb634be67455a"
+    },
+    {
+      "source": "review/2026-09-19-openrouter-live/laptop.json",
+      "destination": "archive/history/reviews/2026-09-19-openrouter-live/laptop.json",
+      "category": "historical-review",
+      "sha256": "877a9aca1297bd19a3c0095b938c96a2f306b979864b57df74849bf103351938"
+    },
+    {
+      "source": "review/2026-09-19-private-local/README.md",
+      "destination": "archive/history/reviews/2026-09-19-private-local/README.md",
+      "category": "historical-review",
+      "sha256": "0b736244b53f641c221e760799ffdd0ce8f116bb436f94833a1d5d83508e8188"
+    },
+    {
+      "source": "review/2026-09-19-private-local/integration.json",
+      "destination": "archive/history/reviews/2026-09-19-private-local/integration.json",
+      "category": "historical-review",
+      "sha256": "248d5e4bebc7a0ec6a31b90285e56055196f0504609e08a4e7e0766f8431bea8"
+    },
+    {
+      "source": "review/2026-09-20-T03-evaluation/README.md",
+      "destination": "archive/history/reviews/2026-09-20-T03-evaluation/README.md",
+      "category": "historical-review",
+      "sha256": "9bef8cc90d499eebf05cb129e8a0a2eb7dbfcf95e2a8361850b7dae7035e0774"
+    },
+    {
+      "source": "review/2026-09-20-T03-evaluation/final-rerun.json",
+      "destination": "archive/history/reviews/2026-09-20-T03-evaluation/final-rerun.json",
+      "category": "historical-review",
+      "sha256": "8ab383e1ca63844310dbb36db47f87159c98144bcd7bbc3bb2d72e7cd05ba9ec"
+    },
+    {
+      "source": "review/2026-09-20-T03-evaluation/planning-final.json",
+      "destination": "archive/history/reviews/2026-09-20-T03-evaluation/planning-final.json",
+      "category": "historical-review",
+      "sha256": "ce690566ce260a2af54b0fcba57126aeb16243910415c7e525870ba25010f273"
+    },
+    {
+      "source": "review/2026-09-20-T03-evaluation/planning-rerun.json",
+      "destination": "archive/history/reviews/2026-09-20-T03-evaluation/planning-rerun.json",
+      "category": "historical-review",
+      "sha256": "918849f7ebb5d69a5a506f8954b10d2b5b9eb6a8751f0df338701047b121d780"
+    },
+    {
+      "source": "review/2026-09-20-T03-evaluation/raw.json",
+      "destination": "archive/history/reviews/2026-09-20-T03-evaluation/raw.json",
+      "category": "historical-review",
+      "sha256": "bb9a35dde875f73a890f2cd6d7bc123739b31560898593d0dc40369d3d39f6b4"
+    },
+    {
+      "source": "review/2026-09-20-T03-evaluation/resume.json",
+      "destination": "archive/history/reviews/2026-09-20-T03-evaluation/resume.json",
+      "category": "historical-review",
+      "sha256": "f9382155b7ec521d3454c47139e4bee4e28dfb0af6c29b49f99d834d2e1c167f"
+    },
+    {
+      "source": "review/2026-09-20-T03-evaluation/score_review.py",
+      "destination": "archive/history/reviews/2026-09-20-T03-evaluation/score_review.py",
+      "category": "historical-review",
+      "sha256": "01689790903c0658932044b0d280a5f555ca6b9eb8e24baa5a79fe2112da3123"
+    },
+    {
+      "source": "review/2026-09-20-T03-evaluation/scored.json",
+      "destination": "archive/history/reviews/2026-09-20-T03-evaluation/scored.json",
+      "category": "historical-review",
+      "sha256": "6bca0cb076f4899c172de13c27da8df188e511ed30e9f8bc311c0cac79b3c6d4"
+    },
+    {
+      "source": "review/2026-09-20-T04-admin-registration/README.md",
+      "destination": "archive/history/reviews/2026-09-20-T04-admin-registration/README.md",
+      "category": "historical-review",
+      "sha256": "eeb77c1807c00aacc9d4bd2414e57027cf0a0e5428641137381eb697dd3b70d1"
+    },
+    {
+      "source": "review/2026-09-20-T04-admin-registration/setup-screen.png",
+      "destination": "archive/history/reviews/2026-09-20-T04-admin-registration/setup-screen.png",
+      "category": "historical-review",
+      "sha256": "c10e437fb4dbfdd6749ddbdc0cb809d7a83ee79053ed127be75a5e0dc6aecc64"
+    },
+    {
+      "source": "review/2026-09-20-T04-foundation/README.md",
+      "destination": "archive/history/reviews/2026-09-20-T04-foundation/README.md",
+      "category": "historical-review",
+      "sha256": "d4020bd83cb9cae2b9e87310ac428b82ef410173d8e4cf6669e769319d788d5b"
+    },
+    {
+      "source": "review/2026-09-20-hybrid-research/README.md",
+      "destination": "archive/history/reviews/2026-09-20-hybrid-research/README.md",
+      "category": "historical-review",
+      "sha256": "a155f4c2285df437ae04f361b371c248a4b7015ea60364271af32a20a1bd01be"
+    },
+    {
+      "source": "review/2026-09-20-recovery-interface/README.md",
+      "destination": "archive/history/reviews/2026-09-20-recovery-interface/README.md",
+      "category": "historical-review",
+      "sha256": "ad955f56b5249b91fa6c62df637b01ee64f99233f7588bb525db7cbd5b702741"
+    },
+    {
+      "source": "review/2026-09-20-recovery-interface/backup-synthetic.png",
+      "destination": "archive/history/reviews/2026-09-20-recovery-interface/backup-synthetic.png",
+      "category": "historical-review",
+      "sha256": "24742424906d4a3307bea6997c28449f83b5a4525029b05189408022dd3addba"
+    },
+    {
+      "source": "review/2026-09-20-recovery-interface/locked-screen.png",
+      "destination": "archive/history/reviews/2026-09-20-recovery-interface/locked-screen.png",
+      "category": "historical-review",
+      "sha256": "ea069960c579c9969a33ce8c44970a8b0cda1391271de41fc1de079012c3b02c"
+    },
+    {
+      "source": "review/2026-09-20-recovery-interface/render_preview.py",
+      "destination": "archive/history/reviews/2026-09-20-recovery-interface/render_preview.py",
+      "category": "historical-review",
+      "sha256": "bed77ded3ce0c41f138d24e2633538a764e974adb6cd83798a33d1e65fb56129"
+    },
+    {
+      "source": "review/2026-09-20-recovery-interface/restore-synthetic.png",
+      "destination": "archive/history/reviews/2026-09-20-recovery-interface/restore-synthetic.png",
+      "category": "historical-review",
+      "sha256": "be6181837630e91e2015c52339c5f1ed88b0cd4ffbd3ad93f70bc435906d3dac"
+    },
+    {
+      "source": "review/2026-09-20-repo-fit-and-semantic-verification/README.md",
+      "destination": "archive/history/reviews/2026-09-20-repo-fit-and-semantic-verification/README.md",
+      "category": "historical-review",
+      "sha256": "6124c0dda7c5b98d22b7e7ee33033e52009fd1c3fdd4a5f8f7af3658ced86d2d"
+    },
+    {
+      "source": "review/2026-09-20-storage-recovery/README.md",
+      "destination": "archive/history/reviews/2026-09-20-storage-recovery/README.md",
+      "category": "historical-review",
+      "sha256": "7f980821e71392a24e2d446a24cf6974bb3e9c8df48adf554ca4a82a95695540"
+    },
+    {
+      "source": "review/2026-09-21-conversational-registration/01-core.png",
+      "destination": "archive/history/reviews/2026-09-21-conversational-registration/01-core.png",
+      "category": "historical-review",
+      "sha256": "cff6cebb9f04e0f1d4a83d6711b1e96c9761d8341a480cc015eceb637b0cb4de"
+    },
+    {
+      "source": "review/2026-09-21-conversational-registration/02-connected-reveal.png",
+      "destination": "archive/history/reviews/2026-09-21-conversational-registration/02-connected-reveal.png",
+      "category": "historical-review",
+      "sha256": "957383e434e29218441f0b8dda598928298d3c75024cc177457355117d1f694b"
+    },
+    {
+      "source": "review/2026-09-21-conversational-registration/03-identity.png",
+      "destination": "archive/history/reviews/2026-09-21-conversational-registration/03-identity.png",
+      "category": "historical-review",
+      "sha256": "16df7103b21b8de70d815652b60d081cff6efeb9764437e94d1f67fb575e0edb"
+    },
+    {
+      "source": "review/2026-09-21-conversational-registration/04-device.png",
+      "destination": "archive/history/reviews/2026-09-21-conversational-registration/04-device.png",
+      "category": "historical-review",
+      "sha256": "0bd465694e8d14fa02058fcf21c1e5cdb0640e700b30f6c64c20f8fba07dcc11"
+    },
+    {
+      "source": "review/2026-09-21-conversational-registration/05-signals.png",
+      "destination": "archive/history/reviews/2026-09-21-conversational-registration/05-signals.png",
+      "category": "historical-review",
+      "sha256": "91dd636ba151e0558de97aa518bf060e10e868b576facad04378d90cde9f79b1"
+    },
+    {
+      "source": "review/2026-09-21-conversational-registration/06-review.png",
+      "destination": "archive/history/reviews/2026-09-21-conversational-registration/06-review.png",
+      "category": "historical-review",
+      "sha256": "95a27181984413ce5061001c77439e0cf4ce2511e88e83380e0b772f26f4d731"
+    },
+    {
+      "source": "review/2026-09-21-conversational-registration/README.md",
+      "destination": "archive/history/reviews/2026-09-21-conversational-registration/README.md",
+      "category": "historical-review",
+      "sha256": "35e19655ac5d98e8beb44d04c3ca5622da1d195758d0c3f18f34423fd6f4060b"
+    },
+    {
+      "source": "review/2026-09-21-conversational-registration/render_preview.py",
+      "destination": "archive/history/reviews/2026-09-21-conversational-registration/render_preview.py",
+      "category": "historical-review",
+      "sha256": "8721352c8c8614b78dc34e6c4be97835e62314e858f5d16cfc07e59fb92b9da8"
+    },
+    {
+      "source": "review/2026-09-21-local-voice/README.md",
+      "destination": "archive/history/reviews/2026-09-21-local-voice/README.md",
+      "category": "historical-review",
+      "sha256": "76ff80fde934ccffb78ca36aaf7d34a8a6467146f8a676f3dba281361b5aa509"
+    },
+    {
+      "source": "review/2026-09-21-local-voice/benchmark.json",
+      "destination": "archive/history/reviews/2026-09-21-local-voice/benchmark.json",
+      "category": "historical-review",
+      "sha256": "ca27e2072d835c3b40da920f5856dd6e805b35d7ed57f073c0cfef2dd41a5300"
+    },
+    {
+      "source": "review/2026-09-21-local-voice/benchmark.py",
+      "destination": "archive/history/reviews/2026-09-21-local-voice/benchmark.py",
+      "category": "historical-review",
+      "sha256": "2dca833c4fd4fc7e5d5b432fa167ed7fb1fbe061125e518880f369a7a194dc74"
+    },
+    {
+      "source": "review/2026-09-21-local-voice/initial-kokoro-benchmark.json",
+      "destination": "archive/history/reviews/2026-09-21-local-voice/initial-kokoro-benchmark.json",
+      "category": "historical-review",
+      "sha256": "304ac1e84caf541293eba34219babf51ad850d39b88226b09944c5f8534209c7"
+    },
+    {
+      "source": "review/2026-09-21-local-voice/memory.json",
+      "destination": "archive/history/reviews/2026-09-21-local-voice/memory.json",
+      "category": "historical-review",
+      "sha256": "8c607621410ce4e2da4e8750839450af82fe9979dd639b6ffd2d25c1ac2c4981"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram-v2/01-core.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram-v2/01-core.png",
+      "category": "historical-review",
+      "sha256": "115a6acf910c52ee596b44f09746c01aae95077f8776bf3cd6360088b7aff863"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram-v2/02-connected-reveal.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram-v2/02-connected-reveal.png",
+      "category": "historical-review",
+      "sha256": "e15b89ad8887df7f76f5bd388e5f7ec311b55bf6ebb0cd440fa44ca1d0c5a94e"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram-v2/03-identity.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram-v2/03-identity.png",
+      "category": "historical-review",
+      "sha256": "8a446fa81821c33e3fdfbc3e8da413e963e7b303056b02164c9cbd400f95b354"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram-v2/04-device.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram-v2/04-device.png",
+      "category": "historical-review",
+      "sha256": "d28b9ac40334a1c060dac95b9c007644d5d11b8542beafaa829af8b533c89ed6"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram-v2/05-signals.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram-v2/05-signals.png",
+      "category": "historical-review",
+      "sha256": "eef97d8a611977b1dcb126f9ebe820853aaf96107339c9088c5aa7d5650785f0"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram-v2/06-review.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram-v2/06-review.png",
+      "category": "historical-review",
+      "sha256": "57528cb9bad61be00a35a692af7be2410b652711ed87c5a7971b9892b1a7b535"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram-v2/README.md",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram-v2/README.md",
+      "category": "historical-review",
+      "sha256": "f4061af9d7aca3572b9ef937e3ee484be512fd37de6e42b108fabbe90ef32434"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram-v2/render_preview.py",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram-v2/render_preview.py",
+      "category": "historical-review",
+      "sha256": "66ce57f24f04ccb5db671bbb59e7de8ba3271a7cac54407e3e92ef1f43623a93"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram/01-center.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram/01-center.png",
+      "category": "historical-review",
+      "sha256": "672025cec903beaa0adc532a6e1de21a5e934cd04c9abb7f979fb775f29ed745"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram/02-split.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram/02-split.png",
+      "category": "historical-review",
+      "sha256": "0da4f3ff877eab1a78c96b71f021b618cb9fc78d7f7a5b2b8dd0473fc1688b8e"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram/03-screen.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram/03-screen.png",
+      "category": "historical-review",
+      "sha256": "8164cda84ce61ce966fafe45b76134e9b3b7d97ca14fc1d3a28d62a2cbe0fffa"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram/04-device.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram/04-device.png",
+      "category": "historical-review",
+      "sha256": "387f0c60e4b7ca878a941c2c49f1297682e00bdd3414876c6196186845ad5727"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram/05-privacy.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram/05-privacy.png",
+      "category": "historical-review",
+      "sha256": "73a407f3eb8078ec2de4dc83b6509ea66bcf90508bd99b876f6ee76f06a0f917"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram/06-review.png",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram/06-review.png",
+      "category": "historical-review",
+      "sha256": "53e80de36ca6b0c198b4be1299594a03d4fe4c75749e0ae89c86fd8cd442c4a3"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram/README.md",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram/README.md",
+      "category": "historical-review",
+      "sha256": "2635da0cfcd074d068a3ab27056f77c654772a09dc0d65f83ba5fd39512e9675"
+    },
+    {
+      "source": "review/2026-09-21-registration-hologram/render_preview.py",
+      "destination": "archive/history/reviews/2026-09-21-registration-hologram/render_preview.py",
+      "category": "historical-review",
+      "sha256": "7ee939ffc4b6dd24689651bc939f03ae0eca5a18f979e6cf3cb91257dce6d862"
+    },
+    {
+      "source": "review/2026-09-22-external-voice-integration/README.md",
+      "destination": "archive/history/reviews/2026-09-22-external-voice-integration/README.md",
+      "category": "historical-review",
+      "sha256": "0765967ac60112cdc04be5bd34cd466e4e26022efdf15b1d5123c47db703763a"
+    },
+    {
+      "source": "review/2026-09-22-external-voice-integration/generate_tuned_samples.py",
+      "destination": "archive/history/reviews/2026-09-22-external-voice-integration/generate_tuned_samples.py",
+      "category": "historical-review",
+      "sha256": "ea424f685b84cca72504d26539162f47bd50b0042e6dbe75296217dc389483a8"
+    },
+    {
+      "source": "review/2026-09-22-external-voice-integration/samples-clean/metrics.json",
+      "destination": "archive/history/reviews/2026-09-22-external-voice-integration/samples-clean/metrics.json",
+      "category": "historical-review",
+      "sha256": "33289b41a597a91dace33a05bd65e6a91fee39c37c11cd89f270a4273dab6922"
+    },
+    {
+      "source": "review/2026-09-22-external-voice-integration/samples/metrics.json",
+      "destination": "archive/history/reviews/2026-09-22-external-voice-integration/samples/metrics.json",
+      "category": "historical-review",
+      "sha256": "f47decab443d24fcddfb5681a234902992ffc8b39971e659b6d7c0d49e7c6d55"
+    },
+    {
+      "source": "review/2026-09-23-english-voice/README.md",
+      "destination": "archive/history/reviews/2026-09-23-english-voice/README.md",
+      "category": "historical-review",
+      "sha256": "a1dc7a0f818a805892fd3ae11a75639e9813aa36b5ecac7a26a311a1fec043da"
+    },
+    {
+      "source": "review/2026-09-23-english-voice/benchmark_kokoro.py",
+      "destination": "archive/history/reviews/2026-09-23-english-voice/benchmark_kokoro.py",
+      "category": "historical-review",
+      "sha256": "736953b9a976620493ed70d46550c7ca0cd2c3e34aabdc7dedb3ca349156a372"
+    },
+    {
+      "source": "review/2026-09-23-english-voice/benchmark_native.py",
+      "destination": "archive/history/reviews/2026-09-23-english-voice/benchmark_native.py",
+      "category": "historical-review",
+      "sha256": "053a5177553079a3301aaebab72628301834386445f0c508710ccab0fec18865"
+    },
+    {
+      "source": "review/2026-09-23-fast-replies-and-decision-models/README.md",
+      "destination": "archive/history/reviews/2026-09-23-fast-replies-and-decision-models/README.md",
+      "category": "historical-review",
+      "sha256": "7f9b9e5f7f24701c94669331b3c2e3e036b355204465509fc865f0c5cf3460a7"
+    },
+    {
+      "source": "review/2026-09-23-vision/README.md",
+      "destination": "archive/history/reviews/2026-09-23-vision/README.md",
+      "category": "historical-review",
+      "sha256": "6b4ef84bb0d55f811cee1d406e3fe8e0ccaa716f0c46774caae850eb51dee529"
+    },
+    {
+      "source": "review/2026-09-23-vision/camera-only-preview.png",
+      "destination": "archive/history/reviews/2026-09-23-vision/camera-only-preview.png",
+      "category": "historical-review",
+      "sha256": "8b8571d2569a8e078e9a713f2a7fd78c376f21c4d21b01339c434fa76e2c4dd9"
+    },
+    {
+      "source": "review/2026-09-23-vision/live_smoke.py",
+      "destination": "archive/history/reviews/2026-09-23-vision/live_smoke.py",
+      "category": "historical-review",
+      "sha256": "4c37b2542fa4666c9203723a90ca69cb2f2ae4ecb740393471001e384a7db8af"
+    },
+    {
+      "source": "review/2026-09-23-vision/live_ui_smoke.py",
+      "destination": "archive/history/reviews/2026-09-23-vision/live_ui_smoke.py",
+      "category": "historical-review",
+      "sha256": "f02e9e691c1a47a04f24fb1bc97f5dddedd6b4ec2057ad044d0d3ca46eae04a1"
+    },
+    {
+      "source": "review/2026-09-23-vision/preview-camera-off.png",
+      "destination": "archive/history/reviews/2026-09-23-vision/preview-camera-off.png",
+      "category": "historical-review",
+      "sha256": "512c96a203b12370113369d798953714186b71529ac1120bd9dc510fa5b173c7"
+    },
+    {
+      "source": "review/2026-09-23-vision/preview_quality_smoke.py",
+      "destination": "archive/history/reviews/2026-09-23-vision/preview_quality_smoke.py",
+      "category": "historical-review",
+      "sha256": "800711de5ae0391bdaef27dd42c10e4546fd5b3bb7ebfcff8666c11574549a8f"
+    },
+    {
+      "source": "review/2026-09-23-vision/quality_ui_smoke.py",
+      "destination": "archive/history/reviews/2026-09-23-vision/quality_ui_smoke.py",
+      "category": "historical-review",
+      "sha256": "503c2521fb96ef63cba655520e1df88adef52a45b54ec0728fd80e8b19129ac8"
+    },
+    {
+      "source": "review/2026-09-23-voice-comparison/README.md",
+      "destination": "archive/history/reviews/2026-09-23-voice-comparison/README.md",
+      "category": "historical-review",
+      "sha256": "270a2e0317529d8c9ca5bfebf75ed62e35815ce64ac343f5bc0de148510a6d48"
+    },
+    {
+      "source": "review/2026-09-23-voice-comparison/generate_public_edge_samples.py",
+      "destination": "archive/history/reviews/2026-09-23-voice-comparison/generate_public_edge_samples.py",
+      "category": "historical-review",
+      "sha256": "b688134bbd2cef29cba2aa5abfd0b553e6ee04408b7b4abe845bcde3743e3f71"
+    },
+    {
+      "source": "review/2026-09-23-voice-comparison/samples/edge-ava-english.mp3",
+      "destination": "archive/history/reviews/2026-09-23-voice-comparison/samples/edge-ava-english.mp3",
+      "category": "historical-review",
+      "sha256": "506b2ac55496e6ce8b7c5bbdf3edfc5a77976407258555dd15b209e06e170d09"
+    },
+    {
+      "source": "review/2026-09-23-voice-comparison/samples/edge-ava-tamil.mp3",
+      "destination": "archive/history/reviews/2026-09-23-voice-comparison/samples/edge-ava-tamil.mp3",
+      "category": "historical-review",
+      "sha256": "387a7d15261756cf207ffb7b5187ab061cf1a8210eda65caaa48dc76954d7a2b"
+    },
+    {
+      "source": "review/2026-09-24-brain-strategy/README.md",
+      "destination": "archive/history/reviews/2026-09-24-brain-strategy/README.md",
+      "category": "historical-review",
+      "sha256": "86c21494e6c8d2f645071e53463f4c4837e4151998d6fb804e170e6d11011f95"
+    },
+    {
+      "source": "review/2026-09-24-brain-strategy/bench_retrieval.py",
+      "destination": "archive/history/reviews/2026-09-24-brain-strategy/bench_retrieval.py",
+      "category": "historical-review",
+      "sha256": "1bf635de22579167451a252f42f973c1013975cabf86125c2b2e4575309e5ed6"
+    },
+    {
+      "source": "review/2026-09-24-brain-strategy/golden-results.md",
+      "destination": "archive/history/reviews/2026-09-24-brain-strategy/golden-results.md",
+      "category": "historical-review",
+      "sha256": "4fb41b936fc8024519df797a282c19aaec9cc57c5888b597a4e2ad7f0bac3cd5"
+    },
+    {
+      "source": "review/2026-09-24-brain-strategy/recovery-runbook.md",
+      "destination": "archive/history/reviews/2026-09-24-brain-strategy/recovery-runbook.md",
+      "category": "historical-review",
+      "sha256": "95f41113d9e2eb44d533c13f393c29495b72a7d71e2c4b64e61e7de74c237cdf"
+    },
+    {
+      "source": "review/2026-09-24-brain-strategy/retrieval-benchmark.md",
+      "destination": "archive/history/reviews/2026-09-24-brain-strategy/retrieval-benchmark.md",
+      "category": "historical-review",
+      "sha256": "f436020d323d4813fd0989d5bff6ec15d8e4e64baf942619e5cecea749b98086"
+    },
+    {
+      "source": "review/2026-09-24-full-check-sweep/README.md",
+      "destination": "archive/history/reviews/2026-09-24-full-check-sweep/README.md",
+      "category": "historical-review",
+      "sha256": "ebc3204e9273cfae4d1420d199485b43c309762b5e3064069a81e3fd44366f91"
+    },
+    {
+      "source": "review/2026-09-24-full-check-sweep/sweep-log.txt",
+      "destination": "archive/history/reviews/2026-09-24-full-check-sweep/sweep-log.txt",
+      "category": "historical-review",
+      "sha256": "59845d9f5a15cbce330f42c6726bae54aaf7b402097d0124f1b067d004340efb"
+    },
+    {
+      "source": "review/2026-09-25-admin-activation-refresh/README.md",
+      "destination": "archive/history/reviews/2026-09-25-admin-activation-refresh/README.md",
+      "category": "historical-review",
+      "sha256": "b5624bf381222befefe8592f52891dc5d49b0f2fc1ba7738cc056cbd30ac89d1"
+    },
+    {
+      "source": "review/2026-09-25-admin-activation-refresh/identity-synthetic.png",
+      "destination": "archive/history/reviews/2026-09-25-admin-activation-refresh/identity-synthetic.png",
+      "category": "historical-review",
+      "sha256": "b08d6d805b6dd508b5ef3316f983da6760f16409da5ee7ebe7c8320da2752599"
+    },
+    {
+      "source": "review/2026-09-25-admin-activation-refresh/optics-synthetic.png",
+      "destination": "archive/history/reviews/2026-09-25-admin-activation-refresh/optics-synthetic.png",
+      "category": "historical-review",
+      "sha256": "5726d4872718cc955264cec6cb1f310524cab5314fb1540335d6caa1cf029f6c"
+    },
+    {
+      "source": "review/2026-09-25-admin-activation-refresh/render_preview.py",
+      "destination": "archive/history/reviews/2026-09-25-admin-activation-refresh/render_preview.py",
+      "category": "historical-review",
+      "sha256": "0907d8d4162a331be2b904e9800e030098fbe33871a06a13e7e4a09f3729995e"
+    },
+    {
+      "source": "review/2026-09-25-admin-bootstrap/README.md",
+      "destination": "archive/history/reviews/2026-09-25-admin-bootstrap/README.md",
+      "category": "historical-review",
+      "sha256": "d036b9140d7b89fd7f7ddc9c80eb24443d853afe42c622af240f37eebf372e5e"
+    },
+    {
+      "source": "review/2026-09-25-admin-bootstrap/review-synthetic.png",
+      "destination": "archive/history/reviews/2026-09-25-admin-bootstrap/review-synthetic.png",
+      "category": "historical-review",
+      "sha256": "9b4927e7bd8c83fc58efafa96ee4b7440d18e251b202db537a094def0fb60782"
+    },
+    {
+      "source": "review/2026-09-25-admin-bootstrap/scan-synthetic.png",
+      "destination": "archive/history/reviews/2026-09-25-admin-bootstrap/scan-synthetic.png",
+      "category": "historical-review",
+      "sha256": "1961f4b6250255471486ac2caf097b26bfef6a5191f897f4938fbfadd1015fce"
+    },
+    {
+      "source": "review/2026-09-25-first-run-and-voice-first/README.md",
+      "destination": "archive/history/reviews/2026-09-25-first-run-and-voice-first/README.md",
+      "category": "historical-review",
+      "sha256": "00a38fa0e85dd04d19fbd8d95d16758983dcbe175ae1430732b250e4ef161a25"
+    },
+    {
+      "source": "review/2026-09-25-jarvis-activation/README.md",
+      "destination": "archive/history/reviews/2026-09-25-jarvis-activation/README.md",
+      "category": "historical-review",
+      "sha256": "6b108065f8830ebe842f992b72b5bc82527edc84d51576e5926156ff89b0506c"
+    },
+    {
+      "source": "review/2026-09-25-task-list/README.md",
+      "destination": "archive/history/reviews/2026-09-25-task-list/README.md",
+      "category": "historical-review",
+      "sha256": "25539d1f5014bbf65fa34351dca9fd36f02f33cdbb07e3df96996fd34f01263f"
+    },
+    {
+      "source": "review/2026-09-26-voice-wake/README.md",
+      "destination": "archive/history/reviews/2026-09-26-voice-wake/README.md",
+      "category": "historical-review",
+      "sha256": "229d24232dde0fab68d1c07517b7ce9ffb9b3f9689b8a6296aafe67b494e8b10"
+    },
+    {
+      "source": "review/2026-09-26-voice-wake/identity-preview.png",
+      "destination": "archive/history/reviews/2026-09-26-voice-wake/identity-preview.png",
+      "category": "historical-review",
+      "sha256": "e5fc4c7d246b665ffcddf7c1c7a97111800f5fdcf28b6042c861ee7a3794d763"
+    },
+    {
+      "source": "review/2026-09-26-voice-wake/wake-flow.mmd",
+      "destination": "archive/history/reviews/2026-09-26-voice-wake/wake-flow.mmd",
+      "category": "historical-review",
+      "sha256": "ddc32d507bacb26ccdf1a26431368136fcf48e88de765c38245dd7c3b0d37f66"
+    },
+    {
+      "source": "review/2026-09-27-foundation-ladder/README.md",
+      "destination": "archive/history/reviews/2026-09-27-foundation-ladder/README.md",
+      "category": "historical-review",
+      "sha256": "577c8c3ab77d168a9cf554fd9a08d77ac28132d664f3c1e9976864557de72720"
+    },
+    {
+      "source": "review/2026-09-27-full-project-workflow-report/README.md",
+      "destination": "archive/history/reviews/2026-09-27-full-project-workflow-report/README.md",
+      "category": "historical-review",
+      "sha256": "a9eab5df814c03bbd11c06ea97e9c5de96a6cd82d9f07e917fd4085c0e5c7562"
+    },
+    {
+      "source": "review/2026-09-27-hands-free-voice/README.md",
+      "destination": "archive/history/reviews/2026-09-27-hands-free-voice/README.md",
+      "category": "historical-review",
+      "sha256": "452028381f101a5a5cec3c6e7966b6614a6389db73513cfe689b88672c311de7"
+    },
+    {
+      "source": "review/2026-09-27-hands-free-voice/synthesis-timing.json",
+      "destination": "archive/history/reviews/2026-09-27-hands-free-voice/synthesis-timing.json",
+      "category": "historical-review",
+      "sha256": "934f09669a18f6ecc21d4559804296c6211d001e234cb872ea220c423619ef2c"
+    },
+    {
+      "source": "review/2026-09-27-name-wake-startup/README.md",
+      "destination": "archive/history/reviews/2026-09-27-name-wake-startup/README.md",
+      "category": "historical-review",
+      "sha256": "5ef63f31dd87a73ccc4546117408a86e4154a0685d33589d36eb14e5960148a9"
+    },
+    {
+      "source": "review/2026-09-27-name-wake-startup/check_names.py",
+      "destination": "archive/history/reviews/2026-09-27-name-wake-startup/check_names.py",
+      "category": "historical-review",
+      "sha256": "157599e803fac47a4433926420c87326d6a1619dd7848c0f3a32fa536a54c9df"
+    },
+    {
+      "source": "review/2026-09-27-name-wake-startup/live-check.md",
+      "destination": "archive/history/reviews/2026-09-27-name-wake-startup/live-check.md",
+      "category": "historical-review",
+      "sha256": "6179c587041cd0edd39acd5d5a780c0dd19a4985b60d070f9a278c211a40bfa4"
+    },
+    {
+      "source": "review/2026-09-27-name-wake-startup/model-check.json",
+      "destination": "archive/history/reviews/2026-09-27-name-wake-startup/model-check.json",
+      "category": "historical-review",
+      "sha256": "c5d0cb53b1b6b2329ae5328fa7bbaf36ca43943ef5b7ae06683c2f9894050840"
+    },
+    {
+      "source": "review/2026-09-27-wake-and-claps/README.md",
+      "destination": "archive/history/reviews/2026-09-27-wake-and-claps/README.md",
+      "category": "historical-review",
+      "sha256": "4c14cb4f14c71b88b22444998b12a6ee22b0a65978c8bd5f5166dc323349b72e"
+    },
+    {
+      "source": "review/2026-09-27-wake-and-claps/check_model.py",
+      "destination": "archive/history/reviews/2026-09-27-wake-and-claps/check_model.py",
+      "category": "historical-review",
+      "sha256": "3e4a9ab5a56cff46e6e440302983dce1c7ee38f7c8df4c2696df1804eca773c9"
+    },
+    {
+      "source": "review/2026-09-27-wake-and-claps/model-check.json",
+      "destination": "archive/history/reviews/2026-09-27-wake-and-claps/model-check.json",
+      "category": "historical-review",
+      "sha256": "4ceb3aeafe5f4dc93e649a6860c322b3a20d3083e6ae2fe5278e66134118321f"
+    },
+    {
+      "source": "review/2026-09-27-wake-calibration/README.md",
+      "destination": "archive/history/reviews/2026-09-27-wake-calibration/README.md",
+      "category": "historical-review",
+      "sha256": "aa1b76abbd3031db653c5ea2b03f2e5a8bfb5f019d7fb2462d25f7b15a3f98e9"
+    },
+    {
+      "source": "review/2026-09-27-wake-calibration/mic-path-check.md",
+      "destination": "archive/history/reviews/2026-09-27-wake-calibration/mic-path-check.md",
+      "category": "historical-review",
+      "sha256": "bbe0c56a34ed99fa692bb0cf4f279cb3589ebee446eac2a8a2e486a3298a4d10"
+    },
+    {
+      "source": "review/2026-09-27-wake-calibration/recording-check.md",
+      "destination": "archive/history/reviews/2026-09-27-wake-calibration/recording-check.md",
+      "category": "historical-review",
+      "sha256": "a61ee5b79eee10d78c3decf182a8007bb14fafa9abfa2546c06ccae4cd59e695"
+    },
+    {
+      "source": "review/2026-09-28-headset-command/README.md",
+      "destination": "archive/history/reviews/2026-09-28-headset-command/README.md",
+      "category": "historical-review",
+      "sha256": "7e21dc699fe0ce445fc4b601e8baf87c785de5bf46cd891aa5d1bb0690ea661b"
+    },
+    {
+      "source": "review/2026-10-03-free-voice-research/README.md",
+      "destination": "archive/history/reviews/2026-10-03-free-voice-research/README.md",
+      "category": "historical-review",
+      "sha256": "947ad3edaf279b077069baf8033abe5a22d40f4f3d3ba6c5880b0025be108b5c"
+    },
+    {
+      "source": "review/2026-10-03-voice-timing/README.md",
+      "destination": "archive/history/reviews/2026-10-03-voice-timing/README.md",
+      "category": "historical-review",
+      "sha256": "e472aa7ae08a0135214d25085d80e78051d4909219191eb2412fcdf700e5cff7"
+    },
+    {
+      "source": "review/2026-10-04-local-asr/README.md",
+      "destination": "archive/history/reviews/2026-10-04-local-asr/README.md",
+      "category": "historical-review",
+      "sha256": "0806d7a45e51e8160a0489322bec717ca5466908f6eb6e98c4b911b45eaf8dc5"
+    },
+    {
+      "source": "review/2026-10-04-local-asr/check_whisper_model.py",
+      "destination": "archive/history/reviews/2026-10-04-local-asr/check_whisper_model.py",
+      "category": "historical-review",
+      "sha256": "9fe8ad226e2509876180be3895abf811cd89c81395547662c3c400909dbed0e2"
+    },
+    {
+      "source": "review/2026-10-04-local-asr/streaming-model-source.json",
+      "destination": "archive/history/reviews/2026-10-04-local-asr/streaming-model-source.json",
+      "category": "historical-review",
+      "sha256": "5c0b88805ad0233ebadd2da99535c647b3a50250515b2c8fbc4956efda294b53"
+    },
+    {
+      "source": "review/2026-10-04-local-asr/synthetic-whisper-check.json",
+      "destination": "archive/history/reviews/2026-10-04-local-asr/synthetic-whisper-check.json",
+      "category": "historical-review",
+      "sha256": "5d84394d28326c2686f7b3a85c979389f508083c3050a6c006e1e79888f73586"
+    },
+    {
+      "source": "review/2026-10-04-local-asr/whisper-model-source.json",
+      "destination": "archive/history/reviews/2026-10-04-local-asr/whisper-model-source.json",
+      "category": "historical-review",
+      "sha256": "c742c44233ea774953b699541504c307e3fa16f42399e530f823000627d6dcca"
+    },
+    {
+      "source": "review/2026-10-04-voice-stabilization/README.md",
+      "destination": "archive/history/reviews/2026-10-04-voice-stabilization/README.md",
+      "category": "historical-review",
+      "sha256": "d76bcaeb6d0c75f94400bcc369706193fa5e1c01ebd1c8e320a1499310b6a9cb"
+    },
+    {
+      "source": "review/2026-10-04-volume-retry/README.md",
+      "destination": "archive/history/reviews/2026-10-04-volume-retry/README.md",
+      "category": "historical-review",
+      "sha256": "863dd7b4f2bc482bb534df8d0573c68a9e912da4f54494299b217a1647453ee8"
+    },
+    {
+      "source": "review/2026-10-05-camera-objects/README.md",
+      "destination": "archive/history/reviews/2026-10-05-camera-objects/README.md",
+      "category": "historical-review",
+      "sha256": "9df078d5dd92d5f931ebdc69307fe9a6530cd8b7d71a9bd81aa41e10b0be5db6"
+    },
+    {
+      "source": "review/2026-10-05-camera-objects/check_models.py",
+      "destination": "archive/history/reviews/2026-10-05-camera-objects/check_models.py",
+      "category": "historical-review",
+      "sha256": "f5e45b39d345fca4e02455f541de2b3214a1023e3d71af4afe2dcf0b05ed0d8a"
+    },
+    {
+      "source": "review/2026-10-05-camera-objects/hand-models.json",
+      "destination": "archive/history/reviews/2026-10-05-camera-objects/hand-models.json",
+      "category": "historical-review",
+      "sha256": "1ed608377229efee7c39545e61e104d2c4a53e5579d7f1e1ccd5826efc8265ac"
+    },
+    {
+      "source": "review/2026-10-05-camera-objects/local-model-check.json",
+      "destination": "archive/history/reviews/2026-10-05-camera-objects/local-model-check.json",
+      "category": "historical-review",
+      "sha256": "3bb8774e4309d5b3ede8f4b34f80af2e3e1f94eb764a95024c8017c1e324c7c8"
+    },
+    {
+      "source": "review/2026-10-05-camera-objects/public-hand-check.json",
+      "destination": "archive/history/reviews/2026-10-05-camera-objects/public-hand-check.json",
+      "category": "historical-review",
+      "sha256": "78b4e463e88e2e87733588b7d3cd4365a4efc6592120a8010ae47ea91bbb1cfa"
+    },
+    {
+      "source": "review/2026-10-05-camera-objects/public-hand-fixture.png",
+      "destination": "archive/history/reviews/2026-10-05-camera-objects/public-hand-fixture.png",
+      "category": "historical-review",
+      "sha256": "bb4391b59ec98bf1cd625f3c298f08f71a3876962e4a5f70181e0726b60407d4"
+    },
+    {
+      "source": "review/2026-10-05-hearing-plan/README.md",
+      "destination": "archive/history/reviews/2026-10-05-hearing-plan/README.md",
+      "category": "historical-review",
+      "sha256": "9117c6158aec647510e1a87d8c1a7528dfbc210ce5c02165a5648942f7186aec"
+    },
+    {
+      "source": "review/2026-10-05-hearing-plan/local-check.md",
+      "destination": "archive/history/reviews/2026-10-05-hearing-plan/local-check.md",
+      "category": "historical-review",
+      "sha256": "ad1b5adf42d5811ff257e0192789dc0ea8b67fe43e7dbec0c4027d5119d28e6a"
+    },
+    {
+      "source": "review/2026-10-05-hearing-plan/nvidia-connection.md",
+      "destination": "archive/history/reviews/2026-10-05-hearing-plan/nvidia-connection.md",
+      "category": "historical-review",
+      "sha256": "c7da0da93a65799c0bd1b15e5d701135f040da4fe785133d25fed708111c5b52"
+    },
+    {
+      "source": "review/2026-10-05-hearing-plan/online-backups.md",
+      "destination": "archive/history/reviews/2026-10-05-hearing-plan/online-backups.md",
+      "category": "historical-review",
+      "sha256": "394c8ed31cd15f7693840eef17c930710475e734ce54ae3023924d358555b449"
+    },
+    {
+      "source": "review/2026-10-05-key-storage/README.md",
+      "destination": "archive/history/reviews/2026-10-05-key-storage/README.md",
+      "category": "historical-review",
+      "sha256": "0e2385e93e6b02a3166bc10034c1937764f141d167191a69743415c211690a7b"
+    },
+    {
+      "source": "review/2026-10-05-native-launch/README.md",
+      "destination": "archive/history/reviews/2026-10-05-native-launch/README.md",
+      "category": "historical-review",
+      "sha256": "cddf716ff3825ebe0db2097d5b6fc28ac3a39d784348cc0d84124e5fc3e31d59"
+    },
+    {
+      "source": "review/2026-10-05-native-launch/key-dialog.png",
+      "destination": "archive/history/reviews/2026-10-05-native-launch/key-dialog.png",
+      "category": "historical-review",
+      "sha256": "6182ac49f8c9eeea12553683231f4234c725330dea33b388edc4fc48f11c3f56"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/README.md",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/README.md",
+      "category": "historical-review",
+      "sha256": "63ef11f9ec6862a4076f37d82a9aafc8a42fe4d65a70057f1fab07c3d0bd8d0e"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/camera-focus-implemented.png",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/camera-focus-implemented.png",
+      "category": "historical-review",
+      "sha256": "2a03514e3fb7bb6d0150a83d5071e8cee6cec632b07e2283165cc190c1570c14"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/camera-tour-implemented.png",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/camera-tour-implemented.png",
+      "category": "historical-review",
+      "sha256": "a314011439626e8f637fdc98cbf9a1557ad60a1cbe3ba4e5b4baf6ac98473d8a"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/check_resources.py",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/check_resources.py",
+      "category": "historical-review",
+      "sha256": "5667ef948e040e2dbeed0c06bff0430ed93e5039306faa9644ad0a6c6df9872a"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/concept.png",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/concept.png",
+      "category": "historical-review",
+      "sha256": "2474395f29253b3c028fa8d2314e3e69210daaa319e34800f320151bbc868772"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/concept.svg",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/concept.svg",
+      "category": "historical-review",
+      "sha256": "19706d9e3196de156090a3bff27ca78f8cd04c3799df3265b32d8d228eb2803c"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/implementation.md",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/implementation.md",
+      "category": "historical-review",
+      "sha256": "f046635e93609d20266ebb672c54a30d783980a64c7fc58ab168066f4cfe426b"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/preview_implemented.py",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/preview_implemented.py",
+      "category": "historical-review",
+      "sha256": "865f2231b53b35941af16a79ffa35717a90486ae7f609fa07429fa1c2877d9ca"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/resource-check.json",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/resource-check.json",
+      "category": "historical-review",
+      "sha256": "4ef4475d8f3c3f3facc379ea295443d4e43d16ac19eb9a78e6f92fcbe3277f8d"
+    },
+    {
+      "source": "review/2026-10-06-camera-focus-research/validation.json",
+      "destination": "archive/history/reviews/2026-10-06-camera-focus-research/validation.json",
+      "category": "historical-review",
+      "sha256": "208da1e8ed7b7ac025cca24853bb7b332b941b0f9e3e565b9303963321624df9"
+    },
+    {
+      "source": "review/2026-10-06-data-routing-plan/README.md",
+      "destination": "archive/history/reviews/2026-10-06-data-routing-plan/README.md",
+      "category": "historical-review",
+      "sha256": "f9fc06f05b83ebbadb6dd1632efd677a1c3b46a43b18e3ddcb1fc3ed0842df8f"
+    },
+    {
+      "source": "review/2026-10-06-data-routing-plan/pipeline.mmd",
+      "destination": "archive/history/reviews/2026-10-06-data-routing-plan/pipeline.mmd",
+      "category": "historical-review",
+      "sha256": "836f4430305b2d0a797a484ed7b279691bd19435ee3267b28d5ec926c5bc9ccc"
+    },
+    {
+      "source": "review/2026-10-06-data-routing-plan/retrieval-benchmark.txt",
+      "destination": "archive/history/reviews/2026-10-06-data-routing-plan/retrieval-benchmark.txt",
+      "category": "historical-review",
+      "sha256": "5f0b1933476e5d76a0358a250fa90b62df6c01b8e600caa8f6da08f91d278a88"
+    },
+    {
+      "source": "review/2026-10-06-distributed-brain-research/README.md",
+      "destination": "archive/history/reviews/2026-10-06-distributed-brain-research/README.md",
+      "category": "historical-review",
+      "sha256": "bb7595fa32d7d832a585c5ed574650b28d9539cba9ae6b82bc77cf9364c9809c"
+    },
+    {
+      "source": "review/2026-10-06-distributed-brain-research/app-builder-skill-draft.md",
+      "destination": "archive/history/reviews/2026-10-06-distributed-brain-research/app-builder-skill-draft.md",
+      "category": "historical-review",
+      "sha256": "d772984b7f42ab484fb966008731bd45f45da15cd7d6e8c151c679a398f272ec"
+    },
+    {
+      "source": "review/2026-10-06-distributed-brain-research/architecture.mmd",
+      "destination": "archive/history/reviews/2026-10-06-distributed-brain-research/architecture.mmd",
+      "category": "historical-review",
+      "sha256": "7292fb072fafbdf295ea0ff1c900d13dfcb91e6b3cc8a412642f3ce458eba195"
+    },
+    {
+      "source": "review/2026-10-06-distributed-brain-research/baseline-results.json",
+      "destination": "archive/history/reviews/2026-10-06-distributed-brain-research/baseline-results.json",
+      "category": "historical-review",
+      "sha256": "eaa1cc7f98583af0b43f52496d941a9225537a7fd9525aadf3ba4857315a9c76"
+    },
+    {
+      "source": "review/2026-10-06-distributed-brain-research/check_memory_baseline.py",
+      "destination": "archive/history/reviews/2026-10-06-distributed-brain-research/check_memory_baseline.py",
+      "category": "historical-review",
+      "sha256": "d84b1e7ee175cfc94f4ab1ae9361a2359c7f391e6a310f75893d93e7d67df837"
+    },
+    {
+      "source": "review/2026-10-06-distributed-brain-research/memory-contract.json",
+      "destination": "archive/history/reviews/2026-10-06-distributed-brain-research/memory-contract.json",
+      "category": "historical-review",
+      "sha256": "a9821b86c631feb1fc2bcb5d78bce5c00e66f27f4583a5c4cf5a29ef3b746536"
+    },
+    {
+      "source": "review/2026-10-06-distributed-brain-research/validation.json",
+      "destination": "archive/history/reviews/2026-10-06-distributed-brain-research/validation.json",
+      "category": "historical-review",
+      "sha256": "dd1e350b33b7a0014158b86fd699cc7c9b7146687c31f282da8a0a044f74b164"
+    },
+    {
+      "source": "review/2026-10-06-response-delay/README.md",
+      "destination": "archive/history/reviews/2026-10-06-response-delay/README.md",
+      "category": "historical-review",
+      "sha256": "1d794f363e3df043fe113e2dfa8916dee3cbe144737354ee34c518a295041cb1"
+    },
+    {
+      "source": "review/2026-10-06-response-delay/vad-initialization.json",
+      "destination": "archive/history/reviews/2026-10-06-response-delay/vad-initialization.json",
+      "category": "historical-review",
+      "sha256": "26c765070338b7a8cf6ef0d2ecbd3628da6e0a58e278147044e8efa35391fb4e"
+    },
+    {
+      "source": "review/2026-10-07-project-memory-foundation/implementation.md",
+      "destination": "archive/history/reviews/2026-10-07-project-memory-foundation/implementation.md",
+      "category": "historical-review",
+      "sha256": "26012c5ef4777ef9770794870981d9d80e293dd6fba6c3a5a08e43f1efe4f0cc"
+    },
+    {
+      "source": "review/2026-10-07-project-memory-foundation/oracle-readiness.json",
+      "destination": "archive/history/reviews/2026-10-07-project-memory-foundation/oracle-readiness.json",
+      "category": "historical-review",
+      "sha256": "c84d2331d8a4c07a3310839c6b57d3e35917869b63f42ee441300866156ac913"
+    },
+    {
+      "source": "review/2026-10-07-project-memory-foundation/resource-check.json",
+      "destination": "archive/history/reviews/2026-10-07-project-memory-foundation/resource-check.json",
+      "category": "historical-review",
+      "sha256": "2d86ec3bb592bc361c01b34f9b89903f0d1681d697272c39965c51b65c69c7e2"
+    },
+    {
+      "source": "review/2026-10-07-project-memory-foundation/validation.json",
+      "destination": "archive/history/reviews/2026-10-07-project-memory-foundation/validation.json",
+      "category": "historical-review",
+      "sha256": "da2d21b42815632f94a9d2b8afa3e4cbaa9e04588603b322359cbe5508fe6229"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/check_resources.py",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/check_resources.py",
+      "category": "historical-review",
+      "sha256": "ed4c1f572de7dfcd754bcd9302228f9de95017cf58194bd6d6c975c97e236c50"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/deploy_public_archive.py",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/deploy_public_archive.py",
+      "category": "historical-review",
+      "sha256": "3c0a16f53d77777e418ccaa99f8e43f4b57e90a36c69be0e6daab8a3eda02c7a"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/deployment.json",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/deployment.json",
+      "category": "historical-review",
+      "sha256": "ca86dd59705215ef172737dd166f11e377a4cae0dcf2381b60e4597deeb2caae"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/implementation.md",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/implementation.md",
+      "category": "historical-review",
+      "sha256": "5b6674852818180d94372487811d711012a89e7e794db52c0c19efa7ea855eb7"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/probe_oracle.py",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/probe_oracle.py",
+      "category": "historical-review",
+      "sha256": "6f404e7cdfe6578f1596c213faff32f18f3bd98bd8bcd6efd37ea8c439ab9b8e"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/readiness.json",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/readiness.json",
+      "category": "historical-review",
+      "sha256": "a0a31876b5041b0f5679f2a3dfc74e2cb417c81b35e5ed25f20358fb3c78c8c2"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/resource-check.json",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/resource-check.json",
+      "category": "historical-review",
+      "sha256": "b5154b8f2fdf55588db48a4d54713e126633224bbd33a6dcafcc5d58a9f2cb74"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/update_continuity.py",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/update_continuity.py",
+      "category": "historical-review",
+      "sha256": "4637617d97fa628345259717bf4352664eeffe99c11a1fc56197c2bb13cbbcb8"
+    },
+    {
+      "source": "review/2026-10-07-public-archive/validation.json",
+      "destination": "archive/history/reviews/2026-10-07-public-archive/validation.json",
+      "category": "historical-review",
+      "sha256": "c3b78ad3f423335705492f94806ed63230516776bf426ca6f789ca2247faa46d"
+    },
+    {
+      "source": "review/2026-10-08-legacy-owner-retirement/README.md",
+      "destination": "archive/history/reviews/2026-10-08-legacy-owner-retirement/README.md",
+      "category": "historical-review",
+      "sha256": "cef4d3de2cf4f04da021eab798fa3014d35c05d8e831707c4f5cfb4234ed7772"
+    },
+    {
+      "source": "review/2026-10-08-legacy-owner-retirement/check_retirement.py",
+      "destination": "archive/history/reviews/2026-10-08-legacy-owner-retirement/check_retirement.py",
+      "category": "historical-review",
+      "sha256": "e0f92e0948fee54aa02bc42aabf753b35e91f1dbb86ffc54117d279b23e02774"
+    },
+    {
+      "source": "review/2026-10-08-legacy-owner-retirement/http-retry.json",
+      "destination": "archive/history/reviews/2026-10-08-legacy-owner-retirement/http-retry.json",
+      "category": "historical-review",
+      "sha256": "ac8b38db240a535f27c8013a62cf96c4043cf20a8c20ee319364771cf74ec844"
+    },
+    {
+      "source": "review/2026-10-08-legacy-owner-retirement/result-summary.json",
+      "destination": "archive/history/reviews/2026-10-08-legacy-owner-retirement/result-summary.json",
+      "category": "historical-review",
+      "sha256": "6c2048172966266df827b116e6ab8b0b38e5fa2ca9e80ded1c685d29700bb321"
+    },
+    {
+      "source": "review/2026-10-08-legacy-owner-retirement/retirement-validation.json",
+      "destination": "archive/history/reviews/2026-10-08-legacy-owner-retirement/retirement-validation.json",
+      "category": "historical-review",
+      "sha256": "17dec00c1138cd8e0891134ba14ac2fe781a9f040992208855bbd028409d3e60"
+    },
+    {
+      "source": "review/2026-10-08-legacy-owner-retirement/validation.json",
+      "destination": "archive/history/reviews/2026-10-08-legacy-owner-retirement/validation.json",
+      "category": "historical-review",
+      "sha256": "adfc14e23b3e535cf034b3f389b7c8596b91cd33f2850d69514e3a7a8f8d5197"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/README.md",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/README.md",
+      "category": "historical-review",
+      "sha256": "cbd1ad4f5aa51b90213bdae18a366b11b40a804b706ee35f69dfce0a58e90c6e"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/check_models.py",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/check_models.py",
+      "category": "historical-review",
+      "sha256": "e5979d8d7f39a8be076a6687cfaf9437cb50722756e736447ecbb44cb5b8736b"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/check_profiles.py",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/check_profiles.py",
+      "category": "historical-review",
+      "sha256": "6fddd985a477336218c133b45feb1bc9c7a6d5f9d163a73497a2f22273d5d8a8"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/check_worker_bridge.py",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/check_worker_bridge.py",
+      "category": "historical-review",
+      "sha256": "1bccf4082090c5333e51a2ff3ab3de9f4d15953a54c026d75361dc0f2e830a5e"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/http-retry.json",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/http-retry.json",
+      "category": "historical-review",
+      "sha256": "89dd2ce3ec0ddd3c2d52a15ef022c98e1c0f0f9b612de23e6e9402e4d6897287"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/model-check.json",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/model-check.json",
+      "category": "historical-review",
+      "sha256": "ef7c7107f0c12447ccab12db5737012cd7e88605deccd21e2611ace1933949a1"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/public-opencv-fixture.jpg",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/public-opencv-fixture.jpg",
+      "category": "historical-review",
+      "sha256": "7de7ed51a1594fff247f4cae2301eceacf5313d6011e37b4a4c8733f7bb72c07"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/registration-controls.png",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/registration-controls.png",
+      "category": "historical-review",
+      "sha256": "5c02d713f3a176295ab1092207c1d974564ea2087f450c43ab7c695923e351d3"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/registration-review.png",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/registration-review.png",
+      "category": "historical-review",
+      "sha256": "501b5b43aedcf18064c7044bca60e5823bdc9cdbc93d3cd66c63ed4557405afd"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/validation.json",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/validation.json",
+      "category": "historical-review",
+      "sha256": "b285138953628e1505bff31400379298350adea3c342b3d3eb0bdb5dc8020699"
+    },
+    {
+      "source": "review/2026-10-08-owner-face-voice/worker-bridge.json",
+      "destination": "archive/history/reviews/2026-10-08-owner-face-voice/worker-bridge.json",
+      "category": "historical-review",
+      "sha256": "b77f989460a7f345014b8d35ca38d6ce067a9400c1180addbe2b2e751b4cf465"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/README.md",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/README.md",
+      "category": "historical-review",
+      "sha256": "fe09482ff27e4e35797c00b4f20b9c7e865a3e185a9172f864d8ec244c9c1817"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/approval-flow.mmd",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/approval-flow.mmd",
+      "category": "historical-review",
+      "sha256": "c6f4a129e1797949b3e7d475e635ed3cfb1848f265acd50ba3a6ff942870af69"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/check_owner_setup.py",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/check_owner_setup.py",
+      "category": "historical-review",
+      "sha256": "e308db45433844e3d914b4f1da8029a25c4e0f41562f32de1b6d1a182539c72e"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/owner-arrive.png",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/owner-arrive.png",
+      "category": "historical-review",
+      "sha256": "4edde97653164a9de2850a64b5c97b32704c0e70d85dac1c0635e769a11890f0"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/owner-legacy-locked.png",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/owner-legacy-locked.png",
+      "category": "historical-review",
+      "sha256": "178d40c402d76a75045dd51dd368bc15b142c0ee8d98f289277fd2e7a051a6ed"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/owner-name.png",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/owner-name.png",
+      "category": "historical-review",
+      "sha256": "91bcb3b23721026e0b8d9ae855af019ce774dbd46a28beeaa9715b9accfc9b40"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/owner-one-action.png",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/owner-one-action.png",
+      "category": "historical-review",
+      "sha256": "adda3a24fdc0ba86f7361c0bc75ff2680b52f4c35f878472cd5e4a9385ec468e"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/owner-recovery.png",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/owner-recovery.png",
+      "category": "historical-review",
+      "sha256": "cf3bdf764297004b17c8fcea6b14a24c95244e80d5b1a94cffe8f3fbb1c4768a"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/phone-page-preview.html",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/phone-page-preview.html",
+      "category": "historical-review",
+      "sha256": "0f9d2133c1ffb5f5d216c82b605990cb79fe1b1ca3a181033395501a410675d6"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/record_continuity.py",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/record_continuity.py",
+      "category": "historical-review",
+      "sha256": "dc89d6db9c9d594524d24b8b67d6a0fb3b16fbb565e1dbb42d03151f10522caf"
+    },
+    {
+      "source": "review/2026-10-08-owner-passkeys/validation.json",
+      "destination": "archive/history/reviews/2026-10-08-owner-passkeys/validation.json",
+      "category": "historical-review",
+      "sha256": "a92c5055f213de61a9dab83998e1a32f2a2c1130b58e88aa8673f040a074289a"
+    },
+    {
+      "source": "review/2026-10-08-registration-artwork/README.md",
+      "destination": "archive/history/reviews/2026-10-08-registration-artwork/README.md",
+      "category": "historical-review",
+      "sha256": "e700de0a9cc0fd5e3bdae5c04b11c137d2a428fb03d2eb268507a028c2dd3c64"
+    },
+    {
+      "source": "review/2026-10-08-registration-artwork/check_walkthrough.py",
+      "destination": "archive/history/reviews/2026-10-08-registration-artwork/check_walkthrough.py",
+      "category": "historical-review",
+      "sha256": "5dbfe88775f78d971836ae190c996947752b904b5fc402fc5fb22abdc68f3da0"
+    },
+    {
+      "source": "review/2026-10-08-registration-artwork/phone-preview.html",
+      "destination": "archive/history/reviews/2026-10-08-registration-artwork/phone-preview.html",
+      "category": "historical-review",
+      "sha256": "2c6df455d9f837eec1b05426476ec7f2f0ec1e8eeeb5396dd87d678eb1fee1a8"
+    },
+    {
+      "source": "review/2026-10-08-registration-artwork/validation.json",
+      "destination": "archive/history/reviews/2026-10-08-registration-artwork/validation.json",
+      "category": "historical-review",
+      "sha256": "b8acb1338407ed7d5401072535292f67c5306addae55c1d9c69b560ce8ee50c5"
+    },
+    {
+      "source": "review/2026-10-08-registration-artwork/walkthrough-arrival.png",
+      "destination": "archive/history/reviews/2026-10-08-registration-artwork/walkthrough-arrival.png",
+      "category": "historical-review",
+      "sha256": "0f74dd1572aae574c78f6c7cd6eeab27c2661f515dc32a79aecf7215606bbbcf"
+    },
+    {
+      "source": "review/2026-10-08-registration-artwork/walkthrough-name.png",
+      "destination": "archive/history/reviews/2026-10-08-registration-artwork/walkthrough-name.png",
+      "category": "historical-review",
+      "sha256": "f6e97e85b4738ae14517ecc3aaad92849367df117ee864e4714a6023bc97e5f8"
+    },
+    {
+      "source": "review/2026-10-08-registration-artwork/walkthrough-phone.png",
+      "destination": "archive/history/reviews/2026-10-08-registration-artwork/walkthrough-phone.png",
+      "category": "historical-review",
+      "sha256": "a35bad21dcde515f03a75f172d7a84bf94e5168cd0db88ae12db816ef5c7d35e"
+    },
+    {
+      "source": "review/2026-10-08-registration-artwork/walkthrough-recovery.png",
+      "destination": "archive/history/reviews/2026-10-08-registration-artwork/walkthrough-recovery.png",
+      "category": "historical-review",
+      "sha256": "433b29a6ec5daf6be3d398041982d23f0d2811f1be2eb07ab81674d2021095f8"
+    },
+    {
+      "source": "review/2026-10-08-registration-routing/README.md",
+      "destination": "archive/history/reviews/2026-10-08-registration-routing/README.md",
+      "category": "historical-review",
+      "sha256": "9e9c6f08432ce5b0ecdc524f65d676ed00c8087dfe4d1629af148dfc8730b465"
+    },
+    {
+      "source": "review/2026-10-08-registration-routing/baseline.json",
+      "destination": "archive/history/reviews/2026-10-08-registration-routing/baseline.json",
+      "category": "historical-review",
+      "sha256": "bbd99d1379599c571249d01ea637d60325e29f0dfa68f4f4ad2b07f3e16570d8"
+    },
+    {
+      "source": "review/2026-10-08-registration-routing/check_routing.py",
+      "destination": "archive/history/reviews/2026-10-08-registration-routing/check_routing.py",
+      "category": "historical-review",
+      "sha256": "66dac08da1ea17c356471588c801dfe6a94a02650fb644997354def5284e6d86"
+    },
+    {
+      "source": "review/2026-10-08-registration-routing/validation.json",
+      "destination": "archive/history/reviews/2026-10-08-registration-routing/validation.json",
+      "category": "historical-review",
+      "sha256": "0d5eea7c54c8b507b6b821d514e6d54fa003ce7187d3f4c64ec3e6705a6d6c51"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/README.md",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/README.md",
+      "category": "historical-review",
+      "sha256": "6bc665e477cbeb14a6c3f074192dc6e35ee46eb38d2c9edf91288c01e0b75ddf"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/check_walkthrough.py",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/check_walkthrough.py",
+      "category": "historical-review",
+      "sha256": "0a51351df281eb7847ce76a778ac6d9964e8267469095d980a692eb26ddedc39"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/phone-preview.html",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/phone-preview.html",
+      "category": "historical-review",
+      "sha256": "50b44e87abee177c8930d33a3f82cebf7cb351e8f0fa7375885b89c1b11626f1"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/validation.json",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/validation.json",
+      "category": "historical-review",
+      "sha256": "2eea9b43348980fb9530a3457dbae33fcd584eae4653f2b929bfaa5cd6ee8221"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/walkthrough-arrival.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/walkthrough-arrival.png",
+      "category": "historical-review",
+      "sha256": "dcaaaf4fc3705b97bd7a43cef1084732c2c129e0432be01dfb2058ac7dca16ef"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/walkthrough-name.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/walkthrough-name.png",
+      "category": "historical-review",
+      "sha256": "7449f4d6694eccf98a2b89c90c85cf44e68e68c3890323c7a6b0a0c62825f348"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/walkthrough-phone.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/walkthrough-phone.png",
+      "category": "historical-review",
+      "sha256": "56f417f36db3b4bf55f72c947a4a354074aa8bc2d245a725a66d631157013d50"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/walkthrough-recovery.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/walkthrough-recovery.png",
+      "category": "historical-review",
+      "sha256": "1fd1e73cdb43779173f460b1c9af5905efeef32ad3a3fe3d93d3805520e43ce7"
+    },
+    {
+      "source": "review/2026-10-08-voice-only-registration/walkthrough-speaking.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-only-registration/walkthrough-speaking.png",
+      "category": "historical-review",
+      "sha256": "8371b9f68aee1d282cb09b93869e1d89f7a6e5e2c1c7c974517c4658b34d0158"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/README.md",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/README.md",
+      "category": "historical-review",
+      "sha256": "773ca04081bec2ed22a73358836fce635ad2bec25d133b1ab3801abe40e927e5"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/check_walkthrough.py",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/check_walkthrough.py",
+      "category": "historical-review",
+      "sha256": "ab8e8c9226a44f6fd3ab02042491bd82ac5632e6a70af241dd99e57f1484bb9a"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/phone-preview.html",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/phone-preview.html",
+      "category": "historical-review",
+      "sha256": "50b44e87abee177c8930d33a3f82cebf7cb351e8f0fa7375885b89c1b11626f1"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/validation.json",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/validation.json",
+      "category": "historical-review",
+      "sha256": "77cc7274a55e9d480df6f820ec386cdbf27ce0dbd5fd9243ce910870b6131958"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/walkthrough-arrival.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/walkthrough-arrival.png",
+      "category": "historical-review",
+      "sha256": "1eca9510518b9ae2473d1598d3edc2419e5c4d68c722b4bbcccd7ddd4c1ad8bb"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/walkthrough-name.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/walkthrough-name.png",
+      "category": "historical-review",
+      "sha256": "897dc7b77136cc81425c601a9571b955cfdacca7758e3621c02e56b82db15cb2"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/walkthrough-phone.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/walkthrough-phone.png",
+      "category": "historical-review",
+      "sha256": "08ebcf039d57c7f7a8fe249b0b35a0712809ab89ccc95b27571c2ff79b378e31"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/walkthrough-recovery.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/walkthrough-recovery.png",
+      "category": "historical-review",
+      "sha256": "1eca9510518b9ae2473d1598d3edc2419e5c4d68c722b4bbcccd7ddd4c1ad8bb"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/walkthrough-speaking.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/walkthrough-speaking.png",
+      "category": "historical-review",
+      "sha256": "927f13b1801c055f33c1554cfcb2a6133ae283d10d30c17db7331e14955992f6"
+    },
+    {
+      "source": "review/2026-10-08-voice-particle-registration/walkthrough-thinking.png",
+      "destination": "archive/history/reviews/2026-10-08-voice-particle-registration/walkthrough-thinking.png",
+      "category": "historical-review",
+      "sha256": "80bb79d077346f8938d232779324f6e19a5ef274125bab5e8cf2befaa3176a93"
+    },
+    {
+      "source": "review/2026-10-09-face-scan/README.md",
+      "destination": "archive/history/reviews/2026-10-09-face-scan/README.md",
+      "category": "historical-review",
+      "sha256": "5bde7792788f670a85464490660a33120a3b0444e4eca03ab9180954fe162f5d"
+    },
+    {
+      "source": "review/2026-10-09-face-scan/check_scan.py",
+      "destination": "archive/history/reviews/2026-10-09-face-scan/check_scan.py",
+      "category": "historical-review",
+      "sha256": "421abd72a507b0925c790c92fee4678ec60de7286ed7d3b023e05c5d6681629a"
+    },
+    {
+      "source": "review/2026-10-09-face-scan/face-guidance.png",
+      "destination": "archive/history/reviews/2026-10-09-face-scan/face-guidance.png",
+      "category": "historical-review",
+      "sha256": "609a3aeed579120a4ea810ed204f06206dd3f9927e3621958bcec2dbb9d45049"
+    },
+    {
+      "source": "review/2026-10-09-face-scan/face-scan-minimum.png",
+      "destination": "archive/history/reviews/2026-10-09-face-scan/face-scan-minimum.png",
+      "category": "historical-review",
+      "sha256": "da38d71f261fe2c3feb941ea9d56ae7f8f064063216dc7e8ba72bd16bde972ca"
+    },
+    {
+      "source": "review/2026-10-09-face-scan/face-scan-narrow.png",
+      "destination": "archive/history/reviews/2026-10-09-face-scan/face-scan-narrow.png",
+      "category": "historical-review",
+      "sha256": "dc3dd897aa18110940cdd47fbbb5559f9e0db40937288cdce8eda3f9d615be4a"
+    },
+    {
+      "source": "review/2026-10-09-face-scan/face-scan-wide.png",
+      "destination": "archive/history/reviews/2026-10-09-face-scan/face-scan-wide.png",
+      "category": "historical-review",
+      "sha256": "2e31406ad4f1e13240788a1aefbd140de7d62402a7f7b29ac8bb594edf68ed30"
+    },
+    {
+      "source": "review/2026-10-09-face-scan/validation.json",
+      "destination": "archive/history/reviews/2026-10-09-face-scan/validation.json",
+      "category": "historical-review",
+      "sha256": "2f493f5ffa4a3f332b49fd6e30eafca39d1bd6f5363c185a63d4d3d3180ebeaf"
+    },
+    {
+      "source": "review/2026-10-09-face-scan/voice-restored.png",
+      "destination": "archive/history/reviews/2026-10-09-face-scan/voice-restored.png",
+      "category": "historical-review",
+      "sha256": "fc8a5531e92f91524cca6559ffd3cfcfc83e2507cb38a669f375aecaeb182213"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/README.md",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/README.md",
+      "category": "historical-review",
+      "sha256": "a2f21d3aa55e2cda8ff4f7aad262547db0e086892e64aa7b772258c30f2e99a2"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/check_registration.py",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/check_registration.py",
+      "category": "historical-review",
+      "sha256": "120339cfb7aa8dff041d69ef45ad7906ac55ce09949eebc0c5e6f32565078c18"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/phone-preview.html",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/phone-preview.html",
+      "category": "historical-review",
+      "sha256": "982bc70e92c4f80184246da033fea99c73cbd6eff40c113f22dd900c610658c2"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/registration-hearing.png",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/registration-hearing.png",
+      "category": "historical-review",
+      "sha256": "7d43d7231ecea55af348937a85509f2df9282d566a5d7a8794b0bb0da25b3dee"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/registration-listening.png",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/registration-listening.png",
+      "category": "historical-review",
+      "sha256": "3f2d2a5cf14055dbe8a2ea229a3ff4883203e59b10b95af03d0404e2528e2d86"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/registration-phone.png",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/registration-phone.png",
+      "category": "historical-review",
+      "sha256": "055ace9b3eb6fff001612f890f4929bbfc21ce087d6f2b17e34e4fb1f0544474"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/registration-ready.png",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/registration-ready.png",
+      "category": "historical-review",
+      "sha256": "67c247039a76095a84c7e480fdbf37c4a297821c1f067e59deb2fd0476102990"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/registration-small.png",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/registration-small.png",
+      "category": "historical-review",
+      "sha256": "7d59ef7caf8ddd889f464bf291c87f54eea0c3391cb55ae22925aa5189e1b541"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/registration-speaking.png",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/registration-speaking.png",
+      "category": "historical-review",
+      "sha256": "a9c21124099aed0f9b5ec9c5219feb4e6098b7f0ea8c7beb087e312422ffe191"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/registration-thinking.png",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/registration-thinking.png",
+      "category": "historical-review",
+      "sha256": "3b37d87ab7e76ff7a2ae9205485af3580cd644d047cb1a1bb3ac8c0f79202fcb"
+    },
+    {
+      "source": "review/2026-10-09-integrated-registration/validation.json",
+      "destination": "archive/history/reviews/2026-10-09-integrated-registration/validation.json",
+      "category": "historical-review",
+      "sha256": "3b18cc99df8e1517b367834a52224006fa9badfa923c2ec9a26e9beb91662060"
+    },
+    {
+      "source": "review/2026-10-09-owner-security-solution/README.md",
+      "destination": "archive/history/reviews/2026-10-09-owner-security-solution/README.md",
+      "category": "historical-review",
+      "sha256": "98cd3b51f4a1853b3d429ad6e18a3b95c4727cb2d540c70d0740201becce7846"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/README.md",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/README.md",
+      "category": "historical-review",
+      "sha256": "10a00095d32271ccda5a861fc99d8f1eba2ee38a98992cd7bd5dddd3a6cc4e76"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/check_bridge.py",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/check_bridge.py",
+      "category": "historical-review",
+      "sha256": "3e0011eb618b300c979b4bcf897ff0738cb8618de2c153cfb6b8594d193332c7"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/check_capture.py",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/check_capture.py",
+      "category": "historical-review",
+      "sha256": "45e69517777544d2265b1a924405a1adeb22db1b3944677aa74743be47aa739a"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/face-preview.png",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/face-preview.png",
+      "category": "historical-review",
+      "sha256": "89465fa3ae858ca85a828e40665c6efa6fca7d3c13baeeeddbae6d59a82db198"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/model-check.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/model-check.json",
+      "category": "historical-review",
+      "sha256": "60824b046a73d43c78c29df80aa8cf57bbf99ac7cd60c4618c202ab3001e5264"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/preview-check.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/preview-check.json",
+      "category": "historical-review",
+      "sha256": "b6ba33e61e9a8eb554a8a0b7479b8bb8e14960d0c1ae41cfc08938b13879fb22"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/render_capture.py",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/render_capture.py",
+      "category": "historical-review",
+      "sha256": "ac4fe753eedbbaac5bc072002ecbc89b40d5b5ffbf32bb61f314737748df41ba"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/source-check.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/source-check.json",
+      "category": "historical-review",
+      "sha256": "0f6ca5ad8c3d2f5e053db45e34e483a9e88bf517fbf565cc47d7fe7b71175987"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/validation.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/validation.json",
+      "category": "historical-review",
+      "sha256": "f7c46b978eb82252b79e89452bcffbf8366daf5cb6470fd65bde55b5b56c83d3"
+    },
+    {
+      "source": "review/2026-10-09-registration-capture-fix/worker-bridge.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-capture-fix/worker-bridge.json",
+      "category": "historical-review",
+      "sha256": "d7e323b5266b60f65c0e0f89df526823893eae17c1ae3cfe7e9861e7e4fe4a61"
+    },
+    {
+      "source": "review/2026-10-09-registration-expiry/README.md",
+      "destination": "archive/history/reviews/2026-10-09-registration-expiry/README.md",
+      "category": "historical-review",
+      "sha256": "a17ecc6cc54e400dd2673ee88c43c884607fb93fe584967efe7e2d3de3b15a40"
+    },
+    {
+      "source": "review/2026-10-09-registration-expiry/check_expiry.py",
+      "destination": "archive/history/reviews/2026-10-09-registration-expiry/check_expiry.py",
+      "category": "historical-review",
+      "sha256": "1789a60a9b331852f4f402d4911d15dcb897b570deba996bb3ee7d87be364e21"
+    },
+    {
+      "source": "review/2026-10-09-registration-expiry/check_resumed_worker.py",
+      "destination": "archive/history/reviews/2026-10-09-registration-expiry/check_resumed_worker.py",
+      "category": "historical-review",
+      "sha256": "0c00c55e8886ffbbc9855b855b61ce060725e8287b386ceafec74e650e2014c3"
+    },
+    {
+      "source": "review/2026-10-09-registration-expiry/resumed-worker.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-expiry/resumed-worker.json",
+      "category": "historical-review",
+      "sha256": "1844921c04ab751ec0e6c58ecdfd4d5877d41e518b12482e3b4a8bdf37df0004"
+    },
+    {
+      "source": "review/2026-10-09-registration-expiry/source-check.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-expiry/source-check.json",
+      "category": "historical-review",
+      "sha256": "f81c675c7763e9cc6c7c65c32be58ff35cb3275f98ce881c393ad45565cfe8b2"
+    },
+    {
+      "source": "review/2026-10-09-registration-expiry/validation.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-expiry/validation.json",
+      "category": "historical-review",
+      "sha256": "244d64367902305d10472307a7cb321bd038d5d37befe1a002bc3d48bbd612ab"
+    },
+    {
+      "source": "review/2026-10-09-registration-lifecycle/README.md",
+      "destination": "archive/history/reviews/2026-10-09-registration-lifecycle/README.md",
+      "category": "historical-review",
+      "sha256": "8053fd7874cf26486d64c557de6c1d01e20519bd96feb96304497b6ae1c6adfc"
+    },
+    {
+      "source": "review/2026-10-09-registration-lifecycle/check_lifecycle.py",
+      "destination": "archive/history/reviews/2026-10-09-registration-lifecycle/check_lifecycle.py",
+      "category": "historical-review",
+      "sha256": "06aa36988ba022de0ed9a08885ed1709067c1a83b9122b55d2f56800bf3c24db"
+    },
+    {
+      "source": "review/2026-10-09-registration-lifecycle/validation.json",
+      "destination": "archive/history/reviews/2026-10-09-registration-lifecycle/validation.json",
+      "category": "historical-review",
+      "sha256": "90e6e5af48a709870aeb9e097cb2c8a35fb78a16b75ec9eb8891169cc93e351d"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/README.md",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/README.md",
+      "category": "historical-review",
+      "sha256": "147e9affa82af34f3737b80c1c8448981a2fce829404dc21d977cc95130b21a7"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/check_snapshot.py",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/check_snapshot.py",
+      "category": "historical-review",
+      "sha256": "f66d9db9a828c6e3ad763338e13441036fd506313e18c957eac2becd9b49202a"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/check_visitors.py",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/check_visitors.py",
+      "category": "historical-review",
+      "sha256": "680f76ac9081e6f156483071a0006331290a416c0e77612e36db6c515e26316d"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/face-scan-minimum.png",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/face-scan-minimum.png",
+      "category": "historical-review",
+      "sha256": "f75bff5181b69d1d44cc5bac16bd5edf1e5360425189ef72887d3bf9ee85632c"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/face-scan-narrow.png",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/face-scan-narrow.png",
+      "category": "historical-review",
+      "sha256": "325ab38952506fab85b2080a660ee9887aa12417d3f1249c168576a743ec0861"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/face-scan-wide.png",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/face-scan-wide.png",
+      "category": "historical-review",
+      "sha256": "7daaf8ed867542096440a091e204d548918fb7e7bbf892e2a9bb3636804c0002"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/public-snapshot.json",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/public-snapshot.json",
+      "category": "historical-review",
+      "sha256": "1b5a791582b9b09b338934a82a65f50603eab383c1e58781902080d4bf5c64a0"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/render_interface.py",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/render_interface.py",
+      "category": "historical-review",
+      "sha256": "3adc19dc745a1a5bcc9d3320937447f613654716712769c2189bff8d360ca96e"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/source-check.json",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/source-check.json",
+      "category": "historical-review",
+      "sha256": "2a41c3c91622b55edcf3e1698a84c968cf15f2a3097dc80b706a54d0363230bd"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/validation.json",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/validation.json",
+      "category": "historical-review",
+      "sha256": "dad75345c1c4aa2b5dd152336cf830ff56f4a8be6d099d07fd1bc6f80a4975c1"
+    },
+    {
+      "source": "review/2026-10-09-visitor-access/visitor-review.png",
+      "destination": "archive/history/reviews/2026-10-09-visitor-access/visitor-review.png",
+      "category": "historical-review",
+      "sha256": "0ee6af2b452d67141d30ec3f0ea91e469e2bfbd1ac575949b9fe8185a5bf45d0"
+    },
+    {
+      "source": "review/local-model-20260918-180912/README.md",
+      "destination": "archive/history/reviews/local-model-20260918-180912/README.md",
+      "category": "historical-review",
+      "sha256": "f45ab7adac1da6b4a3507f8d81effd2ef0e26f13532b3fbfd7a42bd8058b9735"
+    },
+    {
+      "source": "review/local-model-20260918-180912/results.json",
+      "destination": "archive/history/reviews/local-model-20260918-180912/results.json",
+      "category": "historical-review",
+      "sha256": "df384e78117f090fa93d09111811a8f75eeeda447cdf020f5c89032944147e7d"
+    },
+    {
+      "source": "review/local-model-20260919-170021/results.json",
+      "destination": "archive/history/reviews/local-model-20260919-170021/results.json",
+      "category": "historical-review",
+      "sha256": "131b7c133528f1576577431ffbe33f1a0594614237496c9d56ee0a06aae21816"
+    },
+    {
+      "source": "review/local-model-20260919-170146/results.json",
+      "destination": "archive/history/reviews/local-model-20260919-170146/results.json",
+      "category": "historical-review",
+      "sha256": "c989c2e4a4fe335170e6b2630547c5b014e9e4796ed47c6ec18d8a29386fbcef"
+    },
+    {
+      "source": "review/local-model-20260919-170638/README.md",
+      "destination": "archive/history/reviews/local-model-20260919-170638/README.md",
+      "category": "historical-review",
+      "sha256": "d2aa805c858a888b0e20025660ab40d710444a530010bd55f03bbd74aa54f933"
+    },
+    {
+      "source": "review/local-model-20260919-170638/results.json",
+      "destination": "archive/history/reviews/local-model-20260919-170638/results.json",
+      "category": "historical-review",
+      "sha256": "2993baa148415186fc9582b72d0689d06f00cf3efe67444db0da244f5f5753f6"
+    },
+    {
+      "source": "review_checks.py",
+      "destination": "archive/retired/maintenance/review_checks.py",
+      "category": "superseded-maintenance",
+      "sha256": "a7388e51ef18ce5f3df0b07c17f8223fad28cf538c44d43654e6ef4b2ecaade8"
+    },
+    {
+      "source": "store_key.py",
+      "destination": "archive/retired/maintenance/store_key.py",
+      "category": "superseded-maintenance",
+      "sha256": "130ca111c748722cfea5bc1640df97000b5018be48c43984a19db7495f42ad6a"
+    },
+    {
+      "source": "test_summary.txt",
+      "destination": "archive/history/validation/test_summary.txt",
+      "category": "historical-validation",
+      "sha256": "688841c5482105b21b351e9dbdf7bb7c0837c0f0a8eac729b92799d12c415dd9"
+    },
+    {
+      "source": "tools/voice-evaluation/upstream/README.md",
+      "destination": "archive/experiments/voice-evaluation/upstream/README.md",
+      "category": "unused-evaluation",
+      "sha256": "378bd195d506904cee81a6cc67fed209c0ca058cb1e2a15183ef7115f1ddc560"
+    },
+    {
+      "source": "tools/voice-evaluation/upstream/audio_tokenizer/fp16/model_config.json",
+      "destination": "archive/experiments/voice-evaluation/upstream/audio_tokenizer/fp16/model_config.json",
+      "category": "unused-evaluation",
+      "sha256": "bc408dbf10aac3e56f22edec4447330ff3ee9cb91fc56c80f80e1b6a8c90d1aa"
+    },
+    {
+      "source": "tools/voice-evaluation/upstream/audio_tokenizer/model_config.json",
+      "destination": "archive/experiments/voice-evaluation/upstream/audio_tokenizer/model_config.json",
+      "category": "unused-evaluation",
+      "sha256": "8c56d20d936592be005f1cfa0cae3c22c055ccac74f234c5fb7cf4b4b886b3b7"
+    },
+    {
+      "source": "tools/voice-evaluation/upstream/higgs_inference.py",
+      "destination": "archive/experiments/voice-evaluation/upstream/higgs_inference.py",
+      "category": "unused-evaluation",
+      "sha256": "c88dd2a4965326e7b35167cd2dc0be0ed775bfc8b553a3b7f3e680c230e49b33"
+    },
+    {
+      "source": "tools/voice-evaluation/upstream/inference.py",
+      "destination": "archive/experiments/voice-evaluation/upstream/inference.py",
+      "category": "unused-evaluation",
+      "sha256": "cee90493cbca37790ecb3b099d464b514bab98add0cdb61ea623e59530753b3a"
+    },
+    {
+      "source": "tools/voice-evaluation/upstream/int4/omnivoice_manifest.json",
+      "destination": "archive/experiments/voice-evaluation/upstream/int4/omnivoice_manifest.json",
+      "category": "unused-evaluation",
+      "sha256": "62b5fe2a987e29873963e333a5dd5845289107dc8a4cd19340861de87cc0c215"
+    },
+    {
+      "source": "tools/voice-evaluation/upstream/model_config.json",
+      "destination": "archive/experiments/voice-evaluation/upstream/model_config.json",
+      "category": "unused-evaluation",
+      "sha256": "cc4d867113078c19d500469bf5dd8bfd5344dfdae5acb2da6be8110c40b2fc8d"
+    },
+    {
+      "source": "review/review_20260913.py",
+      "destination": "archive/retired/maintenance/review_20260913.py",
+      "category": "superseded-maintenance",
+      "sha256": "5e9d1675646548866bb920cbb3b54dcb1d67f4835c10e965078b0fa7bc25dd9c"
+    }
+  ],
+  "retained_hashes": {
+    ".gitignore": "a19ebd65836bc8b28ad29586520cfb8a15efa9167de5b2185ed986ccef594539",
+    "LYA.lnk": "6d75d2cdd3379e1425979ca8798ee56e8f1efe4164ae3b07e4d22fe070feb25a",
+    "activate-lya.cmd": "69a309a1d0ebb351ea003f4d5ddeb3d56f333447f5ab3d304a647ec566986bd4",
+    "audio/local_asr.py": "3dd120c6415d740d7e59ea8c8b566d1a1882f51052d8a108a01baa98b36ded83",
+    "audio/local_whisper.py": "829d420b07a896ead47b019ad9c82522d6481a1ca66a47670072a8bb9ebda28a",
+    "audio/local_whistle.py": "500a4a377265f6dbd824f735171d51cd0317f4d4628c0fc344ee0271b2a65d9e",
+    "audio/nvidia_asr.py": "23ce2d0c3feee53d3dcb0e49d3748fd6186372bd9916364539754d264af8b30a",
+    "audio/requirements-local-asr.txt": "bc0653d05a98656df3ee8cb32876b71d666a6d80f9ffb3078e535534bdb974d2",
+    "audio/requirements-voice.txt": "00d22295fb0f61389c28cbc75a247a6518372c5cee084169c847e91afefab79b",
+    "audio/voice.py": "c256853c4a4ef75175a40e65768108911c18ba5ca3a295921d0fa5c0dd00b4ab",
+    "audio/voice_auth.py": "f271cebe40b36dfd25322b5e2ae85fcf82a126a63b658745a7a7b540c8f867d0",
+    "brain/capabilities.py": "5117ec61004758c0cbfc781732dc31c6198284721c8d5ca3fbee21612f2a360e",
+    "brain/conversation.py": "2b9f3381fc6af93013409eff2bbfe0f62692d130ba349b0a7d4c24e9388e6a2e",
+    "brain/council.py": "f7a5e8c15d87ed143ae1ff824248e7a65917d37f3d1fbafa7946210ea5058013",
+    "brain/demo.py": "e7d6527b71e224dbadd108df56de5d61cf78c98009ebd70b60596231e5c588b6",
+    "brain/device_status.py": "945d63ca0696f7319c872bc1586b39ffa9a299d8fdd7a94df0b69286dd554df7",
+    "brain/knowledge.py": "2fb14710ee9e361ce2e55c5fa21883c2703accb718b66e8d92c630b3c3154047",
+    "brain/memory.py": "4d76ceaee576432f08ce8619c32e39beee39d5914b53570fdadad60778711133",
+    "brain/memory_prototype.py": "9ebe97f002b33d3beb912c8053cb5007f08be45bdafc203bbfc6194262cbcff7",
+    "brain/memory_recovery.py": "ce29b5698c8d7ea85be7ca458202c7798b793cf4e848c809d76ad23ed5094c62",
+    "brain/mind.py": "2969de8199c91620b201f5b8ff5780be36e6684b02c312afbe4791d4d9b066ca",
+    "brain/notes.py": "049aa754fd28e059e7dd7a3d3f3223f9ddab0f8fda8eef519b0bf27a4a9f4279",
+    "brain/oracle.py": "ca9b65be29adfcc6996d2dfe1ee7715f97e6d4aa64b83039595ad5d564a165e1",
+    "brain/research.py": "4560884f00e1bd7ee918d56298e83d69fcbe3dc4eff50e8035dbe8dd4822de98",
+    "brain/sync.py": "a452f4325a43aa0d1d638e9dfb90574759c5c0db531bdca26f5dfd8d02ac66bb",
+    "brain/tasks.py": "f13f9a564bf440355af6c8295cb03a998c4cbb76a855612cdc54ef17a5880f48",
+    "brain/verification.py": "e1880d7592528bc33dab0120ffce12bb31e1e5d68cd36c330cd602afb1cb27a7",
+    "brain/workflow.py": "9fdb2f692b7ad39682e530058f0f5a16aec52bcb24f78deb11a4963102f0e709",
+    "check-storage-recovery.cmd": "893e1b32f10143a8f1f4f191336237b4ef993b109d25fb0d879d8a4f970abff2",
+    "check-t01.cmd": "4e9aac428af11cc8960095f161e763682e2951c0af09d6bf2d00fab6db28699a",
+    "check-t02.cmd": "f444c322c9cd9cd26b5565b04b8832d736abf47f00c32c63ed7d138a899ec5d3",
+    "check-t03.cmd": "bc2491be26c17edd356317e2ee60168ec2749fe8ec4e0080f54ac9c451d815a0",
+    "check-t04.cmd": "f1f7f8711bc411f692e92acfbaba44c345b98aa547a3a771fba2013869e27e09",
+    "check-voice-live.cmd": "8b0578151a27978a53343c683db03411f64e8a8fbfd71279227d31d515a82386",
+    "cloud/answer-verification-cases.json": "beeddf72f37be77a199458cfbfbbebff0a7a7c9eeab9d6d196a0517e02facac4",
+    "cloud/answer-verification-thresholds.json": "6f752e9b45cfb708105637dc0b8f452a96a32ee6f74504e08ae3298c52bfaf7b",
+    "cloud/evaluate_answer_cases.py": "4659ed5974ef14454f20bffbd5d7bc86ae1f5f620521791c31620c61b1eb502c",
+    "cloud/evaluate_models.py": "c8b2f0b87aaee095e6195c62e77c03f052fc9f54557780c4d7a17955728ef7fb",
+    "cloud/inference.py": "d97b549aacc74d26b544c7259a9368e357a496810bb3cbd84b2b2ed7630d0b87",
+    "cloud/lya_cloud.py": "a8af1dce1c1afe23bfafd83c0cc511ce06d050c250280d32dec2ae0033fcf787",
+    "cloud/mobile.py": "db4e60a7123b83fefc617dad2ca71cc908fb9092c945af9241477cb3b7f5cda0",
+    "cloud/mobile_client.py": "97d9607a6049edaecdbd055ce0c86df760fe7afa33e6eb109f3a6db06780446e",
+    "cloud/mobile_runtime.py": "e39912448fe73d0dfe80bf826c0e7c7f607ce20837c9522c7f7739d55c700378",
+    "cloud/mobile_speech.py": "e43915e182cdfdf8f27d9bbdca38978109cfced37ee7a35e9387c7a14d29631f",
+    "cloud/mobile_tts.py": "fe6f7ff2426255b4df476e5e00a0b383dd5fc532850b5506943d53edd7c849ee",
+    "cloud/model-evaluation.json": "1d1de00aff10248c17637dd476031c4bd96ea48ed1f61d2069a017fb2169aa17",
+    "cloud/probe_models.py": "ecf29ff3b0b4be938191e000a05779cf3653be665c2588aa12ebe60dd20dbc8f",
+    "cloud/provider.example.json": "2224d3de72ef0630e7230bd494a1a4d2105670e6e32938b743f2c32a163eef13",
+    "cloud/public_archive.py": "e64fed10853117648db845cc71d7c1b0e0694e478be2462e4d9fd67cc5300a50",
+    "cloud/router.py": "bf648a811fd8ab5f8ff6b42693f4b3f39c1526d2b531bd1711c22a34cbfe8a2a",
+    "cloud/ssh_session.py": "d865759094190a07e30b10d92ffd79799ea03d0afd63f165352442f762965cc1",
+    "cloud/t02_remote.py": "dc16b8ab5863cb2944a4f34f7c1516153b4581da05b13c9c56364dcd6cf4620b",
+    "cloud/verify_router.py": "f9245416870da3d3ed7d20c3fc3d8d4bc6cfbb5e8d6112633f645aec59bf6da7",
+    "desktop/activation.py": "7eca42e68a4dc0b78b89b7c34d4fab7e9267127f911d7a6956b388dc42505743",
+    "desktop/app.py": "cd23f5243a80f687a50dec4aa9742e321bfb18ce43303f0b75048429774ca611",
+    "desktop/assets/crystal-original.png": "eb7aab080abedffb04ace25cfb14845016a3a0fb26e710fc7d1e30d5d788c340",
+    "desktop/assets/obsidian-baked.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/obsidian-baked.png": "016ecc0c4e9a823c32c1455db1935463a0d678acfe833e9beedd2244ec1613a9",
+    "desktop/assets/obsidian-crystal.glb": "e1bc93ea1ecd7ed48a64e9c70ea8ee327198ad0ba374f1dd2636aa0283c7c4ab",
+    "desktop/assets/owner-crystal-2026-10-08.png": "d98055e14513b251cb9589e6e6b0f14c4bc18438324e6788cee725e8a2729c7a",
+    "desktop/assets/rotation/frame-00.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-00.png": "016ecc0c4e9a823c32c1455db1935463a0d678acfe833e9beedd2244ec1613a9",
+    "desktop/assets/rotation/frame-01.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-01.png": "12833c527c9c09119179d509dfb7c2a71df0b5f417c08f0d50674ac672cd547b",
+    "desktop/assets/rotation/frame-02.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-02.png": "466fd97f4bab3390f2a2f3a3a87359562c5d726e6ff69b6a5dbf8dc0e224e1a4",
+    "desktop/assets/rotation/frame-03.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-03.png": "a92eed28b50e88a41fe2fc7f50a466195a35431bd849cf38a5719be458d61f75",
+    "desktop/assets/rotation/frame-04.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-04.png": "1e9c4d321a308c22e1825122399fa931eff9f7115aa8400534cf77ed80fc73d1",
+    "desktop/assets/rotation/frame-05.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-05.png": "1479f1264b2b6e2f69958cc2e1def36fb90c7dc071291b01035d7e7e357c0c77",
+    "desktop/assets/rotation/frame-06.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-06.png": "55f451d3a9b8ce49752c57cc478962db76b645a9582b786eb5248e371629b8ea",
+    "desktop/assets/rotation/frame-07.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-07.png": "9481aca5908f3d7aa547d518d17881d8d15a0b8c5b555dc2f6556e7ff3f95bcf",
+    "desktop/assets/rotation/frame-08.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-08.png": "6db1b420d0f113f18ef53fe9c7766d6ba70be832ed35dfa38f5ac5a997fa7176",
+    "desktop/assets/rotation/frame-09.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-09.png": "4a3cb7d36c50a67c8bec2dab5e12ce7edd947869fb8662f731d31b52bb3782dd",
+    "desktop/assets/rotation/frame-10.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-10.png": "e0845c66ef8c1420599ff45cc7656da2f53122fa80c3072584d6b45cfd74290a",
+    "desktop/assets/rotation/frame-11.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-11.png": "900de2015d59a0ec1c337e4e8370be6a5c921e53af38366b68015a85a95b3da6",
+    "desktop/assets/rotation/frame-12.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-12.png": "215042cb0bab9024ea3f9a2b58be21189933ae2779ccbb30c2ffa29ce4736cf6",
+    "desktop/assets/rotation/frame-13.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-13.png": "8ccc630d48ca7ae835d31a01b073fc850aec0f9189b6f7b6219808e32d6ca6be",
+    "desktop/assets/rotation/frame-14.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-14.png": "7907ee6eb7c6b0d984e5540014c298750dda7941a3f0db7ecf9d47e9e2a0d48a",
+    "desktop/assets/rotation/frame-15.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-15.png": "ad32eb2f7866b8d547da6bb974188972d3a133192eea21fe72fba8e0b4fe7613",
+    "desktop/assets/rotation/frame-16.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-16.png": "d272bff65eec8dbb57362a0bb0efd6067e16fb84830c045e9454c841c6c12372",
+    "desktop/assets/rotation/frame-17.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-17.png": "56454879b1230baf005f2d41c4e72a65bee423abfdc8262cf8e8c2c7585a7212",
+    "desktop/assets/rotation/frame-18.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-18.png": "e61315848cba223460986f6c3db8a40a992f1e7eec8fa04ef6221a67c9225d88",
+    "desktop/assets/rotation/frame-19.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-19.png": "79049772bd80b8a70e23e2413db4700680e0c796e9f7fd653b3b1e4e9126d495",
+    "desktop/assets/rotation/frame-20.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-20.png": "cfb76950694a5e0dfaae315a35c8a39c20f19b63b4e020104911be4632b6085d",
+    "desktop/assets/rotation/frame-21.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-21.png": "adf0151e675bb5810eeae1d61dc7e2581c5d7fc6246199c551e5a080d13a00bc",
+    "desktop/assets/rotation/frame-22.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-22.png": "85e2a99375ca18a1e53b5130fa8c0d0b0a6752f94f1f070d9435a745cc42c945",
+    "desktop/assets/rotation/frame-23.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-23.png": "f0e5d3ccdaf49bcb2e4fd8ec921f6651078cff92cd00292cffbe7912b808c9bc",
+    "desktop/assets/rotation/frame-24.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-24.png": "41954b0ba9d6981c3f2863ec955afe2b034dcfa726135e774d3fbc0ec65dc977",
+    "desktop/assets/rotation/frame-25.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-25.png": "9a75ad610671904ba7614ab80433a37da592c4b668b21bad48c456c2269a6cd1",
+    "desktop/assets/rotation/frame-26.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-26.png": "d55664923a982b3431f5bcb265e68e91f9efe89796942fd3f678f7d80003fd1f",
+    "desktop/assets/rotation/frame-27.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-27.png": "e3c49ae3a2c8a1749824b3bf47fa829164edb82ea68d3bf479162302280371b9",
+    "desktop/assets/rotation/frame-28.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-28.png": "c69f5b3e3d5d226159ea403c54ae8a3c4bf3b5cc94aebb41da59e9284afec0b3",
+    "desktop/assets/rotation/frame-29.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-29.png": "059128614251dfa66992c479aa473bd2c89d154ac1deb2f5017a3e386eec4883",
+    "desktop/assets/rotation/frame-30.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-30.png": "d61d44850ab10a9a860e33aed29032b2e82be8f2cf18378e06517c7d32738a97",
+    "desktop/assets/rotation/frame-31.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-31.png": "5787c199bdacda354bfd20d9e34eababac8e3ce9e12328b09454710fe4faaddf",
+    "desktop/assets/rotation/frame-32.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-32.png": "fa67d4b70706682ca2aba04f42a641868465f0e2e217f5d70bf821ff613b5ce7",
+    "desktop/assets/rotation/frame-33.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-33.png": "89d53230747dd29a319f5a4847114482b57e96fd68ecb8ee38fa379553d61b42",
+    "desktop/assets/rotation/frame-34.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-34.png": "08e1d986919640b111cd564428dabe9bcca0cff3eab37b4caf9e0ab035528930",
+    "desktop/assets/rotation/frame-35.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-35.png": "98098787b8efed9d2ec333fa15bc5f1b998a2287dced2d9032d3662a1c313e64",
+    "desktop/assets/rotation/frame-36.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-36.png": "89611d54285f3cddbe43984d430f10d9ceb24df6795f2cf056997777512faa39",
+    "desktop/assets/rotation/frame-37.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-37.png": "db691c9616adb9a0184c53860249fbeb3aa79ecffc8706276388b5a9e6eba59b",
+    "desktop/assets/rotation/frame-38.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-38.png": "787a178c7a755b28097afff30cef4a9b774e6b92a881f80b95323407928326da",
+    "desktop/assets/rotation/frame-39.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-39.png": "662bc95d85f9022406b19121a22ce0f7dbdd83308ae5333cf36841f8de63baba",
+    "desktop/assets/rotation/frame-40.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-40.png": "dc7d12b6d5c352476bc6de17a91c29f75bc338ec570f8cf99b5f1f3dd9a58e4e",
+    "desktop/assets/rotation/frame-41.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-41.png": "602b89dc9c59b8cd749401f462df69108bc6250a21f461899bad6ebeab697e9a",
+    "desktop/assets/rotation/frame-42.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-42.png": "f3cb51d5096fbddd8f7fbab48cf565fc981d508cc5ff42fb5ca84d3d52b35f16",
+    "desktop/assets/rotation/frame-43.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-43.png": "3b9b31ea08ac8f68994608277899de194612884740399d67891d60d306706c84",
+    "desktop/assets/rotation/frame-44.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-44.png": "abc3724bbb1502d4a6fd9517684af3bfcd5f52c595a546368e94ac93b10d8787",
+    "desktop/assets/rotation/frame-45.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-45.png": "e17de3f931cb7026ddaa5859228d24eabb8ed80ef9f7e78b15a38a1a2108df87",
+    "desktop/assets/rotation/frame-46.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-46.png": "ba55fb425ef86008bf019b9d4e2d65c3d26c83b0fae048eac4b6234c492d3e4c",
+    "desktop/assets/rotation/frame-47.json": "3c9b53698ab553dd8bab4bbcd3ec3081b28d7e1c47f7cc283107f07363171652",
+    "desktop/assets/rotation/frame-47.png": "7f0e0a7e36bc6cba4649e84ac7a94174fe7b0e32ef0dfc07aa8d898f70b123f4",
+    "desktop/assets/wake-greeting.wav": "8b725394cbbc47cd90a53c102e955a500fbf2a1880c2c772cc90c5ef76561fc2",
+    "desktop/camera_eyes.py": "a2d5c53897016acb05a1d9c7583101196c9967ad78be394c11615618d7344072",
+    "desktop/check_experience.py": "b147c77d3e414b0c69147beb2490c25eb22765b0255230eb6244808fb96fcf53",
+    "desktop/check_ui.py": "1c7cd2c6ed05af83fc4e6304133b67db8a2f62ebd81eb83e6f3be3324fb0418d",
+    "desktop/experience.py": "56c968bc4d29de59e0a29aeabb9c136382aaa898c91dc281f3ac7a6a26f1a394",
+    "desktop/familiarity.py": "c0febdd3d99c8d69eacfc76b76768fb71b7db5d6ae3a44c56eaf0d4a24d2e8a5",
+    "desktop/layout.py": "113ec226bb3a0f619a86137e728254e6ae5b10d74b328e51657768237113ddf7",
+    "desktop/owner_biometrics.py": "5d5b266daf34b5f2bf1be17c3ba53d814a92cde52f843cba7f51a00475e7f115",
+    "desktop/owner_scan.py": "02fa8f05a28de1fe0196ee4d066a6ca069d9b37a6ce03d57b6df9c52bae54362",
+    "desktop/owner_setup.py": "3acf5df1d8a2533896ae1e68df7eccf7859c445cf4e57b4b1386e26500cb068b",
+    "desktop/qa/2026-09-17-window-controls/answer.png": "95311b40771561a11469ea74df44c53ae16850ea8dbc7d333e78fc6b4f9ee425",
+    "desktop/qa/2026-09-17-window-controls/chat.png": "720fe8346f4577a302815b63f7eadc751d90d0fd06cde2f243a1b96b1d2713e1",
+    "desktop/qa/2026-09-17-window-controls/input.png": "14fc114ab5018eeba64c3c069d1cc5c9db5e82454e1039b5c5967fa026ec62df",
+    "desktop/qa/dark-desktop.png": "a60788df314b89b00cf52b8d186d0a835ccafc2706d35376e2b0200619536018",
+    "desktop/qa/light-desktop.png": "fd74bc63d4a1ebcd71f962d863f47ffac4a60cb045b7ada2b4e50a34f82f7b62",
+    "desktop/qa/measurement.json": "d423e32361c39c84d2a28f0b6b9123c88b995481a4c87cbc5f6b9298aa32736b",
+    "desktop/qa/message-desktop.png": "0b4888c3b3a7ee1d34be8fb0a0dcc302678d12fa8705096dd1990a8a1221c248",
+    "desktop/recovery.py": "f0e169f31ab0d275b1bc7991897101239f58785c9bd96f54facdb544a010c8d6",
+    "desktop/registration.py": "cd831b8dc6e5f322c06d865c330355c95c2fa13aa202b3786f6ae505ddc019de",
+    "desktop/requirements.txt": "2e16ecf158dea6dd6de9f3478f376cd78608421b913924d7a913c8bbdcadf9d2",
+    "desktop/setup_speech.py": "c7e6945617fc1b274a011abd944e44b9e0d51118c8b0b716e0eca204941e413b",
+    "diagrams/10-wake-identity-storage-mobile.png": "950207b34f2a251333b0a71ab7a1c4209b7088f1b9bb7a2ec717ea2ff7aeebda",
+    "diagrams/11-brain-workflow.png": "0728efcd3a14a10a0f27d2a192b71e9e56a7f2b8c0cc59d3bc47edd3fcc8a145",
+    "diagrams/12-brain-schema.png": "67e841d5480c3c958654e9cb997d4e87d2ba89ed1cc01d7cbef73d2cbaa98ecb",
+    "diagrams/14-t01-working-and-test.png": "582d09df2fdefa11d061aed1cf452373865e5754a1c48dbca4d835f07326f129",
+    "diagrams/15-t03-t04-workflow.png": "1da611c35cf36d41d20c9e7dbcbc34a260c82c6c2923796947c2e72ee75109c5",
+    "diagrams/16-admin-registration.png": "61bf41298b853f990e6dc5e86fd741b8fef350214c7957d1adf2ef4e4cde27f9",
+    "diagrams/17-storage-recovery.png": "b63b7a6df73c8ce20960213067ec0a501250f7f3de8a3bf44053ed000348ceed",
+    "diagrams/render_admin_registration.py": "aea33bccc3352bf6a106f9ac527709ef9ba60beb4729b8ee91832edd10e740e9",
+    "diagrams/render_brain_map.py": "d19b73c487a247ed5bb4a2330cc61d34faa7e4496e18ddae2a51b2c71f9c31fc",
+    "diagrams/render_storage_recovery.py": "97bc3e2429e86652f48e74b7da0d7a44549212e6bcb095899bf6d172d3da0716",
+    "diagrams/render_t03_t04.py": "d489e74fada6f071efd0980bf57c91b6e63f705c3172347536cb412b0dcac54a",
+    "external-work/alya_voice/__init__.py": "bd20e407990759b21ccbf315411923278d406de67134c702f204d440a2dc2bb9",
+    "external-work/alya_voice/audiofile.py": "b6787bdc9bffbae3d6a9489e8026a57414d5022ec50fc7dd762860926744a067",
+    "external-work/alya_voice/audit.py": "091f8b742bbe4970ca8de73cf103b17c00f21cab7b86edfdb9a63c038d7cc31b",
+    "external-work/alya_voice/cache.py": "d0f1443d27c7ab56c934b67ded0a42971e5a21fe5c2436619b38f20f042b8cf6",
+    "external-work/alya_voice/cli.py": "ec6413cf28a9adb57def440c7d881e55c9a5a8689c8d47fd08f9e6e41da12f41",
+    "external-work/alya_voice/director.py": "846057f81d880b48e89e87d6e53e37a0fbcecbd11c8bc4cc0b1457a7c61aa9f1",
+    "external-work/alya_voice/dsp.py": "8edd663a91b50182afc09604b953efbaf3c865e895cc2ad2d98c5baf3a898656",
+    "external-work/alya_voice/emotions.py": "2117d030d324b314788d900bb6da243a5c1c7b0c2159c60fd1a61ce33a50676f",
+    "external-work/alya_voice/engines/__init__.py": "a77ce8d90825de75296de43b4b4b45101641bcf35642c9f7fd01d8a39948c5d5",
+    "external-work/alya_voice/engines/base.py": "0c3bd6054513a3f863049c04dfc1982e7a3ab84b42b802f3e97688dbf9ab825d",
+    "external-work/alya_voice/engines/cloud_edge.py": "c3ce985e89dc14d1fdaca48b22a7309eb8324db19e68b2b56a485b31dd40bbba",
+    "external-work/alya_voice/engines/neural_edge.py": "06e249522600207aa9f86d16f65a5cf3c330489c9e750ca622b1e4860b3b0ba9",
+    "external-work/alya_voice/engines/offline_piper.py": "64199c0938325c13eb260365093b9124129a5edbef649006599005c44611d4f8",
+    "external-work/alya_voice/engines/offline_sapi.py": "850ecd492ae118380a352bb3cbdb35861264525e8bc2ae3274404e9fad20e12a",
+    "external-work/alya_voice/normalize.py": "44288d7aaa7475c591275de691737fef53c5cc19f646d9058cec4dfb0843647b",
+    "external-work/alya_voice/persona.py": "d48e12cd715fb1122503a5e17ff830e0919a3124438a690a4af2c2a1a8839c7a",
+    "external-work/alya_voice/privacy.py": "ee1c179bb700a81a95991abd3df437753d04fe1a580042fdacb421120dc57815",
+    "external-work/alya_voice/realism.py": "de9d1f784c49b4187fb6ec89fcd2189d22e7ee7b67ed8901e5793ca1ac2bee8c",
+    "external-work/alya_voice/runtime.py": "b83cb52e77a94ef7617491925dcd5d6bb2bcc17d28b018407d50254182b2e1fd",
+    "external-work/config/emotions.json": "903a70a99a6494864fc75d20921c14635bc58f8c3baeb208512c8fa2bc44183c",
+    "external-work/config/persona.json": "7223430089bd88559fdcf3b9e7ffe97a1186fbaaaa1482205687904f1a250935",
+    "external-work/config/policy.json": "906441beb0055642cd1a51e5463ee665bc9a192e14ba23ada10dafaddeba5d66",
+    "external-work/out/audit/voice-audit.jsonl": "13585457196e2567d1de1ff832e2531ab2cd198721ef68b636723d1b3eb010b5",
+    "external-work/out/bench-offline_piper-20260922-222058.json": "48c4cb23d21efcd09904f7718fad5ab72bde0d9f2e4b8c75b7510b8ffd42a241",
+    "external-work/out/eol.cmd": "f61f426182d3ae27e4d1bfbcfcb7bb89b8427d3b55ae6457dc1ee1fb4cd46688",
+    "external-work/out/eol.txt": "1dfa59016b82f0b3143add14a4895af80e908ff07534ac2f2a03918a9b413c7c",
+    "external-work/out/normalize_eol.py": "3d741578edaa41eed21ef6bb62d75fe5d2563d0526750e44190bdf8e1fa4a245",
+    "external-work/out/run.cmd": "a753556b03907b2534980749d721e7f24b7e52456329d66cde7bd6b8b3898b68",
+    "external-work/out/t2-err-before-fixes.txt": "7dfff54c1ca32439b0050a76bcdbfe466a570b299fcc467fbada74de9f3450ab",
+    "external-work/out/t2-out.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external-work/out/tests-2026-09-22-before-fixes.txt": "765c70cc51eb284131d4468178720627ed87840e081061ac4ad6727a66c18811",
+    "external-work/out/tests-run1-err.txt": "2180edb49cf493d52699f9a36939654cde9325368e87e68e55f293c7616ec807",
+    "external-work/out/tests-run1.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external-work/out/tests.txt": "85486bc29c477a7cdab410238afaf68aad3e901be1ecc4a06335c7235b9a9662",
+    "external-work/tests/__init__.py": "cb9f85ea78df20b5063b47fa5f2f4ee70b2e5306e6cd9b7039943062f8980419",
+    "external-work/tests/test_director.py": "4b5a68e25ad7bdeaacb72d3470e7567b982459d78e8c75b1282b7193b868d2f1",
+    "external-work/tests/test_dsp.py": "d104fa9673b58ac2a05bbb90a084a6f01f888f0dd4847d8f4e9ce3b8b05a3a99",
+    "external-work/tests/test_emotions.py": "7df68ab13eb55bf529e2a853f2d5ec1135f84dc3543cf5085f96ef66ffed4384",
+    "external-work/tests/test_local_piper.py": "d5b9f5e3ca8b6d12726f1bab815acd5b0a7168e290de0e948db1290ced9dfd8a",
+    "external-work/tests/test_moods_and_cli.py": "5785ad9ccaa5fedb2bbe9445c221deaa7d84d0eec52c52ea66a218f295c550f0",
+    "external-work/tests/test_neural_edge.py": "18d134aafe3c5f929448f782a0b7e32f8053dd732851fcf9f28f41c662e4cef9",
+    "external-work/tests/test_normalize.py": "fd31cb55ccc5b185552e5d1d5ad575b255cfb598b78bee4772265df5fbc9d207",
+    "external-work/tests/test_privacy.py": "1fe79b81141e3cbb3365efd108ee2664c198bfc515d0190b88d26667c191350a",
+    "external-work/tests/test_realism.py": "582018ae2203f62f1841f5b929eebfe0a84186e582097a0a041cf6aa93696643",
+    "external-work/tests/test_runtime.py": "fcdae697a536c1c47627cb0d5f1dc254dbcc29cf8234e3f1b7c44cb44ef4d74b",
+    "external-work/tools/alya-voice.cmd": "e930063a0eea5205cb9b9b4a19cb4ad739eee789118152653ff3445966429597",
+    "external-work/tools/f0_probe.py": "679b0c0e352b8b71795b6c36d8ab6bd87a3dfd834f9a4616a228f11689b2275e",
+    "external-work/tools/render_realistic.py": "a909a75a77469e637eb1f1189f9be655ac40a9648bafe2287193fdca726487aa",
+    "external-work/tools/run-tests.cmd": "bce31cb761e71a03965287e0653f04de376771e41ac36ab3c3b0c1f2c5f67910",
+    "launch-lya.cmd": "5ee84e0fc0d41841295125b9cc05ff67fa0063039c5e2b365f4a8b736e9f82b6",
+    "launch-lya.ps1": "3108be8ea0a9082ebc74cab230a4b656cbfcdfd25ffbb141e3eb8e7eaa2fb9c4",
+    "main.py": "f05c95901370b2101bbee2ef42f52542ba46989435e7de603b49596d640caed6",
+    "models/voice/en_US-amy-medium.onnx.json": "95a23eb4d42909d38df73bb9ac7f45f597dbfcde2d1bf9526fdeaf5466977d77",
+    "models/voice/en_US-ljspeech-medium.onnx.json": "141d612cc0a95ed7efc1ca936b845c2364967f2e9217c5dbfcf69fc4d6c65860",
+    "models/voice/manifest.json": "5bc1e5a6c9d34a2812bdcc0ca5a3e8e2195a9df8266a8ba1dbb03d93fd38346b",
+    "models/voice/ta_IN-rasa_female-medium.onnx.json": "e49a5f947bfe64bc232d9f900a163b3b771b812780fd8efe0d411a3d8f4b4ee2",
+    "requirements-nvidia-speech.txt": "04c78880f38f183667b439fda95371e91122c41e9b6b65c43b5b61bb9d3713cc",
+    "requirements-owner.txt": "c5ef64ef6ca62b28caf533c0103035c8ac2cbe4547391998a2c83eb45f5d1f11",
+    "requirements.txt": "53a98dad5ab25cf06cc4b9c06d55196e93401b16d62d08599dc1ca1c2f0fdf47",
+    "review/2026-10-03-voice-conversation/amy-timing.json": "ae3d0d8a35621fc7f9b45b3dd59bad587354673f8c673dd8671e5e525967079c",
+    "review/2026-10-03-voice-conversation/check_stop_model.py": "5f7e29b35986ba3a455155c56ff1d988c2841e71a6c472aace7692f73ef3ad8d",
+    "review/2026-10-03-voice-conversation/check_vad_model.py": "718eb6c6ea9782f7db08d1b0713356aa51a9bf11d57b6d47cef236e96452352a",
+    "review/2026-10-03-voice-conversation/check_voice_choices.py": "21db5536193eb8fb230a442ece7c4c059ae68d926b757caf36fe7d67ae067ec4",
+    "review/2026-10-03-voice-conversation/command-model-candidate.json": "45d8e612e644bf73398ee6316de960d8c2ea327dddc44216a446c7d32e91e7fb",
+    "review/2026-10-03-voice-conversation/orb-states.png": "7ade16ac8b4d60d83187a70942a361d3d81fbfc08113fc67280b56c1b4194c5f",
+    "review/2026-10-03-voice-conversation/render_orb_preview.py": "1e46432733de62ca80d7faae680b5b94239d9717911715bcb7879454524e3ff5",
+    "review/2026-10-03-voice-conversation/stop-model-check.json": "3efb972e5ccf8312b9fec70f9eab1fef2897f1b8a83df0503534807bbfa0c2fb",
+    "review/2026-10-03-voice-conversation/vad-model-check.json": "585dbdf1c9609d11f88cdca3193fd6c1c606137c8a9aaafac3d1f990c2ba3c04",
+    "review/2026-10-03-voice-conversation/voice-choice-timing.json": "017d2ac675fb24156ab7f703f2398dc27bc294fd0f08ac8890d444fada106950",
+    "review/2026-10-05-conversation-design/after-light.png": "7a734cf105965cd6289aad7098f0d3279b709662e4eaaf877a655f16a0593a5a",
+    "review/2026-10-05-conversation-design/after-modes.png": "0b2e077563e0434cb412648de7c777acdbf2c5820efe5cbb3915102160cb7cb5",
+    "review/2026-10-05-conversation-design/after.png": "29fbf0e165e4a8c0314360d22e0ba1da6a63496a8f4815b3cd14de2d14121dde",
+    "review/2026-10-05-conversation-design/before.png": "1067cf46b76406495e9dc736eba00b8f2ce0ea632d786d801f9763c157b61fe5",
+    "review/2026-10-10-mobile-connection/check_connection.py": "ee1c1be9c95ec8e71e511d637eef9b5d0f1149f3181167e9577595f7f08e54ee",
+    "review/2026-10-10-mobile-connection/check_linux.py": "9eba7410430f2191d85bc2675a8563e01a0a875bb90f72e12c6bad31ec26865c",
+    "review/2026-10-10-mobile-connection/host-activate.json": "ca7f38af9bf3d861150fcdaacf52bcbe76c4ece449d398eaccc8b895f890019c",
+    "review/2026-10-10-mobile-connection/host-network.json": "7a2ce8176dda10b47e825589ac5a5d10482465769af68cf31eb5cd5164a47121",
+    "review/2026-10-10-mobile-connection/host-readiness.json": "7d2a5a6cc3256777db5f3ffcbce9d9e8b7443171f600ebdd0f445ac6133f116b",
+    "review/2026-10-10-mobile-connection/host-stage.json": "daa7dbc8b43296c5e6159dd10ceff0ef37312b10da8cb9ea39002dc670eb4b8a",
+    "review/2026-10-10-mobile-connection/installer-check.json": "948c27c5c3bdf2013eb188cd3511d4ffb1f5822d921e2edba9923c71572a76e3",
+    "review/2026-10-10-mobile-connection/linux-validation.json": "fe25c1a6fee5a709e3cfe4d8bc4e7e076b6971a4245953fb91d34fa5865a6db7",
+    "review/2026-10-10-mobile-connection/live-network.json": "56a64ba506dc6a22e40a97471181f691b41650cbf3d1a7cc0d4ab31a58a732c9",
+    "review/2026-10-10-mobile-connection/probe_host.py": "0b24ef0027bb45960bec6c25f231d62b24221a594a67d4f1febc3d1fc41389cd",
+    "review/2026-10-10-mobile-connection/service-check.json": "830bd0012cdea3ed09e9c6442bc557a179aac52af15676ae51a6a5b786a87b9e",
+    "review/2026-10-10-mobile-connection/validation-fixture-path.json": "e06ca2f240bc83ed2cbe71e258f948812cf2ced27b4bc2f3c494abe566ab3c35",
+    "review/2026-10-10-mobile-connection/validation-host-abort.json": "05652db94b1fbab80d6a5abfb9d70afca2e773c24c926a72a4fdef17de46144d",
+    "review/2026-10-10-mobile-connection/validation.json": "5825667e62650153b7ae5aa0e86c9d4d2a2b3fac0c3f94c2cc1cd57eb2d1dae7",
+    "review/2026-10-10-mobile-conversation/amy-long-probe-failure.json": "32c792ce0a5e3aa6feda6ff09ee9b9dd90930611def2161d56dcda4857db2a78",
+    "review/2026-10-10-mobile-conversation/amy-long-resource-check.json": "f931028c10729a1eef6d6b0bbeb9d64c9e3dc2393aac41145fc7fa4a49d194f9",
+    "review/2026-10-10-mobile-conversation/amy-resource-check.json": "16522c3af27a36952d1fa4141ef41b34cbf73b49ae3a71c4d22ff3548caea8e4",
+    "review/2026-10-10-mobile-conversation/amy-sentence-resource-check.json": "9f29172b723695dd3bd592d72b6957f1f4be722e154df6ba574cbad6916a5bc1",
+    "review/2026-10-10-mobile-conversation/check_client.js": "11d119dc68f5ccc3dd4641d43ac7338a07e775ea72204ba1113fc96fccb4fd96",
+    "review/2026-10-10-mobile-conversation/check_connection.py": "f7a550a1c90b252be3c04c45ba4741dcb1135bd47bbee7260127530596a63237",
+    "review/2026-10-10-mobile-conversation/check_full_reply.py": "8605bc1b1dc63bd61f13f6954f2355d268f5f7919e6685f993b330e1f9c81ad0",
+    "review/2026-10-10-mobile-conversation/check_network.py": "b4dc82392055837f70acf18fb5317927398e15266e4609d75a6efc4aab7df0ae",
+    "review/2026-10-10-mobile-conversation/check_sentence.py": "5ba677ecd179017a30f03ac7ac3db823f3b1b520a00b89dfc59c26aba506ff4d",
+    "review/2026-10-10-mobile-conversation/client-validation.json": "7d14d35fdb0d1aeeac7872e659d74bf8dfe54d572398ee5fdb05a855a53ac5c3",
+    "review/2026-10-10-mobile-conversation/final-full-reply-resource-check.json": "8ce57a7050b4aebf1dbc39a2704bdcc78a063f55493b6d6fe53bef2bf06022c9",
+    "review/2026-10-10-mobile-conversation/final-service-check.json": "b473efd05c78b1753f827c54ba0d3b4e790ad575cb512ef145bed7d4c22f22a6",
+    "review/2026-10-10-mobile-conversation/full-reply-resource-check.json": "b734230ab9acf4f5cde8211862c881979c0c18f495c031cd7a0e528098301750",
+    "review/2026-10-10-mobile-conversation/host-activate.json": "5f42813cef01f81b88c58e099c5129547f9b5b63d38f38728950b4f6e6276fc6",
+    "review/2026-10-10-mobile-conversation/host-stage.json": "5775898012f272ee6d6846fbd2451b0c221e274519fa8cbd2cb4ea2ae2af01a7",
+    "review/2026-10-10-mobile-conversation/live-network.json": "208c387e29caea468033d81f939a76ab8dbaa9ae845e7d0e62663476a2517ee9",
+    "review/2026-10-10-mobile-conversation/stage_tts.py": "6a28cdf49343b0656f18586d2948b46b76a67e04fbbe70e2a937968d997a57f4",
+    "review/2026-10-10-mobile-conversation/transport-validation.json": "630d6a9428a2a4b86dc08c47798e2e57f76abb4bbde11d22b66bf2e3b4b539f9",
+    "review/2026-10-10-mobile-conversation/tts-stage.json": "8d2384f79fca22b29507e40a8c4bddf9aac8deccc230e4a1668e22d51c7f5bd3",
+    "review/2026-10-10-mobile-conversation/validation.json": "934edb0f9a67dd7e1cee19482648539ea504fb04a028282e9be860845dd9abdb",
+    "review/2026-10-10-mobile-voice/check_client.js": "afc4af8b421a811629dd7a0233593d683bf2a87a1df0542d8b7013b137387910",
+    "review/2026-10-10-mobile-voice/check_connection.py": "301847fec280bcd79e740f2b4c5bd75b63c997a903e9ba4801992f538ea36f64",
+    "review/2026-10-10-mobile-voice/check_network.py": "b4dc82392055837f70acf18fb5317927398e15266e4609d75a6efc4aab7df0ae",
+    "review/2026-10-10-mobile-voice/check_public_speech.py": "13be30fbb2a352718726d80b337626027ba4c70fd38912bac4bca0e5dffd276a",
+    "review/2026-10-10-mobile-voice/client-validation.json": "31681b0a6e7ecac73a0cbbe67cbfdb03753b9b09f66f99f1f7175ef4fb71f186",
+    "review/2026-10-10-mobile-voice/final-checks.json": "1bee0e65b123651ed637af6a9e35385043a2dd9fd371e11625b0b5eb3336e378",
+    "review/2026-10-10-mobile-voice/final-deployment.json": "6bd43b526a0c919ff891a23e0c2366b601159549d9fdd3fa11130be059286040",
+    "review/2026-10-10-mobile-voice/host-activate.json": "cf2c1bbd613529506668ec09af69f3655d768a71f9e8a6130c138b4499d559a6",
+    "review/2026-10-10-mobile-voice/host-stage.json": "2bf781cd86a33032c519bb1b41dc111689e514892ab8339bf926b7e4d2da7a33",
+    "review/2026-10-10-mobile-voice/live-network.json": "208c387e29caea468033d81f939a76ab8dbaa9ae845e7d0e62663476a2517ee9",
+    "review/2026-10-10-mobile-voice/page-update.json": "526973ae3629023a17d603828c3f8d5c97ba6c39264ec35e2704cb22cfdbb884",
+    "review/2026-10-10-mobile-voice/public-speech.json": "934f95976dc8ecc56ee54ebd0d840fff6dc6bd00f24cb4dbfa776109d8103958",
+    "review/2026-10-10-mobile-voice/validation.json": "f39393b1d4c88e3e7b3c4ff533a28bc84080a15e3b45944933aed166dfde1c36",
+    "review/2026-10-10-owner-data-phone-plan/check_local.py": "18358bcee3c76685873e192bf9f4a0465fb1d95a1a815d831e8aa3ee3355c3f8",
+    "review/2026-10-10-owner-data-phone-plan/validation.json": "2a09d36af6fda06f8790b0ef70054840748d71ada4a89ffcc90f1521363ab847",
+    "review/2026-10-10-registration-retries/check_retries.py": "c4191816a6f36fd80731619c6b53a03c71f9a4428f9b42b9374877106c697236",
+    "review/2026-10-10-registration-retries/check_sources.py": "f9ad2cd4452924fd0d2cc97576a9b8a3a157cc55bbdd72b017e99e5b16cb556c",
+    "review/2026-10-10-registration-retries/model-check.json": "8a2ff9ad6fde6bc499aff891eb972f1536e1b6949c653e6c35bbc582cec50d9f",
+    "review/2026-10-10-registration-retries/source-check.json": "fb0694c099448bf59445cc494cc7292997ed299f2e4bafed6c17e5c4628e4da6",
+    "review/2026-10-10-registration-retries/validation-host-abort.json": "c20826186bd41de1f8fddc0d605e06ead2c5897740eccfe5bbfc222cdc0808d3",
+    "review/2026-10-10-registration-retries/validation.json": "e3e9157d4e344abd2a0f504a508ffaf7d778bf5222980b4768e9bdd58216db60",
+    "review/2026-10-10-two-device-lya/diagram-check.json": "8f7e7116999231f95eac06d3460e35a64da6eccca7abd42ec0031d3e41c9e8ca",
+    "review/2026-10-11-brain-storage-design/diagram-validation.json": "0a4585daff3d43c1e80195bff995b5a70ba7d90a778dfc5c2aab8132f18e1bfa",
+    "review/2026-10-11-conversation-contract/validation.json": "00cf2d5092fad6435eb992df2f0cf35ff0bff445fdeb12b66c7f1df1d142ebe5",
+    "review/2026-10-11-foundation/activate.json": "7c4d1a975072c026c98765f484891735cadf522f24e0bc1ca116fa82c6437401",
+    "review/2026-10-11-foundation/baseline.json": "094d4d5e088091a2b38d7edf892856b1ebfe34e6ba22e03a4c5fe177ea26ca43",
+    "review/2026-10-11-foundation/baseline.py": "afabb6bde5a198964901afdd2d98e771e64f853b176598aef99827ad5804204c",
+    "review/2026-10-11-foundation/check_network.py": "5d1874434268c99e6cff7b4e46a6c993f466fa7f942e7c052e8db917e0177468",
+    "review/2026-10-11-foundation/network.json": "3232d9cb88eeb256964b71719973894476da45336ad7fe64608a1b0693e9ba96",
+    "review/2026-10-11-foundation/oracle-access.json": "d0c21e78278a3fd8bc948b763a5bbb5a2992ce41542783414cf509796af9f9c2",
+    "review/2026-10-11-foundation/readiness.json": "9150be42b5117dc4d6ace5604a11b8e5ad8490009768862c7b059e9c03c839b3",
+    "review/2026-10-11-foundation/readiness.py": "df4aae5ec4620972f584be6822e7663c36571a938c57cc56e08caa050ca3465d",
+    "review/2026-10-11-foundation/release_timing.py": "1858e68483c43264b3b931e19fe336542dd00fc26d005c9a0b0b9d60c7c7c520",
+    "review/2026-10-11-foundation/stage.json": "8ef7c586282751b9fea313dc75b85a3bb24c384fa24b8f26b77020d5df52f93f",
+    "review/2026-10-11-foundation/validation.json": "de3ac8fb0a2c9c7732a13590231c5f399330f999f2d0486761a403691e1ac5f1",
+    "review/2026-10-11-implementation-checkpoint/baseline.json": "549d59ba6d922cfcdb030e223b61ad1004f3b955a84106fd20c39f525ae55d64",
+    "review/2026-10-11-implementation-checkpoint/layout-validation.json": "3ee44e39e0d8242d745b31b957f0156c1e9960357406bec309e936d1e553930e",
+    "review/2026-10-11-implementation-checkpoint/network.json": "3232d9cb88eeb256964b71719973894476da45336ad7fe64608a1b0693e9ba96",
+    "review/2026-10-11-implementation-checkpoint/phone-preview.png": "af6ab826e82b08acebb6250222500f44af8574c2f061a29ef5a9c35238d1655a",
+    "review/2026-10-11-implementation-checkpoint/run_checks.py": "3a42be1fce03585908badd770a3ffb954485f80a626ff4a6d079ac2a552e5bcf",
+    "review/2026-10-11-implementation-checkpoint/source-checks.json": "5ead23ee7c22179bc7e91e98619075a32f6b57b258f2b0fc7214551bf68c4fcc",
+    "review/2026-10-11-implementation-checkpoint/validation.json": "758f199e31c167da4695f8684a95b57a95abf4d9a27b4ae48d1961f260d735b3",
+    "review/2026-10-11-memory-prototype/qualification.json": "47fcca3f37adf09e6eb527b5f9a97acf764d11da93b911088812a1a0184ab139",
+    "review/2026-10-11-memory-prototype/qualify.py": "13d6800b3fe44d1e81556c5bc41b766bf1f94bd613e8e0a0a9fa7392aac58271",
+    "review/2026-10-11-memory-prototype/validation.json": "45a18231867422c904d918bc9d16ad15d751cfe988186ecb443051327c9b90ac",
+    "review/2026-10-11-memory-recovery/validation.json": "ea7228b46d6880517e4703fcd5945b9955adde33cfac7184c13fc3f39abb553c",
+    "review/2026-10-11-one-lya/check_layout.py": "c42701117492618a389e6f3e12d792738a17144d9ca84f23c5f390ba9396ca7c",
+    "review/2026-10-11-one-lya/layout-validation.json": "915e13100eba1ec7d84ee9024709599df259086037d96458580612b00e89dfbb",
+    "review/2026-10-11-one-lya/live-network.json": "208c387e29caea468033d81f939a76ab8dbaa9ae845e7d0e62663476a2517ee9",
+    "review/2026-10-11-one-lya/page-update.json": "c735427a425266385b9a33bd07cf74b300655ee69d74008d777b23592017824a",
+    "review/2026-10-11-one-lya/phone-preview.png": "85aec0ca60a1e1b8f65131cc40c817d9f6dab1628c080657509c30214257652b",
+    "review/2026-10-11-one-lya/update_page.py": "5cce566a486d5baad7a684148b58412145a5e303ac47fbb64976b6ac196b7b6f",
+    "review/2026-10-11-portable-access/cloud-published.png": "a23b9c37db9ffc5f0d82cb3812fcce6230d93d28936b7b509a60859fca8c3514",
+    "review/2026-10-11-portable-access/manual_demo.py": "7ddd14cec2fa7c809c27c8a291570f7846e90a68639efe80311fdafd72a2a80c",
+    "review/2026-10-11-portable-access/validation.json": "8191419dd9b6a4f72d3d7a0a424947861e9bfc6a60153101fd042aff4fe8063f",
+    "review/2026-10-11-system-architecture/atlas-phone-preview.png": "4b9c9bde20e1e10a20a3c9f779f9e2d6a577fdccc99ddecc3a7c69437b43f127",
+    "review/2026-10-11-system-architecture/atlas-preview.png": "0259ef5725ebb857270ef1e26c2099264ac8d57217e85ef5b9af54d0dfabd761",
+    "review/2026-10-11-system-architecture/build_atlas.cjs": "f5941b1ff7f352acc124ac5e6ae9051bee3ef0aaab07e3d5e3d4c8de03aef822",
+    "review/2026-10-11-system-architecture/capacity-observed.json": "2e3a0916b0e3df24991fb993972091f1ae267a178f43026e4a126dd823dea3bb",
+    "review/2026-10-11-system-architecture/inspect_capacity.py": "e01e5a14ffacbfa57cf9f5dc21883081a4e8dc5a76cf31bc22a60fc59e54dd0d",
+    "review/2026-10-11-system-architecture/laptop-capacity-observed.json": "3bff9e5b6d16c3c090606bf4d73091b8a70ef4e41b249583b032c83a60862f8c",
+    "review/2026-10-11-system-architecture/memory-record.example.json": "3eb89cc9ebe17eef6038069e89ee48ab72ebd33097a74cb733e37b6961519064",
+    "review/2026-10-11-system-architecture/mermaid-validation.json": "c67716ef0d5d84158a0dc12043ede2e2b54ab249884bef25baea4d2a06c62816",
+    "review/2026-10-11-system-architecture/validation.json": "9cd2dadd38d0e2de9e920eb01c7755ac7eff9bf4e979152f2fb8da3aa7b860d2",
+    "review/2026-10-12-mobile-natural/check_client.js": "0e061fe6a071eb010679e2e5f7ce762d24c0e31ab8e9f7faaef1862022b1d769",
+    "review/2026-10-12-mobile-natural/client-validation.json": "ff9cd5aa2e1e1ecfa317ada3d7d4bbbaf96798c3885ab237819058a15291adc0",
+    "review/2026-10-12-mobile-natural/update_page.py": "9c79b271d7042e8283a2c75e891c131ead1e9d06085a50fe44cee7d51b39690c",
+    "run-local-model.cmd": "25b5eaf5d3484b439f6943a70b86db14b52bc31563cd97dbac04e7697447b6ee",
+    "security/HelloVerifier.cs": "ee184a9ab3d04073aede186b2bf9b17469f611b003fa471e1b4f66712082bab1",
+    "security/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "security/approval.py": "621eb8a681a759519d339e6a48205e69cec9f6bd0ce21f1761fe2fe13b4dd87f",
+    "security/auth_wall.py": "eed1c3da0da51352a79d4109985ccb29cf20140a5df9474a5ac6e394e0f16a96",
+    "security/build-hello.cmd": "94da5612496c57778eaf63f610ab65b46c52bf6fc7c06a4bf740e7f4a6fcabed",
+    "security/database.py": "19237dccb24976e8b38231c7649ad1f22f0fc56791f51f383b296fe97291be0e",
+    "security/enroll.py": "ceb8aa1e47b0b1e707b87662146b922fd97e6a158dd139fbce3f048e48d2180b",
+    "security/escalation.py": "f5bc93325e75b656f9f14f59f344d3c37f49696014632257bdf4f041be56666a",
+    "security/familiar_capture.py": "9acdd21209507a433e872654a9d417d79a089c6ba2d5f01ac401316601a86df9",
+    "security/liveness.py": "6d149c2570fa1a09168c80f23568885882ba27e6fc6b40595fdb44deea2b8ada",
+    "security/owner_capture.py": "d0c190d8f9c078a91e24bd5b024f18b71ccc75a6a49b568e7c49d1bf6ff27a97",
+    "security/owner_profiles.py": "d7deee2c1ff4d31b58affb33d5c7f1497a5ed86b2ed0c65c772565d842ecc621",
+    "security/passkeys.py": "00be2c7b5f57c51fcfb75761e7d031d40cd68d6d4d8494fdd3b3f12fca496e37",
+    "security/policy.py": "c7a0b531ce7e44eab9a00385ceeac16e44d35200e1d39f3be364220ed23b1c1d",
+    "security/registration.py": "c3fc3afc056b29215265d2b6b6bc7b48481fd724474c91f18c49bcbf57c96eff",
+    "security/vault.py": "dc9c1a3c2568b6e07b4865f815bb038bfadee06f78c2bb795171f11828241d5f",
+    "security/visitors.py": "ca94134c7c3137ffcf3d2280c37b001b6bcbc1304d6ae9684e891227ced6aacb",
+    "security/windows_consent.py": "2d709fc60fce24365941eb36d9af544209e7865e13470d30e27f9bb3a738c2da",
+    "skills/__init__.py": "fa8601a06e393cffc9cc8bfc071974c5b78f2b73659a6624fc48ad3e50bbf987",
+    "skills/device.py": "bdad804848a667a1c6bd5e0e8d30e7ce93655818dd474510fef6c2d491797b7b",
+    "skills/files.py": "90a6a57353ac5876b933c7cd5c0458f7ff901abd5b288cd32151a1821aca01b4",
+    "skills/forge.py": "9e003c5b016b5f798a879f7500ac1abb2586938007a5ddfd38cb8d3f2a3e1835",
+    "skills/governor.py": "6e46c14e98760fd7a7890683baa44c08e312704c4ce49bef4797ac4f98e48a98",
+    "skills/guardian.py": "b61b642d4c9b7c4bbdd5ff6f51a916fe139cc9f26df6d7727831309d6c238f88",
+    "skills/harden.py": "0cdd41d8df8a0a6a528c9feb280be0db098018ec84cfd96606c7ea2d0ae8768e",
+    "skills/limited_apps.py": "351c62bd95a6a6340d93f3b511e7ef3863b0c9eb4a89b2b9fb7b705b41d0c015",
+    "skills/reminder.py": "43b5629afc9e35ee64fef30fe26e21d3d42af0bcce47405e42d055586df47a66",
+    "skills/security_brain.txt.gz": "66d399749858a9aecc624f5ba9ab44c1bb0c0ebb0021e1453ede3c40db2f7a19",
+    "storage/__init__.py": "6e2418e7f3e558da157cb3cd222ed7689995ead74427763a5c96fd570d5c401d",
+    "storage/public_archive.py": "6edd0719a3873cf4157eaed26b9b237a4991d109979272c6ce246190106f7931",
+    "storage/recovery.py": "6770759e4f69b5e8c1b9bbbb38e498538e3e6af6ea683d1856be08073778cfca",
+    "storage/store.py": "86e2ec469933cac360e2c6a712e4f9d0e380901d1b4c908878959e7dfd0c2d2f",
+    "storage/visitors.py": "21e20aeda6ac8296c4b3a0dc94a54db27ba735987fcd9902c8b98b594b2d859a",
+    "test_activation.py": "a01ada65d0314449ba19dcc6c61e46baf1999207c3a06830e1f892664a3b56d6",
+    "test_answer_verification.py": "56f91a5c36fdc0a96cfe027bc8f95f432b3c931bfbd0cd1d1f06af41810ddd00",
+    "test_approval.py": "4904e437b181c014b7fcd21576a6ebb92b6c2141dd6a743fef75f02d132c39dd",
+    "test_auth_wall.py": "79f784de8c825fddb7fb9f8430c960b24544bcd94a9243c99725faf73594b1fd",
+    "test_brain_workflow.py": "d1e3246de209666a9490986d37dd5bdbcfbd472be2093ce771613d3de74e8498",
+    "test_camera_dialog.py": "6d3641260eb346fec77d8a2831a6c5e520155664d4daba5c63f6ef0eb967f0e4",
+    "test_camera_preview.py": "a5a43f1168793142b8dc02264915784c63be9a80352137e7fb4853fbdbced1df",
+    "test_conversation_contract.py": "aca22cca24a38489c2bec6c3b5aec7d409ff59a1b277b11bff7d1f8cb10ef324",
+    "test_escalation.py": "e31f8a10b106a61808f2212424bacfabc59df55508fb3469477db6da3cbe715f",
+    "test_foundations.py": "66fb372ce566d2c6e316d8028f20e80aa8782e92505763cafc4ac2c735a87c0e",
+    "test_guardian_governor.py": "dd5eec6c0c2e25cecc329777dc2d65cb32c3dcddd903dfeea822dd9435a6a923",
+    "test_hearing_pilots.py": "86ce8ce9b2b43a42e35bc14e325c44b5d108f7984cd6dda5a580c25e86e65afc",
+    "test_identity.py": "a03b7f0d3afa818935163c43c4e5009eade5af22b38c916da3b520fe78dba123",
+    "test_legacy_retirement.py": "4a4e0f3b284ac14c8d87c5fc999af568e95dde2e58b238ddfa7bf295c203a1bd",
+    "test_liveness.py": "76869e55849657fa00ff71f9d9d497a2f31cc9a5c45128bb84d5355b94515c9c",
+    "test_local_hearing_check.py": "977653c1c8e92147eca5a1970a8ff0e363c9980b3fd8400103a3d27fb7769d08",
+    "test_local_whisper.py": "30a03a9122c85d2da78d84b742466f0a50babe30c514378af1a5512ebb9d57e3",
+    "test_memory_prototype.py": "cbd9f1a2a41eceec9027717c12c3ecaa45bdcddc74f80a13a4e343162f7983f7",
+    "test_memory_recovery.py": "68bf85cad610bea2854a186ae437480683deafb8d8637552bf84ae0247a67501",
+    "test_mind.py": "8569c9d21a858e1cdd1b2ab5de898405502a6318f5858ca46296da70eb0231f8",
+    "test_mobile.py": "3f9ce14925ea0b5311abb156241096cafa9cd6edd3e468386e37fb0341756a62",
+    "test_mobile_conversation.py": "2a35a9c96849410665c56f06bb078f88b688b3f3d360455e91439065c908edc9",
+    "test_mobile_timing.py": "e5b148e61fda7fb96dc118ecef53870617792b6d6adcfb5c4c77af258efa3013",
+    "test_mobile_voice.py": "417930efd572a56cdd895113874c9e10e5080b0a57a40a3a735245d113ed5691",
+    "test_nvidia_launcher.py": "b31df48a784e29ab55364b40d3908427b9008cd80015c9c4fb96421e9979af26",
+    "test_oracle.py": "f4d179d3b0f3bdace588ec4fa2536edcfd9d352fc313430b29273737d7e99e0d",
+    "test_owner_profiles.py": "6bffe17a52e517dccc96d10c4e11b890f6793a77de8e19e21dc384d83e9a217f",
+    "test_passkeys.py": "b87f6a71613fc1dd125f64f87679af2bdb71b61da7bda00b24f8475d2dd308f8",
+    "test_pointing.py": "d14bc1600e382c785ceb0fe00f8d5faa9cfbecf405d74d1bb7770ee46d0d5fa4",
+    "test_project_memory.py": "274b251cecb26191941f09cfc3665f70964233dffc433bfdf3bf292088ba0922",
+    "test_provider_setup.py": "12a0fbb922822fa39257ac8b13bff8133a2d13909cffb59f41104ce69154f5af",
+    "test_public_archive.py": "4864464e3efb422f0e1884d357448c2fb2ce5d4a943976e794158beff7c6a148",
+    "test_recovery.py": "59ea5a590eedcd8f568b85216fb5ee53ca01838269be83de7461e440456239fb",
+    "test_recovery_ui.py": "129b284fcf808f8fdfaafc6ecb27504fcb7a6ef568f2f35e12b089be67850557",
+    "test_registration.py": "66b33bc3ea36e5f2716c9f941c71c8eb389b3d6ecad5e47d66381cba6b2601c6",
+    "test_registration_ui.py": "8b7f07e0716a6d9c7fb052fa032cc5d011d4f1842ef79277c1dc6c904be87da7",
+    "test_regressions_r01_r05.py": "afb325833bff4c6de4f9eeb21ed514703c197e9aa9f71341a6029dbd75ce3eed",
+    "test_research_adapter.py": "0d08902a3daae7d69455c1ff27aa21335dd1b89d35d65e79e09b7417f45f28d6",
+    "test_router.py": "fa9ee7fc4d389f686667c9a9336741f3a1584ba36c9d367f82588ae5a9234532",
+    "test_search_index.py": "ce7c3452333bffc8138fbb78f0d3522f6c88301151003aea2279926a2e315fc9",
+    "test_setup_speech.py": "28f25842840e47cad9873007d6a5360c365532550ab690a20cd02337e5d8e4ac",
+    "test_skills.py": "7cec8ebdc87a4052605d9c7e99d89b41d218cffdb540e36c57e5ef7c2e3d2b75",
+    "test_storage.py": "804d228f638b5242b85b49ca0c1725db340c2ef96ca84bcfff1b0d46f2e7c89d",
+    "test_t02.py": "35a9d8456abc7261bb30a23bbbcb5fc90e8470b378dbf8e8f88410b2d9c1d368",
+    "test_vault_recovery.py": "1cd80ca1c79a1b6db28143643b2da7723e5730ffba6bfe93e7d988081908d6ba",
+    "test_vision.py": "0abaa2594ad70bda757186a1fd370127467e6ddc6419a1e7c2c237887e6b7b75",
+    "test_visitors.py": "dcac53a4dcd9f6745d06819ca7bbdc58f73a46c2979e3bc6f0cdeb0a6bf07939",
+    "test_voice.py": "d1f02c4ac9c5541b16d135f296369d671ecc8d9ed4804593b302c880ca6c5f14",
+    "test_voice_live_check.py": "9eeb7c41194150a84ea39d32011e55ddacc6087a3b8ee619cf55e7464dcf423e",
+    "tools/check_asr_comparison_live.py": "daf9aa609d03eeda879516b907615d66f34a267b2726407297a890601ae93664",
+    "tools/check_command_live.py": "4a5a46b5b89fe3f89461219af175a1e0e34d7a47f0455a85a009a6ed09819bc4",
+    "tools/check_conversation_live.py": "22ca9d4f862a795de63a5e1e1da113164558ca240705a71bd16098aa66e5b848",
+    "tools/check_local_hearing.py": "d772054e28cc55a8bbf4d65d6755048bed029add0f2ca8bc15d10f3f4dcc2970",
+    "tools/check_local_voice_ui.py": "912c1fe1139661e355811295aa6121c49cf7172e150807d7248ee56326e8493c",
+    "tools/check_mic_paths.py": "626e953a9ae01df55b5960b6d835f0632ce7900f8d5a96383489e3f479596b3c",
+    "tools/check_nvidia_hearing.py": "8b7590ee5bc261d81c50feafd742fc77db140cf279c3e376507f6f7429918dea",
+    "tools/check_voice_live.py": "ece7a6d4164129daaf7df1ec42d63d2719897196dfe2a82d5e1473ae8f26d241",
+    "tools/compare_private_question.py": "5a829a421c3d67f8c8222aecc5dcf617ca8f87b07c36cb9300d166cc3db8a994",
+    "tools/record_headset_check.py": "0882bebf175ac5866e43afaa0f8fbca8830fe506fec93b5c595b21719896be98",
+    "tools/record_voice_question.py": "44f29bfdf885dac9bc15080a249c5da4b0257deed3482bf7630dcf031e723f63",
+    "tools/render_lya_design.py": "5bc5a3cc9872ebd2421753e43a442b1e5ac15d1250e59838e3bb9d5564ee2636",
+    "tools/retire_legacy_owner.py": "3052121933afd9ef8345845e5f50477bc7395989a6740bfb10a681a34de49fcd",
+    "tools/run-llama-local.ps1": "23915487e67b43215474f796de3643ee5338c2a48920e0bb19dede385064fdba",
+    "tools/set-startup.ps1": "887ab8d0dbf520a2da97a882795b2c282e46bebc56ff6d55094dec375b32fc28",
+    "tools/setup_local_asr.py": "507ab35d9c912844a6f3e9f3d5c02da30cc11115375722e5d511eb7de64a044f",
+    "tools/setup_mobile_connection.py": "83e4ada6013b8911a01b9c4ad55599189fe146d5b714c8c5a7311082892cf1dc",
+    "tools/setup_whistle.py": "5d8579a3be2c706f914d3c1be9e0807235a1a4ae5bdff2464e4a97dfac4f9b42",
+    "tools/start_nvidia_lya.py": "9ef8c52428fb6ebe9aa702680c6c21530ad3859eb1fbdd50f9496912f6cfcd32",
+    "tools/update_mobile_conversation.py": "aa0ed705223fcae2b8676e0030228d2d38b96890d81f664c5fbe0201ff9808b8",
+    "tools/update_mobile_voice.py": "ac020b3d4400474b60dca91cb6394936a55015f7a7e8c30b7b2e9df91c07a20f",
+    "tools/whistle_worker.py": "d5f7a1bb113adffd9a651a3f9316c31009b6ddcc70bec3e44a6ba5b5f395f2ac",
+    "ui/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ui/orb.py": "b8ed828e0859750af747a5e166fb7ae90e0242276ad12bd47753ed879bb62b8f",
+    "ui/themes.py": "03d44533fc8711d58c274cf7241259e7b550f104bbf8a20fd66db2e9700f5552",
+    "vision/answers.py": "8a1a133c46210d15b943335747d9a75991e8d6d0159a7bead456d02ee5c83eb7",
+    "vision/face_auth.py": "80e9316a883f4a6224499004359a6eca60ef6dbb77428283f06ab9595e9ca40c",
+    "vision/hands.py": "563f1a8a971fd45807b249e31d2790857d24a49ae7decbb63743c4a530dd9573",
+    "vision/identity.py": "61074657e3dcfe10b2d3fd81ea5446dbd4cfb6b3e81e756081b5c0855ec5ccbf",
+    "vision/scan.py": "5df1b66d4651416c5d582b68d8848b16e99351ea727db5692a5ea846e99fc99c",
+    "vision/vendor/opencv_hands/LICENSE": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+    "vision/vendor/opencv_hands/mp_handpose.py": "d9c48ec05933d0f06bd559c5f6a5ebcce50d56c2c6141c8da3d5b56456d8e580",
+    "vision/vendor/opencv_hands/mp_palmdet.py": "c9e1b600432cdbb5d64546cd8c175af740718d5c58514df3d1d45ef32c1015b6",
+    "web_server.py": "0c09a50945a647a0f74833b07e4d9c0212bce349685d09d3f6b5a9e3425fa39a",
+    "cloud/mobile.html": "5a2a7a6f90faf7055000230a807507ff644d687893af5dee60572eabd025c4a3"
+  },
+  "baseline_missing_links": {
+    "AGENTS.md": [],
+    "BUILD_PROGRESS.md": [],
+    "LYA_ADVANCED_BRAIN_PLAN.md": [],
+    "LYA_ARCHITECTURE.md": [],
+    "LYA_BRAIN_WORKFLOW.md": [],
+    "LYA_CAMERA_VOICE_DECISION.md": [],
+    "LYA_FOUNDATION_DECISIONS.md": [],
+    "LYA_IMPLEMENTATION_CHECKLIST.md": [],
+    "LYA_MODEL_STRATEGY.md": [],
+    "LYA_REBUILD_PLAN.md": [],
+    "LYA_STORAGE_SECURITY_PLAN.md": [],
+    "LYA_TASK_REASONING_LEVELS.md": [],
+    "LYA_TASK_ROADMAP.md": [],
+    "LYA_TEST_GUIDE.md": [],
+    "LYA_VISION.md": [],
+    "README.md": [],
+    "cloud/README.md": [],
+    "desktop/README.md": [],
+    "desktop/qa/2026-09-15-orb/README.md": [],
+    "desktop/qa/2026-09-16-compact/README.md": [],
+    "desktop/qa/2026-09-17-bottom-center/README.md": [],
+    "desktop/qa/2026-09-17-window-controls/README.md": [],
+    "external-work/README.md": [],
+    "external-work/docs/01-research.md": [],
+    "external-work/docs/02-architecture.md": [],
+    "external-work/docs/03-usage.md": [],
+    "external-work/docs/04-limitations.md": [],
+    "external-work/docs/05-status.md": [],
+    "lya-project-brain.md": [],
+    "models/vision/README.md": [],
+    "models/voice/english-MODEL_CARD.md": [],
+    "review/2026-09-13/REVIEW.md": [],
+    "review/2026-09-14-live-models/README.md": [],
+    "review/2026-09-16-T01-baseline/README.md": [],
+    "review/2026-09-17-T02-backup/README.md": [],
+    "review/2026-09-17-T02-backup/acceptance.md": [],
+    "review/2026-09-18-free-provider-candidates/README.md": [],
+    "review/2026-09-19-T03-foundation/README.md": [],
+    "review/2026-09-19-nvidia-lightning/README.md": [],
+    "review/2026-09-19-openrouter-live/README.md": [],
+    "review/2026-09-19-private-local/README.md": [],
+    "review/2026-09-20-T03-evaluation/README.md": [],
+    "review/2026-09-20-T04-admin-registration/README.md": [],
+    "review/2026-09-20-T04-foundation/README.md": [],
+    "review/2026-09-20-hybrid-research/README.md": [],
+    "review/2026-09-20-recovery-interface/README.md": [],
+    "review/2026-09-20-repo-fit-and-semantic-verification/README.md": [],
+    "review/2026-09-20-storage-recovery/README.md": [],
+    "review/2026-09-21-conversational-registration/README.md": [],
+    "review/2026-09-21-local-voice/README.md": [],
+    "review/2026-09-21-registration-hologram-v2/README.md": [],
+    "review/2026-09-21-registration-hologram/README.md": [],
+    "review/2026-09-22-external-voice-integration/README.md": [
+      "external%20work/out/reel-01-warm.wav",
+      "external%20work/out/reel-02-cheerful.wav",
+      "external%20work/out/reel-04-serious.wav",
+      "external%20work/out/reel-09-warm.wav",
+      "external%20work/out/reel-10-cheerful.wav",
+      "external%20work/out/reel-12-curious.wav"
+    ],
+    "review/2026-09-23-english-voice/README.md": [],
+    "review/2026-09-23-fast-replies-and-decision-models/README.md": [],
+    "review/2026-09-23-vision/README.md": [],
+    "review/2026-09-23-voice-comparison/README.md": [],
+    "review/2026-09-24-brain-strategy/README.md": [],
+    "review/2026-09-24-brain-strategy/golden-results.md": [],
+    "review/2026-09-24-brain-strategy/recovery-runbook.md": [],
+    "review/2026-09-24-brain-strategy/retrieval-benchmark.md": [],
+    "review/2026-09-24-full-check-sweep/README.md": [],
+    "review/2026-09-25-admin-activation-refresh/README.md": [],
+    "review/2026-09-25-admin-bootstrap/README.md": [],
+    "review/2026-09-25-first-run-and-voice-first/README.md": [],
+    "review/2026-09-25-jarvis-activation/README.md": [],
+    "review/2026-09-25-task-list/README.md": [],
+    "review/2026-09-26-voice-wake/README.md": [],
+    "review/2026-09-27-foundation-ladder/README.md": [],
+    "review/2026-09-27-full-project-workflow-report/README.md": [],
+    "review/2026-09-27-hands-free-voice/README.md": [],
+    "review/2026-09-27-name-wake-startup/README.md": [],
+    "review/2026-09-27-name-wake-startup/live-check.md": [],
+    "review/2026-09-27-wake-and-claps/README.md": [],
+    "review/2026-09-27-wake-calibration/README.md": [],
+    "review/2026-09-27-wake-calibration/mic-path-check.md": [],
+    "review/2026-09-27-wake-calibration/recording-check.md": [],
+    "review/2026-09-28-headset-command/README.md": [],
+    "review/2026-10-03-free-voice-research/README.md": [],
+    "review/2026-10-03-voice-conversation/README.md": [],
+    "review/2026-10-03-voice-timing/README.md": [],
+    "review/2026-10-04-local-asr/README.md": [],
+    "review/2026-10-04-voice-stabilization/README.md": [],
+    "review/2026-10-04-volume-retry/README.md": [],
+    "review/2026-10-05-camera-objects/README.md": [],
+    "review/2026-10-05-conversation-design/README.md": [],
+    "review/2026-10-05-hearing-plan/README.md": [],
+    "review/2026-10-05-hearing-plan/local-check.md": [],
+    "review/2026-10-05-hearing-plan/nvidia-connection.md": [],
+    "review/2026-10-05-hearing-plan/online-backups.md": [],
+    "review/2026-10-05-key-storage/README.md": [],
+    "review/2026-10-05-native-launch/README.md": [],
+    "review/2026-10-06-camera-focus-research/README.md": [],
+    "review/2026-10-06-camera-focus-research/implementation.md": [],
+    "review/2026-10-06-data-routing-plan/README.md": [],
+    "review/2026-10-06-distributed-brain-research/README.md": [],
+    "review/2026-10-06-distributed-brain-research/app-builder-skill-draft.md": [],
+    "review/2026-10-06-response-delay/README.md": [],
+    "review/2026-10-07-project-memory-foundation/implementation.md": [],
+    "review/2026-10-07-public-archive/implementation.md": [],
+    "review/2026-10-08-legacy-owner-retirement/README.md": [],
+    "review/2026-10-08-owner-face-voice/README.md": [],
+    "review/2026-10-08-owner-passkeys/README.md": [],
+    "review/2026-10-08-registration-artwork/README.md": [],
+    "review/2026-10-08-registration-routing/README.md": [],
+    "review/2026-10-08-voice-only-registration/README.md": [],
+    "review/2026-10-08-voice-particle-registration/README.md": [],
+    "review/2026-10-09-face-scan/README.md": [],
+    "review/2026-10-09-integrated-registration/README.md": [],
+    "review/2026-10-09-owner-security-solution/README.md": [],
+    "review/2026-10-09-registration-capture-fix/README.md": [],
+    "review/2026-10-09-registration-expiry/README.md": [],
+    "review/2026-10-09-registration-lifecycle/README.md": [],
+    "review/2026-10-09-visitor-access/README.md": [],
+    "review/2026-10-10-mobile-connection/README.md": [],
+    "review/2026-10-10-mobile-connection/phone-voice-owner-access.md": [],
+    "review/2026-10-10-mobile-conversation/README.md": [],
+    "review/2026-10-10-mobile-conversation/owner-feedback-2026-10-11.md": [],
+    "review/2026-10-10-mobile-voice/README.md": [],
+    "review/2026-10-10-owner-data-phone-plan/README.md": [],
+    "review/2026-10-10-registration-retries/README.md": [],
+    "review/2026-10-10-two-device-lya/README.md": [],
+    "review/2026-10-11-brain-storage-design/README.md": [],
+    "review/2026-10-11-conversation-contract/README.md": [],
+    "review/2026-10-11-foundation/README.md": [],
+    "review/2026-10-11-implementation-checkpoint/README.md": [],
+    "review/2026-10-11-memory-prototype/README.md": [],
+    "review/2026-10-11-memory-recovery/README.md": [],
+    "review/2026-10-11-one-lya/README.md": [],
+    "review/2026-10-11-portable-access/DEVELOPMENT-ACCESS.md": [],
+    "review/2026-10-11-portable-access/PHONE-CODEX-SETUP.md": [],
+    "review/2026-10-11-portable-access/README.md": [],
+    "review/2026-10-11-project-assessment/README.md": [],
+    "review/2026-10-11-system-architecture/ARCHITECTURE.md": [],
+    "review/2026-10-11-system-architecture/CAPACITY.md": [],
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md": [],
+    "review/2026-10-11-system-architecture/IMPLEMENTATION.md": [],
+    "review/2026-10-11-system-architecture/PLATFORM-STORAGE.md": [],
+    "review/2026-10-11-system-architecture/README.md": [],
+    "review/2026-10-11-system-architecture/RESEARCH.md": [],
+    "review/2026-10-12-mobile-natural/README.md": [],
+    "review/local-model-20260918-180912/README.md": [],
+    "review/local-model-20260919-170638/README.md": [],
+    "tools/voice-evaluation/upstream/README.md": [],
+    "vision/vendor/opencv_hands/NOTICE.md": []
+  },
+  "kept_reviews": [
+    "2026-10-03-voice-conversation",
+    "2026-10-05-conversation-design"
+  ],
+  "rewritten_documents": [
+    {
+      "path": "docs/plans/LYA_ADVANCED_BRAIN_PLAN.md",
+      "sha256": "f1bf08239e6d163728e1d0baaf7cd152cd55587ba9dfc81c6a13706d7a4dee32",
+      "previous_missing_links": []
+    },
+    {
+      "path": "docs/architecture/LYA_ARCHITECTURE.md",
+      "sha256": "af16a2e6fec1f9bc2ca7efd50cfd5b84e8d24b43090d72b4b6e92746d491d5a3",
+      "previous_missing_links": []
+    },
+    {
+      "path": "docs/architecture/LYA_BRAIN_WORKFLOW.md",
+      "sha256": "1aa725be445201de8a49564e42d4e4dcbefdb2b1f2d8621c9bfc9e55f0ea8ed4",
+      "previous_missing_links": []
+    },
+    {
+      "path": "docs/plans/LYA_IMPLEMENTATION_CHECKLIST.md",
+      "sha256": "db6b587ad25fc6880d3a0c6ada0724e3b57b6dbe1b7c059df361b3a39bc2a73f",
+      "previous_missing_links": []
+    },
+    {
+      "path": "docs/plans/LYA_MODEL_STRATEGY.md",
+      "sha256": "9d79ff5e0ee62ce739da949567bc618b5fde462ff399235d31f920426b384d33",
+      "previous_missing_links": []
+    },
+    {
+      "path": "docs/plans/LYA_STORAGE_SECURITY_PLAN.md",
+      "sha256": "39429a79994de3aeeb610b4296fc03add374bd3a1cab27bc2d7e8eba1261e727",
+      "previous_missing_links": []
+    },
+    {
+      "path": "docs/guides/LYA_TASK_REASONING_LEVELS.md",
+      "sha256": "7157344e87df584314ae23a338171a46e862d7323c97f8841e9753f45c1e2d23",
+      "previous_missing_links": []
+    },
+    {
+      "path": "docs/plans/LYA_TASK_ROADMAP.md",
+      "sha256": "7743174c2199c49058fc91a2f2f6b96aaf5b6ac241ce3efcf8d55cb176d9b5e0",
+      "previous_missing_links": []
+    },
+    {
+      "path": "docs/guides/LYA_TEST_GUIDE.md",
+      "sha256": "23cb82be52898e577d177a99a58b9ba75242ff146da024fb1b1c4e39cb88a539",
+      "previous_missing_links": []
+    },
+    {
+      "path": "cloud/README.md",
+      "sha256": "b0a5fe092383e03cc9e94a1c243cd08a1fd74903d99440d12f9f1eb1686bc1c4",
+      "previous_missing_links": []
+    },
+    {
+      "path": "desktop/README.md",
+      "sha256": "435c150761ebffc761f8e4e5690d593edfe717cfd832156ec0d0a1004fc0d438",
+      "previous_missing_links": []
+    },
+    {
+      "path": "external-work/docs/01-research.md",
+      "sha256": "5facc1431fce73462e0a65bdaa7e3308f45f0110b61640622fac75386faaa5c8",
+      "previous_missing_links": []
+    },
+    {
+      "path": "external-work/docs/05-status.md",
+      "sha256": "b58d818a90b0e526d13d0d04dde6e55da74741d3d48b3c107fb0dcf27f99ccaf",
+      "previous_missing_links": []
+    },
+    {
+      "path": "models/vision/README.md",
+      "sha256": "a6492d60908095a983ccb86f5fcbdaaed476cec41219f92b4bce18d4636066d9",
+      "previous_missing_links": []
+    },
+    {
+      "path": "review/2026-10-10-mobile-conversation/owner-feedback-2026-10-11.md",
+      "sha256": "66378096c9ecccf7e3fe88e23c418f44b4dac1d261067aebd267b4347a97c5b8",
+      "previous_missing_links": []
+    },
+    {
+      "path": "vision/vendor/opencv_hands/NOTICE.md",
+      "sha256": "af32ae64c1e279dbbb0973d502b8baa59da94078e4d9a6efe4d3f4d01ec934a9",
+      "previous_missing_links": []
+    }
+  ],
+  "verification": "review/2026-10-12-project-organization/validation.json"
+}

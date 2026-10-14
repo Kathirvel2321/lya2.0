@@ -1,0 +1,38 @@
+{
+  "asset": "LYA crystal concept",
+  "runtimeIntegration": false,
+  "geometry": {
+    "triangles": 128,
+    "materials": 11,
+    "layers": {
+      "core": 64,
+      "outer": 64
+    }
+  },
+  "files": {
+    "lya-crystal.glb": {
+      "bytes": 19456,
+      "sha256": "29e8d8083269ed00b051aa34506ef1891100bc9a4f60bd779fc1be0cefbda45a"
+    },
+    "lya-crystal.obj": {
+      "bytes": 28439,
+      "sha256": "318e4a3d1b56c651f2c6c5eabfb71aff83befe3ff5010ec97bbd606060124615"
+    },
+    "lya-crystal.mtl": {
+      "bytes": 1067,
+      "sha256": "db8ee3efa62a7d6dcc34dc695f2bab490f57e170c2f93fe8aebb229b99a50a2f"
+    },
+    "preview.png": {
+      "bytes": 72525,
+      "sha256": "4b3e7bb2b8a9c87eca160424b2a61848563dfab10c01704da2c144d1aef5979a"
+    }
+  },
+  "checks": {
+    "glbHeader": true,
+    "previewSize": [
+      480,
+      720
+    ],
+    "transmissionMaterials": 11
+  }
+}

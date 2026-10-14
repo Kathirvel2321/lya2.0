@@ -1,0 +1,63 @@
+{
+  "date_utc": "2026-10-12T17:44:07.670185+00:00",
+  "parsed_python_sources": 3,
+  "source_sha256": {
+    "review/2026-10-12-memory-placement/check_oracle.py": "bbd410bd489998cf59a00d6d1f9a0c41eb5411327c8b5cbacf266244aa552a3d",
+    "review/2026-10-12-memory-placement/check_recovery.py": "4385711353dd5958d7de23c1aa34ff298a25e26eaabdaaa14307b7e2a086b824",
+    "review/2026-10-12-memory-placement/test_screening.py": "b3c2c450d0cfd918d6110e9597e64650e00914bdccd79ebc49a052923c9a0316"
+  },
+  "previous_memory_sources_preserved": {
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "test_memory_hardening.py": true,
+    "test_memory_encrypted.py": true,
+    "review/2026-10-12-memory-hardening/check.py": true,
+    "review/2026-10-12-memory-hardening/qualify.py": true,
+    "brain/memory_authority.py": true,
+    "test_memory_authority.py": true,
+    "test_memory_reactivation.py": true,
+    "review/2026-10-12-memory-reactivation/check.py": true
+  },
+  "checked_documents": [
+    "lya-project-brain.md",
+    "docs/README.md",
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md",
+    "review/2026-10-12-memory-placement/README.md"
+  ],
+  "checked_local_links": 97,
+  "missing_links": [],
+  "scoped_whitespace_check_passed": true,
+  "private_operational_evidence_git_ignored": true,
+  "published_report_excludes_raw_counters": true,
+  "temporary_fixture_directories": [],
+  "local_checks": {
+    "screening": {
+      "tests_run": 1,
+      "passed": true,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "fake_counters_only": true
+    },
+    "recovery": {
+      "tests_run": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "fake_data_only": true,
+      "fresh_process": true,
+      "same_physical_host": true,
+      "source_path_unavailable": true,
+      "live_database_copied": false,
+      "real_key_custody_tested": false,
+      "off_host_durability_tested": false
+    },
+    "total_tests_run": 4
+  },
+  "live_read_only_ssh_screen_succeeded": true,
+  "billing_accessed": false,
+  "remote_install_or_deployment_performed": false,
+  "real_key_custody_or_off_host_recovery_tested": false
+}

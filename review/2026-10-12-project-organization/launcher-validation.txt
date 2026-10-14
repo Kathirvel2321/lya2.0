@@ -1,0 +1,14 @@
+test_cancel_exits_before_desktop_launch (test_nvidia_launcher.NvidiaLauncherTests.test_cancel_exits_before_desktop_launch) ... ok
+test_console_diagnostic_mode_keeps_hidden_input (test_nvidia_launcher.NvidiaLauncherTests.test_console_diagnostic_mode_keeps_hidden_input) ... ok
+test_desktop_error_removes_key_and_does_not_display_exception_payload (test_nvidia_launcher.NvidiaLauncherTests.test_desktop_error_removes_key_and_does_not_display_exception_payload) ... ok
+test_desktop_main_reuses_existing_qt_application (test_nvidia_launcher.NvidiaLauncherTests.test_desktop_main_reuses_existing_qt_application) ... ok
+test_existing_session_key_skips_prompt (test_nvidia_launcher.NvidiaLauncherTests.test_existing_session_key_skips_prompt) ... ok
+test_gui_key_reaches_desktop_only_in_session_environment (test_nvidia_launcher.NvidiaLauncherTests.test_gui_key_reaches_desktop_only_in_session_environment) ... ok
+test_gui_password_is_masked_and_cleared_on_accept_and_cancel (test_nvidia_launcher.NvidiaLauncherTests.test_gui_password_is_masked_and_cleared_on_accept_and_cancel) ... ok
+test_missing_project_env_key_keeps_the_existing_prompt (test_nvidia_launcher.NvidiaLauncherTests.test_missing_project_env_key_keeps_the_existing_prompt) ... ok
+test_project_env_key_skips_input_and_remains_out_of_arguments (test_nvidia_launcher.NvidiaLauncherTests.test_project_env_key_skips_input_and_remains_out_of_arguments) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.770s
+
+OK

@@ -1,0 +1,8 @@
+test_latest_metadata_and_bundle_recover_without_original_source_or_live_copy (__main__.CleanProcessChecks.test_latest_metadata_and_bundle_recover_without_original_source_or_live_copy) ... ok
+test_missing_or_wrong_keys_and_missing_catalogue_never_recover (__main__.CleanProcessChecks.test_missing_or_wrong_keys_and_missing_catalogue_never_recover) ... ok
+test_old_catalogue_is_rejected_when_latest_anchor_survives_separately (__main__.CleanProcessChecks.test_old_catalogue_is_rejected_when_latest_anchor_survives_separately) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 14.317s
+
+OK

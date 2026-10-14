@@ -1,0 +1,13 @@
+test_authority_fencing_conflicts_failed_publication_and_reactivation (test_qualification.StorageChecks.test_authority_fencing_conflicts_failed_publication_and_reactivation) ... ok
+test_cancellation_and_full_database_rollback (test_qualification.StorageChecks.test_cancellation_and_full_database_rollback) ... ok
+test_child_death_before_commit_and_lost_reply_after_commit (test_qualification.StorageChecks.test_child_death_before_commit_and_lost_reply_after_commit) ... ok
+test_correction_retry_unicode_forget_expiry_and_owner_scope (test_qualification.StorageChecks.test_correction_retry_unicode_forget_expiry_and_owner_scope) ... ok
+test_corrupt_and_truncated_database_are_not_accepted (test_qualification.StorageChecks.test_corrupt_and_truncated_database_are_not_accepted) ... ok
+test_engine_encryption_wrong_keys_and_plaintext_driver_rejection (test_qualification.StorageChecks.test_engine_encryption_wrong_keys_and_plaintext_driver_rejection) ... ok
+test_thousand_record_corpus_and_quarantined_restore (test_qualification.StorageChecks.test_thousand_record_corpus_and_quarantined_restore) ... ok
+test_wal_rollback_journal_and_encrypted_restore_staging (test_qualification.StorageChecks.test_wal_rollback_journal_and_encrypted_restore_staging) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 9.769s
+
+OK

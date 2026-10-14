@@ -69,4 +69,4 @@ alive instead of synthetic.
   audio required, no English).
 - Rasa, the dataset behind the Tamil Piper voice: https://arxiv.org/abs/2407.14056
 - Project constraints: `LYA_VISION.md` (zero-subscription budget, existing
-  hardware) and `review/2026-09-21-local-voice/README.md` (open voice gates).
+  hardware) and `archive/history/reviews/2026-09-21-local-voice/README.md` (open voice gates).

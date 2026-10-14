@@ -13,7 +13,7 @@ upstream license is preserved in `LICENSE`.
 
 LYA uses the full-precision ONNX models: upstream warns of significant accuracy
 loss in the ordinary INT8 hand model. The model hashes, sizes and revision are
-in `review/2026-10-05-camera-objects/hand-models.json`. No upstream demo code that
+in `archive/history/reviews/2026-10-05-camera-objects/hand-models.json`. No upstream demo code that
 opens a camera or downloads files is invoked by these adapters.
 
 Sources:

@@ -1,0 +1,83 @@
+{
+  "date_utc": "2026-10-13T15:57:39.269828+00:00",
+  "parsed_python_sources": 3,
+  "source_sha256": {
+    "review/2026-10-13-memory-linux/test_qualification.py": "06fb9f5ce49b688d1d3f6c5639adcc1c15c5169c0e4f86e1f6bd272fd1320aeb",
+    "review/2026-10-13-memory-linux/remote_stage.py": "7db2da463f37df5c5b541256d406325d568ba6370811220d74864056c72b2067",
+    "review/2026-10-13-memory-linux/check.py": "35e30e19f162b69553ea1fd7fa5365f5effd32805eea0c958ea39a97bbfcb3dd"
+  },
+  "previous_sources_preserved": {
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "test_memory_hardening.py": true,
+    "test_memory_encrypted.py": true,
+    "review/2026-10-12-memory-hardening/check.py": true,
+    "review/2026-10-12-memory-hardening/qualify.py": true,
+    "brain/memory_authority.py": true,
+    "test_memory_authority.py": true,
+    "test_memory_reactivation.py": true,
+    "review/2026-10-12-memory-reactivation/check.py": true,
+    "review/2026-10-12-memory-placement/check_oracle.py": true,
+    "review/2026-10-12-memory-placement/check_recovery.py": true,
+    "review/2026-10-12-memory-placement/test_screening.py": true
+  },
+  "transferred_normalized_utf8_sources_match": {
+    "brain/conversation.py": true,
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "brain/memory_authority.py": true,
+    "brain/__init__.py": true,
+    "test_qualification.py": true
+  },
+  "checked_documents": [
+    "lya-project-brain.md",
+    "LYA_VISION.md",
+    "docs/README.md",
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md",
+    "review/2026-10-12-memory-placement/README.md",
+    "review/2026-10-13-memory-linux/README.md"
+  ],
+  "checked_local_links": 111,
+  "missing_links": [],
+  "scoped_whitespace_check_passed": true,
+  "temporary_local_fixtures": [],
+  "remote_qualification": {
+    "tests_run": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true,
+    "cipher_version": "4.12.0 community",
+    "sqlite_version": "3.51.1",
+    "elapsed_seconds": 9.77,
+    "wheel": "sqlcipher3-0.6.3-cp312-cp312-manylinux_2_28_aarch64.whl",
+    "wheel_sha256": "96b89544616cb71284c89bedc5519c42ca34027016638678ba607f7189ead248",
+    "source_sha256": {
+      "brain/conversation.py": "2b9f3381fc6af93013409eff2bbfe0f62692d130ba349b0a7d4c24e9388e6a2e",
+      "brain/memory_prototype.py": "4603af22320cbec471e517b15385eaa5ba6f72ab41fada4759bbb54cfd16efd8",
+      "brain/memory_recovery.py": "a19c9d7e176c47207ca7ad20a9cb9e8ff92f68d0588e903f3606097a70ff8ed9",
+      "brain/memory_repository.py": "6b729701b15417941b75e237ddf2d265320a9d435cc4c450bbe306a35be4f9c2",
+      "brain/memory_authority.py": "f3e26239a95ec3ec2283d8bc39719baa15498f5ee8a28005d2da46ec4dfeb58b",
+      "brain/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_qualification.py": "06fb9f5ce49b688d1d3f6c5639adcc1c15c5169c0e4f86e1f6bd272fd1320aeb"
+    },
+    "platform": "Linux aarch64 CPython 3.12",
+    "fake_data_only": true,
+    "native_identity_tested": false,
+    "private_memory_or_keys_transferred": false,
+    "temporary_stage_removed": true,
+    "mobile_state_and_source_unchanged": true,
+    "production_activated": false,
+    "system_packages_changed": false,
+    "owner_confirmed_free": true,
+    "billing_api_verified": false,
+    "total_seconds": 10.783,
+    "child_max_rss_bytes": 47505408
+  },
+  "prior_114_check_suite_rerun": false,
+  "account_eligibility_evidence": "Direct owner confirmation in chat on 2026-10-13; no independent billing API check",
+  "production_activated": false,
+  "private_data_or_real_keys_transferred": false
+}

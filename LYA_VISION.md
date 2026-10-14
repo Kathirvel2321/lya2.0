@@ -4,11 +4,13 @@ Recorded from the owner's discussion on 2026-09-10. This is a requirements recor
 
 ## Purpose
 
-Owner budget clarification (2026-10-11): proceed using Oracle free-tier resources only. No paid upgrade, billable resource provisioning or resizing is authorized. Existing SSH-key access is verified; SSH access and machine capacity do not verify tenancy billing eligibility. Use fake-data/local development while any live resource-cost question remains unresolved.
+Owner budget clarification (2026-10-11): proceed using Oracle free-tier resources only. No paid upgrade, billable resource provisioning or resizing is authorized. Existing SSH-key access is verified; SSH access and machine capacity do not verify tenancy billing eligibility. Use fake-data/local development while any live resource-cost question remains unresolved. Owner follow-up (2026-10-13): confirmed in the Oracle console that the existing instance is covered by Always Free; this is owner-supplied confirmation, not independent tenancy/billing API verification. No paid provisioning or resize is authorized.
 
 LYA is an ambitious personal assistant inspired by Jarvis: conversational, context-aware, able to research, plan and carry out useful tasks across the owner's connected devices. Face recognition is one supporting subsystem, not the project purpose. Build within the owner's existing hardware and zero-subscription budget using suitable open-source components.
 
 ## Required experience
+
+- Recovery-custody preference (2026-10-13): use an existing owner-controlled password manager for the separate random recovery-envelope unlock key. No actual manager entry or real key is configured by the fake-data implementation; real setup and clean-host recovery remain separate owner-controlled steps.
 
 - Development-access intent clarification (2026-10-11): owner wants to build LYA from the personal phone and during permitted free time on a work-managed laptop, not merely use the deployed assistant. Recommended an isolated browser development workspace on existing Oracle resources, with no production secrets/deployment authority, fake test providers and GitHub development branches. code-server is a candidate, not installed; iPhone usability/private access/resource isolation need testing. github.dev is an immediate editing-only option without terminal/compute. Current native signed fixtures/Windows UI/voice/hardware acceptance are not promised to run unchanged on Linux. See review/2026-10-11-portable-access/DEVELOPMENT-ACCESS.md. No push, remote development setup, secret transfer, resource or runtime change authorized/performed by this clarification.
 

@@ -1,0 +1,6 @@
+test_screen_is_not_production_or_billing_approval_and_never_echoes_host_details (screening_checks.ScreeningChecks.test_screen_is_not_production_or_billing_approval_and_never_echoes_host_details) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK

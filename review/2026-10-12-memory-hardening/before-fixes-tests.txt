@@ -1,0 +1,80 @@
+test_authenticated_wrong_json_field_types_are_validation_errors (test_memory_hardening.HardeningChecks.test_authenticated_wrong_json_field_types_are_validation_errors) ... ERROR
+test_equal_sequence_different_source_branch_is_not_verified_or_reused (test_memory_hardening.HardeningChecks.test_equal_sequence_different_source_branch_is_not_verified_or_reused) ... FAIL
+test_missing_open_store_is_not_recreated (test_memory_hardening.HardeningChecks.test_missing_open_store_is_not_recreated) ... FAIL
+test_nonfinite_clock_cannot_commit_records (test_memory_hardening.HardeningChecks.test_nonfinite_clock_cannot_commit_records) ... ERROR
+test_old_catalogue_schema_is_refused_without_migration (test_memory_hardening.HardeningChecks.test_old_catalogue_schema_is_refused_without_migration) ... FAIL
+test_wrong_sync_key_cannot_silently_rotate_existing_acknowledgement (test_memory_hardening.HardeningChecks.test_wrong_sync_key_cannot_silently_rotate_existing_acknowledgement) ... FAIL
+
+======================================================================
+ERROR: test_authenticated_wrong_json_field_types_are_validation_errors (test_memory_hardening.HardeningChecks.test_authenticated_wrong_json_field_types_are_validation_errors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_hardening.py", line 63, in test_authenticated_wrong_json_field_types_are_validation_errors
+    with self.assertRaises(ValueError):self.f.r._validate_backup(data)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 241, in _validate_backup
+    records = _heads(data['records'],owners,records=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 119, in _heads
+    value = json.loads(row['value'], object_pairs_hook=_unique)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\json\__init__.py", line 339, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not NoneType
+
+======================================================================
+ERROR: test_nonfinite_clock_cannot_commit_records (test_memory_hardening.HardeningChecks.test_nonfinite_clock_cannot_commit_records)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_hardening.py", line 53, in test_nonfinite_clock_cannot_commit_records
+    with self.assertRaises(ValueError):self.f.f.f.call(self.f.f.f.save_packet(key='bad clock'))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_prototype.py", line 40, in call
+    return self.m.handle(turn or (self.f.phone_turn() if phone else self.f.laptop()), packet, approved=approved)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_prototype.py", line 228, in handle
+    rowid = db.execute('''INSERT INTO memories(id,owner,project,kind,key,normkey,value,retention,expires_at,revision,recorded_at,updated_at,source_request)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: NOT NULL constraint failed: memories.recorded_at
+
+======================================================================
+FAIL: test_equal_sequence_different_source_branch_is_not_verified_or_reused (test_memory_hardening.HardeningChecks.test_equal_sequence_different_source_branch_is_not_verified_or_reused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_hardening.py", line 45, in test_equal_sequence_different_source_branch_is_not_verified_or_reused
+    self.assertEqual(self.f.repo.status(branch,self.f.r)['state'],'diverged')
+AssertionError: 'verified' != 'diverged'
+- verified
++ diverged
+
+
+======================================================================
+FAIL: test_missing_open_store_is_not_recreated (test_memory_hardening.HardeningChecks.test_missing_open_store_is_not_recreated)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_hardening.py", line 24, in test_missing_open_store_is_not_recreated
+    self.assertFalse(path.exists())
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_old_catalogue_schema_is_refused_without_migration (test_memory_hardening.HardeningChecks.test_old_catalogue_schema_is_refused_without_migration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_hardening.py", line 69, in test_old_catalogue_schema_is_refused_without_migration
+    with self.assertRaises(ValueError):SyntheticRepository(self.f.root,synthetic_only=True)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_wrong_sync_key_cannot_silently_rotate_existing_acknowledgement (test_memory_hardening.HardeningChecks.test_wrong_sync_key_cannot_silently_rotate_existing_acknowledgement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_hardening.py", line 31, in test_wrong_sync_key_cannot_silently_rotate_existing_acknowledgement
+    with self.assertRaises(PermissionError):self.f.repo.sync(self.f.m,wrong,approved=True)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PermissionError not raised
+
+----------------------------------------------------------------------
+Ran 6 tests in 3.212s
+
+FAILED (failures=4, errors=2)

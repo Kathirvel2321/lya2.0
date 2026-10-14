@@ -1,0 +1,14 @@
+{
+  "project": {
+    "staged_files_checked": 566,
+    "secret_pattern_findings": [],
+    "active_python_files_parse": 32,
+    "syntax_errors": []
+  },
+  "visual": {
+    "staged_files_checked": 64,
+    "secret_pattern_findings": [],
+    "active_python_files_parse": 4,
+    "syntax_errors": []
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-12",
+  "parsed_python_sources": 7,
+  "source_sha256": {
+    "brain/memory_prototype.py": "4603af22320cbec471e517b15385eaa5ba6f72ab41fada4759bbb54cfd16efd8",
+    "brain/memory_recovery.py": "a19c9d7e176c47207ca7ad20a9cb9e8ff92f68d0588e903f3606097a70ff8ed9",
+    "brain/memory_repository.py": "6b729701b15417941b75e237ddf2d265320a9d435cc4c450bbe306a35be4f9c2",
+    "test_memory_hardening.py": "809a34a47ff60b3dd689cc4b0b4397d6bbe83f0bfcfeb9c4746fbde09767d67a",
+    "test_memory_encrypted.py": "22197045a60a6d3b580085dda279781f440e9098540a36f56f9d15377a6a7146",
+    "review/2026-10-12-memory-hardening/check.py": "7c982850e3f262e381e4a2d0f305a3ec56065ec80a122f7cc6880dead8f718fb",
+    "review/2026-10-12-memory-hardening/qualify.py": "c87ccd171f27b9a8b909a32eec587e3b2ea637d2ba2ec2a4fbdea53550454ff9"
+  },
+  "checked_documents": [
+    "lya-project-brain.md",
+    "docs/README.md",
+    "review/2026-10-12-memory-hardening/README.md",
+    "review/2026-10-12-memory-acknowledgement/README.md",
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md"
+  ],
+  "checked_local_links": 89,
+  "missing_links": [],
+  "scoped_git_diff_check_passed": true,
+  "scoped_trailing_whitespace_passed": true,
+  "caller_references": [
+    "brain\\memory_recovery.py:19:from brain.memory_prototype import SyntheticMemory, APPLICATION_ID, SCHEMA_VERSION, MAX_RECORDS, MAX_REQUESTS, _id, _json, _validate, _time, _unlinked",
+    "brain\\memory_repository.py:12:from brain.memory_prototype import Conflict, SyntheticMemory, _id, _unlinked",
+    "brain\\memory_repository.py:13:from brain.memory_recovery import CheckpointAnchor, SyntheticRecovery, HEAD_FIELDS, _integer, _read"
+  ],
+  "production_caller_found": false,
+  "temporary_fixture_directories": [],
+  "final_regression": {
+    "date": "2026-10-12",
+    "tests_run": 77,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true,
+    "fake_data_only": true,
+    "external_service_called": false,
+    "production_paths_connected": false,
+    "deployed": false
+  },
+  "qualification_limit": "path guards statically reviewed; hostile filesystem races and power loss not tested"
+}

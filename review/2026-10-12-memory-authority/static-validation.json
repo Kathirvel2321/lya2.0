@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-12",
+  "parsed_python_sources": 3,
+  "source_sha256": {
+    "brain/memory_authority.py": "ad51d2265dfd777887961db7f8a62d2118524023aeb4620a2dd410c290e7e9f7",
+    "test_memory_authority.py": "f0c44f90b1e3eebf21d5b345e7533d387846eb350a4dbd890e326cdc5505b6a1",
+    "review/2026-10-12-memory-authority/check.py": "8ab39daf7c04c2fcc02cd8b890b31932ee1d547e71641ab1bcced9b82936f211"
+  },
+  "previous_seven_source_files_preserved": {
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "test_memory_hardening.py": true,
+    "test_memory_encrypted.py": true,
+    "review/2026-10-12-memory-hardening/check.py": true,
+    "review/2026-10-12-memory-hardening/qualify.py": true
+  },
+  "checked_documents": [
+    "lya-project-brain.md",
+    "docs/README.md",
+    "review/2026-10-12-memory-authority/README.md",
+    "review/2026-10-12-memory-hardening/README.md",
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md"
+  ],
+  "checked_local_links": 100,
+  "missing_links": [],
+  "scoped_git_diff_check_passed": true,
+  "scoped_trailing_whitespace_passed": true,
+  "production_caller_found": false,
+  "temporary_fixture_directories": [],
+  "combined_regression": {
+    "date": "2026-10-12",
+    "tests_run": 99,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true,
+    "fake_data_only": true,
+    "independent_off_host": false,
+    "production_paths_connected": false,
+    "external_service_called": false,
+    "deployed": false
+  },
+  "targeted_takeover_recheck": {
+    "date": "2026-10-12",
+    "tests_run": 1,
+    "passed": true,
+    "purpose": "Allow thread result delivery order to vary; still assert serialized commit and stale-grant rejection",
+    "fake_data_only": true
+  },
+  "deployment_or_external_service_tested": false
+}

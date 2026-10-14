@@ -1,0 +1,11 @@
+{
+  "tests_run": 75,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "fake_data_only": true,
+  "witness_independently_hosted": false,
+  "production_paths_connected": false,
+  "real_keys_created": false
+}

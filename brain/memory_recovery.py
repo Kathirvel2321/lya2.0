@@ -1,23 +1,22 @@
 """Encrypted recovery qualification for disposable FAKE-DATA stores only.
 
-The live/staged database remains plaintext. No real key custody, independent
-storage, approval workflow, account recovery or production cutover is enabled.
+The default live/staged database is plaintext; SQLCipher qualification is optional.
+No real key custody, independent storage, approval workflow, account recovery or
+production cutover is enabled.
 """
 from contextlib import closing
 from dataclasses import dataclass
 import hashlib
 import json
-import math
 import os
 from pathlib import Path
 import re
-import sqlite3
 import tempfile
 import time
 import uuid
 
 from cryptography.fernet import Fernet, InvalidToken
-from brain.memory_prototype import SyntheticMemory, APPLICATION_ID, SCHEMA_VERSION, MAX_RECORDS, MAX_REQUESTS, _id, _json, _validate
+from brain.memory_prototype import SyntheticMemory, APPLICATION_ID, SCHEMA_VERSION, MAX_RECORDS, MAX_REQUESTS, _id, _json, _validate, _time, _unlinked
 
 MAX_RAW = 64 * 1024 * 1024
 MAX_BLOB = MAX_RAW * 2
@@ -39,9 +38,7 @@ class CheckpointAnchor:
 
 
 def _number(value):
-    if type(value) not in (int,float) or not math.isfinite(value) or value < 0:
-        raise ValueError('Invalid recovery time.')
-    return value
+    return _time(value)
 
 
 def _integer(value, minimum=0):
@@ -65,7 +62,7 @@ def _unique(pairs):
 
 def _read(path):
     path = Path(path)
-    if path.is_symlink():raise ValueError('No linked recovery input.')
+    _unlinked(path)
     with path.open('rb') as source:data = source.read(MAX_BLOB+1)
     if len(data) > MAX_BLOB:raise ValueError('Recovery input too large.')
     return data
@@ -74,6 +71,7 @@ def _read(path):
 def _publish(path, writer, cancelled):
     """Same-volume atomic create, never replace an existing file."""
     path = Path(path).absolute()
+    _unlinked(path)
     if path.exists() or path.is_symlink() or path.parent.is_symlink():
         raise FileExistsError('Recovery output must be new and unlinked.')
     with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
@@ -116,6 +114,7 @@ def _heads(rows, owners, *, records=False):
             else:
                 retention = {'mode':row['retention']}
                 if row['retention'] == 'until':retention['expires_at'] = row['expires_at']
+                if type(row['value']) is not str:raise ValueError('Invalid encoded record value.')
                 value = json.loads(row['value'], object_pairs_hook=_unique)
                 packet = dict(op='save',project=row['project'],request_id=row['source_request'],kind=row['kind'],
                               key=row['key'],value=value,retention=retention)
@@ -135,6 +134,7 @@ class SyntheticRecovery:
         if type(recovery_key) is not bytes:raise ValueError('A random recovery key is required.')
         try:self.cipher = Fernet(recovery_key)
         except (TypeError,ValueError):raise ValueError('Invalid recovery key.') from None
+        self.key_id = hashlib.sha256(recovery_key).hexdigest()
         self.clock = clock
 
     @staticmethod
@@ -160,11 +160,15 @@ class SyntheticRecovery:
     @staticmethod
     def _capture(memory):
         if type(memory) is not SyntheticMemory:raise ValueError('Synthetic store required.')
+        _unlinked(memory.path)
         # SQLite's backup API copies a consistent snapshot, including committed WAL state.
-        with closing(sqlite3.connect(memory.path.as_uri()+'?mode=ro',uri=True,timeout=3)) as source, \
-                closing(sqlite3.connect(':memory:')) as db:
+        with closing(memory._connect(read_only=True)) as source, \
+                closing(memory._driver.connect(':memory:')) as db:
+            if memory._key is not None:
+                db.execute('PRAGMA key = "x\''+memory._key.hex()+'\'"')
+            db.execute('PRAGMA temp_store=MEMORY')
             source.backup(db)
-            db.row_factory = sqlite3.Row
+            db.row_factory = memory._driver.Row
             if (db.execute('PRAGMA application_id').fetchone()[0] != APPLICATION_ID
                     or db.execute('PRAGMA user_version').fetchone()[0] != SCHEMA_VERSION
                     or db.execute('PRAGMA integrity_check').fetchone()[0] != 'ok'
@@ -203,7 +207,9 @@ class SyntheticRecovery:
     def checkpoint(self, memory, destination, *, approved=False, cancelled=lambda:False):
         if approved is not True:raise PermissionError('Trusted checkpoint approval required.')
         if cancelled():raise InterruptedError('Recovery cancelled.')
-        data = self._capture(memory)
+        return self._checkpoint(self._capture(memory),destination,cancelled)
+
+    def _checkpoint(self, data, destination, cancelled):
         checkpoint = dict(format='lya-fake-checkpoint/1',lineage=data['lineage'],sequence=data['sequence'],
                           created_at=_number(self.clock()),checkpoint_id=uuid.uuid4().hex,owners=data['owners'],
                           heads=[{key:row[key] for key in HEAD_FIELDS} for row in data['records']],deletions=data['deletions'])
@@ -214,12 +220,23 @@ class SyntheticRecovery:
     def backup(self, memory, destination, *, approved=False, cancelled=lambda:False):
         if approved is not True:raise PermissionError('Trusted backup approval required.')
         if cancelled():raise InterruptedError('Recovery cancelled.')
-        data = self._capture(memory)
+        return self._backup(self._capture(memory),destination,cancelled)
+
+    def _backup(self, data, destination, cancelled):
+        data = dict(data)
         data.pop('deletions')
         data.update(format='lya-fake-backup/1',created_at=_number(self.clock()))
         self._validate_backup(data)
         blob = self._seal(data,BACKUP_MAGIC,destination,cancelled)
         return {'records':len(data['records']),'sequence':data['sequence'],'encrypted_bytes':len(blob)}
+
+    def bundle(self, memory, backup, checkpoint, *, approved=False, cancelled=lambda:False):
+        """Both encrypted files describe one committed snapshot; partial files are unacknowledged."""
+        if approved is not True:raise PermissionError('Trusted backup approval required.')
+        if cancelled():raise InterruptedError('Recovery cancelled.')
+        data = self._capture(memory)
+        self._backup(data,backup,cancelled)
+        return self._checkpoint(data,checkpoint,cancelled)
 
     @staticmethod
     def _validate_backup(data):
@@ -233,6 +250,7 @@ class SyntheticRecovery:
             if type(row) is not dict or set(row) != {'owner','request_id','fingerprint','result'}:
                 raise ValueError('Invalid receipt.')
             _id(row['owner']);_id(row['request_id']);_id(row['fingerprint'],64)
+            if type(row['result']) is not str:raise ValueError('Invalid encoded receipt.')
             pair = (row['owner'],row['request_id'])
             result = json.loads(row['result'],object_pairs_hook=_unique)
             if type(result) is not dict or set(result) != {'id','revision','operation','committed'}:
@@ -245,25 +263,13 @@ class SyntheticRecovery:
             seen.add(pair)
         return records
 
-    def restore(self, backup, checkpoint, destination, *, trusted_anchor, approved=False, cancelled=lambda:False):
+    def restore(self, backup, checkpoint, destination, *, trusted_anchor, approved=False,
+                cancelled=lambda:False, trusted_backup_sha256=None, storage_key=None):
         if approved is not True:raise PermissionError('Trusted restore approval required.')
-        if type(trusted_anchor) is not CheckpointAnchor:raise ValueError('Latest independent checkpoint anchor required.')
         if cancelled():raise InterruptedError('Recovery cancelled.')
-        saved,_ = self._open(backup,BACKUP_MAGIC)
-        current,blob = self._open(checkpoint,CHECKPOINT_MAGIC)
-        records = self._validate_backup(saved)
-        heads,deletions = self._validate_checkpoint(current)
-        expected = CheckpointAnchor(current['lineage'],current['sequence'],current['checkpoint_id'],hashlib.sha256(blob).hexdigest())
-        if expected != trusted_anchor:raise ValueError('Checkpoint is not the trusted latest version.')
-        if (saved['lineage'] != current['lineage'] or saved['sequence'] > current['sequence']
-                or not set(saved['owners']) <= set(current['owners']) or not set(records) <= set(heads)):
-            raise ValueError('Checkpoint does not cover this snapshot.')
-        for mid,row in records.items():
-            head = heads[mid]
-            if (row['owner'],row['project']) != (head['owner'],head['project']) or row['revision'] > head['revision']:
-                raise ValueError('Record state moved backwards or changed scope.')
-            if row['revision'] == head['revision'] and any(row[key] != head[key] for key in HEAD_FIELDS):
-                raise ValueError('Record changed without a revision.')
+        if trusted_backup_sha256 is not None:_id(trusted_backup_sha256,64)
+        saved,current,records,heads,deletions = self._restore_inputs(
+            backup,checkpoint,trusted_anchor,backup_sha256=trusted_backup_sha256)
         now = _number(self.clock())
         restored, markers = [], []
         counts = {'preserved':0,'suppressed_deleted':0,'suppressed_expired':0,'suppressed_unavailable':0}
@@ -284,7 +290,7 @@ class SyntheticRecovery:
             markers.append(deletions[mid] if head['deleted'] else dict(owner=head['owner'],project=head['project'],
                            memory_id=mid,revision=revision,deleted_at=stamp,reason='expiry' if expired else 'restore_unavailable'))
         def write(path):
-            memory = SyntheticMemory(path,synthetic_only=True,clock=self.clock)
+            memory = SyntheticMemory(path,synthetic_only=True,clock=self.clock,encryption_key=storage_key)
             with memory._db() as db:
                 db.execute('UPDATE store_meta SET lineage=?,sequence=? WHERE id=1', (current['lineage'],current['sequence']+1))
                 db.executemany('INSERT INTO owners VALUES(?)',[(owner,) for owner in current['owners']])
@@ -306,3 +312,24 @@ class SyntheticRecovery:
         _publish(destination,write,cancelled)
         # No bindings, sessions or old outbox jobs are restored. Explicit new authority is required.
         return {**counts,'quarantined':True,'active_bindings':0,'resumed_jobs':0}
+
+    def _restore_inputs(self, backup, checkpoint, trusted_anchor, *, backup_sha256=None):
+        if type(trusted_anchor) is not CheckpointAnchor:raise ValueError('Latest independent checkpoint anchor required.')
+        saved,backup_blob = self._open(backup,BACKUP_MAGIC)
+        if backup_sha256 is not None and hashlib.sha256(backup_blob).hexdigest() != backup_sha256:
+            raise ValueError('Backup differs from its acknowledgement.')
+        current,blob = self._open(checkpoint,CHECKPOINT_MAGIC)
+        records = self._validate_backup(saved)
+        heads,deletions = self._validate_checkpoint(current)
+        expected = CheckpointAnchor(current['lineage'],current['sequence'],current['checkpoint_id'],hashlib.sha256(blob).hexdigest())
+        if expected != trusted_anchor:raise ValueError('Checkpoint is not the trusted latest version.')
+        if (saved['lineage'] != current['lineage'] or saved['sequence'] > current['sequence']
+                or not set(saved['owners']) <= set(current['owners']) or not set(records) <= set(heads)):
+            raise ValueError('Checkpoint does not cover this snapshot.')
+        for mid,row in records.items():
+            head = heads[mid]
+            if (row['owner'],row['project']) != (head['owner'],head['project']) or row['revision'] > head['revision']:
+                raise ValueError('Record state moved backwards or changed scope.')
+            if row['revision'] == head['revision'] and any(row[key] != head[key] for key in HEAD_FIELDS):
+                raise ValueError('Record changed without a revision.')
+        return saved,current,records,heads,deletions

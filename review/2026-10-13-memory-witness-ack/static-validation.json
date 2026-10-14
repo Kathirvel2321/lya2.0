@@ -1,0 +1,44 @@
+{
+  "parsed_python_sources": 4,
+  "source_sha256": {
+    "brain/memory_authority.py": "a8764e9dbc2ae0d2043c5e28af5d5273181e6f800a0c2bfedc5e7b715aa4c656",
+    "brain/memory_custody.py": "683434589c80e4157b0e0d5936b154940243c3e42f00105c5a0222b2fb8f88f5",
+    "test_memory_witness_ack.py": "18a9ca238bf40161163c03e08c26b3a022e9a8d8d3b2276ee8e0d55b2fe722a7",
+    "review/2026-10-13-memory-witness-ack/check.py": "9d007f56c01cfb5779f0354fe39b4130f19a166dd1affa480d9adbf00854b124"
+  },
+  "prior_source_files_preserved": {
+    "brain/conversation.py": true,
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "test_memory_custody.py": true,
+    "test_memory_authority.py": true,
+    "test_memory_reactivation.py": true,
+    "review/2026-10-13-memory-linux/test_qualification.py": true
+  },
+  "checked_documents": [
+    "lya-project-brain.md",
+    "docs/README.md",
+    "review/2026-10-13-memory-custody/README.md",
+    "review/2026-10-13-memory-witness-ack/README.md",
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md"
+  ],
+  "checked_local_links": 134,
+  "missing_links": [],
+  "scoped_whitespace_check_passed": true,
+  "temporary_fake_fixture_directories": [],
+  "production_callers_found": [],
+  "combined_validation": {
+    "tests_run": 75,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true,
+    "fake_data_only": true,
+    "witness_independently_hosted": false,
+    "production_paths_connected": false,
+    "real_keys_created": false
+  },
+  "wsl_revision_tested": false,
+  "oracle_revision_tested": false
+}

@@ -9,7 +9,7 @@ The desktop now selects native Piper voices per language. English uses
 The earlier unified Tamil model is still available in this lab but is no longer
 the desktop default. Routing/transport and focused engine tests passed;
 owner listening and normal-workload battery checks remain open. See
-`review/2026-09-23-english-voice/README.md` from the project root.
+`archive/history/reviews/2026-09-23-english-voice/README.md` from the project root.
 
 ## 2026-09-22 — Bounded LYA desktop integration
 
@@ -25,7 +25,7 @@ tests passed. A real `.venv-ui`/Piper smoke test rendered mixed English/Tamil as
 two timed chunks (1.25 seconds of audio). The benchmark measured roughly
 2.1–2.8 seconds to first audio. Owner listening and battery/memory soak remain
 required; naturalness is not established. Full evidence and samples are in the
-project's `review/2026-09-22-external-voice-integration/README.md`.
+project's `archive/history/reviews/2026-09-22-external-voice-integration/README.md`.
 
 ## 2026-09-22 — Completion pass: 16 failing tests fixed, docs added
 

@@ -1,0 +1,12 @@
+{
+  "brain/conversation.py": "2b9f3381fc6af93013409eff2bbfe0f62692d130ba349b0a7d4c24e9388e6a2e",
+  "brain/memory_prototype.py": "4603af22320cbec471e517b15385eaa5ba6f72ab41fada4759bbb54cfd16efd8",
+  "brain/memory_recovery.py": "a19c9d7e176c47207ca7ad20a9cb9e8ff92f68d0588e903f3606097a70ff8ed9",
+  "brain/memory_repository.py": "6b729701b15417941b75e237ddf2d265320a9d435cc4c450bbe306a35be4f9c2",
+  "brain/memory_authority.py": "f3e26239a95ec3ec2283d8bc39719baa15498f5ee8a28005d2da46ec4dfeb58b",
+  "brain/memory_custody.py": "bad78112a9cfaf6e46bcaf26787309b0549d1f00f06223d52041dbe1f03cecb4",
+  "test_memory_custody.py": "05b0ea4594f4f0b599855e73802fcbeeabeb504f60ac7d5650182663f372b10c",
+  "test_memory_authority.py": "b5c8d5bbe22f6b59de579c20a2814aff6ea176884fe52ba613af44f9502c0a78",
+  "test_memory_reactivation.py": "444347381c5860e6dac797eda238d8be4862df1785d95113a5a7d0ca833fc05e",
+  "review/2026-10-13-memory-linux/test_qualification.py": "06fb9f5ce49b688d1d3f6c5639adcc1c15c5169c0e4f86e1f6bd272fd1320aeb"
+}

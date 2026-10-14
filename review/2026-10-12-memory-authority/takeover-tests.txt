@@ -1,0 +1,6 @@
+test_takeover_serializes_with_inflight_publication (test_memory_authority.AuthorityChecks.test_takeover_serializes_with_inflight_publication) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.886s
+
+OK

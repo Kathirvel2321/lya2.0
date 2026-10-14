@@ -1,0 +1,28 @@
+{
+  "observed_at_utc": "2026-10-12T17:39:14.147767+00:00",
+  "read_only": true,
+  "checks": {
+    "memory_screen_256_mib": true,
+    "disk_screen_1_gib": true,
+    "system_sqlcipher_candidate": false,
+    "system_cryptography": true,
+    "existing_mobile_active": true
+  },
+  "screening_only": true,
+  "production_ready": false,
+  "billing_eligibility_verified": false,
+  "independent_latest_state_qualified": false,
+  "protected_key_custody_configured": false,
+  "linux_encrypted_engine_qualified": false,
+  "real_device_acceptance_verified": false,
+  "remote_runtime_changed": false,
+  "private_memory_or_keys_transferred": false,
+  "gates": [
+    "free-account eligibility",
+    "separate restricted memory service and budgets",
+    "Linux encrypted engine and failure qualification",
+    "protected independent keys",
+    "independent latest-state/rollback policy",
+    "clean-host and real-device recovery"
+  ]
+}

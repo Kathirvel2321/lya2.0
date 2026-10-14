@@ -6,15 +6,15 @@ sets gateway fallback false and rejects a different provider reported by the res
 Live synthetic checks verified provider pinning, then rejected both tested free
 routes for latency/completion failures. Direct NVIDIA Nemotron 3.5 Lightning also
 failed the eight-second gate on laptop and Oracle. See
-`review/2026-09-19-openrouter-live/README.md` and
-`review/2026-09-19-nvidia-lightning/README.md`.
+`archive/history/reviews/2026-09-19-openrouter-live/README.md` and
+`archive/history/reviews/2026-09-19-nvidia-lightning/README.md`.
 
 T02 update (2026-09-18): local sources now include persistent token reservations,
 Retry-After cooldowns, canonical upstream grouping, POSIX wall-clock bounds and an
 optional cancellable stdin session. These changes are tested but NOT deployed.
 Both NVIDIA candidates failed the Oracle eight-second acceptance limit and remain
 disabled. Run `check-t02.cmd` for 81 offline checks. Full evidence and the deployment/
-rollback gate: `review/2026-09-17-T02-backup/README.md`. Do not set local
+rollback gate: `archive/history/reviews/2026-09-17-T02-backup/README.md`. Do not set local
 `session_protocol: true` until matching server sources are deployed and verified.
 
 Local desktop update (2026-09-24): the default non-session SSH call now uses
@@ -29,10 +29,10 @@ upstream provider immediately stops computing or releases quota.
 Updated 2026-09-14: public-text Groq is active through the desktop/Oracle bridge.
 NVIDIA routes remain disabled after failed live reliability checks; there is one
 active provider. Private context is denied. See
-[LYA_MODEL_STRATEGY.md](../LYA_MODEL_STRATEGY.md) for the current policy, shortlist
+[LYA_MODEL_STRATEGY.md](../docs/plans/LYA_MODEL_STRATEGY.md) for the current policy, shortlist
 and verification limits. The version-2 `provider.example.json` is disabled by
 default and differs intentionally from protected active configuration. See
-`review/2026-09-14-live-models/README.md` for live evidence and accuracy failures.
+`archive/history/reviews/2026-09-14-live-models/README.md` for live evidence and accuracy failures.
 
 Prepared 2026-09-14. Uses one standard-library Python process per SSH request;
 no HTTP listener, daemon, container, extra package or private-memory database.

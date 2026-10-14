@@ -1,0 +1,7 @@
+# Local WSL memory lab — 13 October 2026
+
+The owner installed Ubuntu 24.04 under WSL 2, created a separate Linux home-folder lab with a Python 3.12 virtual environment, and copied only six portable memory modules plus `test_memory_custody.py` and `review/2026-10-13-memory-linux/test_qualification.py`. No private LYA store or runtime configuration was copied as part of the guided commands.
+
+Owner-supplied terminal output reports the PyPI CPython 3.12 Linux x86-64 `sqlcipher3==0.6.3` wheel passed SHA-256 verification (`67a1edbd957cd0d22afa3a3a6e14152b50abddf03507c49b6abf8f9a3af5e35e`). `cryptography`, `cffi` and `pycparser` were installed only in the lab virtual environment. `python -m unittest -v test_memory_custody test_qualification` reported **20 tests, OK**, with every case marked `ok`. SQLCipher's HMAC error lines were emitted during the intentional corrupt-file and wrong-key rejection checks, which passed.
+
+This is a user-reported local result; the assistant did not independently run or inspect the WSL environment. Test stores and keys are generated fake fixtures. The isolated source is not wired to the production desktop, phone, owner enrollment, or independently hosted witness. WSL has access to Windows mounts by default, so this lab is not a hard security sandbox. The next Linux step is to reopen the lab and reactivate its virtual environment when needed; continue witness acknowledgement design separately before production memory use.

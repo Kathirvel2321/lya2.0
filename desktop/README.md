@@ -6,7 +6,7 @@ records after a verified protected encrypted backup. Old memories/vault data sta
 bound to inactive identities; new signup does not inherit them. API keys and the
 encryption key were preserved. Fully quit/reopen LYA and say `register admin`;
 fresh signed phone enrollment is still required. This is not a voice-reset feature.
-See [retirement checks and limits](../review/2026-10-08-legacy-owner-retirement/README.md).
+See [retirement checks and limits](../archive/history/reviews/2026-10-08-legacy-owner-retirement/README.md).
 
 Owner walkthrough presentation (2026-10-08): registration now uses a plain,
 voice-led screen with coloured native particles: rounded listening rings,
@@ -15,7 +15,7 @@ text is rendered. Repeat/continue/cancel symbols retain keyboard and screen-read
 names. Phone verification still uses the browser's secure prompt; exact protected
 action details remain reviewable there before signing. This presentation replaces
 the earlier registration artwork; the ordinary LYA interface is unchanged.
-See [current previews and isolated checks](../review/2026-10-08-voice-particle-registration/README.md).
+See [current previews and isolated checks](../archive/history/reviews/2026-10-08-voice-particle-registration/README.md).
 
 Owner access (2026-10-08): `register admin` / `sign in` now opens LYA's
 voice-guided phone-passkey screen, without a Windows identity prompt. New owners
@@ -26,7 +26,7 @@ locked for separate trusted migration; no identity data or key was replaced.
 Camera/voice/hearing/startup defaults are preserved. Synthetic integration is
 checked; actual iPhone/browser enrollment and migration remain unverified.
 Install the pinned UI requirements and reopen the existing launcher to load it.
-See [implementation, research, limits and screen previews](../review/2026-10-08-owner-passkeys/README.md).
+See [implementation, research, limits and screen previews](../archive/history/reviews/2026-10-08-owner-passkeys/README.md).
 
 Camera focus/security (2026-10-06): camera start and camera questions now require
 an existing verified LYA administrator session, checked against the protected
@@ -47,7 +47,7 @@ remain. Camera frames are transient/local, no image cloud calls or recording;
 camera observations stay out of chat history. Access loss, expiry, close/hide,
 minimize and sleep stop the view. Isolated/public-fixture tests and a short fake-
 camera resource check passed; owner-room accuracy and sustained device load are
-pending. See [implementation, limits and native synthetic previews](../review/2026-10-06-camera-focus-research/implementation.md).
+pending. See [implementation, limits and native synthetic previews](../archive/history/reviews/2026-10-06-camera-focus-research/implementation.md).
 
 Camera references (2026-10-05): local common-object analysis now accepts
 `what object is this?`, `what am I holding?`, and `what am I pointing at?`.
@@ -61,7 +61,7 @@ The detector supports common categories, not every object (pens unsupported).
 Pointing selects along a 2D image direction, not physical distance or a 3D target.
 Implemented and isolated/public-fixture tested; owner live accuracy pending.
 Voice/hearing, interface appearance, credential and startup behavior were preserved.
-See [camera review](../review/2026-10-05-camera-objects/README.md).
+See [camera review](../archive/history/reviews/2026-10-05-camera-objects/README.md).
 
 Camera routing follow-up (2026-10-05): natural direct commands such as
 `please open the camera` and `open the camera and see me` now reach the local
@@ -78,7 +78,7 @@ The masked key prompt appears only when no key is configured. `.env` is excluded
 from Git; never put keys in source code or the project brain.
 The owner's new preserve-working-features rule is in `AGENTS.md`; no further
 voice, hearing, wake, interface or startup change is authorized by this update.
-See [key storage](../review/2026-10-05-key-storage/README.md).
+See [key storage](../archive/history/reviews/2026-10-05-key-storage/README.md).
 
 Normal launch now uses a native masked NVIDIA key dialog (2026-10-05). Open
 `LYA.lnk` in the project folder for a direct windowed launch; `launch-lya.cmd`
@@ -87,7 +87,7 @@ flash before exiting; the shortcut does not need that shell. The existing owned
 sign-in shortcut has been migrated to the same native prompt. Keys remain
 session-only. Cancel exits before the desktop/listener starts. The console
 launcher command below is retained for manual diagnostics.
-See [native launch review](../review/2026-10-05-native-launch/README.md).
+See [native launch review](../archive/history/reviews/2026-10-05-native-launch/README.md).
 
 Current conversation and design status (2026-10-05): the normal launcher now uses
 NVIDIA Parakeet questions with a bounded NVIDIA-hosted Whisper backup and hidden
@@ -130,7 +130,7 @@ change volume. The handler sends one relative volume key step; mute uses the
 existing hardware toggle. It does not set an absolute percentage or read back
 the actual device level. No hearing accuracy or real volume outcome has been
 accepted from these isolated checks. Restart LYA to load source changes.
-See [retry/volume repair](../review/2026-10-04-volume-retry/README.md).
+See [retry/volume repair](../archive/history/reviews/2026-10-04-volume-retry/README.md).
 
 The orb/tray menu has **Microphone** and **Command recognition (local)** choices.
 Selections last for this process only. Switching microphones waits for the old
@@ -187,7 +187,7 @@ The new launch defaults to the requested baked model artwork; `--original-art`
 selects the earlier image. `--reduced-motion` skips movement and text reveal.
 `--show-panel` remains accepted for launcher compatibility; launch now starts with
 the greeting rather than a large chat panel. No recognition or voice is activated.
-See [interaction and performance evidence](qa/2026-09-16-compact/README.md).
+See [interaction and performance evidence](../archive/history/desktop-qa/2026-09-16-compact/README.md).
 Older milestone descriptions below describe the base panel before this change.
 
 The user's custom black-chrome crystal is now a small native Windows widget, with
@@ -295,7 +295,7 @@ long-duration stability under model/camera workloads.
 Type `brain demo` for a labelled synthetic demonstration, `brain status` for
 readiness, `brain help` for memory commands, or `who am i` for session identity.
 Requests run on a background worker; closing the panel suppresses late results.
-See [the brain guide](../LYA_BRAIN_WORKFLOW.md) for lifetimes, graph and council.
+See [the brain guide](../docs/architecture/LYA_BRAIN_WORKFLOW.md) for lifetimes, graph and council.
 
 The desktop starts as a guest. `register admin` / `sign in` opens a local
 Windows verification flow that can create or reopen a device-only admin
@@ -363,7 +363,7 @@ paint calls switches to the original and enables reduced motion. This measures
 paint work, not battery consumption or all sources of lag. Idle redraw checks
 passed, but zero battery impact and physical display FPS are not established.
 
-See [measurements and synthetic previews](qa/2026-09-15-orb/README.md).
+See [measurements and synthetic previews](../archive/history/desktop-qa/2026-09-15-orb/README.md).
 
 ## Memory recovery interface (2026-09-20)
 
@@ -391,7 +391,7 @@ File/encryption work runs on a worker thread. Cancel is cooperative; a commit
 already completed cannot be undone by cancellation. Closing requests cancellation
 and clears displayed secrets. Keys/labels/previews are also cleared on detected
 session change/expiry. Nothing syncs to cloud. See
-`review/2026-09-20-recovery-interface/README.md` for limits and synthetic screenshots.
+`archive/history/reviews/2026-09-20-recovery-interface/README.md` for limits and synthetic screenshots.
 
 ## Conversational registration guide (2026-09-21)
 
@@ -409,7 +409,7 @@ type it into LYA's name field.
 
 Face/voice preferences remain drafts and are discarded on close. No real
 enrollment or owner session is created. See the synthetic previews, checks, and
-playback limitations in `review/2026-09-21-conversational-registration/README.md`.
+playback limitations in `archive/history/reviews/2026-09-21-conversational-registration/README.md`.
 Earlier registration previews are retained as historical evidence.
 
 ## Local female speech (updated 2026-09-23)
@@ -427,18 +427,18 @@ answer appears; phrase-timed captions remain available in the speech transport
 but do not hold the desktop answer back. Remote speech and desktop speech audit
 logging are off. Microphone
 listening, naturalness acceptance, barge-in and production battery validation
-remain pending. See `review/2026-09-23-english-voice/README.md`.
+remain pending. See `archive/history/reviews/2026-09-23-english-voice/README.md`.
 
 
 
 ## Local camera eyes (2026-09-23)
 
-Type `open vision`, `look around`, or `scan room` to open the camera-off lens window. Click **Scan once** for one local object-and-face-presence scan. The camera closes after the scan; closing the window or an eight-second timeout stops the worker. Frames stay in memory and are cleared on close. This does not identify a person, create an owner session, save a visitor photo or authorize any action. One owner-authorized live scan completed in about 2 seconds; visual accuracy and battery performance remain unreviewed. See `review/2026-09-23-vision/README.md`.
+Type `open vision`, `look around`, or `scan room` to open the camera-off lens window. Click **Scan once** for one local object-and-face-presence scan. The camera closes after the scan; closing the window or an eight-second timeout stops the worker. Frames stay in memory and are cleared on close. This does not identify a person, create an owner session, save a visitor photo or authorize any action. One owner-authorized live scan completed in about 2 seconds; visual accuracy and battery performance remain unreviewed. See `archive/history/reviews/2026-09-23-vision/README.md`.
 
 
 ## Live local camera (2026-09-23)
 
-Type `open camera`, `look around`, or `scan room` to start a bounded live view. `open vision` opens the same window with camera off. Use Stop live view or close the window to end capture. The worker also ends after 90 seconds. Preview targets up to six frames/s and local object/face analysis at most two/s; actual startup depends on the webcam. Ask about a person or one of the detector's supported objects. LYA gives approximate on-screen position, never identity or permission. Small items such as pens are not in this model and will be reported as unsupported. No camera frame is saved or sent online. See `review/2026-09-23-vision/README.md` for measured checks and remaining limits.
+Type `open camera`, `look around`, or `scan room` to start a bounded live view. `open vision` opens the same window with camera off. Use Stop live view or close the window to end capture. The worker also ends after 90 seconds. Preview targets up to six frames/s and local object/face analysis at most two/s; actual startup depends on the webcam. Ask about a person or one of the detector's supported objects. LYA gives approximate on-screen position, never identity or permission. Small items such as pens are not in this model and will be reported as unsupported. No camera frame is saved or sent online. See `archive/history/reviews/2026-09-23-vision/README.md` for measured checks and remaining limits.
 
 Visual questions typed in LYA's main command line, such as `can you see my pen?`, route to the Vision window and wait for a current analyzed frame. The lightweight model currently cannot detect pens and will say so. Microphone transcription is still pending.
 
@@ -450,7 +450,7 @@ NVIDIA session launcher with hidden key entry. Default Parakeet TDT has one Whis
 backup on selected model/service errors; CTC 1.1B is a selectable spare. Private
 mode blocks speech recognition and requests text instead of a local guess. Full
 backup accuracy and integrated reply acceptance are pending. See
-`review/2026-10-05-hearing-plan/online-backups.md`; the earlier optional status below
+`archive/history/reviews/2026-10-05-hearing-plan/online-backups.md`; the earlier optional status below
 is historical.
 
 An ordinary speech-to-text check with hosted Parakeet passed by owner confirmation.
@@ -466,14 +466,14 @@ and stop remain local; complete questions go to NVIDIA while private mode is off
 Enable private mode through text **before** confidential speech. Local private
 recognition remains unaccepted. Current speaking voice and security gates remain
 unchanged. Ongoing cloud use needs explicit permission; the first permission only
-covered a diagnostic question. See `review/2026-10-05-hearing-plan/nvidia-connection.md`
+covered a diagnostic question. See `archive/history/reviews/2026-10-05-hearing-plan/nvidia-connection.md`
 for validation and the untested integrated reply/noise/interruption gates.
 
 ## Camera-only preview (2026-09-24)
 
 The Vision window now contains the live picture and a small Start/Stop strip. Type visual questions into LYA's normal input, including `what do you see?`; answers appear in her normal panel and use her configured speech when enabled. `open camera` starts the preview, while `open vision` opens it with the camera off. `close camera` stops and clears the preview. The camera worker still ends automatically after 90 seconds.
 
-LYA requests 1280×720 capture and up to 15 preview frames/s, while recognition runs on a smaller copy at most twice per second. A real laptop camera and Qt check each measured about 15 preview frames/s after startup. Camera resolution and speed depend on the device and lighting. No image is saved or uploaded. Pen recognition, identity matching, anti-spoofing, and battery-life validation remain open; Windows Hello PIN remains the authority for protected actions. Measurements and a synthetic window preview are in `review/2026-09-23-vision/README.md`.
+LYA requests 1280×720 capture and up to 15 preview frames/s, while recognition runs on a smaller copy at most twice per second. A real laptop camera and Qt check each measured about 15 preview frames/s after startup. Camera resolution and speed depend on the device and lighting. No image is saved or uploaded. Pen recognition, identity matching, anti-spoofing, and battery-life validation remain open; Windows Hello PIN remains the authority for protected actions. Measurements and a synthetic window preview are in `archive/history/reviews/2026-09-23-vision/README.md`.
 
 ## LYA initialization and admin registration (2026-09-25)
 
@@ -498,5 +498,5 @@ capture audio, and the local speech worker completes. The locally built Hello
 helper remains blocked by Windows Application Control, so admin creation cannot
 complete yet. Do not disable Application Control to force the helper through.
 See the dated report and synthetic previews in
-`review/2026-09-25-admin-activation-refresh/README.md`; the earlier prototype
-is recorded in `review/2026-09-25-jarvis-activation/README.md`.
+`archive/history/reviews/2026-09-25-admin-activation-refresh/README.md`; the earlier prototype
+is recorded in `archive/history/reviews/2026-09-25-jarvis-activation/README.md`.

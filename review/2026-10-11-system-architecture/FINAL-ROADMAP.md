@@ -10,6 +10,8 @@ Implementation began after the owner requested one step at a time. See
 and synthetic HTTP baseline. Billing/recovery gates and live speed qualification
 remain open; this does not mark all of steps 1-2 complete.
 
+2026-10-13 follow-up: [optional witnessed authority](../2026-10-13-memory-witness-ack/README.md) now waits for a local witness commit and reconciles interrupted transitions, with 75 selected fake-data checks passing on Windows. The owner subsequently reported all 38 portable cases passing in the Ubuntu WSL lab; this is owner-supplied evidence, not an assistant rerun. The independently hosted authenticated witness/backup service, new revision's Oracle qualification, real key custody and production cutover remain pending.
+
 ## Decision in plain language
 
 Keep one small authoritative memory service on the existing Oracle host, the
@@ -172,8 +174,8 @@ backup retention mean physical erasure may lag logical deletion.
 | 1 | Confirm free-resource budget, selected shared-memory placement, recovery destination and key custody | Account limits checked; concrete data scope; no existing private vault migration implied |
 | 2 | Baseline timing and resource measurements with synthetic inputs | Endpointing, upload, queue, ASR, retrieval, model first/final output, TTS first/final audio, download/playback; p50/p95, cold/warm and network conditions |
 | 3 | Shared request/identity/style contract with fake data | Implemented and isolated-tested: [contract slice](../2026-10-11-conversation-contract/README.md), 10 new checks/46 combined pass, shared style and separate sessions. Production paths not connected; fake stable-owner mapping now covered in order 4. |
-| 4 | Isolated durable memory API and storage comparison | [SQLite semantics baseline](../2026-10-11-memory-prototype/README.md) implemented: 19 new/29 combined checks, restart/correction/conflict/retry/expiry/forget, child-process crash and SQLite-full rollback, 1,000 synthetic records. Plaintext fake-only; PostgreSQL/SQLCipher comparison and live engine choice remain open. |
-| 5 | Recovery before valuable records | [Isolated encrypted recovery](../2026-10-11-memory-recovery/README.md): 17 new/46 combined checks; consistent WAL snapshot, authenticated encryption, latest-anchor requirement, later-deletion/expiry suppression and quarantined restore. Live DB remains plaintext; independent destination, key custody, checkpoint acknowledgement, writer fencing and clean-host restore remain open. |
+| 4 | Isolated durable memory API and storage comparison | [SQLite semantics baseline](../2026-10-11-memory-prototype/README.md); [12 October hardening/SQLCipher candidate](../2026-10-12-memory-hardening/README.md) passes 77 combined fake-data checks and the same 1,000-record corpus on both engines. Explicit encrypted live/staging candidate only; PostgreSQL, Oracle/platform qualification and production engine choice remain open. |
+| 5 | Recovery before valuable records | [Isolated recovery](../2026-10-11-memory-recovery/README.md), [acknowledgement](../2026-10-12-memory-acknowledgement/README.md), [hardening](../2026-10-12-memory-hardening/README.md), [canonical authority](../2026-10-12-memory-authority/README.md), and [verified reactivation](../2026-10-12-memory-reactivation/README.md): verified snapshot commits, writer generation/token fencing, exact-anchor conflicts, safe retries and encrypted quarantine. Reactivation requires the exact acknowledged restore and a freshly verified pre-existing owner; only one binding and zero jobs resume. 114 distinct fake-data checks verified across combined run and corrected concurrency recheck; see the reactivation report. Independent off-host/rollback-resistant latest-state/key custody, real identity acceptance, production integration and clean-host/power-loss restore remain open. |
 | 6 | Connect both devices to approved new shared records | Laptop save -> phone recall, phone correction -> laptop update, laptop-asleep recall, forget on both; visible persistence failures |
 | 7 | Retrieval and answer quality | Held-out Tamil/English/transliteration, dated facts, ambiguous entities and unanswerable cases; tune optional embeddings only if they help |
 | 8 | Measured latency improvements and optional LAYA routing experiment | Test text streaming, bounded worker reuse, sentence audio and binary payloads individually; compare LAYA with rules only if routing is costly; preserve accepted pause/voice/Stop and memory limits |
@@ -181,6 +183,64 @@ backup retention mean physical erasure may lag logical deletion.
 | 10 | Resumable tasks and additional app adapters | Minimal job state first; choose LangGraph/n8n/MCP or a Jev browser experiment only for demonstrated needs, with action authorization and uncertain-outcome recovery |
 | 11 | Optional continuous voice / native iPhone actions | Separate LiveKit/Pipecat/WebRTC or App Intents evaluation; owner acceptance before replacing any working interaction |
 | 12 | Growth and maintenance | Larger corpus/load tests, upgrade/rollback drills, backup-budget checks and measured resource ceilings |
+
+12 October follow-up: [recovery acknowledgement](../2026-10-12-memory-acknowledgement/README.md)
+adds a same-snapshot encrypted bundle, metadata-only catalogue acknowledgement,
+pending/verified/unavailable status, and rejection of a known unacknowledged
+deletion on restore. Fifteen new and 46 earlier fake-data checks pass (61 total).
+The catalogue/destination remain same-disk fixtures; independent latest-state
+custody, encrypted live storage, writer fencing and production integration remain
+open. This does not close order 5 for valuable records.
+
+Later 12 October follow-up: [hardening and encrypted candidate](../2026-10-12-memory-hardening/README.md)
+fixes missing-source recreation, implicit key changes and same-sequence divergent
+state verification, adds catalogue schema 2, and qualifies an optional SQLCipher
+live/staging path with 77 combined isolated checks. Both engines pass the same
+1,000-record corpus; SQLCipher search was slower in this local comparison.
+The default baseline/catalogue stay plaintext; no production engine or platform
+is selected. Independent custody and old-writer fencing still gate order 5.
+
+Latest 12 October follow-up: [canonical authority/writer fencing](../2026-10-12-memory-authority/README.md)
+adds a new isolated snapshot authority that commits recovery files before write
+acknowledgement, serializes writer takeover with publication, rejects old grants
+and outdated anchors, and revokes writers on successful quarantined restore.
+Twenty-two new plus 77 preceding checks pass. It is a local trusted fixture;
+off-host rollback-resistant custody, keys, reactivation, resource qualification
+and production wiring still gate valuable records. Legacy paths are not fenced.
+
+Subsequent 12 October follow-up: [verified recovery/reactivation](../2026-10-12-memory-reactivation/README.md)
+adds authority schema 2, a durable quarantine receipt, blocked takeover while
+recovery is pending and explicit cutover for one verified pre-existing identity.
+Old writers stay revoked; bindings for other owners and old jobs do not resume.
+Fake source-loss/correction/forget/expiry and commit-failure cases extend the
+preceding evidence. Lost identities/new-device enrollment, protected real keys,
+independent custody and production/native acceptance remain open.
+
+Latest placement follow-up: [read-only Oracle screening and fresh-process recovery](../2026-10-12-memory-placement/README.md)
+observed minimum memory/disk screening headroom and an active mobile service,
+but no system SQLCipher candidate. Billing eligibility, Linux engine qualification,
+protected independent keys and the latest-state failure-domain policy remain open.
+Four new local checks pass, including recovery without the original source path
+or live DB copy. This is a fresh-process drill on one host, not clean-host/off-host
+acceptance. No remote installation, deployment or memory transfer occurred.
+
+13 October follow-up: the owner confirmed the existing instance is covered by
+Always Free (owner-supplied confirmation; no billing API verification). The
+[Linux ARM64 encrypted candidate](../2026-10-13-memory-linux/README.md) passes eight
+portable fake-data checks, including the 1,000-record corpus, in a temporary stage
+outside the phone service. The stage was removed and checked mobile files/service
+state preserved. This qualifies a bounded driver/platform slice only; protected
+independent keys/latest state, service/admission/retention budgets, clean-host
+recovery and native/device acceptance still gate valuable records.
+
+Later 13 October follow-up: [sealed key custody and latest-state witness](../2026-10-13-memory-custody/README.md)
+adds authenticated fake key envelopes and a separately trusted exact checkpoint/
+writer-epoch witness with monotonic compare-and-swap. Twenty cases pass on Windows
+and Linux ARM64. Owner selected an existing password manager in principle; no real
+entry/key or independent witness deployment exists. The witness is not yet wired
+into source write acknowledgements: independent recoverability still requires a
+concrete failure-domain placement and durable acknowledgement/reconciliation of
+all relevant changes before production success, plus real clean-host/device tests.
 
 Orders 2-5 can be designed/tested with fake records before external placement is
 approved. Live personal writes depend on orders 1 and 5. Speed instrumentation

@@ -1,0 +1,2 @@
+# Isolated CPython 3.12 Windows x64 qualification only; not an app dependency.
+sqlcipher3==0.6.3 --hash=sha256:9abace2cfd755184d75510f7c56e8bff5f146a204b29e926e03c81a32a514a7b

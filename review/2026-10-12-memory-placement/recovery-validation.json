@@ -1,0 +1,14 @@
+{
+  "tests_run": 3,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "fake_data_only": true,
+  "fresh_process": true,
+  "same_physical_host": true,
+  "source_path_unavailable": true,
+  "live_database_copied": false,
+  "real_key_custody_tested": false,
+  "off_host_durability_tested": false
+}

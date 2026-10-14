@@ -1,0 +1,6 @@
+test_concurrent_activation_has_one_winner (test_memory_reactivation.ReactivationChecks.test_concurrent_activation_has_one_winner) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 3.834s
+
+OK

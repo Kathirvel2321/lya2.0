@@ -1,0 +1,11 @@
+{
+  "python_sources_parsed": 4,
+  "local_documentation_links_checked": 58,
+  "temporary_fixture_directories_remaining": 0,
+  "source_sha256": {
+    "brain/memory_recovery.py": "f9d292233793e77e354c24c2bac7a3fb2dd1990a46e707c2dbba33ba55cee006",
+    "brain/memory_repository.py": "d83036d84b25a4bd6afc88abb509a0eb3bc78a326a7a41092bd2d67c63dfacbc",
+    "test_memory_repository.py": "98c748376f31fa0476593cf67e3d67145e2a3a3f47bc272bae92e8e96b8326cb",
+    "review/2026-10-12-memory-acknowledgement/check.py": "fc528c6153acd7741ce82b4d9ba2de9692672df84db0131b071be5da1e271f32"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "success": true,
+  "rendered_states": 12,
+  "checks": [
+    {
+      "viewport": 320,
+      "height": 568,
+      "scroll": 320,
+      "state": "history",
+      "recent": 2,
+      "auth": false,
+      "chat": true,
+      "composerBottom": 502.84375,
+      "questionButton": "BUTTON",
+      "chatOverflow": true
+    },
+    {
+      "viewport": 320,
+      "height": 568,
+      "scroll": 320,
+      "state": "editing",
+      "recent": 3,
+      "auth": false,
+      "chat": true,
+      "composerBottom": 485.25,
+      "questionButton": "BUTTON",
+      "chatOverflow": true
+    },
+    {
+      "viewport": 320,
+      "height": 568,
+      "scroll": 320,
+      "state": "locked",
+      "recent": 0,
+      "auth": true,
+      "chat": false,
+      "composerBottom": 0,
+      "questionButton": "BUTTON",
+      "chatOverflow": false
+    },
+    {
+      "viewport": 390,
+      "height": 844,
+      "scroll": 390,
+      "state": "history",
+      "recent": 2,
+      "auth": false,
+      "chat": true,
+      "composerBottom": 801.453125,
+      "questionButton": "BUTTON",
+      "chatOverflow": true
+    },
+    {
+      "viewport": 390,
+      "height": 844,
+      "scroll": 390,
+      "state": "editing",
+      "recent": 3,
+      "auth": false,
+      "chat": true,
+      "composerBottom": 801.453125,
+      "questionButton": "BUTTON",
+      "chatOverflow": true
+    },
+    {
+      "viewport": 390,
+      "height": 844,
+      "scroll": 390,
+      "state": "locked",
+      "recent": 0,
+      "auth": true,
+      "chat": false,
+      "composerBottom": 0,
+      "questionButton": "BUTTON",
+      "chatOverflow": false
+    },
+    {
+      "viewport": 768,
+      "height": 1024,
+      "scroll": 768,
+      "state": "history",
+      "recent": 2,
+      "auth": false,
+      "chat": true,
+      "composerBottom": 923.859375,
+      "questionButton": "BUTTON",
+      "chatOverflow": true
+    },
+    {
+      "viewport": 768,
+      "height": 1024,
+      "scroll": 768,
+      "state": "editing",
+      "recent": 3,
+      "auth": false,
+      "chat": true,
+      "composerBottom": 923.859375,
+      "questionButton": "BUTTON",
+      "chatOverflow": true
+    },
+    {
+      "viewport": 768,
+      "height": 1024,
+      "scroll": 768,
+      "state": "locked",
+      "recent": 0,
+      "auth": true,
+      "chat": false,
+      "composerBottom": 0,
+      "questionButton": "BUTTON",
+      "chatOverflow": false
+    },
+    {
+      "viewport": 390,
+      "height": 420,
+      "scroll": 390,
+      "state": "history",
+      "recent": 2,
+      "auth": false,
+      "chat": true,
+      "composerBottom": 415.890625,
+      "questionButton": "BUTTON",
+      "chatOverflow": true
+    },
+    {
+      "viewport": 390,
+      "height": 420,
+      "scroll": 390,
+      "state": "editing",
+      "recent": 3,
+      "auth": false,
+      "chat": true,
+      "composerBottom": 415.890625,
+      "questionButton": "BUTTON",
+      "chatOverflow": true
+    },
+    {
+      "viewport": 390,
+      "height": 420,
+      "scroll": 390,
+      "state": "locked",
+      "recent": 0,
+      "auth": true,
+      "chat": false,
+      "composerBottom": 0,
+      "questionButton": "BUTTON",
+      "chatOverflow": false
+    }
+  ],
+  "real_phone": false,
+  "real_audio": false,
+  "provider_call": false
+}

@@ -1,0 +1,19 @@
+test_activation_rebinds_verified_existing_owner_without_changing_quarantine (test_memory_reactivation.ReactivationChecks.test_activation_rebinds_verified_existing_owner_without_changing_quarantine) ... ok
+test_activation_requires_literal_approval_fresh_proof_and_registered_identity (test_memory_reactivation.ReactivationChecks.test_activation_requires_literal_approval_fresh_proof_and_registered_identity) ... ok
+test_authority_schema_one_is_refused_without_migration (test_memory_reactivation.ReactivationChecks.test_authority_schema_one_is_refused_without_migration) ... ok
+test_catalogue_failure_after_publication_rolls_back_binding_pointer_and_grant (test_memory_reactivation.ReactivationChecks.test_catalogue_failure_after_publication_rolls_back_binding_pointer_and_grant) ... ok
+test_changed_candidate_copy_cannot_activate (test_memory_reactivation.ReactivationChecks.test_changed_candidate_copy_cannot_activate) ... ok
+test_child_death_before_and_after_activation_commit (test_memory_reactivation.ReactivationChecks.test_child_death_before_and_after_activation_commit) ... ok
+test_concurrent_activation_has_one_winner (test_memory_reactivation.ReactivationChecks.test_concurrent_activation_has_one_winner) ... ok
+test_normal_takeover_cannot_bypass_pending_recovery (test_memory_reactivation.ReactivationChecks.test_normal_takeover_cannot_bypass_pending_recovery) ... ok
+test_owner_proof_revoked_during_publication_cannot_activate (test_memory_reactivation.ReactivationChecks.test_owner_proof_revoked_during_publication_cannot_activate) ... ok
+test_publication_failure_or_cancellation_keeps_recovery_pending (test_memory_reactivation.ReactivationChecks.test_publication_failure_or_cancellation_keeps_recovery_pending) ... ok
+test_reactivation_does_not_bind_other_owners_automatically (test_memory_reactivation.ReactivationChecks.test_reactivation_does_not_bind_other_owners_automatically) ... ok
+test_second_restore_supersedes_the_first_activation_receipt (test_memory_reactivation.ReactivationChecks.test_second_restore_supersedes_the_first_activation_receipt) ... ok
+test_tampered_missing_or_unacknowledged_restore_is_rejected (test_memory_reactivation.ReactivationChecks.test_tampered_missing_or_unacknowledged_restore_is_rejected) ... ok
+test_unacknowledged_restore_destination_cannot_replace_acknowledged_quarantine (test_memory_reactivation.ReactivationChecks.test_unacknowledged_restore_destination_cannot_replace_acknowledged_quarantine) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 80.911s
+
+OK

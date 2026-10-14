@@ -1,0 +1,7 @@
+{
+  "date": "2026-10-12",
+  "tests_run": 1,
+  "passed": true,
+  "purpose": "Allow thread result delivery order to vary; still assert serialized commit and stale-grant rejection",
+  "fake_data_only": true
+}

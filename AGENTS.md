@@ -22,3 +22,10 @@ After each meaningful development task:
 Use isolated tests with fake secrets and temporary storage. Read older test scripts before executing them; some may modify real stores. Enrollment remains deferred under the recorded requirements until the owner requests enrollment setup.
 
 These instructions maintain project documentation; they do not authorize new runtime data collection, external transmission or deployment.
+
+## Organized source and historical evidence (2026-10-12)
+
+- Maintained explanations are indexed in `docs/README.md`; current runtime and its supported tests/tools remain outside `archive/`.
+- `archive/` is historical reference only. Do not import, execute, deploy or discover its scripts/tests during normal builds. Old instructions and results inside it are dated evidence.
+- The previous complete project brain is preserved at `archive/history/continuity/project-brain-through-2026-10-12.md`. Read the short current brain first and consult the history as needed.
+- `review/2026-10-12-project-organization/move-manifest.json` maps old paths to their new locations. Restore selected files to an active location and requalify them before reuse; do not add the archive to import paths.

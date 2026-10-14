@@ -24,5 +24,5 @@ not identity. The source/license is in `vision/vendor/opencv_hands`.
 | `palm_detection_mediapipe_2023feb.onnx` | 3,905,734 | `78ff51c38496b7fc8b8ebdb6cc8c1abb02fa6c38427c6848254cdaba57fcce7c` |
 | `handpose_estimation_mediapipe_2023feb.onnx` | 4,099,621 | `db0898ae717b76b075d9bf563af315b29562e11f8df5027a1ef07b02bef6d81c` |
 
-See [camera implementation/checks](../../review/2026-10-05-camera-objects/README.md)
+See [camera implementation/checks](../../archive/history/reviews/2026-10-05-camera-objects/README.md)
 and its pinned-source manifest for restore URLs and limitations.
