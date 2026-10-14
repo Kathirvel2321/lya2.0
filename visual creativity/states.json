@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "body": {"asset": "assets/lya-body-anchor.png", "pose": "listening-fixed", "geometry_changes": false, "core_color": "#d4faff"},
+  "interaction": {
+    "idle": {"label": "Idle", "color": "#b8d5df", "effect": "aura", "motion": false, "source": "existing-idle-with-guest-preview-palette"},
+    "standby": {"label": "Standby", "color": "#68e5f2", "effect": "crescents", "motion": false, "source": "existing-voice-phase"},
+    "listening": {"label": "Listening", "color": "#68e5f2", "effect": "orbit", "motion": true, "source": "desktop/layout.py"},
+    "hearing": {"label": "Hearing", "color": "#68e5f2", "effect": "ticks", "motion": true, "source": "existing-voice-phase"},
+    "thinking": {"label": "Thinking", "color": "#b69bff", "effect": "weave", "motion": true, "source": "desktop/layout.py"},
+    "speaking": {"label": "Speaking", "color": "#78e1bf", "effect": "waves", "motion": true, "source": "desktop/app.py"},
+    "uncertain": {"label": "Please repeat", "color": "#ff879b", "effect": "broken", "motion": false, "source": "existing-voice-phase"},
+    "paused": {"label": "Paused", "color": "#9aaeba", "effect": "brackets", "motion": false, "source": "proposal"},
+    "voice_off": {"label": "Voice off", "color": "#9aaeba", "effect": "quiet", "motion": false, "source": "existing-off-phase"},
+    "offline": {"label": "Offline", "color": "#9aaeba", "effect": "dashed", "motion": false, "source": "proposal"},
+    "reconnecting": {"label": "Reconnecting", "color": "#68e5f2", "effect": "orbit", "motion": true, "source": "proposal"},
+    "cancelled": {"label": "Cancelled", "color": "#9aaeba", "effect": "broken", "motion": false, "source": "proposal"}
+  },
+  "tasks": {
+    "none": {"label": "No task", "color": null, "effect": null, "source": "neutral"},
+    "coding": {"label": "Coding", "color": "#79b8ff", "effect": "code", "source": "proposal"},
+    "helping": {"label": "Helping", "color": "#7fdbc9", "effect": "crescents", "source": "proposal"},
+    "building": {"label": "Building", "color": "#99afff", "effect": "progress", "source": "proposal"},
+    "learning": {"label": "Learning", "color": "#abe5a1", "effect": "rise", "source": "proposal"},
+    "research": {"label": "Research", "color": "#a997ef", "effect": "orbit", "source": "existing-route-new-visual"},
+    "files": {"label": "Files", "color": "#6dceff", "effect": "frames", "source": "desktop/layout.py"},
+    "security": {"label": "Security work", "color": "#b8d5df", "effect": "boundary", "source": "existing-route-new-visual"},
+    "private": {"label": "Private mode", "color": "#8cd9d1", "effect": "boundary", "source": "existing-mode-new-visual"},
+    "approval": {"label": "Waiting for approval", "color": "#ffc26b", "effect": "approval", "source": "desktop/layout.py"},
+    "high_risk": {"label": "High risk — approval required", "color": "#ff995c", "effect": "caution", "source": "proposal"},
+    "success": {"label": "Success", "color": "#77e0b2", "effect": "complete", "source": "desktop/layout.py"},
+    "blocked": {"label": "Blocked — approval required", "color": "#ffc26b", "effect": "approval", "source": "desktop/app.py-blocked-route"},
+    "error": {"label": "Needs attention", "color": "#ff879b", "effect": "broken", "source": "desktop/layout.py"}
+  },
+  "rules": {"effects_do_not_grant_authority": true, "idle_fps": 0, "active_fps_limit": 30, "device_pixel_ratio_limit": 2, "reduced_motion_is_static": true, "hidden_stops_animation": true}
+}

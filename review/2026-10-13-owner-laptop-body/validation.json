@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-13",
+  "commit": "6ba5694717df64299ecdf5fc81e370ad8fcdc76e",
+  "python": "C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.venv-asr\\Scripts\\python.exe",
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "qt_platform": "windows",
+  "device_pixel_ratio": 1.25,
+  "check_body_qt": {
+    "exit_code": 0,
+    "tests": 3,
+    "test_seconds": 0.221,
+    "result": "OK"
+  },
+  "render_body_ci": {
+    "exit_code": 0,
+    "images": {
+      "blocked.png": {
+        "width": 420,
+        "height": 390,
+        "bytes": 25389,
+        "sha256": "810c65a23f61788da12773a8af5dbbe4b76296b994a794f83cecf7ee7de3b505"
+      },
+      "docked-standby.png": {
+        "width": 420,
+        "height": 390,
+        "bytes": 8703,
+        "sha256": "40e6643171bed7fe2df7ecdff3c22aad5419991ca3dcc247f38ef782185a13b5"
+      },
+      "listening.png": {
+        "width": 420,
+        "height": 390,
+        "bytes": 25980,
+        "sha256": "03bfc36947022ea5836e7652487a350315b878d0dabe4f4083e8b363b9e7c4fc"
+      },
+      "speaking.png": {
+        "width": 420,
+        "height": 390,
+        "bytes": 26088,
+        "sha256": "4af14475df7308fd526dd84aafbd9138d1a2876150e4370d731221c6dd74d452"
+      },
+      "thinking-coding.png": {
+        "width": 420,
+        "height": 390,
+        "bytes": 28062,
+        "sha256": "ca2c3a211c6193a4ba37a4234dbe840d176f1102ed25abb2685df204510737a1"
+      }
+    }
+  },
+  "main_preservation": {
+    "file_entries_checked": 1530,
+    "matching_file_states": 1528,
+    "concurrent_document_changes": [
+      "docs/README.md",
+      "lya-project-brain.md"
+    ],
+    "head_unchanged": true,
+    "branch_unchanged": true,
+    "index_unchanged": true,
+    "status_unchanged": false,
+    "added_status_entries": [
+      "?? review/2026-10-13-memory-wsl/README.md"
+    ],
+    "removed_status_entries": []
+  },
+  "limitations": [
+    "Static widget checks only; no live voice, drag, cancellation, sustained GPU/battery or full application acceptance.",
+    "Submodule directory contents were not individually hashed.",
+    "Codex panel opens returned queued; both requested images were displayed through image inspection.",
+    "Main documentation changed concurrently with a separate WSL continuity entry; no attempt was made to overwrite it."
+  ]
+}

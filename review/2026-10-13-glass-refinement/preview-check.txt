@@ -1,0 +1,1 @@
+{"success":true,"synthetic_preview_checks":15,"real_browser":false,"real_audio":false,"network_calls":false}

@@ -455,7 +455,8 @@ class OrbDesktop(Desktop):
         self.docking.stop()
         self.morph.stop()
         area = (self.app.screenAt(self.orb.geometry().center()) or self.app.primaryScreen()).availableGeometry()
-        target = QRect(area.center().x() - 32, area.bottom() - 84, 64, 64)
+        width, height = (96, 112) if self.orb.body_enabled else (64, 64)
+        target = QRect(area.center().x() - width // 2, area.bottom() - height - 20, width, height)
         if animated and not self.orb.reduced_motion:
             self.docking.setStartValue(self.orb.geometry())
             self.docking.setEndValue(target)
@@ -467,6 +468,7 @@ class OrbDesktop(Desktop):
             self.orb.setGeometry(target)
             self.set_circle(1.0)
         self.orb.timer.stop()
+        self.orb.refresh_effects()
 
     def panel_target(self):
         screen = self.app.screenAt(self.orb.geometry().center()) or self.app.primaryScreen()
@@ -1139,5 +1141,6 @@ class OrbDesktop(Desktop):
         self.panel.reveal.stop()
         self.transcript.clear()
         super().quit()
+
 
 

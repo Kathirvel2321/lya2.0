@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "closed_meshes": 7,
+  "triangles": 2344,
+  "glb_bytes": 174564,
+  "sha256": "8f14f953f31129631c55324fb965c9ab703985862bd5e2ec82d769417d7ff374",
+  "visual_match_approved": false,
+  "rendering_checked_by_this_test": false
+}
