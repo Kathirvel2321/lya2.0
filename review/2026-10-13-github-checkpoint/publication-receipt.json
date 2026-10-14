@@ -1,0 +1,29 @@
+{
+  "verified_date": "2026-10-14",
+  "repository": "https://github.com/Kathirvel2321/lya2.0",
+  "remote_heads_verified": {
+    "codex/lya-project-checkpoint-20261013": "21ce48c881334c079870a857e3303bb481db1984",
+    "codex/lya-visual-prototype-20261013": "11eb6388050271fcb1a9f84de221fd6564cfa358",
+    "main": "1d7b5c1c497b7b848ea70f5cac5c25aa9efffda7"
+  },
+  "push_exit_codes": {
+    "project": 0,
+    "visual": 0
+  },
+  "project_snapshot_files": 567,
+  "visual_snapshot_files": 64,
+  "main_checkout_branch": "main",
+  "main_remote_unchanged": true,
+  "remaining_local": [
+    "pre-existing dirty contents in lya-external-work",
+    "pre-existing dirty contents in security/Silent-Face-Anti-Spoofing",
+    "visual creativity/model/rendered-glass/lya-glass-study.blend1 (redundant backup)"
+  ],
+  "excluded": "Ignored secrets, protected stores, environments/models and portable Blender were not staged or pushed.",
+  "limitations": [
+    "No merge or deployment",
+    "No new full-repository or device test run",
+    "Post-push GitHub Actions status not checked"
+  ],
+  "receipt_note": "This receipt records verified source publication commits. A following documentation-only commit records the receipt on the checkpoint branch."
+}

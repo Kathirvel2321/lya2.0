@@ -16,3 +16,13 @@ Two embedded repositories have pre-existing dirty contents (`security/Silent-Fac
 Validation scope: reuse the recorded completed development checks, check staged content and source syntax, and verify actual remote commit IDs after push. No full-repository rerun or additional deployment/device claim is made. Publication receipts will be recorded after the pushes succeed.
 
 Resumed 2026-10-14 after the automatic approval reviewer previously could not run due to an account usage limit; the blocked action was not executed then. Rechecked the unchanged empty main index lock dated 2026-10-12 with no Git process running, removed only that stale lock under authorized execution, and staged the parent snapshot. [Staged validation](staged-validation.json): 566 parent files and 64 visual files scanned, zero specified token/key-pattern matches; 32 active parent Python files and four visual Python files parse. Staged whitespace checks pass. Remote main and visual head matched their starting commits, and the checkpoint branch did not exist. No archived script was executed.
+
+## Publication completed - 2026-10-14
+
+Both ordinary pushes exited 0 and actual remote heads were verified with `git ls-remote`:
+
+- Project snapshot: `21ce48c881334c079870a857e3303bb481db1984` on [codex/lya-project-checkpoint-20261013](https://github.com/Kathirvel2321/lya2.0/tree/codex/lya-project-checkpoint-20261013), 567 changed files.
+- Glass/native laptop evidence: `11eb6388050271fcb1a9f84de221fd6564cfa358` on [PR #3](https://github.com/Kathirvel2321/lya2.0/pull/3), 64 changed files.
+- Remote `main` remains `1d7b5c1c497b7b848ea70f5cac5c25aa9efffda7`; local main branch was never switched. No reset, clean, force push, merge or deployment.
+
+[Publication receipt](publication-receipt.json) records the verified source commits. A final documentation-only checkpoint commit publishes this receipt. Parent working-tree status contains only the two pre-existing dirty embedded repositories; visual status contains only the excluded `.blend1` backup. Those contents remain intact. Ignored protected data, environments and portable tool downloads remain local. Post-push GitHub Actions status and full-repository/device tests were not checked again.
