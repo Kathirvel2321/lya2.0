@@ -1,0 +1,15 @@
+{
+  "brain/memory_witness_service.py": "80099d437539f1fc331006693e87a4be60c2f22a5a14b5fb1288573ea5b6596a",
+  "brain/memory_network_authority.py": "7e1c0b9d7ae89310ccb6215b01dfa54107744b6deb1132075ac8edb1931fe0e7",
+  "brain/memory_authority.py": "a8764e9dbc2ae0d2043c5e28af5d5273181e6f800a0c2bfedc5e7b715aa4c656",
+  "brain/memory_custody.py": "683434589c80e4157b0e0d5936b154940243c3e42f00105c5a0222b2fb8f88f5",
+  "brain/memory_repository.py": "6b729701b15417941b75e237ddf2d265320a9d435cc4c450bbe306a35be4f9c2",
+  "brain/memory_recovery.py": "a19c9d7e176c47207ca7ad20a9cb9e8ff92f68d0588e903f3606097a70ff8ed9",
+  "brain/memory_prototype.py": "4603af22320cbec471e517b15385eaa5ba6f72ab41fada4759bbb54cfd16efd8",
+  "desktop/app.py": "fd87dd8be55da1d333391eb4b031a44c55b5d0d921bb403c8ebdae681ab1c1ef",
+  "desktop/experience.py": "56c968bc4d29de59e0a29aeabb9c136382aaa898c91dc281f3ac7a6a26f1a394",
+  "cloud/mobile.py": "db4e60a7123b83fefc617dad2ca71cc908fb9092c945af9241477cb3b7f5cda0",
+  "cloud/mobile.html": "5a2a7a6f90faf7055000230a807507ff644d687893af5dee60572eabd025c4a3",
+  "test_memory_witness_service.py": "3bd964594741d6c81c2653ecf63d699763d59416d8c3e8b6af6e6f5b2aa51972",
+  "test_memory_network_authority.py": "ffd713027687751791070cecdaca9bc2d790272bcd2f632c57a698d8891eb173"
+}

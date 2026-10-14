@@ -1,0 +1,20 @@
+{
+  "tests_run": 115,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "fake_data_only": true,
+  "loopback_only": true,
+  "network_adapter_connected_in_isolated_tests": true,
+  "production_paths_connected": false,
+  "witness_independently_hosted": false,
+  "real_keys_created": false,
+  "source_sha256": {
+    "brain/memory_network_authority.py": "7e1c0b9d7ae89310ccb6215b01dfa54107744b6deb1132075ac8edb1931fe0e7",
+    "test_memory_network_authority.py": "ffd713027687751791070cecdaca9bc2d790272bcd2f632c57a698d8891eb173",
+    "brain/memory_authority.py": "a8764e9dbc2ae0d2043c5e28af5d5273181e6f800a0c2bfedc5e7b715aa4c656",
+    "brain/memory_witness_service.py": "80099d437539f1fc331006693e87a4be60c2f22a5a14b5fb1288573ea5b6596a",
+    "brain/memory_custody.py": "683434589c80e4157b0e0d5936b154940243c3e42f00105c5a0222b2fb8f88f5"
+  }
+}

@@ -1,0 +1,17 @@
+flowchart TD
+    A["Existing memory authority"] --> L["Existing local SQLite witness transaction"]
+    A -. "Planned durable authority adapter" .-> C["Fake-data loopback client"]
+    C --> H["POST /witness on 127.0.0.1"]
+    H --> E["Signed scoped request validation"]
+    E --> P["Prepare durable reservation and generation"]
+    P --> F["Finish exact reservation and checkpoint"]
+    F --> D["Atomic witness head and retry receipt commit"]
+    D --> R["Signed reply bound to request and nonce"]
+    R --> C
+    P --> U["Disconnected reservation stays pending"]
+    U --> F
+    C -. "Planned TLS and independent placement" .-> N["Independent witness and backup hosts"]
+    classDef active fill:#1a7f37,color:#fff
+    classDef planned fill:#9a6700,color:#fff
+    class A,L,C,H,E,P,F,D,R,U active
+    class N planned

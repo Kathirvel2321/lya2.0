@@ -31,11 +31,17 @@ class Visitors:
         scores.sort(key=lambda item:item[0],reverse=True)
         # shortcut: uncalibrated webcam familiarity, never use this as phone or private-data proof.
         if scores and scores[0][0] >= .45 and (len(scores)==1 or scores[0][0]-scores[1][0] >= .08):
-            self.person = {key:scores[0][1][key] for key in ('person_id','display_name','role')}
+            self.person = {key:scores[0][1][key] for key in
+                           ('person_id','display_name','role','nickname','greeting','style')
+                           if key in scores[0][1]}
             self.until = self.clock()+300
         else:
             self.pending = dict(token=secrets.token_urlsafe(20),vector=vector,until=self.clock()+600)
         return self.person
+
+    def attach_pending(self, pending_id):
+        if self.pending is not None and type(pending_id) is str and pending_id:
+            self.pending['pending_id'] = pending_id
 
     def current(self):
         if self.clock() >= self.until:
@@ -58,4 +64,3 @@ class Visitors:
     def discard(self):
         self.counts = dict(requests=0,limited_apps=0,blocked=0)
         self.pending = None
-

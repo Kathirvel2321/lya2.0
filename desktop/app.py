@@ -97,7 +97,11 @@ class Crystal(QWidget):
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFixedSize(184, 252)
-        self.original = crystal_pixmap(HERE / "assets" / "crystal-original.png")
+        self.original = QPixmap(str(HERE / "assets" / "lya-reference-body.png"))
+        if self.original.isNull():
+            raise RuntimeError("Approved LYA body artwork missing or unreadable")
+        self.original = self.original.scaled(288, 408, Qt.AspectRatioMode.KeepAspectRatio,
+                                             Qt.TransformationMode.SmoothTransformation)
         self.model_art = QPixmap()
         baked = HERE / "assets" / "obsidian-baked.png"
         reader = QImageReader(str(baked))
@@ -782,6 +786,9 @@ class Desktop(QObject):
         menu.addAction("Open LYA", self.wake)
         menu.addAction("Project files", self.show_files)
         menu.addAction("Sign in / register admin", lambda: self.command("register admin"))
+        review_visitors = getattr(self, 'review_visitors', None)
+        if review_visitors is not None:
+            menu.addAction("Review visitors", review_visitors)
         model_art = QAction("Use 3D model artwork (baked, experimental)", menu, checkable=True)
         model_art.setChecked(self.orb.using_model)
         model_art.setEnabled(not self.orb.model_art.isNull())
@@ -1300,7 +1307,7 @@ def main():
     parser.add_argument("--system-dictation", action="store_true",
                         help="Prepare Windows Voice Access input with LYA's microphone off")
     parser.add_argument("--skip-setup", action="store_true", help="Do not open first-run owner setup")
-    parser.add_argument("--original-art", action="store_true", help="Use the earlier crystal artwork")
+    parser.add_argument("--original-art", action="store_true", help="Use the approved reference artwork (default)")
     parser.add_argument("--model-art", action="store_true", help="Try the experimental baked 3D artwork")
     args = parser.parse_args()
     app = QApplication.instance() or QApplication(sys.argv[:1])
@@ -1313,7 +1320,7 @@ def main():
     app.setQuitOnLastWindowClosed(False)
     from experience import OrbDesktop
     desktop = OrbDesktop(app, args.reduced_motion)
-    desktop.orb.set_artwork(not args.original_art)
+    desktop.orb.set_artwork(args.model_art and not args.original_art)
     if args.microphone:
         os.environ['LYA_MICROPHONE'] = args.microphone
     if args.command_asr:

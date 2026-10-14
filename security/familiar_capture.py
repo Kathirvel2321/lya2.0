@@ -1,4 +1,5 @@
 """One bounded local face observation. No profile storage, network or owner authority."""
+import base64
 import hashlib
 import json
 import os
@@ -13,7 +14,7 @@ from security.owner_capture import HASHES, YUNET, SFACE, guard
 from security.owner_profiles import FACE_MODEL, checked_vector
 
 
-def snapshot(detector,encoder,valid,camera_factory=None):
+def snapshot(detector,encoder,valid,camera_factory=None,with_image=False):
     import cv2
     import numpy as np
     if not valid():
@@ -51,7 +52,18 @@ def snapshot(detector,encoder,valid,camera_factory=None):
             return None
         vector = encoder.feature(encoder.alignCrop(frame,face)).reshape(-1)
         vector /= max(float(np.linalg.norm(vector)),1e-9)
-        return checked_vector(vector.tolist(),FACE_MODEL) if valid() else None
+        checked = checked_vector(vector.tolist(),FACE_MODEL) if valid() else None
+        if checked is None or not with_image:
+            return checked
+        # Store only a bounded face crop, never the complete room frame.
+        pad = 24
+        left, top = max(0,int(x)-pad), max(0,int(y)-pad)
+        right, bottom = min(640,int(x+w)+pad), min(480,int(y+h)+pad)
+        crop = frame[top:bottom,left:right]
+        crop = cv2.resize(crop,(min(320,crop.shape[1]),min(320,crop.shape[0])))
+        ok, encoded = cv2.imencode('.jpg',crop,[cv2.IMWRITE_JPEG_QUALITY,70])
+        photo = encoded.tobytes() if ok and encoded.size <= 160000 else None
+        return dict(vector=checked, photo=photo)
     finally:
         camera.release()
         if frame is not None:
@@ -86,10 +98,14 @@ def main():
     sys.addaudithook(guard)
     print(json.dumps(dict(kind='camera')),flush=True)
     lease['camera_until']=time.monotonic()+3
-    vector = snapshot(detector,encoder,valid)
+    observation = snapshot(detector,encoder,valid,with_image=True)
     if not valid():
         raise RuntimeError('cancelled')
-    print(json.dumps(dict(kind='result',vector=vector),allow_nan=False),flush=True)
+    vector = observation.get('vector') if isinstance(observation,dict) else observation
+    photo = observation.get('photo') if isinstance(observation,dict) else None
+    print(json.dumps(dict(kind='result',vector=vector,
+                          image=base64.b64encode(photo).decode('ascii') if photo else None),
+                      allow_nan=False),flush=True)
 
 
 if __name__=='__main__':

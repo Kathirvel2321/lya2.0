@@ -1,0 +1,19 @@
+flowchart TD
+    S["Explicit fresh-store opt-in: RPC storage schema 2"] --> G["Require generation-scoped prepare and finish"]
+    G --> C["Normal operation: source commit, witness finish, local confirmation"]
+    C --> A["Approved retirement holds source writer lock"]
+    A --> I{"Journal idle and exact remote head completed?"}
+    I -->|"No"| B["Refuse; preserve pending recovery receipts"]
+    I -->|"Yes"| R["Signed retirement of exact state, custody and generation"]
+    R --> T["One witness transaction: advance floor and delete covered receipts"]
+    T --> V["Verify signed retired generation; return metadata only"]
+    T -->|"Lost reply or process termination"| X["Retry exact completed generation with a fresh nonce"]
+    X --> R
+    T --> N["Next prepare requires a generation above the floor"]
+    N --> G
+    N -->|"Retired generation replay"| F["Reject even with new nonce or request ID"]
+    V -.-> H["Pending: Linux revision check, TLS and independent hosting"]
+    classDef isolated fill:#0969da,color:#fff
+    classDef planned fill:#9a6700,color:#fff
+    class S,G,C,A,I,B,R,T,V,X,N,F isolated
+    class H planned

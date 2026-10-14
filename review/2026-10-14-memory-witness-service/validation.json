@@ -1,0 +1,12 @@
+{
+  "tests_run": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "fake_data_only": true,
+  "loopback_only": true,
+  "authority_network_adapter_connected": false,
+  "witness_independently_hosted": false,
+  "real_keys_created": false
+}

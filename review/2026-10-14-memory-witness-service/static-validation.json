@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-14",
+  "parsed_python_sources": 3,
+  "source_sha256": {
+    "brain/memory_witness_service.py": "e545e0f605572f6621cdd23cfd16116c0a96c5644a31cf72f7937a0162a59a24",
+    "test_memory_witness_service.py": "3bd964594741d6c81c2653ecf63d699763d59416d8c3e8b6af6e6f5b2aa51972",
+    "review/2026-10-14-memory-witness-service/check.py": "338d4199ee6d17915cf8abf3d7b77098f581f1f29f9bfec0b051eab5df1d5599"
+  },
+  "prior_sources_preserved": {
+    "brain/conversation.py": true,
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "brain/memory_authority.py": true,
+    "brain/memory_custody.py": true,
+    "test_memory_custody.py": true,
+    "test_memory_authority.py": true,
+    "test_memory_reactivation.py": true,
+    "review/2026-10-13-memory-linux/test_qualification.py": true,
+    "test_memory_witness_ack.py": true,
+    "review/2026-10-13-memory-witness-ack/check.py": true
+  },
+  "checked_documents": [
+    "lya-project-brain.md",
+    "docs/README.md",
+    "review/2026-10-13-memory-witness-ack/README.md",
+    "review/2026-10-14-memory-witness-service/README.md",
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md"
+  ],
+  "checked_local_links": 150,
+  "missing_links": [],
+  "scoped_whitespace_check_passed": true,
+  "temporary_fake_fixtures": [],
+  "production_callers": [],
+  "diagram_validation": {
+    "ok": true,
+    "checked": 2,
+    "failed": 0,
+    "warnings": 0,
+    "results": [
+      {
+        "ok": true,
+        "type": "flowchart",
+        "errors": [],
+        "warnings": [],
+        "label": "review/2026-10-14-memory-witness-service/protocol.mmd:1"
+      },
+      {
+        "ok": true,
+        "type": "flowchart",
+        "errors": [],
+        "warnings": [],
+        "label": "review/2026-10-14-memory-witness-service/import-trace.mmd:1"
+      }
+    ]
+  },
+  "validation": {
+    "tests_run": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true,
+    "fake_data_only": true,
+    "loopback_only": true,
+    "authority_network_adapter_connected": false,
+    "witness_independently_hosted": false,
+    "real_keys_created": false
+  },
+  "wsl_tested": false,
+  "oracle_tested": false
+}

@@ -1,0 +1,15 @@
+test_capacity_preflight_refuses_new_work_before_local_intent (test_memory_witness_capacity.NetworkCapacityChecks.test_capacity_preflight_refuses_new_work_before_local_intent) ... ok
+test_full_receipts_allow_committed_reconciliation_but_stop_the_next_write (test_memory_witness_capacity.NetworkCapacityChecks.test_full_receipts_allow_committed_reconciliation_but_stop_the_next_write) ... ok
+test_capacity_is_content_free_and_observations_do_not_change_generation (test_memory_witness_capacity.WitnessCapacityChecks.test_capacity_is_content_free_and_observations_do_not_change_generation) ... ok
+test_database_page_budget_refuses_growth_with_full_rollback (test_memory_witness_capacity.WitnessCapacityChecks.test_database_page_budget_refuses_growth_with_full_rollback) ... ok
+test_expired_nonce_cleanup_restores_observation_without_discarding_receipts (test_memory_witness_capacity.WitnessCapacityChecks.test_expired_nonce_cleanup_restores_observation_without_discarding_receipts) ... ok
+test_last_receipt_slot_is_kept_for_finish_and_retry_survives_full_restart (test_memory_witness_capacity.WitnessCapacityChecks.test_last_receipt_slot_is_kept_for_finish_and_retry_survives_full_restart) ... ok
+test_observation_flags_and_authentication_are_strict (test_memory_witness_capacity.WitnessCapacityChecks.test_observation_flags_and_authentication_are_strict) ... ok
+test_oversized_existing_database_is_refused_without_resetting_trust (test_memory_witness_capacity.WitnessCapacityChecks.test_oversized_existing_database_is_refused_without_resetting_trust) ... ok
+test_prepare_requires_two_free_slots_and_preflight_does_not_reserve (test_memory_witness_capacity.WitnessCapacityChecks.test_prepare_requires_two_free_slots_and_preflight_does_not_reserve) ... ok
+test_signed_observation_has_no_receipts_and_still_rejects_nonce_replay (test_memory_witness_capacity.WitnessCapacityChecks.test_signed_observation_has_no_receipts_and_still_rejects_nonce_replay) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 11.861s
+
+OK

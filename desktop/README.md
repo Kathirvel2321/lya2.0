@@ -1,5 +1,30 @@
 # LYA crystal desktop milestone
 
+Approved body replacement (2026-10-14): the normal launcher now uses
+`assets/lya-reference-body.png`, the front render of the owner-approved curved
+blue glass model. Its source export is `assets/lya-reference-body.glb`.
+The desktop displays the baked render; it does not render live 3D refraction.
+Existing voice, controls, tint effects and circle docking remain in place.
+The earlier experimental bake remains available through the artwork menu;
+`--model-art` explicitly selects it when invoking `desktop/app.py` directly.
+Quit/reopen LYA through the usual launcher to load the new default.
+Run `.venv-asr/Scripts/python.exe desktop/check_approved_body.py` for isolated
+widget checks and five previews, without starting the assistant or sensors.
+See [installation evidence](../review/2026-10-14-approved-body-install/README.md).
+
+Visitor personalization slice (2026-10-14): after the owner explicitly enables
+startup recognition, one visible local YuNet/SFace check runs at startup and on
+an LYA wake, then the camera closes. A match can choose the owner/friend/family
+conversation style and limited everyday tools; it never creates an owner
+session or unlocks private actions. `enable visitor photos` is a separate
+owner-approved setting. When enabled, an unrecognized face is stored as a
+bounded encrypted local thumbnail, surfaced through a neutral tray alert, and
+shown only in the phone-verified `visitor review` dialog. The owner can delete
+it or save it as a friend/family profile with a name, nickname and presentation
+preferences. Real camera accuracy, liveness and device notification delivery
+still require owner-run acceptance; synthetic storage/UI checks cover the
+state boundaries.
+
 Old owner registration (2026-10-08): the owner explicitly requested removal for
 an entirely new signup. The tested offline maintenance retired the old login
 records after a verified protected encrypted backup. Old memories/vault data stay
@@ -183,8 +208,8 @@ Cards grow above the circle with a 450 ms transition. Ordinary answers have no
 branding header or title and reveal short answers gently, while longer replies finish within about 1.2 seconds. Reduced motion
 shows the whole answer immediately. Idle rendering and completed text timers stop.
 
-The new launch defaults to the requested baked model artwork; `--original-art`
-selects the earlier image. `--reduced-motion` skips movement and text reveal.
+The launch defaults to the approved reference body; `--original-art`
+also selects this default. `--reduced-motion` skips movement and text reveal.
 `--show-panel` remains accepted for launcher compatibility; launch now starts with
 the greeting rather than a large chat panel. No recognition or voice is activated.
 See [interaction and performance evidence](../archive/history/desktop-qa/2026-09-16-compact/README.md).

@@ -21,7 +21,14 @@ COMMANDS = {
                        ("time", "what time is it", "date", "what date is it", "day")),
     "identity": Capability("who am i", exact=("who am i",)),
     "registration_data": Capability("show my saved data / show my registration", "memory_read", exact=
-                                    ("show my saved data", "show my registration", "show my profiles")),
+                                     ("show my saved data", "show my registration", "show my profiles")),
+    "visitor_photos": Capability("enable visitor photos / disable visitor photos", "memory_write",
+                                 exact=("enable visitor photos", "disable visitor photos")),
+    "visitor_list": Capability("show visitors / show friends and family", "memory_read",
+                               exact=("show visitors", "show friends", "show family", "show friends and family")),
+    "personalization": Capability("call me <name> / set nickname for <person> to <name>", "memory_write",
+                                   prefixes=("call me ", "address me as ", "set nickname for ",
+                                             "set greeting for ", "set style for ")),
     "mobile_connect": Capability("connect my phone / disconnect my phone", "mobile_connect", exact=
                                  ("connect my phone", "pair my phone", "disconnect my phone")),
     "status": Capability("brain status", exact=("brain status",)),

@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "python_sources_parse": [
+    "brain/memory_network_authority.py",
+    "brain/memory_witness_service.py",
+    "test_memory_network_authority.py",
+    "review/2026-10-14-memory-network-authority/check.py"
+  ],
+  "local_links_checked": 201,
+  "missing_links": [],
+  "whitespace_issues": [],
+  "scoped_git_diff_check_passed": true,
+  "source_baseline_count": 12,
+  "preserved_baseline_sources": [
+    "brain/memory_authority.py",
+    "brain/memory_custody.py",
+    "brain/memory_prototype.py",
+    "brain/memory_repository.py",
+    "brain/memory_recovery.py",
+    "desktop/app.py",
+    "desktop/experience.py",
+    "cloud/mobile.py",
+    "cloud/mobile.html",
+    "test_memory_witness_ack.py",
+    "test_memory_witness_service.py"
+  ],
+  "intended_baseline_source_changes": [
+    "brain/memory_witness_service.py"
+  ],
+  "final_test_source_hashes_match": true,
+  "remaining_fixture_directories": [],
+  "active_python_reference_files": [
+    "brain/memory_network_authority.py",
+    "test_memory_network_authority.py"
+  ],
+  "production_paths_connected": false,
+  "diagrams": {
+    "ok": true,
+    "checked": 2,
+    "failed": 0,
+    "warnings": 0,
+    "results": [
+      {
+        "ok": true,
+        "type": "flowchart",
+        "errors": [],
+        "warnings": [],
+        "label": "review/2026-10-14-memory-network-authority/coordinator.mmd:1"
+      },
+      {
+        "ok": true,
+        "type": "flowchart",
+        "errors": [],
+        "warnings": [],
+        "label": "review/2026-10-14-build-status/current-status.mmd:1"
+      }
+    ]
+  },
+  "source_sha256": {
+    "brain/memory_network_authority.py": "7e1c0b9d7ae89310ccb6215b01dfa54107744b6deb1132075ac8edb1931fe0e7",
+    "brain/memory_witness_service.py": "80099d437539f1fc331006693e87a4be60c2f22a5a14b5fb1288573ea5b6596a",
+    "test_memory_network_authority.py": "ffd713027687751791070cecdaca9bc2d790272bcd2f632c57a698d8891eb173",
+    "review/2026-10-14-memory-network-authority/check.py": "031b6c55239bf154dc624f90cb7e03ae4f2e0d104fc7cd5150f3a4d2b5f979d3"
+  }
+}

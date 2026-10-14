@@ -1,0 +1,13 @@
+flowchart TD
+  memory_witness_service_py["memory_witness_service.py"]
+  memory_custody_py["memory_custody.py"]
+  memory_prototype_py["memory_prototype.py"]
+  memory_recovery_py["memory_recovery.py"]
+  conversation_py["conversation.py"]
+  memory_witness_service_py --> memory_custody_py
+  memory_witness_service_py --> memory_prototype_py
+  memory_witness_service_py --> memory_recovery_py
+  memory_custody_py --> memory_prototype_py
+  memory_custody_py --> memory_recovery_py
+  memory_recovery_py --> memory_prototype_py
+  memory_prototype_py --> conversation_py

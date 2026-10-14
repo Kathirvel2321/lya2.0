@@ -182,6 +182,58 @@ class VisitorChecks(SyntheticPasskeys,unittest.TestCase):
         with self.assertRaises(PermissionError):
             visitors.save_summary(replace(owner,verified_until=time.time()-1),brain.visitors.counts,self.db)
 
+    def test_family_photo_review_and_personalization_stay_owner_bound(self):
+        owner=self.owner(True)
+        visitors.set_photo_enabled(owner,True,self.db)
+        photo=b'\xff\xd8' + b'synthetic-private-photo' * 10 + b'\xff\xd9'
+        pending=visitors.record_unknown(vector(2),photo,self.db)
+        rows=visitors.pending(self.db)
+        self.assertEqual(rows[0]['pending_id'],pending)
+        self.assertTrue(rows[0]['photo_available'])
+        self.assertEqual(visitors.pending_photo(pending,self.db),photo)
+        self.assertNotIn(photo,self.db.read_bytes())
+
+        visitors.register_pending(owner,pending,'Akshay',self.db,category='family')
+        self.assertEqual(visitors.pending(self.db),[])
+        people=visitors.recognition_people(self.db)
+        akshay=next(person for person in people if person['display_name']=='Akshay')
+        self.assertEqual(akshay['role'],'family')
+        visitors.set_personalization(owner,'Akshay',self.db,nickname='Aks',
+                                     greeting='Hey {name}, welcome back.',style='warm')
+        preferences=visitors.personalization(akshay['person_id'],self.db)
+        self.assertEqual(preferences,{'nickname':'Aks','greeting':'Hey {name}, welcome back.','style':'warm'})
+        people=visitors.recognition_people(self.db)
+        akshay=next(person for person in people if person['display_name']=='Akshay')
+        self.assertEqual(akshay['nickname'],'Aks')
+        self.assertEqual(akshay['greeting'],'Hey {name}, welcome back.')
+        self.assertEqual(visitors.list_registered(owner,self.db),
+                         [dict(person_id=akshay['person_id'],display_name='Akshay',role='family')])
+
+    def test_unknown_photo_capture_is_off_until_owner_enables_it(self):
+        owner=self.owner(True)
+        photo=b'\xff\xd8' + b'synthetic-photo' * 8 + b'\xff\xd9'
+        self.assertIsNone(visitors.record_unknown(vector(2),photo,self.db))
+        self.assertEqual(visitors.pending(self.db),[])
+        visitors.set_photo_enabled(owner,True,self.db)
+        pending=visitors.record_unknown(vector(2),photo,self.db)
+        self.assertIsNotNone(pending)
+        self.assertTrue(visitors.discard_pending(owner,pending,self.db))
+        self.assertIsNone(visitors.pending_photo(pending,self.db))
+
+    def test_registered_person_gets_personalized_brain_prompt_without_authority(self):
+        owner=self.owner(True)
+        visitors.register(owner,'Akshay',vector(1),self.db,category='family')
+        visitors.set_personalization(owner,'Akshay',self.db,nickname='Aks',style='warm')
+        calls=[]
+        brain=Brain(client=lambda messages:calls.append(messages) or 'Hello, {LYA_OWNER_NAME}.',db_path=self.db)
+        brain.visitors.observe(vector(1),visitors.recognition_people(self.db))
+        answer=brain.respond('Explain the stars.')
+        self.assertEqual(answer.text,'Hello, Aks.')
+        self.assertIn('warm',calls[-1][0]['content'])
+        self.assertNotIn('Aks',calls[-1][0]['content'])
+        self.assertEqual(answer.route,'model')
+        self.assertFalse(brain._identified())
+
 
 class FamiliarBoundaryChecks(unittest.TestCase):
     def test_ambiguity_expiry_caps_and_no_transcripts(self):
@@ -234,6 +286,17 @@ class FamiliarBoundaryChecks(unittest.TestCase):
         worker.finished(0,None)
         self.assertEqual(results,[vector()])
         self.assertIsNone(worker.vector)
+
+        import base64
+        worker=FaceObservation()
+        self.addCleanup(worker.stop)
+        payload=[]
+        worker.result.connect(payload.append)
+        photo=b'\xff\xd8' + b'synthetic-photo' * 4 + b'\xff\xd9'
+        worker.packet(dict(kind='camera'))
+        worker.packet(dict(kind='result',vector=vector(),image=base64.b64encode(photo).decode('ascii')))
+        worker.finished(0,None)
+        self.assertEqual(payload,[{'vector':vector(),'photo':photo}])
 
     def test_launcher_has_fixed_urls_guest_mode_and_no_shell(self):
         from skills.limited_apps import launch

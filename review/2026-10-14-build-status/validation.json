@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-14",
+  "assessment_only": true,
+  "new_runtime_tests_run": false,
+  "live_service_rechecked": false,
+  "selected_source_hashes_match_prior_test_reports": {
+    "brain/memory_authority.py": true,
+    "brain/memory_custody.py": true,
+    "test_memory_witness_ack.py": true,
+    "review/2026-10-13-memory-witness-ack/check.py": true,
+    "brain/memory_witness_service.py": true,
+    "test_memory_witness_service.py": true,
+    "review/2026-10-14-memory-witness-service/check.py": true
+  },
+  "recorded_checks": {
+    "review/2026-10-13-memory-witness-ack/validation.json": {
+      "tests_run": 75,
+      "passed": true
+    },
+    "review/2026-10-13-memory-witness-ack/wsl-user-reported-validation.json": {
+      "tests_run": 38,
+      "passed": true
+    },
+    "review/2026-10-14-memory-witness-service/validation.json": {
+      "tests_run": 18,
+      "passed": true
+    },
+    "review/2026-10-14-memory-witness-service/wsl-user-reported-validation.json": {
+      "tests_run": 18,
+      "passed": true
+    }
+  },
+  "checked_local_links": 145,
+  "missing_links": [],
+  "scoped_whitespace_passed": true,
+  "diagram_validation": {
+    "ok": true,
+    "checked": 1,
+    "failed": 0,
+    "warnings": 0,
+    "results": [
+      {
+        "ok": true,
+        "type": "flowchart",
+        "errors": [],
+        "warnings": [],
+        "label": "review/2026-10-14-build-status/current-status.mmd:1"
+      }
+    ]
+  }
+}

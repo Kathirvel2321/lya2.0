@@ -1,9 +1,10 @@
 """Compact native presentation. No sensors, persistence or inference changes."""
 import re
+import time
 import wave
 from PySide6.QtCore import Qt, QEvent, QRect, QPoint, QTimer, QElapsedTimer, QPropertyAnimation, QVariantAnimation, QEasingCurve, Signal, QProcess
 from PySide6.QtGui import QTextCursor, QPixmap
-from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QTextBrowser
+from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QTextBrowser, QSystemTrayIcon
 from app import Desktop, GlassPanel, WINDOW_FLAGS, HERE, DOCUMENTS, read_project_document
 from layout import Box, place_panel
 
@@ -267,6 +268,8 @@ class OrbDesktop(Desktop):
         self.pending_question = ''
         self.quitting=False
         self.startup_observation_done=False
+        self.last_observation_started=0.0
+        self.last_unknown_alert=0.0
         self.face_observation=None
         self.camera_badge=None
         self.visitor_expiry=QTimer(self)
@@ -359,9 +362,13 @@ class OrbDesktop(Desktop):
             self.intro_timer.timeout.connect(self.finish_expansion)
             self.intro_timer.start(1150)
 
-    def startup_recognition(self):
+    def startup_recognition(self, force=False):
         if (self.quitting or not self.orb.isVisible() or self.brain._identified()
                 or (hasattr(self,'owner_dialog') and self.owner_dialog.isVisible())):
+            return
+        if not force and self.startup_observation_done is False:
+            self.startup_observation_done=True
+        if time.monotonic() - self.last_observation_started < 25:
             return
         try:
             from storage.visitors import recognition_people
@@ -371,6 +378,7 @@ class OrbDesktop(Desktop):
             if hasattr(self,'vision_dialog') and self.vision_dialog.process.state()!=QProcess.ProcessState.NotRunning:
                 return
             from desktop.familiarity import FaceObservation
+            self.last_observation_started=time.monotonic()
             self.face_observation=FaceObservation(self)
             self.face_observation.camera.connect(self.show_camera_badge)
             self.face_observation.result.connect(lambda vector:self.observed_person(vector,people))
@@ -394,12 +402,14 @@ class OrbDesktop(Desktop):
                                max(area.top(),self.orb.y()-54))
         self.camera_badge.show()
 
-    def observed_person(self,vector,people):
+    def observed_person(self,observation,people):
         if self.camera_badge is not None:
             self.camera_badge.close()
             self.camera_badge=None
         if self.quitting or (hasattr(self,'owner_dialog') and self.owner_dialog.isVisible()):
             return
+        photo = observation.get('photo') if isinstance(observation,dict) else None
+        vector = observation.get('vector') if isinstance(observation,dict) else observation
         try:
             person=self.brain.visitors.observe(vector,people)
         except Exception:
@@ -407,12 +417,42 @@ class OrbDesktop(Desktop):
             return
         self.visitor_expiry.start(600000)
         if person is not None:
-            address = person['display_name']
+            address = person.get('nickname') or person['display_name']
             self.greeting.setText('Welcome back, '+address+'.')
-            self.orb.set_state(person='admin' if person['role']=='admin' else 'friend',task='idle')
+            palette = 'admin' if person['role']=='admin' else person['role'] if person['role'] in ('family','friend') else 'guest'
+            self.orb.set_state(person=palette,task='idle')
             if (not self.brain_busy and not self.speech.busy
                     and self.listener_phase not in ('hearing','transcribing')):
-                self.speak_reply('Welcome back, '+address+'. What shall we work on?' if person['role']=='admin' else 'Hi, '+address+'.')
+                greeting = person.get('greeting')
+                if greeting:
+                    greeting = greeting.replace('{name}', address)
+                self.speak_reply(greeting or
+                    ('Welcome back, '+address+'. What shall we work on?' if person['role']=='admin'
+                     else 'Hi, '+address+'.'))
+            return
+        # Unknown faces are retained only when the admin explicitly enabled the
+        # encrypted-photo review path. The RAM observation still expires normally.
+        try:
+            from storage import visitors
+            material=self.brain.visitors.material()
+            pending_id=visitors.record_unknown(material['vector'],photo,self.brain.db_path)
+            if pending_id:
+                self.brain.visitors.attach_pending(pending_id)
+                self.notify_unknown_visitor(pending_id)
+        except Exception:
+            pass
+
+    def notify_unknown_visitor(self, pending_id):
+        """Use a neutral tray alert; the photo is shown only after owner proof."""
+        now=time.monotonic()
+        if now-self.last_unknown_alert < 30:
+            return
+        self.last_unknown_alert=now
+        self.greeting.setText('Unrecognized visitor · owner review required.')
+        if hasattr(self,'tray') and QSystemTrayIcon.supportsMessages():
+            self.tray.showMessage('LYA · New visitor',
+                                  'An unrecognized face was captured locally. Sign in and say “visitor review” to see the encrypted photo.',
+                                  QSystemTrayIcon.MessageIcon.Warning, 9000)
 
     def stop_observation(self):
         if self.face_observation is not None:
@@ -661,7 +701,9 @@ class OrbDesktop(Desktop):
                 'Face and voice are not enrolled. Private actions still need separate phone approval.')
             self.open_panel()
         QTimer.singleShot(0, welcome)
-        if getattr(self,'passkey_session_id',None)==session.id and any(self.brain.visitors.counts.values()):
+        from storage import visitors
+        if (getattr(self,'passkey_session_id',None)==session.id and
+                (any(self.brain.visitors.counts.values()) or visitors.pending(self.brain.db_path))):
             QTimer.singleShot(0,self.review_visitors)
 
     def open_panel(self):
@@ -721,6 +763,8 @@ class OrbDesktop(Desktop):
         self.close_panel()
         self.dock(False)
         self.orb.show()
+        # One bounded local identity check per wake, never a continuous stream.
+        QTimer.singleShot(0, lambda: self.startup_recognition(force=True))
         if self.spoken:
             self.speech.prewarm()
         if self.spoken:

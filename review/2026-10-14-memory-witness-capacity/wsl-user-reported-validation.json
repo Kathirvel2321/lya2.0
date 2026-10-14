@@ -1,0 +1,27 @@
+{
+  "platform": "Ubuntu WSL (owner-operated lab)",
+  "evidence_origin": "Owner-supplied terminal output",
+  "assistant_rerun": false,
+  "source_hashes_independently_verified": false,
+  "tests_run": 50,
+  "passed": true,
+  "reported_failures": 0,
+  "reported_errors": 0,
+  "reported_skips": 0,
+  "module_counts": {
+    "test_memory_witness_capacity": 10,
+    "test_memory_witness_service": 18,
+    "test_memory_network_authority": 22
+  },
+  "selected_test_ids_match_current_test_definitions": true,
+  "individual_cases_all_reported_ok": true,
+  "final_status": "OK",
+  "fake_data_only": true,
+  "production_paths_connected": false,
+  "witness_independently_hosted": false,
+  "production_keys_created": false,
+  "limitations": [
+    "No independent WSL rerun or copied-source hash measurement",
+    "No Oracle/TLS/independent-host/device or production acceptance"
+  ]
+}

@@ -578,10 +578,10 @@ class OwnerSetupDialog(QDialog):
                     self.set_step('LOCAL PROFILES', 'Your choice. Your device.', '',
                         'Your phone credential is registered and its proof is verified. Next I can store three face profiles and three voice profiles, '
                         'your confirmed name, public passkey and consent record, encrypted on this laptop. '
-                        'Lya never receives your private passkey. I save no photos or recordings. '
-                        'I will stop online hearing before any capture. With your consent, future launches will make one brief, visible local face check, '
-                        'then close the camera. Recognition personalizes greetings and limited everyday tools only; no photos are saved. '
-                        'Unknown face observations stay in RAM for ten minutes and are never automatically registered. '
+                        'Lya never receives your private passkey. I save no owner photos or recordings. '
+                        'I will stop online hearing before any capture. With your consent, future launches and wakes make one brief, visible local face check, '
+                        'then close the camera. Recognition personalizes greetings and limited everyday tools only; it never unlocks private actions. '
+                        'Unknown visitor photos are off until you explicitly say enable visitor photos; when enabled, each bounded photo is encrypted locally, alerted neutrally, and reviewed only after owner proof. '
                         'Visitor activity counts stay in RAM until you save or discard them, or quit Lya. A webcam and voice can be copied, '
                         'so recognition never replaces your phone. Say I agree to start, or cancel.', 'Start local face and voice profiles')
                     return

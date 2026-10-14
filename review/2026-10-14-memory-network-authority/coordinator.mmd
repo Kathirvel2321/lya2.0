@@ -1,0 +1,25 @@
+flowchart TD
+    I["Idle: exact source and remote generation"] --> J["Commit durable operation intent"]
+    J --> R["Prepare: compare exact state and protocol generation"]
+    R --> P["Commit reservation ID and generation locally"]
+    P --> L["Recheck ownership; atomically commit source and target journal"]
+    L --> W["Finish same reservation; validate signed current receipt"]
+    W --> C["Commit local confirmation; clear pending intent"]
+    C --> A["Normal call returns; content checks fresh identity"]
+    R -->|"Lost reply or failure"| X["Pending journal blocks normal APIs"]
+    P -->|"Process termination"| X
+    L -->|"Commit failure or termination"| X
+    W -->|"Reply or confirmation loss"| X
+    X --> U["Approved reconciliation holds source writer lock"]
+    U --> D{"Journal proves source committed?"}
+    D -->|"Yes"| T["Finish recorded target; never replay request or grant"]
+    D -->|"No"| B["Finish unchanged after proving no source commit"]
+    T --> M["Verify same signed finish receipt; commit confirmation"]
+    B --> M
+    M --> Q["Return content-free reconciliation metadata"]
+    U -->|"Divergent state, custody or generation"| Z["Refuse; preserve trust and pending evidence"]
+    W -.-> H["Pending: TLS and independent witness hosting"]
+    classDef tested fill:#0969da,color:#fff
+    classDef planned fill:#9a6700,color:#fff
+    class I,J,R,P,L,W,C,A,X,U,D,T,B,M,Q,Z tested
+    class H planned

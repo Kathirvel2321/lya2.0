@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "synthetic_states": [
+    "resting",
+    "listening",
+    "thinking",
+    "speaking",
+    "docked"
+  ],
+  "asset_sha256": "938686b0cfbdb77eff105a65104b19097d8dc58abb93299d6d4aa8b95980515c",
+  "keyboard_activation": true,
+  "legacy_toggle_returns_to_approved_body": true,
+  "startup_default_verified": true,
+  "live_voice_tested": false
+}

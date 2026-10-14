@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "python_sources_parse": [
+    "brain/memory_witness_service.py",
+    "brain/memory_network_authority.py",
+    "test_memory_witness_capacity.py",
+    "review/2026-10-14-memory-witness-capacity/check.py"
+  ],
+  "local_links_checked": 198,
+  "missing_links": [],
+  "whitespace_issues": [],
+  "scoped_git_diff_check_passed": true,
+  "intended_baseline_source_changes": [
+    "brain/memory_witness_service.py",
+    "brain/memory_network_authority.py"
+  ],
+  "preserved_baseline_sources": [
+    "brain/memory_authority.py",
+    "brain/memory_custody.py",
+    "brain/memory_repository.py",
+    "brain/memory_recovery.py",
+    "brain/memory_prototype.py",
+    "desktop/app.py",
+    "desktop/experience.py",
+    "cloud/mobile.py",
+    "cloud/mobile.html",
+    "test_memory_witness_service.py",
+    "test_memory_network_authority.py"
+  ],
+  "remaining_fixture_directories": [],
+  "corrected_new_checks_passed": 10,
+  "existing_regressions_passed": 40,
+  "distinct_cases_verified_across_runs": 50,
+  "combined_all_green_rerun": false,
+  "regression_evidence": "initial-tests.txt",
+  "regression_case_ids": [
+    "test_memory_witness_service.WitnessServiceChecks.test_failure_before_commit_rolls_back_head_reservation_and_receipt.test_failure_before_commit_rolls_back_head_reservation_and_receipt",
+    "test_memory_witness_service.WitnessServiceChecks.test_forged_tampered_and_substituted_replies_are_rejected.test_forged_tampered_and_substituted_replies_are_rejected",
+    "test_memory_witness_service.WitnessServiceChecks.test_http_boundaries_and_fake_only_binding.test_http_boundaries_and_fake_only_binding",
+    "test_memory_witness_service.WitnessServiceChecks.test_lost_finish_reply_retries_durably_but_stale_receipt_is_never_current.test_lost_finish_reply_retries_durably_but_stale_receipt_is_never_current",
+    "test_memory_witness_service.WitnessServiceChecks.test_lost_prepare_reply_is_recovered_with_same_operation_and_new_nonce.test_lost_prepare_reply_is_recovered_with_same_operation_and_new_nonce",
+    "test_memory_witness_service.WitnessServiceChecks.test_missing_schema_wrong_key_and_reenable_never_reset_trust.test_missing_schema_wrong_key_and_reenable_never_reset_trust",
+    "test_memory_witness_service.WitnessServiceChecks.test_nonce_replay_is_rejected_but_fresh_nonce_receipt_retry_is_allowed.test_nonce_replay_is_rejected_but_fresh_nonce_receipt_retry_is_allowed",
+    "test_memory_witness_service.WitnessServiceChecks.test_old_future_and_boolean_timestamps_fail_without_mutation.test_old_future_and_boolean_timestamps_fail_without_mutation",
+    "test_memory_witness_service.WitnessServiceChecks.test_old_generation_and_changed_key_or_previous_state_cannot_finish.test_old_generation_and_changed_key_or_previous_state_cannot_finish",
+    "test_memory_witness_service.WitnessServiceChecks.test_prepare_retry_pins_meaning_and_competing_prepare_cannot_steal_reservation.test_prepare_retry_pins_meaning_and_competing_prepare_cannot_steal_reservation",
+    "test_memory_witness_service.WitnessServiceChecks.test_process_death_before_finish_commit_and_after_prepare_or_finish_commit.test_process_death_before_finish_commit_and_after_prepare_or_finish_commit",
+    "test_memory_witness_service.WitnessServiceChecks.test_receipt_and_nonce_budgets_fail_closed.test_receipt_and_nonce_budgets_fail_closed",
+    "test_memory_witness_service.WitnessServiceChecks.test_request_expiry_during_operation_rolls_back_reservation.test_request_expiry_during_operation_rolls_back_reservation",
+    "test_memory_witness_service.WitnessServiceChecks.test_reservation_survives_restart_and_clock_advance_without_automatic_unlock.test_reservation_survives_restart_and_clock_advance_without_automatic_unlock",
+    "test_memory_witness_service.WitnessServiceChecks.test_signed_head_prepare_finish_and_no_raw_key_transmission_or_storage.test_signed_head_prepare_finish_and_no_raw_key_transmission_or_storage",
+    "test_memory_witness_service.WitnessServiceChecks.test_strict_bounded_fields_duplicate_json_and_cross_lineage_are_rejected.test_strict_bounded_fields_duplicate_json_and_cross_lineage_are_rejected",
+    "test_memory_witness_service.WitnessServiceChecks.test_two_service_instances_have_one_reserved_winner.test_two_service_instances_have_one_reserved_winner",
+    "test_memory_witness_service.WitnessServiceChecks.test_wrong_key_audience_client_and_signature_domain_never_read_state.test_wrong_key_audience_client_and_signature_domain_never_read_state",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_cancellation_and_identity_revocation_during_finish_withhold_reply.test_cancellation_and_identity_revocation_during_finish_withhold_reply",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_confirmation_commit_failure_retries_exact_finish_receipt.test_confirmation_commit_failure_retries_exact_finish_receipt",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_corrupt_journal_missing_binding_and_changed_custody_fail_closed.test_corrupt_journal_missing_binding_and_changed_custody_fail_closed",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_explicit_cutover_preserves_local_mode_and_pins_client.test_explicit_cutover_preserves_local_mode_and_pins_client",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_failed_publication_rolls_back_source_before_unchanged_finish.test_failed_publication_rolls_back_source_before_unchanged_finish",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_generation_cas_rejects_a_stale_prepare_without_stranding_a_reservation.test_generation_cas_rejects_a_stale_prepare_without_stranding_a_reservation",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_intent_is_durable_before_prepare_and_unavailable_prepare_resolves_unchanged.test_intent_is_durable_before_prepare_and_unavailable_prepare_resolves_unchanged",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_interrupted_restore_and_activation_reconcile_without_replaying_grants.test_interrupted_restore_and_activation_reconcile_without_replaying_grants",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_lost_finish_reply_reconciles_committed_source_and_retries_only_receipt.test_lost_finish_reply_reconciles_committed_source_and_retries_only_receipt",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_lost_prepare_reply_recovers_same_reservation_and_blocks_late_resume.test_lost_prepare_reply_recovers_same_reservation_and_blocks_late_resume",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_lost_takeover_grant_is_not_reconstructed.test_lost_takeover_grant_is_not_reconstructed",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_missing_current_bundle_cannot_finish_or_fall_back.test_missing_current_bundle_cannot_finish_or_fall_back",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_process_death_at_intent_reservation_source_and_confirmation_boundaries.test_process_death_at_intent_reservation_source_and_confirmation_boundaries",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_reconciliation_fences_a_paused_local_writer_before_another_write.test_reconciliation_fences_a_paused_local_writer_before_another_write",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_reconciliation_loss_after_unchanged_finish_without_saved_generation.test_reconciliation_loss_after_unchanged_finish_without_saved_generation",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_restore_damaged_live_file_and_verified_reactivation.test_restore_damaged_live_file_and_verified_reactivation",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_save_correct_forget_expiry_and_secret_free_metadata.test_save_correct_forget_expiry_and_secret_free_metadata",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_semantically_wrong_prepare_and_finish_replies_do_not_acknowledge.test_semantically_wrong_prepare_and_finish_replies_do_not_acknowledge",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_source_commit_failure_never_finishes_a_changed_state.test_source_commit_failure_never_finishes_a_changed_state",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_source_rollback_after_changed_state_is_rejected.test_source_rollback_after_changed_state_is_rejected",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_source_rollback_after_unchanged_read_is_rejected_by_protocol_generation.test_source_rollback_after_unchanged_read_is_rejected_by_protocol_generation",
+    "test_memory_network_authority.NetworkAuthorityChecks.test_two_copied_catalogues_cannot_both_write_or_close_each_others_reservation.test_two_copied_catalogues_cannot_both_write_or_close_each_others_reservation"
+  ],
+  "implementation_hashes_unchanged_between_runs": true,
+  "final_test_source_hashes_match": true,
+  "production_paths_connected": false,
+  "diagrams": {
+    "ok": true,
+    "checked": 1,
+    "failed": 0,
+    "warnings": 0,
+    "results": [
+      {
+        "ok": true,
+        "type": "flowchart",
+        "errors": [],
+        "warnings": [],
+        "label": "review/2026-10-14-memory-witness-capacity/capacity.mmd:1"
+      }
+    ]
+  },
+  "source_sha256": {
+    "brain/memory_witness_service.py": "65bba12d34a531c37c6fb2ac6afc549cac0f4bc8fa33d11b1c0db153c8100442",
+    "brain/memory_network_authority.py": "ae7f9aeae89f2b9c674c3022942d917951a5eb6ad7356acff639ccb45f582da2",
+    "test_memory_witness_capacity.py": "cf34d6b396c6de2f48492ab5d16ba66e531889db07bc639e5752eb704b58b146",
+    "review/2026-10-14-memory-witness-capacity/check.py": "cb2428c4fbf18bbe69b65ce331eab12948515309db84faedb89c12042c574842"
+  }
+}

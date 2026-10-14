@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "implementation_and_test_source_hashes_unchanged": {
+    "brain/memory_witness_service.py": true,
+    "brain/memory_network_authority.py": true,
+    "test_memory_witness_capacity.py": true,
+    "review/2026-10-14-memory-witness-capacity/check.py": true
+  },
+  "local_links_checked": 121,
+  "missing_links": [],
+  "scoped_whitespace_passed": true,
+  "documentation_only": true,
+  "assistant_wsl_rerun": false,
+  "owner_reported_tests": 50
+}

@@ -10,7 +10,7 @@ LYA is an ambitious personal assistant inspired by Jarvis: conversational, conte
 
 ## Required experience
 
-- Recovery-custody preference (2026-10-13): use an existing owner-controlled password manager for the separate random recovery-envelope unlock key. No actual manager entry or real key is configured by the fake-data implementation; real setup and clean-host recovery remain separate owner-controlled steps.
+- Recovery custody (updated 2026-10-14): an owner-controlled password manager is the intended location for the separate random recovery-envelope unlock key, but manager selection/setup remains pending. Owner clarified that the earlier "existing manager" choice was not confirmation of an available manager. Explain password-manager/cloud setup one step at a time; no actual entry or real key is configured by fake-data development. Real setup and clean-host recovery remain separate owner-controlled steps; secrets must not be requested in chat.
 
 - Development-access intent clarification (2026-10-11): owner wants to build LYA from the personal phone and during permitted free time on a work-managed laptop, not merely use the deployed assistant. Recommended an isolated browser development workspace on existing Oracle resources, with no production secrets/deployment authority, fake test providers and GitHub development branches. code-server is a candidate, not installed; iPhone usability/private access/resource isolation need testing. github.dev is an immediate editing-only option without terminal/compute. Current native signed fixtures/Windows UI/voice/hardware acceptance are not promised to run unchanged on Linux. See review/2026-10-11-portable-access/DEVELOPMENT-ACCESS.md. No push, remote development setup, secret transfer, resource or runtime change authorized/performed by this clarification.
 
@@ -125,3 +125,17 @@ machine, so no real admin has yet been created. Startup face recognition and
 unknown-visitor photo retention remain requirements, not working features.
 The camera cannot recognize anyone without actually activating; any future
 capture needs a visible state and an explicit retention rule.
+
+## Face personalization slice — 2026-10-14
+
+The first native slice now connects the existing consented YuNet/SFace one-shot
+worker to startup and wake checks. Owner/friend/family matches can select a
+name, nickname, greeting and style for ordinary conversation, while face
+familiarity still cannot create an owner session or unlock private actions.
+Unknown-photo retention is a separate owner-approved setting; when enabled,
+the local encrypted thumbnail is bounded, expires after seven days and is
+reviewed only after phone proof. Friend/family promotion, delete, and
+presentation preferences are implemented with synthetic temporary-store/Qt
+checks. Real enrollment, target-laptop camera accuracy, liveness and phone
+notification acceptance remain pending. See
+`lya-external-work/lya-face-recognition/LYA_PERSONALIZATION_PLAN.md`.

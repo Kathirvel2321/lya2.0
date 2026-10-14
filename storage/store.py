@@ -134,6 +134,15 @@ def _init_schema(db: sqlite3.Connection, *, use_search: bool = True):
     db.execute('''CREATE TABLE IF NOT EXISTS recognition_preferences(
         owner_id TEXT PRIMARY KEY REFERENCES people(person_id), credential_digest TEXT NOT NULL,
         enabled INTEGER NOT NULL CHECK(enabled IN (0,1)))''')
+    db.execute('''CREATE TABLE IF NOT EXISTS visitor_photo_preferences(
+        owner_id TEXT PRIMARY KEY REFERENCES people(person_id), credential_digest TEXT NOT NULL,
+        enabled INTEGER NOT NULL CHECK(enabled IN (0,1)))''')
+    db.execute('''CREATE TABLE IF NOT EXISTS person_preferences(
+        person_id TEXT PRIMARY KEY REFERENCES people(person_id),
+        nickname_enc TEXT,
+        greeting_enc TEXT,
+        style_enc TEXT,
+        updated_at TEXT NOT NULL)''')
     db.execute('''CREATE TABLE IF NOT EXISTS visitor_grants(
         person_id TEXT PRIMARY KEY REFERENCES people(person_id), owner_id TEXT NOT NULL REFERENCES people(person_id),
         credential_digest TEXT NOT NULL)''')
@@ -841,14 +850,62 @@ def forget(person_id: str, exact_key: str, db_path: Path | None = None, *, proje
 
 # ---------------------------------------------------------- Pending Faces (7-day Expiry)
 
+def _pending_photo_dir(db_path: Path | None = None) -> Path:
+    target = Path(db_path) if db_path is not None else get_data_dir() / "lya.db.enc"
+    directory = target.parent / "faces"
+    directory.mkdir(parents=True, exist_ok=True)
+    return directory
+
+
+def _pending_photo_path(path: str | None, db_path: Path | None = None) -> Path | None:
+    """Return a photo path only when it stays inside this store's faces folder."""
+    if not path:
+        return None
+    candidate = Path(path)
+    directory = _pending_photo_dir(db_path).resolve()
+    try:
+        resolved = candidate.resolve()
+    except OSError:
+        return None
+    return resolved if resolved.parent == directory else None
+
+
+def _write_pending_photo(pending_id: str, photo: bytes, db_path: Path | None = None) -> str:
+    if (type(photo) is not bytes or not 32 <= len(photo) <= 400_000
+            or not photo.startswith(b'\xff\xd8') or not photo.endswith(b'\xff\xd9')):
+        raise ValueError('Unknown visitor photo must be a bounded JPEG.')
+    target = _pending_photo_dir(db_path) / f'{pending_id}.jpg.lya'
+    temporary = target.with_name(target.name + f'.tmp.{secrets.token_hex(4)}')
+    try:
+        with open(temporary, 'xb') as output:
+            output.write(vault.encrypt(photo))
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, target)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return str(target)
+
+
+def _delete_pending_photo(path: str | None, db_path: Path | None = None):
+    target = _pending_photo_path(path, db_path)
+    if target is not None:
+        try:
+            vault.secure_delete(str(target))
+        except OSError:
+            pass
+
 def record_pending_face(
     thumbnail_path: str | None = None,
     embedding: object = None,
     expires_days: int = 7,
     db_path: Path | None = None,
     embedding_bytes: object = None,
+    photo_bytes: bytes | None = None,
 ) -> str:
-    """Record an unknown face observation. Expires automatically in 7 days."""
+    """Record an unknown face observation; any photo is encrypted before disk write."""
+    if type(expires_days) is not int or expires_days > 30:
+        raise ValueError('Pending face retention must be at most 30 days.')
     now_dt = datetime.datetime.now()
     now_iso = now_dt.isoformat()
     expiry_iso = (now_dt + datetime.timedelta(days=expires_days)).isoformat()
@@ -868,15 +925,28 @@ def record_pending_face(
             emb_list = list(raw_emb)
         emb_enc = vault.encrypt_text(json.dumps(emb_list))
 
-    with store_connection(db_path) as db:
-        # Cleanup expired on write
-        db.execute("DELETE FROM pending_faces WHERE expires_at <= ?", (now_iso,))
-        db.execute(
-            """INSERT INTO pending_faces
-               (pending_id, thumbnail_path, embedding_enc, first_seen, last_seen, sightings, expires_at)
-               VALUES (?, ?, ?, ?, ?, 1, ?)""",
-            (pending_id, thumbnail_path, emb_enc, now_iso, now_iso, expiry_iso),
-        )
+    stored_photo = None
+    expired_photos = []
+    try:
+        if photo_bytes is not None:
+            stored_photo = _write_pending_photo(pending_id, photo_bytes, db_path)
+        with store_connection(db_path) as db:
+            # Cleanup expired rows and their encrypted photo files on every write.
+            expired_photos = [row[0] for row in db.execute(
+                "SELECT thumbnail_path FROM pending_faces WHERE expires_at <= ?", (now_iso,)
+            ).fetchall()]
+            db.execute("DELETE FROM pending_faces WHERE expires_at <= ?", (now_iso,))
+            db.execute(
+                """INSERT INTO pending_faces
+                   (pending_id, thumbnail_path, embedding_enc, first_seen, last_seen, sightings, expires_at)
+                   VALUES (?, ?, ?, ?, ?, 1, ?)""",
+                (pending_id, stored_photo or thumbnail_path, emb_enc, now_iso, now_iso, expiry_iso),
+            )
+    except Exception:
+        _delete_pending_photo(stored_photo, db_path)
+        raise
+    for path in expired_photos:
+        _delete_pending_photo(path, db_path)
     record_audit("pending_face_captured", "unknown_visitor", db_path=db_path)
     return pending_id
 
@@ -884,15 +954,19 @@ def record_pending_face(
 def list_pending_faces(db_path: Path | None = None) -> list[dict]:
     """List pending visitor faces that have not yet expired."""
     now_iso = datetime.datetime.now().isoformat()
+    expired_photos = []
     with store_connection(db_path) as db:
+        expired_photos = [row[0] for row in db.execute(
+            "SELECT thumbnail_path FROM pending_faces WHERE expires_at <= ?", (now_iso,)
+        ).fetchall()]
         db.execute("DELETE FROM pending_faces WHERE expires_at <= ?", (now_iso,))
         rows = db.execute(
             "SELECT pending_id, thumbnail_path, first_seen, last_seen, sightings, expires_at FROM pending_faces ORDER BY last_seen DESC"
         ).fetchall()
-        return [
+        result = [
             {
                 "pending_id": r[0],
-                "thumbnail_path": r[1],
+                "photo_available": _pending_photo_path(r[1], db_path) is not None,
                 "first_seen": r[2],
                 "last_seen": r[3],
                 "sightings": r[4],
@@ -900,6 +974,47 @@ def list_pending_faces(db_path: Path | None = None) -> list[dict]:
             }
             for r in rows
         ]
+    for path in expired_photos:
+        _delete_pending_photo(path, db_path)
+    return result
+
+
+def pending_face_photo(pending_id: str, db_path: Path | None = None) -> bytes | None:
+    """Decrypt one pending thumbnail into RAM; callers must enforce owner review."""
+    if type(pending_id) is not str or not pending_id:
+        return None
+    with store_connection(db_path, read_only=True) as db:
+        row = db.execute(
+            "SELECT thumbnail_path, expires_at FROM pending_faces WHERE pending_id = ?",
+            (pending_id,),
+        ).fetchone()
+    if not row or row[1] <= datetime.datetime.now().isoformat():
+        return None
+    target = _pending_photo_path(row[0], db_path)
+    if target is None or not target.is_file():
+        return None
+    try:
+        data = vault.decrypt(target.read_bytes())
+    except Exception:
+        return None
+    return data if (32 <= len(data) <= 400_000 and data.startswith(b'\xff\xd8')
+                    and data.endswith(b'\xff\xd9')) else None
+
+
+def delete_pending_face(pending_id: str, db_path: Path | None = None) -> bool:
+    """Delete one pending face and its encrypted photo."""
+    if type(pending_id) is not str or not pending_id:
+        return False
+    path = None
+    with store_connection(db_path) as db:
+        row = db.execute("SELECT thumbnail_path FROM pending_faces WHERE pending_id = ?", (pending_id,)).fetchone()
+        if not row:
+            return False
+        path = row[0]
+        db.execute("DELETE FROM pending_faces WHERE pending_id = ?", (pending_id,))
+    _delete_pending_photo(path, db_path)
+    record_audit('pending_face_deleted', 'owner_review', db_path=db_path)
+    return True
 
 
 def promote_pending_face(

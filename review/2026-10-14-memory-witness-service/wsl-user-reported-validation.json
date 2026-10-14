@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-14",
+  "evidence_source": "Owner-supplied Ubuntu WSL terminal output",
+  "independently_rerun_by_assistant": false,
+  "lab_source_hashes_independently_verified": false,
+  "tests_run": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "module": "test_memory_witness_service",
+  "fake_data_only": true,
+  "loopback_only": true,
+  "authority_network_adapter_connected": false,
+  "witness_independently_hosted": false
+}

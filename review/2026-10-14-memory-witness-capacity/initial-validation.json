@@ -1,0 +1,18 @@
+{
+  "tests_run": 50,
+  "failures": 0,
+  "errors": 1,
+  "skipped": 0,
+  "passed": false,
+  "fake_data_only": true,
+  "loopback_only": true,
+  "production_paths_connected": false,
+  "witness_independently_hosted": false,
+  "production_keys_created": false,
+  "source_sha256": {
+    "brain/memory_witness_service.py": "65bba12d34a531c37c6fb2ac6afc549cac0f4bc8fa33d11b1c0db153c8100442",
+    "brain/memory_network_authority.py": "ae7f9aeae89f2b9c674c3022942d917951a5eb6ad7356acff639ccb45f582da2",
+    "test_memory_witness_capacity.py": "056741308c14a0e2e0430754e9e73a5a9caa28618b62ba940d2a9821ad031360",
+    "review/2026-10-14-memory-witness-capacity/check.py": "cb2428c4fbf18bbe69b65ce331eab12948515309db84faedb89c12042c574842"
+  }
+}

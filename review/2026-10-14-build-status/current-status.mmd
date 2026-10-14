@@ -1,0 +1,23 @@
+flowchart TD
+    W["Existing accepted Windows client"] --> B["Existing desktop workflow and local vault"]
+    P["Existing phone client"] --> S["Previously deployed public conversation service"]
+    W -. "Pending shared integration" .-> C["Isolated shared conversation contract"]
+    P -. "Pending shared integration" .-> C
+    C -. "Pending production wiring" .-> M["Tested selective memory API"]
+    M --> A["Tested canonical authority and writer fencing"]
+    A --> R["Tested encrypted snapshots and quarantined recovery"]
+    A --> L["Tested local witness acknowledgement"]
+    A --> D["Tested isolated durable network authority coordinator"]
+    D --> N["Tested authenticated localhost witness protocol"]
+    N -.-> H["Pending TLS and independent witness hosting"]
+    R -.-> O["Pending independent backup objects and host-loss drill"]
+    K["Pending protected production keys"] -.-> H
+    K -.-> O
+    H -.-> Q["Pending approved device pilot and acceptance"]
+    O -.-> Q
+    classDef existing fill:#145744,color:#fff
+    classDef isolated fill:#243c65,color:#fff
+    classDef pending fill:#714f17,color:#fff
+    class W,B,P,S existing
+    class C,M,A,R,L,D,N isolated
+    class H,O,K,Q pending

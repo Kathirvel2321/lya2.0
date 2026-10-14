@@ -1,0 +1,405 @@
+test_cancellation_and_identity_revocation_during_finish_withhold_reply (test_memory_network_authority.NetworkAuthorityChecks.test_cancellation_and_identity_revocation_during_finish_withhold_reply) ... ERROR
+test_confirmation_commit_failure_retries_exact_finish_receipt (test_memory_network_authority.NetworkAuthorityChecks.test_confirmation_commit_failure_retries_exact_finish_receipt) ... ERROR
+test_corrupt_journal_missing_binding_and_changed_custody_fail_closed (test_memory_network_authority.NetworkAuthorityChecks.test_corrupt_journal_missing_binding_and_changed_custody_fail_closed) ... ERROR
+test_explicit_cutover_preserves_local_mode_and_pins_client (test_memory_network_authority.NetworkAuthorityChecks.test_explicit_cutover_preserves_local_mode_and_pins_client) ... ERROR
+test_failed_publication_rolls_back_source_before_unchanged_finish (test_memory_network_authority.NetworkAuthorityChecks.test_failed_publication_rolls_back_source_before_unchanged_finish) ... ERROR
+test_intent_is_durable_before_prepare_and_unavailable_prepare_resolves_unchanged (test_memory_network_authority.NetworkAuthorityChecks.test_intent_is_durable_before_prepare_and_unavailable_prepare_resolves_unchanged) ... ERROR
+test_lost_finish_reply_reconciles_committed_source_and_retries_only_receipt (test_memory_network_authority.NetworkAuthorityChecks.test_lost_finish_reply_reconciles_committed_source_and_retries_only_receipt) ... ERROR
+test_lost_prepare_reply_recovers_same_reservation_and_blocks_late_resume (test_memory_network_authority.NetworkAuthorityChecks.test_lost_prepare_reply_recovers_same_reservation_and_blocks_late_resume) ... ERROR
+test_lost_takeover_grant_is_not_reconstructed (test_memory_network_authority.NetworkAuthorityChecks.test_lost_takeover_grant_is_not_reconstructed) ... ERROR
+test_missing_current_bundle_cannot_finish_or_fall_back (test_memory_network_authority.NetworkAuthorityChecks.test_missing_current_bundle_cannot_finish_or_fall_back) ... ERROR
+test_process_death_at_intent_reservation_source_and_confirmation_boundaries (test_memory_network_authority.NetworkAuthorityChecks.test_process_death_at_intent_reservation_source_and_confirmation_boundaries) ... ERROR
+test_reconciliation_fences_a_paused_local_writer_before_another_write (test_memory_network_authority.NetworkAuthorityChecks.test_reconciliation_fences_a_paused_local_writer_before_another_write) ... ERROR
+test_reconciliation_loss_after_unchanged_finish_without_saved_generation (test_memory_network_authority.NetworkAuthorityChecks.test_reconciliation_loss_after_unchanged_finish_without_saved_generation) ... ERROR
+test_restore_damaged_live_file_and_verified_reactivation (test_memory_network_authority.NetworkAuthorityChecks.test_restore_damaged_live_file_and_verified_reactivation) ... ERROR
+test_save_correct_forget_expiry_and_secret_free_metadata (test_memory_network_authority.NetworkAuthorityChecks.test_save_correct_forget_expiry_and_secret_free_metadata) ... ERROR
+test_semantically_wrong_prepare_and_finish_replies_do_not_acknowledge (test_memory_network_authority.NetworkAuthorityChecks.test_semantically_wrong_prepare_and_finish_replies_do_not_acknowledge) ... ERROR
+test_source_commit_failure_never_finishes_a_changed_state (test_memory_network_authority.NetworkAuthorityChecks.test_source_commit_failure_never_finishes_a_changed_state) ... ERROR
+test_source_rollback_after_changed_state_is_rejected (test_memory_network_authority.NetworkAuthorityChecks.test_source_rollback_after_changed_state_is_rejected) ... ERROR
+test_source_rollback_after_unchanged_read_is_rejected_by_protocol_generation (test_memory_network_authority.NetworkAuthorityChecks.test_source_rollback_after_unchanged_read_is_rejected_by_protocol_generation) ... ERROR
+test_two_copied_catalogues_cannot_both_write_or_close_each_others_reservation (test_memory_network_authority.NetworkAuthorityChecks.test_two_copied_catalogues_cannot_both_write_or_close_each_others_reservation) ... ERROR
+
+======================================================================
+ERROR: test_cancellation_and_identity_revocation_during_finish_withhold_reply (test_memory_network_authority.NetworkAuthorityChecks.test_cancellation_and_identity_revocation_during_finish_withhold_reply)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpgdd6j8hu\\authority\\objects\\55fd4490f7e545678ad37a96e4e7992b\\.lya-fake-recovery-avkujbfj\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpgdd6j8hu\\authority\\objects\\55fd4490f7e545678ad37a96e4e7992b\\live.sqlite'
+
+======================================================================
+ERROR: test_confirmation_commit_failure_retries_exact_finish_receipt (test_memory_network_authority.NetworkAuthorityChecks.test_confirmation_commit_failure_retries_exact_finish_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpt5uwn79z\\authority\\objects\\a56dc103f0894e7c87ff90aec589720c\\.lya-fake-recovery-u4c_9en5\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpt5uwn79z\\authority\\objects\\a56dc103f0894e7c87ff90aec589720c\\live.sqlite'
+
+======================================================================
+ERROR: test_corrupt_journal_missing_binding_and_changed_custody_fail_closed (test_memory_network_authority.NetworkAuthorityChecks.test_corrupt_journal_missing_binding_and_changed_custody_fail_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpm66j457m\\authority\\objects\\3e437df1bd47422ba2ed1b3631bd2de6\\.lya-fake-recovery-ry2insw5\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpm66j457m\\authority\\objects\\3e437df1bd47422ba2ed1b3631bd2de6\\live.sqlite'
+
+======================================================================
+ERROR: test_explicit_cutover_preserves_local_mode_and_pins_client (test_memory_network_authority.NetworkAuthorityChecks.test_explicit_cutover_preserves_local_mode_and_pins_client)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpm9h7zdp8\\authority\\objects\\325b81c187474baf8853e6866dea656b\\.lya-fake-recovery-b6ckovnk\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpm9h7zdp8\\authority\\objects\\325b81c187474baf8853e6866dea656b\\live.sqlite'
+
+======================================================================
+ERROR: test_failed_publication_rolls_back_source_before_unchanged_finish (test_memory_network_authority.NetworkAuthorityChecks.test_failed_publication_rolls_back_source_before_unchanged_finish)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp_owspi46\\authority\\objects\\6cfb37ac376445a98f06882c68f7324a\\.lya-fake-recovery-ruees10o\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp_owspi46\\authority\\objects\\6cfb37ac376445a98f06882c68f7324a\\live.sqlite'
+
+======================================================================
+ERROR: test_intent_is_durable_before_prepare_and_unavailable_prepare_resolves_unchanged (test_memory_network_authority.NetworkAuthorityChecks.test_intent_is_durable_before_prepare_and_unavailable_prepare_resolves_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpbo9c7qyp\\authority\\objects\\28aa54ad11054a55a583186f5df31809\\.lya-fake-recovery-bzhw76su\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpbo9c7qyp\\authority\\objects\\28aa54ad11054a55a583186f5df31809\\live.sqlite'
+
+======================================================================
+ERROR: test_lost_finish_reply_reconciles_committed_source_and_retries_only_receipt (test_memory_network_authority.NetworkAuthorityChecks.test_lost_finish_reply_reconciles_committed_source_and_retries_only_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpcxaz8i0h\\authority\\objects\\bd5c0ae03aa9445eb73b767f421fb258\\.lya-fake-recovery-fwliogvd\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpcxaz8i0h\\authority\\objects\\bd5c0ae03aa9445eb73b767f421fb258\\live.sqlite'
+
+======================================================================
+ERROR: test_lost_prepare_reply_recovers_same_reservation_and_blocks_late_resume (test_memory_network_authority.NetworkAuthorityChecks.test_lost_prepare_reply_recovers_same_reservation_and_blocks_late_resume)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp830hxns1\\authority\\objects\\e69ed48cc27143d08a505d630edd80db\\.lya-fake-recovery-2_b1su41\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp830hxns1\\authority\\objects\\e69ed48cc27143d08a505d630edd80db\\live.sqlite'
+
+======================================================================
+ERROR: test_lost_takeover_grant_is_not_reconstructed (test_memory_network_authority.NetworkAuthorityChecks.test_lost_takeover_grant_is_not_reconstructed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpjv9z4xqf\\authority\\objects\\1c2a7547b2d84cb18d66843ab962d1ff\\.lya-fake-recovery-z2cen443\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpjv9z4xqf\\authority\\objects\\1c2a7547b2d84cb18d66843ab962d1ff\\live.sqlite'
+
+======================================================================
+ERROR: test_missing_current_bundle_cannot_finish_or_fall_back (test_memory_network_authority.NetworkAuthorityChecks.test_missing_current_bundle_cannot_finish_or_fall_back)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpvj8rv72m\\authority\\objects\\9e603ecc77de4a928303a0ba26b36a9e\\.lya-fake-recovery-k55g3j5y\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpvj8rv72m\\authority\\objects\\9e603ecc77de4a928303a0ba26b36a9e\\live.sqlite'
+
+======================================================================
+ERROR: test_process_death_at_intent_reservation_source_and_confirmation_boundaries (test_memory_network_authority.NetworkAuthorityChecks.test_process_death_at_intent_reservation_source_and_confirmation_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpz69x3z6p\\authority\\objects\\f21651785e2c4f13bbdc0f2888a51940\\.lya-fake-recovery-kzktr7iy\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpz69x3z6p\\authority\\objects\\f21651785e2c4f13bbdc0f2888a51940\\live.sqlite'
+
+======================================================================
+ERROR: test_reconciliation_fences_a_paused_local_writer_before_another_write (test_memory_network_authority.NetworkAuthorityChecks.test_reconciliation_fences_a_paused_local_writer_before_another_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp7upmrd2k\\authority\\objects\\326ff754698047b9b280ee5c9192228b\\.lya-fake-recovery-s9r91ua6\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp7upmrd2k\\authority\\objects\\326ff754698047b9b280ee5c9192228b\\live.sqlite'
+
+======================================================================
+ERROR: test_reconciliation_loss_after_unchanged_finish_without_saved_generation (test_memory_network_authority.NetworkAuthorityChecks.test_reconciliation_loss_after_unchanged_finish_without_saved_generation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpcy921a9k\\authority\\objects\\42919796912b4bf280b14a2d969dac26\\.lya-fake-recovery-dmydufs8\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpcy921a9k\\authority\\objects\\42919796912b4bf280b14a2d969dac26\\live.sqlite'
+
+======================================================================
+ERROR: test_restore_damaged_live_file_and_verified_reactivation (test_memory_network_authority.NetworkAuthorityChecks.test_restore_damaged_live_file_and_verified_reactivation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp_f7lxnri\\authority\\objects\\444c4fb7ced842238881921931bbca98\\.lya-fake-recovery-0480w7hp\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp_f7lxnri\\authority\\objects\\444c4fb7ced842238881921931bbca98\\live.sqlite'
+
+======================================================================
+ERROR: test_save_correct_forget_expiry_and_secret_free_metadata (test_memory_network_authority.NetworkAuthorityChecks.test_save_correct_forget_expiry_and_secret_free_metadata)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp3yncvlnd\\authority\\objects\\30a53b56adce4fb699856273acc4e628\\.lya-fake-recovery-9386qr3m\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp3yncvlnd\\authority\\objects\\30a53b56adce4fb699856273acc4e628\\live.sqlite'
+
+======================================================================
+ERROR: test_semantically_wrong_prepare_and_finish_replies_do_not_acknowledge (test_memory_network_authority.NetworkAuthorityChecks.test_semantically_wrong_prepare_and_finish_replies_do_not_acknowledge)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp45sbieag\\authority\\objects\\5e0bdcaabbe24e61bc811339dbf68992\\.lya-fake-recovery-sy9e92er\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmp45sbieag\\authority\\objects\\5e0bdcaabbe24e61bc811339dbf68992\\live.sqlite'
+
+======================================================================
+ERROR: test_source_commit_failure_never_finishes_a_changed_state (test_memory_network_authority.NetworkAuthorityChecks.test_source_commit_failure_never_finishes_a_changed_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpl_7hm40b\\authority\\objects\\69ba76f8581648e592a7cb41333252dc\\.lya-fake-recovery-m0iwlght\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpl_7hm40b\\authority\\objects\\69ba76f8581648e592a7cb41333252dc\\live.sqlite'
+
+======================================================================
+ERROR: test_source_rollback_after_changed_state_is_rejected (test_memory_network_authority.NetworkAuthorityChecks.test_source_rollback_after_changed_state_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpju9k5sb9\\authority\\objects\\9bb88ba841f64b3ca47b169ef3527a5b\\.lya-fake-recovery-kb3q3nx3\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpju9k5sb9\\authority\\objects\\9bb88ba841f64b3ca47b169ef3527a5b\\live.sqlite'
+
+======================================================================
+ERROR: test_source_rollback_after_unchanged_read_is_rejected_by_protocol_generation (test_memory_network_authority.NetworkAuthorityChecks.test_source_rollback_after_unchanged_read_is_rejected_by_protocol_generation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpaz6mb4_1\\authority\\objects\\2d4848ff17ea4c15b8cea775d1085b12\\.lya-fake-recovery-_oxt1hhv\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpaz6mb4_1\\authority\\objects\\2d4848ff17ea4c15b8cea775d1085b12\\live.sqlite'
+
+======================================================================
+ERROR: test_two_copied_catalogues_cannot_both_write_or_close_each_others_reservation (test_memory_network_authority.NetworkAuthorityChecks.test_two_copied_catalogues_cannot_both_write_or_close_each_others_reservation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpeerze67g\\authority\\objects\\7b2f5a050de64b83b9d49a1d6ca1abed\\.lya-fake-recovery-64palzav\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-14-memory-network-authority\\.fixtures-k1338nb6\\tmpeerze67g\\authority\\objects\\7b2f5a050de64b83b9d49a1d6ca1abed\\live.sqlite'
+
+----------------------------------------------------------------------
+Ran 20 tests in 6.996s
+
+FAILED (errors=20)

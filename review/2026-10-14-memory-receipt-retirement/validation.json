@@ -1,0 +1,18 @@
+{
+  "tests_run": 64,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "fake_data_only": true,
+  "loopback_only": true,
+  "production_paths_connected": false,
+  "witness_independently_hosted": false,
+  "production_keys_created": false,
+  "source_sha256": {
+    "brain/memory_witness_service.py": "e52430b7d301db4c33155fc4d0262471ff71c4c2c02ca366e1c8f272110c3c23",
+    "brain/memory_network_authority.py": "2c5a3b0c83c82346dae6d04904ac5b3ea220e4065a6bba37b8ef2138f89de6ad",
+    "test_memory_receipt_retirement.py": "9f1d26bbc80beb095bb5da4ee432d743060fbff2225ba5a971cd1521dffe9c1a",
+    "review/2026-10-14-memory-receipt-retirement/check.py": "03f60671454fdc1c09b2998b122f1c605ffe8174feb7bf595d57a5943c7f23cc"
+  }
+}

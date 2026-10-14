@@ -1,5 +1,7 @@
 # Witness-confirmed memory operations — 13 October 2026
 
+2026-10-14 follow-up: the [authenticated loopback witness protocol](../2026-10-14-memory-witness-service/README.md) adds durable remote-style reservations and signed retry receipts with 18 passing fake-data checks. It remains separate from this authority; durable coordinator adaptation, TLS and independent placement are still pending.
+
 The owner authorized connecting the isolated memory authority to its latest-state witness. The optional witnessed mode in [memory_authority.py](../../brain/memory_authority.py) now waits for the witness commit before returning a write, takeover, restore or activation result. Reads also require the exact witnessed checkpoint and writer generation, including reads that perform expiry cleanup. The standalone witness's locked operations in [memory_custody.py](../../brain/memory_custody.py) are reused rather than opening a second connection during coordination.
 
 ## Explicit cutover

@@ -1,0 +1,20 @@
+flowchart TD
+    A["Signed request: authenticate before state access"] --> S["Verify pinned schema and database page limit"]
+    S --> N["Fresh bounded nonce and timestamp"]
+    N --> R{"Existing durable receipt?"}
+    R -->|"Yes"| V["Require same meaning and exact current state"]
+    V --> Q["Return signed reply after commit"]
+    R -->|"No"| O{"Observation request?"}
+    O -->|"Yes"| F["Return fresh state; optional prepare-capacity check; no receipt"]
+    F --> Q
+    O -->|"No"| C["Check receipt admission; preserve one finish slot"]
+    C --> P["Execute exact operation and commit durable receipt"]
+    P --> Q
+    C -->|"Capacity exhausted"| E["Refuse new work; preserve head and reservation"]
+    F -->|"Preflight exhausted"| E
+    S -->|"Database over limit or full"| E
+    P -.-> T["Pending: qualified receipt retirement and independent TLS hosting"]
+    classDef isolated fill:#0969da,color:#fff
+    classDef pending fill:#9a6700,color:#fff
+    class A,S,N,R,V,Q,O,F,C,P,E isolated
+    class T pending
