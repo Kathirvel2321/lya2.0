@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-13",
+  "renderer": "Blender 4.5.3 LTS / Cycles CPU / four threads",
+  "front_samples": 96,
+  "turnaround_samples": 64,
+  "renderer_exit_codes": {
+    "turnaround": 0,
+    "front": 0
+  },
+  "images": {
+    "glass-front.png": {
+      "width": 768,
+      "height": 1024,
+      "bytes": 1009109,
+      "sha256": "c6572e445a3c792f133530757b2c08a57ea92f1301751aba0099b69b7e775ead"
+    },
+    "glass-000.png": {
+      "width": 512,
+      "height": 640,
+      "bytes": 269557,
+      "sha256": "3245c3c8fac7644cff7a5dd94a7b5af00006d7f60098942d520a81c43edeb26a"
+    },
+    "glass-045.png": {
+      "width": 512,
+      "height": 640,
+      "bytes": 252311,
+      "sha256": "ab2ee53f6a913886d635e91d1ce1c0238c90593a3d0046966ec5fa4590afae12"
+    },
+    "glass-090.png": {
+      "width": 512,
+      "height": 640,
+      "bytes": 194808,
+      "sha256": "ba06e474b0b93ff5f5359d688c80e5739458a043c275c55495f52832e26b539b"
+    },
+    "glass-135.png": {
+      "width": 512,
+      "height": 640,
+      "bytes": 242645,
+      "sha256": "cabafbbc694d6c3aca6d063a4cfeb08d9b8e2276cbe02b4cdc89e74d54052037"
+    },
+    "glass-180.png": {
+      "width": 512,
+      "height": 640,
+      "bytes": 263304,
+      "sha256": "efbbc71e370037cbbe46173e5398b90d1259f2de8b82e574d646863c2cafc054"
+    },
+    "glass-225.png": {
+      "width": 512,
+      "height": 640,
+      "bytes": 251038,
+      "sha256": "42d6c049c0ab49043d6bc649c29dd6a92b03e10b0a90162e926ae8c4fd9c336d"
+    },
+    "glass-270.png": {
+      "width": 512,
+      "height": 640,
+      "bytes": 198404,
+      "sha256": "fdca0e5d7dc67b17364ad795d7e6e8d8fb3c834d62aa6f0f73bf8efaea94b0bb"
+    },
+    "glass-315.png": {
+      "width": 512,
+      "height": 640,
+      "bytes": 243826,
+      "sha256": "7534e0efdbfa67c7e50c77f9a8b6a471c2c10de6176a1bb42bc9c058f32728ad"
+    }
+  },
+  "scene": {
+    "bytes": 702901,
+    "sha256": "e87ef92fccb24176c83ceeccb06b88226f936f3c0d2ce8dd40f8e35170c931db"
+  },
+  "logs": {
+    "turnaround-render-final.txt": {
+      "completed": true,
+      "saved_pngs": 8,
+      "render_times": [
+        "00:30.86",
+        "00:28.67",
+        "00:19.58",
+        "00:24.00",
+        "00:23.74",
+        "00:23.23",
+        "00:19.73",
+        "00:27.47"
+      ]
+    },
+    "front-render-final.txt": {
+      "completed": true,
+      "saved_pngs": 1,
+      "render_times": [
+        "01:39.22"
+      ]
+    }
+  },
+  "checks": {
+    "geometry": "seven closed meshes, 2344 triangles; deterministic GLB passes",
+    "effect_frames": 1008,
+    "synthetic_preview_scenarios": 15,
+    "python_sources_parse": 4,
+    "git_diff_check": "passes"
+  },
+  "visually_reviewed": "front and representative angles; not exact reference approval",
+  "browser_visual_qa": "blocked by local-file URL policy; not bypassed",
+  "integration": "prototype only; native artwork/runtime unchanged"
+}

@@ -8,23 +8,55 @@ from pathlib import Path
 HERE=Path(__file__).resolve().parent
 
 def closed_sail(outline,ridge,thickness):
-    n=len(outline)
-    vertices=[list(p) for p in outline]+[[p[0],p[1],p[2]-thickness] for p in outline]
-    vertices += [list(ridge),[ridge[0],ridge[1],ridge[2]-thickness-.13]]
-    faces=[]
+    # Nested folded surfaces give the glass real thickness and changing reflections.
+    n=len(outline);vertices=[];faces=[]
+    for back in (False,True):
+        for fraction in (1,.72,.38):
+            for i,p in enumerate(outline):
+                x=ridge[0]+(p[0]-ridge[0])*fraction
+                y=ridge[1]+(p[1]-ridge[1])*fraction
+                fold=math.sin(math.pi*fraction)*(.085*math.sin(i*2.3+fraction*5))
+                z=p[2]*fraction+ridge[2]*(1-fraction)+fold
+                vertices.append([x,y,z-thickness if back else z])
+        vertices.append([ridge[0],ridge[1],ridge[2]-thickness if back else ridge[2]])
+    stride=3*n+1
+    for side in (0,1):
+        offset=side*stride
+        for ring in range(2):
+            for i in range(n):
+                j=(i+1)%n;a=offset+ring*n+i;b=offset+ring*n+j
+                c=b+n;d=a+n
+                triangles=[[a,b,c],[a,c,d]]
+                faces.extend([list(reversed(f)) for f in triangles] if side else triangles)
+        for i in range(n):
+            f=[offset+3*n,offset+2*n+i,offset+2*n+(i+1)%n]
+            faces.append(list(reversed(f)) if side else f)
     for i in range(n):
         j=(i+1)%n
-        faces += [[2*n,i,j],[2*n+1,n+j,n+i],[i,n+i,n+j],[i,n+j,j]]
+        faces.extend([[i,stride+i,stride+j],[i,stride+j,j]])
     return vertices,faces
 
-def spine(sections,sides=8):
+def curved_sections(points):
+    sections=[]
+    for i in range(len(points)-1):
+        a,b,c,d=[points[max(0,min(len(points)-1,j))] for j in (i-1,i,i+1,i+2)]
+        for step in range(4):
+            t=step/4
+            sections.append([.5*((2*b[k])+(-a[k]+c[k])*t+
+                (2*a[k]-5*b[k]+4*c[k]-d[k])*t*t+
+                (-a[k]+3*b[k]-3*c[k]+d[k])*t*t*t) for k in range(5)])
+    return sections+[points[-1]]
+
+def spine(sections,sides=12):
+    sections=curved_sections(sections)
     vertices=[];faces=[]
     for index,(x,y,z,rx,rz) in enumerate(sections):
         before=sections[max(0,index-1)];after=sections[min(len(sections)-1,index+1)]
         tx,ty=after[0]-before[0],after[1]-before[1];length=math.hypot(tx,ty)
         ux,uy=ty/length,-tx/length
         for i in range(sides):
-            a=i*math.tau/sides;vertices.append([x+ux*rx*math.cos(a),y+uy*rx*math.cos(a),z+rz*math.sin(a)])
+            a=i*math.tau/sides+index*.065
+            vertices.append([x+ux*rx*math.cos(a),y+uy*rx*math.cos(a),z+rz*math.sin(a)])
     for ring in range(len(sections)-1):
         for i in range(sides):
             a=ring*sides+i;b=ring*sides+(i+1)%sides;c=b+sides;d=a+sides
@@ -54,6 +86,9 @@ def make_model(spec):
     for sail in spec['sails']:
         v,f=closed_sail(sail['outline'],sail['ridge'],sail['thickness']);objects.append({'name':sail['name'],'vertices':v,'faces':f,'material':0})
     v,f=core(spec['core']);objects.append({'name':'core','vertices':v,'faces':f,'material':2})
+    for vein in spec['veins']:
+        v,f=spine(vein['sections'],8)
+        objects.append({'name':vein['name'],'vertices':v,'faces':f,'material':1})
     for obj in objects:
         volume=0.0
         for face in obj['faces']:

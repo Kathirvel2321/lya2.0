@@ -1,10 +1,10 @@
 /* Synthetic DOM/canvas scheduling only; not browser visual QA. */
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),html=fs.readFileSync(path.join(root,'preview.html'),'utf8'),scripts=[...html.matchAll(/<script nonce="lya-design">([\s\S]*?)<\/script>/g)].map(m=>m[1]);assert.equal(scripts.length,2);
-const ids={},events={},raf=new Map(),draws=[];let next=0,now=0,observer;
+const ids={},events={},raf=new Map(),draws=[],imagesDrawn=[];let next=0,now=0,observer;
 const defaults={interaction:'listening',task:'none',energy:'.4',appearance:'navy',mode:'reference',angle:'0'};
 function element(id){return ids[id]??={value:defaults[id]||'',checked:['effects'].includes(id),hidden:id==='rotate-controls',textContent:'',style:{},listeners:{},classList:{toggle(){}},append(o){if(!this.value)this.value=o.value},setAttribute(){},addEventListener(n,f){(this.listeners[n]??=[]).push(f)},fire(n){for(const f of this.listeners[n]||[])f({})}}}
-const noop=()=>{},ctx={save:noop,restore:noop,setTransform:noop,clearRect:noop,translate:noop,setLineDash:noop,beginPath:noop,arc:noop,fill:noop,moveTo:noop,lineTo:noop,stroke:noop,closePath:noop,drawImage:(...args)=>draws.push(args.slice(1))};
+const noop=()=>{},ctx={save:noop,restore:noop,setTransform:noop,clearRect:noop,translate:noop,setLineDash:noop,beginPath:noop,arc:noop,fill:noop,moveTo:noop,lineTo:noop,stroke:noop,closePath:noop,drawImage:(...args)=>{draws.push(args.slice(1));imagesDrawn.push(args[0])}};
 const canvas=element('view');canvas.getContext=()=>ctx;canvas.getBoundingClientRect=()=>({width:500,height:600});
 const document={hidden:false,getElementById:element,createElement:()=>({}),addEventListener:(n,f)=>events[n]=f};
 const pref={matches:false,addEventListener:noop},context=vm.createContext({document,window:{addEventListener:(n,f)=>events[n]=f},devicePixelRatio:3,matchMedia:()=>pref,performance:{now:()=>now},Image:class{constructor(){this.width=1199;this.height=1312}set src(v){assert.ok(v.startsWith('data:image/png;base64,'));this.onload()}},ResizeObserver:class{constructor(f){observer=f}observe(){observer()}},requestAnimationFrame:f=>{raf.set(++next,f);return next},cancelAnimationFrame:i=>raf.delete(i),console});
@@ -23,7 +23,10 @@ element('motion').checked=false;element('motion').fire('input');assert.equal(raf
 input('task','approval');assert.equal(raf.size,0);assert.match(element('status').textContent,/approval/);checked++;
 input('mode','geometry');assert.equal(element('rotate-controls').hidden,false);element('spin').checked=true;element('spin').fire('input');assert.equal(raf.size,1);frame();checked++;
 element('motion').checked=true;element('motion').fire('input');assert.equal(raf.size,0);checked++;
-element('reset').fire('click');assert.equal(element('mode').value,'reference');assert.equal(element('task').value,'none');assert.equal(element('interaction').value,'listening');assert.equal(element('rotate-controls').hidden,true);checked++;
+element('reset').fire('click');assert.equal(element('mode').value,'glass');assert.equal(element('task').value,'none');assert.equal(element('interaction').value,'listening');assert.equal(element('rotate-controls').hidden,false);checked++;
+assert.equal(vm.runInContext('glassImages.length',context),8);input('mode','glass');input('angle','0');const front=imagesDrawn.at(-1);input('angle','90');assert.notEqual(imagesDrawn.at(-1),front);input('angle','360');assert.equal(imagesDrawn.at(-1),front);assert.equal(element('rotate-controls').hidden,false);checked++;
+element('spin').checked=true;element('spin').fire('input');element('motion').checked=true;element('motion').fire('input');assert.equal(raf.size,0);checked++;
+element('motion').checked=false;element('motion').fire('input');assert.equal(raf.size,1);
 events.pagehide();assert.equal(raf.size,0);events.pageshow();assert.equal(raf.size,1);checked++;
 assert.ok(!/fetch\(|getUserMedia|localStorage|indexedDB|serviceWorker|https?:\/\//.test(scripts.join('\n')));assert.ok(html.includes("connect-src 'none'"));checked++;
 const result={success:true,synthetic_preview_checks:checked,real_browser:false,real_audio:false,network_calls:false};fs.writeFileSync(path.join(root,'tests/preview-validation.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

@@ -1,0 +1,15 @@
+{
+  "python_sources_parse": 4,
+  "source_sha256": {
+    "visual creativity/model/build_model.py": "476927ad413d493eaeb85e0951de1306a97967739c2258a110b0703922166f9d",
+    "visual creativity/model/create_scene.py": "5b576df3bfcbb02ad5a38db7e77880f0f9c85358e6650c610fdd53ebb877b614",
+    "visual creativity/build_preview.py": "2ede6d9330d9bc9ff4ae213bf78b74f6fc3711ca12db4c2c0b7c583ee8f057c8",
+    "visual creativity/tests/check_model.py": "2cc1775bbee2a1ad4b95c999eadcbf340dd6d16396d7e7209f0e3182c24843a3",
+    "visual creativity/model/body-spec.json": "5d0970fe354d0c6f3ec45423c05972a92b434222ff1c8aefac01c95833f9c6de",
+    "visual creativity/preview.template.html": "35715fb3b8fe744f5d5a38f44edff6a97da03cc02b90a25c89dc2cfe337a26f5",
+    "visual creativity/preview.html": "a5f690a60729f2692e5f40975ba62c62dc24595534887f7cc5d898b66534b928",
+    "visual creativity/tests/check_preview.js": "2fc8f539bf7455fc8074ef5b625de7d23f8dd7307aa12d67579e51cb90cde7f5"
+  },
+  "preview_bytes": 3858687,
+  "scoped_diff_check": "passed; Git emitted LF-to-CRLF notices for generated JSON evidence"
+}

@@ -1,0 +1,1 @@
+{"success":true,"frames_checked":1008,"fixed_body":true,"authority_granted":false,"real_browser":false}

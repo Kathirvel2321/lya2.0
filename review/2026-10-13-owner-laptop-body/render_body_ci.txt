@@ -1,0 +1,5 @@
+Rendered listening: 420x390
+Rendered thinking-coding: 420x390
+Rendered speaking: 420x390
+Rendered blocked: 420x390
+Rendered docked-standby: 420x390

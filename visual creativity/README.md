@@ -1,19 +1,19 @@
 # LYA visual creativity — prototype and native adapter
 
-2026-10-13. Prototype based on GitHub main 1d7b5c1c497b7b848ea70f5cac5c25aa9efffda7. The offline preview remains isolated. A native reference-artwork adapter is now implemented in the same draft branch; see **INTEGRATION.md** for live state mapping, checks and rollback. Not merged or deployed. Real Qt acceptance and finished 3D glass matching remain pending.
+2026-10-13. Prototype based on GitHub main 1d7b5c1c497b7b848ea70f5cac5c25aa9efffda7. The offline preview remains isolated. A native reference-artwork adapter is now implemented in the same draft branch; see **INTEGRATION.md** for live state mapping, checks and rollback. Not merged or deployed. Three native Qt widget checks passed on the owner laptop in the separate worktree; full app acceptance and exact 3D reference likeness remain pending.
 
 ## What is built
 
-- **preview.html:** offline interactive preview. Open directly in a browser; no web server, network or dependencies. The fixed body is a derived transparent PNG anchor; the refined surrounding effects are drawn separately. Select interaction/task, background and simulated voice level. Body appearance is unchanged across states.
+- **preview.html:** offline interactive preview. Open directly in a browser; no web server, network or dependencies. The default Rendered glass study displays eight Blender Cycles views of the actual model. The derived transparent PNG reference and diagnostic geometry view remain selectable; surrounding effects are drawn separately. Select interaction/task, background and simulated voice level. Body appearance is unchanged across states.
 - **effects.js + states.json:** deterministic effect geometry, palette, precedence and state rules. Voice/task colours are independently described. Selecting a task previews its signature at idle; select an interaction afterward to see combined behaviour. Attention states override activity; paused/offline/voice-off suppress task animation. Actual backend blocked requests retain amber approval treatment; errors use rose. This corrects the earlier combined blocked/error concept image's ambiguous rose proposal.
-- **model/lya-body-candidate.glb:** real editable 3D geometry, five closed outward-wound components, 280 triangles. Contains PBR transmission, volume, IOR and emissive materials. Candidate only: silhouette, side/back geometry, topology intersections, optical glass and glow are not artist-approved.
+- **model/lya-body-candidate.glb:** real editable 3D geometry, seven closed outward-wound components, 2,344 triangles. Contains PBR transmission, volume, IOR and emissive materials. Candidate only: silhouette, side/back geometry, topology intersections, optical glass and glow are not artist-approved.
 - **model/body-spec.json + build_model.py:** editable source geometry and deterministic GLB exporter using Python standard library. No state-driven body deformation.
-- **model/create_scene.py:** Blender 4+ authoring/render entry to create a .blend, fixed transparent front render or actual eight-angle turnaround from the same geometry. Syntax checked only; Blender is absent here, so no .blend or rendered 3D frames are claimed.
+- **model/create_scene.py:** Blender 4.5 authoring/render entry. Checksum-verified portable Blender produced the editable [glass study scene](model/rendered-glass/lya-glass-study.blend), [front render](model/rendered-glass/glass-front.png) and eight transparent turntable views. Materials use blue volume absorption, transmission and IOR, a darker sapphire spine, polished edges and an emissive core. The scene has studio lights and uses CPU Cycles; this is offline design rendering.
 - **assets:** original approved four-pose reference and a new transparent raster anchor derived from its top-right Listening pose. The anchor is an ImageGen derivative, not a pixel-exact extraction or a Blender render. Review its likeness before acceptance.
 
 ## Try it
 
-Open **preview.html**. It includes all data and artwork. The default Reference artwork mode gives the closest current visual target. Turn effects off to inspect the body. Geometry candidate mode provides actual 3D rotation of the candidate using simple software preview shading; it deliberately does not claim final physical glass/refraction.
+Open **preview.html**. It includes all data and artwork. Rendered glass study is the default. Turn effects off to inspect the body, drag Model rotation or enable Turntable. Eight baked angles are spaced 45 degrees apart; lighting and refraction do not recalculate with the page background. Reference artwork provides the approved visual comparison. Diagnostic geometry rotation retains simple software shading. Exact reference likeness is not yet approved. See [refinement evidence and limits](../review/2026-10-13-glass-refinement/README.md).
 
 Voice level is a slider simulation, not microphone input. The controls grant no identity, authority, actions, files, memory or access to the live LYA service. No automatic production installation/deployment.
 
@@ -21,6 +21,7 @@ Rebuild assets from this folder:
 
 ```sh
 python model/build_model.py
+blender --background --factory-startup --python model/create_scene.py -- --turnaround --transparent
 python build_preview.py
 node tests/check_effects.js
 node tests/check_preview.js

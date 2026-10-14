@@ -1,0 +1,26 @@
+{
+  "protected_worktree_files_unchanged": {
+    "desktop/app.py": true,
+    "desktop/experience.py": true,
+    "desktop/living_body.py": true,
+    "desktop/body_style.py": true,
+    "visual creativity/assets/approved-body-reference.png": true,
+    "visual creativity/assets/lya-body-anchor.png": true,
+    "visual creativity/states.json": true,
+    "visual creativity/effects.js": true
+  },
+  "source_comparison": "Git newline normalization for text; byte comparison for PNG assets",
+  "main_branch_unchanged": true,
+  "main_head_unchanged": true,
+  "main_index_unchanged": true,
+  "main_baseline_file_states_checked": 1530,
+  "main_concurrent_differences": [
+    "brain/memory_authority.py",
+    "brain/memory_custody.py",
+    "docs/README.md",
+    "lya-project-brain.md",
+    "review/2026-10-11-system-architecture/FINAL-ROADMAP.md",
+    "review/2026-10-13-memory-custody/README.md"
+  ],
+  "note": "This task wrote only to the separate worktree and its sibling portable-tool directory. Concurrent main changes are outside this task and were left intact; no attribution is assumed for the additional memory-work changes."
+}

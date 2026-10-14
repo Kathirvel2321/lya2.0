@@ -24,14 +24,18 @@ for view in doc['bufferViews']:assert view['byteOffset']%4==0 and view['byteOffs
 for accessor in doc['accessors']:
     view=doc['bufferViews'][accessor['bufferView']];assert view['byteLength']==accessor['count']*12
     assert accessor['componentType']==5126 and accessor['type']=='VEC3'
-assert len(doc['nodes'])==5 and len(doc['meshes'])==5 and 'animations' not in doc
+assert len(doc['nodes'])==len(objects)==7 and len(doc['meshes'])==7 and 'animations' not in doc
 for m in doc['materials'][:2]:
     assert m['alphaMode']=='OPAQUE' and m['pbrMetallicRoughness']['metallicFactor']==0
     assert m['extensions']['KHR_materials_transmission']['transmissionFactor']>0
 assert doc['extras']['no_shape_animation'] is True
+assert spec['material']['glass']['transmissionFactor']>=.9
+assert 1.4 <= spec['material']['glass']['ior'] <= 1.6
+assert spec['material']['glass']['roughnessFactor'] < .05
+assert sum(len(o['faces']) for o in objects)>2000
 # Rebuild determinism without writing over the reviewed artifact.
 import tempfile
 with tempfile.TemporaryDirectory() as d:
     rebuilt=Path(d)/'candidate.glb';write_glb(objects,spec,rebuilt);assert rebuilt.read_bytes()==raw
-result={'success':True,'closed_meshes':len(objects),'triangles':sum(len(o['faces']) for o in objects),'glb_bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'visual_match_approved':False,'blender_rendered':False}
+result={'success':True,'closed_meshes':len(objects),'triangles':sum(len(o['faces']) for o in objects),'glb_bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'visual_match_approved':False,'rendering_checked_by_this_test':False}
 (root/'tests/model-validation.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result))
