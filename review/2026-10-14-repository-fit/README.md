@@ -2,7 +2,7 @@
 
 Assessment date: 2026-10-14. Owner asked whether these repositories could help build LYA before the next implementation. This is a read-only upstream review and recommendation, not an integration or security certification.
 
-Follow-up: owner then explicitly requested skill installation. The [installation record](INSTALLATION.md) supersedes the earlier no-installation status for the skill only; executable package acquisition was blocked by automatic approval review and remains pending approval.
+Follow-up: owner requested skill installation and then asked to implement the connection. The [installation record](INSTALLATION.md) records the pinned skill, Codex MCP setup and readiness result.
 
 ## Recommendation
 

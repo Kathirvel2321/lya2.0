@@ -1,0 +1,34 @@
+{
+  "evidence_type": "owner_supplied_WSL_terminal_output",
+  "assistant_reran_WSL": false,
+  "reported_tests_run": 15,
+  "passed_cases": 15,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "all_current_test_ids_present": true,
+  "counts_by_module": {
+    "test_memory_witness_process": 7,
+    "test_memory_witness_tls": 8
+  },
+  "linux_source_hashes_measured": false,
+  "private_runtime_details_retained": false,
+  "production_acceptance_claimed": false,
+  "test_results": {
+    "test_memory_witness_process.AuthorityProcessChecks.test_tls_witness_death_during_finish_reconciles_committed_source_without_lost_grants": "ok",
+    "test_memory_witness_process.WitnessProcessChecks.test_body_rejection_and_repeated_observations_keep_durable_state_bounded": "ok",
+    "test_memory_witness_process.WitnessProcessChecks.test_external_kill_at_synchronized_transaction_boundaries": "ok",
+    "test_memory_witness_process.WitnessProcessChecks.test_external_termination_preserves_pending_reservation_and_releases_listener": "ok",
+    "test_memory_witness_process.WitnessProcessChecks.test_graceful_process_stop_during_silent_handshake_or_incomplete_body": "ok",
+    "test_memory_witness_process.WitnessProcessChecks.test_missing_corrupt_or_wrong_key_trust_refuses_startup_without_recreation": "ok",
+    "test_memory_witness_process.WitnessProcessChecks.test_process_exit_before_and_after_prepare_finish_and_retirement_commits": "ok",
+    "test_memory_witness_tls.AuthorityTLSChecks.test_committed_reply_loss_reconciles_after_tls_restart_and_retirement": "ok",
+    "test_memory_witness_tls.AuthorityTLSChecks.test_tls_trust_failure_blocks_before_local_intent_and_does_not_change_state": "ok",
+    "test_memory_witness_tls.WitnessTLSChecks.test_fixture_pins_minimum_when_platform_default_is_unspecified": "ok",
+    "test_memory_witness_tls.WitnessTLSChecks.test_invalid_roles_disabled_verification_and_mutated_context_are_refused": "ok",
+    "test_memory_witness_tls.WitnessTLSChecks.test_plaintext_and_silent_handshake_are_rejected_and_socket_closes": "ok",
+    "test_memory_witness_tls.WitnessTLSChecks.test_tls_prepare_finish_retry_retirement_survive_service_restart": "ok",
+    "test_memory_witness_tls.WitnessTLSChecks.test_tls_still_requires_protocol_authentication_and_service_recovers": "ok",
+    "test_memory_witness_tls.WitnessTLSChecks.test_untrusted_expired_and_wrong_address_certificates_never_reach_protocol_or_fallback": "ok"
+  }
+}

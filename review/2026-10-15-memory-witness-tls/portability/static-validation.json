@@ -1,0 +1,21 @@
+{
+  "unchanged_since_initial_71_case_windows_run": {
+    "brain/memory_witness_service.py": true,
+    "brain/memory_network_authority.py": true,
+    "test_memory_receipt_retirement.py": true,
+    "test_memory_witness_capacity.py": true,
+    "test_memory_witness_service.py": true,
+    "test_memory_network_authority.py": true,
+    "review/2026-10-15-memory-witness-tls/check.py": true
+  },
+  "current_tls_result_matches_source": true,
+  "python_parse_passed": true,
+  "local_links_checked": 198,
+  "missing_links": [],
+  "git_diff_check_passed": true,
+  "temporary_fixture_directories": [],
+  "linux_fix_verified": false,
+  "emulated_default": "ssl.TLSVersion.MINIMUM_SUPPORTED",
+  "tls_cases_passed": 8,
+  "passed": true
+}

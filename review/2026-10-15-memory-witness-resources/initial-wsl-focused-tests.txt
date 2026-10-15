@@ -1,0 +1,10 @@
+test_explicit_opt_in_and_supported_platform_are_required_before_limits_change (test_memory_witness_resources.BudgetContractChecks.test_explicit_opt_in_and_supported_platform_are_required_before_limits_change) ... ok
+test_address_space_and_descriptor_exhaustion_are_rejected_by_kernel_limits (test_memory_witness_resources.LinuxWitnessResourceChecks.test_address_space_and_descriptor_exhaustion_are_rejected_by_kernel_limits) ... ok
+test_cpu_ceiling_terminates_only_owned_worker_and_restart_rolls_back_pending_changes (test_memory_witness_resources.LinuxWitnessResourceChecks.test_cpu_ceiling_terminates_only_owned_worker_and_restart_rolls_back_pending_changes) ... ok
+test_memory_and_file_limit_failures_roll_back_a_signed_prepare (test_memory_witness_resources.LinuxWitnessResourceChecks.test_memory_and_file_limit_failures_roll_back_a_signed_prepare) ... ok
+test_profile_is_applied_and_normal_tls_operations_work_under_it (test_memory_witness_resources.LinuxWitnessResourceChecks.test_profile_is_applied_and_normal_tls_operations_work_under_it) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 13.682s
+
+OK

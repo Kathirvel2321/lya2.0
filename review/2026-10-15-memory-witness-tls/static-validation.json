@@ -1,0 +1,28 @@
+{
+  "python_files_parsed": [
+    "brain/memory_witness_service.py",
+    "test_memory_witness_tls.py",
+    "review/2026-10-15-memory-witness-tls/check.py"
+  ],
+  "local_links_checked": 186,
+  "missing_local_links": [],
+  "git_diff_check_passed": true,
+  "new_python_trailing_whitespace": [],
+  "selected_application_sources_match_head": true,
+  "selected_application_sources": [
+    "desktop/experience.py",
+    "audio/voice.py",
+    "audio/nvidia_asr.py",
+    "brain/workflow.py",
+    "cloud/mobile.py",
+    "cloud/mobile.html",
+    "storage/store.py"
+  ],
+  "unchanged_since_retirement_qualification": {
+    "brain/memory_network_authority.py": true,
+    "test_memory_receipt_retirement.py": true
+  },
+  "combined_result_matches_current_source": true,
+  "fixture_directories_remaining": [],
+  "passed": true
+}

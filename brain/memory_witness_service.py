@@ -2,11 +2,13 @@
 from dataclasses import asdict
 import hashlib
 import hmac
-from http.client import HTTPConnection
+from http.client import HTTPConnection,HTTPSConnection,HTTPException
 from http.server import BaseHTTPRequestHandler,HTTPServer
+import io
 import json
 import secrets
 import sqlite3
+import ssl
 import time
 
 from brain.memory_custody import SyntheticWitness
@@ -14,6 +16,8 @@ from brain.memory_prototype import Conflict,_id,_json
 from brain.memory_recovery import _integer,_unique
 
 MAX_BODY = 8192
+MAX_HEADERS = 8192
+REQUEST_SECONDS = 2
 MAX_RECEIPTS = 1024
 MAX_NONCES = 2048
 MAX_DATABASE_BYTES = 4 * 1024 * 1024
@@ -253,9 +257,47 @@ class SyntheticWitnessEndpoint:
         return status,_json(_sign(reply,self._key,REPLY_DOMAIN)).encode()
 
 
+class _DeadlineSocketIO(io.RawIOBase):
+    def __init__(self,connection,deadline):
+        super().__init__();self.connection,self.deadline = connection,deadline
+
+    def readable(self):return True
+
+    def writable(self):return True
+
+    def _timeout(self):
+        remaining = self.deadline-time.monotonic()
+        if remaining<=0:raise TimeoutError('Witness request I/O deadline exceeded.')
+        self.connection.settimeout(remaining)
+
+    def readinto(self,buffer):
+        self._timeout();return self.connection.recv_into(buffer)
+
+    def write(self,data):
+        self._timeout();self.connection.sendall(data);return len(data)
+
+
+class _HeaderReader(io.BufferedReader):
+    def __init__(self,raw):
+        super().__init__(raw);self.header_bytes = 0
+
+    def readline(self,size=-1):
+        limit = MAX_HEADERS-self.header_bytes+1
+        line = super().readline(limit if size<0 else min(size,limit))
+        self.header_bytes+=len(line)
+        if self.header_bytes>MAX_HEADERS:raise HTTPException('Request header budget exceeded.')
+        return line
+
+
 class WitnessHandler(BaseHTTPRequestHandler):
     def setup(self):
-        super().setup();self.connection.settimeout(2)
+        super().setup();self.rfile.close();self.wfile.close()
+        self.rfile = _HeaderReader(_DeadlineSocketIO(self.connection,self.server.request_deadline))
+        self.wfile = _DeadlineSocketIO(self.connection,self.server.request_deadline)
+
+    def handle(self):
+        try:super().handle()
+        except (OSError,HTTPException):self.close_connection = True
 
     def log_message(self,*args):pass
 
@@ -283,18 +325,48 @@ class WitnessHandler(BaseHTTPRequestHandler):
         except (OSError,TimeoutError):self.close_connection = True
 
 
-def loopback_server(endpoint,*,synthetic_only=False):
+def _tls_context(context,*,server=False):
+    protocol = ssl.PROTOCOL_TLS_SERVER if server else ssl.PROTOCOL_TLS_CLIENT
+    if (not isinstance(context,ssl.SSLContext) or context.protocol!=protocol
+            or context.minimum_version<ssl.TLSVersion.TLSv1_2):
+        raise ValueError('Role-specific TLS context with TLS 1.2 minimum required.')
+    if not server and (not context.check_hostname or context.verify_mode!=ssl.CERT_REQUIRED):
+        raise ValueError('TLS certificate and hostname verification required.')
+    return context
+
+
+class _LoopbackServer(HTTPServer):
+    request_queue_size = 2
+
+    def get_request(self):
+        connection,address = super().get_request()
+        self.request_deadline = time.monotonic()+REQUEST_SECONDS
+        try:
+            connection.settimeout(REQUEST_SECONDS)
+            if self.ssl_context is not None:
+                connection = _tls_context(self.ssl_context,server=True).wrap_socket(connection,server_side=True)
+            return connection,address
+        except (OSError,ValueError) as error:
+            connection.close()
+            raise OSError('TLS connection rejected.') from error
+
+
+def loopback_server(endpoint,*,synthetic_only=False,ssl_context=None):
     if synthetic_only is not True or type(endpoint) is not SyntheticWitnessEndpoint:
         raise PermissionError('Explicit fake-data loopback server required.')
-    # shortcut: bounded single-request lab server; qualify TLS, admission and service lifecycle before remote use.
-    server = HTTPServer(('127.0.0.1',0),WitnessHandler);server.endpoint = endpoint
+    if ssl_context is not None:_tls_context(ssl_context,server=True)
+    # shortcut: serial loopback lab; qualify aggregate load, OS budgets and independent placement before remote use.
+    server = _LoopbackServer(('127.0.0.1',0),WitnessHandler)
+    server.endpoint,server.ssl_context = endpoint,ssl_context
     return server
 
 
 class SyntheticWitnessClient:
-    def __init__(self,port,*,service,client,lineage,key,synthetic_only=False,clock=time.time):
+    def __init__(self,port,*,service,client,lineage,key,synthetic_only=False,clock=time.time,ssl_context=None):
         if synthetic_only is not True:raise PermissionError('Explicit fake-data client opt-in required.')
         if type(port) is not int or not 1<=port<=65535:raise ValueError('Loopback port required.')
+        if ssl_context is not None:_tls_context(ssl_context)
+        self.ssl_context = ssl_context
         self.port,self.service,self.client,self.lineage = port,_id(service),_id(client),_id(lineage)
         self._key,self.clock = _key(key),clock
 
@@ -329,7 +401,8 @@ class SyntheticWitnessClient:
     def request(self,operation,*,request_id=None):
         raw = _json(self._packet(operation,request_id if request_id is not None else secrets.token_hex(16))).encode()
         if len(raw)>MAX_BODY:raise ValueError('Protocol body too large.')
-        connection = HTTPConnection('127.0.0.1',self.port,timeout=2)
+        connection = (HTTPConnection('127.0.0.1',self.port,timeout=2) if self.ssl_context is None else
+            HTTPSConnection('127.0.0.1',self.port,timeout=2,context=_tls_context(self.ssl_context)))
         try:
             connection.request('POST','/witness',body=raw,headers={'Content-Type':'application/json'})
             reply = connection.getresponse()

@@ -1,0 +1,20 @@
+{
+  "prior_18_selected_sources_preserved": true,
+  "windows_and_linux_results_match_reviewed_19_sources": true,
+  "runner_digest_matches_results": true,
+  "all_93_expected_linux_case_ids_present": true,
+  "all_20_windows_ids_in_linux_selection": true,
+  "python_files_parsed": [
+    "test_memory_witness_cgroup.py",
+    "review/2026-10-15-memory-witness-cgroup/check.py"
+  ],
+  "local_links_checked": 275,
+  "missing_links": [],
+  "trailing_whitespace": [],
+  "git_diff_check_passed": true,
+  "selected_accepted_sources_match_head": true,
+  "remaining_synthetic_units": 0,
+  "remaining_lab_fixture_directories": 0,
+  "remaining_windows_fixture_directories": [],
+  "passed": true
+}

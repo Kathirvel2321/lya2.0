@@ -1,0 +1,24 @@
+{
+  "tests_run": 4,
+  "failures": 6,
+  "errors": 0,
+  "skipped": 0,
+  "passed": false,
+  "fake_data_only": true,
+  "loopback_only": true,
+  "production_paths_connected": false,
+  "production_keys_created": false,
+  "openssl": "OpenSSL 3.5.8 25 Aug 2026",
+  "source_sha256": {
+    "brain/memory_witness_service.py": "3860ab3e9c481a4c4be8eec713a02ec7e6141408ba428ff97b27825ebc24abcc",
+    "brain/memory_network_authority.py": "2c5a3b0c83c82346dae6d04904ac5b3ea220e4065a6bba37b8ef2138f89de6ad",
+    "test_memory_witness_admission.py": "c8f74178eb791f5b57f9306881d6a856731c422c4826f4852bfcd6aa27aa5842",
+    "test_memory_witness_process.py": "7a5c8b3da59b0755952d48a853a0729d624d26027336ef4e9cac176fb41599d0",
+    "test_memory_witness_tls.py": "7326d0828cd720c5610842188d4d6a963db0db189199e21d8e2bb6115e2f08f1",
+    "test_memory_receipt_retirement.py": "9f1d26bbc80beb095bb5da4ee432d743060fbff2225ba5a971cd1521dffe9c1a",
+    "test_memory_witness_capacity.py": "cf34d6b396c6de2f48492ab5d16ba66e531889db07bc639e5752eb704b58b146",
+    "test_memory_witness_service.py": "3bd964594741d6c81c2653ecf63d699763d59416d8c3e8b6af6e6f5b2aa51972",
+    "test_memory_network_authority.py": "ffd713027687751791070cecdaca9bc2d790272bcd2f632c57a698d8891eb173",
+    "review/2026-10-15-memory-witness-admission/check.py": "5e7e165f3da934782353df8e97124bedb3378c7e6b650bd27fc8141c0055b217"
+  }
+}

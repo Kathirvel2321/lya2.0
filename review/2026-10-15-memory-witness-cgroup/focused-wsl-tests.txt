@@ -1,0 +1,10 @@
+test_cpu_rate_throttles_work_without_a_lifetime_cpu_kill (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_cpu_rate_throttles_work_without_a_lifetime_cpu_kill) ... ok
+test_memory_cgroup_kill_rolls_back_prepare_and_restart_retries (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_memory_cgroup_kill_rolls_back_prepare_and_restart_retries) ... ok
+test_profile_and_repeated_tls_transactions_remain_bounded (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_profile_and_repeated_tls_transactions_remain_bounded) ... ok
+test_repeated_stalled_connections_release_service_for_healthy_requests (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_repeated_stalled_connections_release_service_for_healthy_requests) ... ok
+test_task_limit_rejects_excess_threads_and_service_recovers (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_task_limit_rejects_excess_threads_and_service_recovers) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 21.807s
+
+OK

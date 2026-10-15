@@ -1,0 +1,36 @@
+{
+  "prior_sources_preserved_except_explicit_test_worker_hook": {
+    "brain/conversation.py": true,
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "brain/memory_authority.py": true,
+    "brain/memory_custody.py": true,
+    "brain/memory_witness_service.py": true,
+    "brain/memory_network_authority.py": true,
+    "test_memory_witness_tls.py": true,
+    "test_memory_witness_service.py": true,
+    "test_memory_network_authority.py": true,
+    "test_qualification.py": true,
+    "test_memory_receipt_retirement.py": true,
+    "test_memory_witness_capacity.py": true,
+    "test_memory_witness_admission.py": true
+  },
+  "windows_result_matches_source": true,
+  "linux_result_matches_source": true,
+  "all_88_expected_linux_case_ids_present": true,
+  "post_run_linux_sources_match": true,
+  "python_files_parsed": [
+    "brain/memory_witness_budget.py",
+    "test_memory_witness_resources.py",
+    "test_memory_witness_process.py",
+    "review/2026-10-15-memory-witness-resources/check.py"
+  ],
+  "trailing_whitespace": [],
+  "local_links_checked": 261,
+  "missing_links": [],
+  "git_diff_check_passed": true,
+  "selected_accepted_sources_match_head": true,
+  "fixture_directories_remaining": [],
+  "passed": true
+}

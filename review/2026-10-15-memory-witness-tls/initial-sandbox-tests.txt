@@ -1,0 +1,136 @@
+test_committed_reply_loss_reconciles_after_tls_restart_and_retirement (test_memory_witness_tls.AuthorityTLSChecks.test_committed_reply_loss_reconciles_after_tls_restart_and_retirement) ... ERROR
+test_tls_trust_failure_blocks_before_local_intent_and_does_not_change_state (test_memory_witness_tls.AuthorityTLSChecks.test_tls_trust_failure_blocks_before_local_intent_and_does_not_change_state) ... ERROR
+test_invalid_roles_disabled_verification_and_mutated_context_are_refused (test_memory_witness_tls.WitnessTLSChecks.test_invalid_roles_disabled_verification_and_mutated_context_are_refused) ... ERROR
+test_plaintext_and_silent_handshake_are_rejected_and_socket_closes (test_memory_witness_tls.WitnessTLSChecks.test_plaintext_and_silent_handshake_are_rejected_and_socket_closes) ... ERROR
+test_tls_prepare_finish_retry_retirement_survive_service_restart (test_memory_witness_tls.WitnessTLSChecks.test_tls_prepare_finish_retry_retirement_survive_service_restart) ... ERROR
+test_tls_still_requires_protocol_authentication_and_service_recovers (test_memory_witness_tls.WitnessTLSChecks.test_tls_still_requires_protocol_authentication_and_service_recovers) ... ERROR
+test_untrusted_expired_and_wrong_address_certificates_never_reach_protocol_or_fallback (test_memory_witness_tls.WitnessTLSChecks.test_untrusted_expired_and_wrong_address_certificates_never_reach_protocol_or_fallback) ... ERROR
+
+======================================================================
+ERROR: test_committed_reply_loss_reconciles_after_tls_restart_and_retirement (test_memory_witness_tls.AuthorityTLSChecks.test_committed_reply_loss_reconciles_after_tls_restart_and_retirement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_tls.py", line 145, in setUp
+    self.addCleanup(self.f.doCleanups);self.f.setUp();self.f.endpoint.enable_retirement(approved=True)
+                                       ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmpjbhr2yt1\\authority\\objects\\ed8e0a720c544e279c6a995d222b2855\\.lya-fake-recovery-eo75ud20\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmpjbhr2yt1\\authority\\objects\\ed8e0a720c544e279c6a995d222b2855\\live.sqlite'
+
+======================================================================
+ERROR: test_tls_trust_failure_blocks_before_local_intent_and_does_not_change_state (test_memory_witness_tls.AuthorityTLSChecks.test_tls_trust_failure_blocks_before_local_intent_and_does_not_change_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_tls.py", line 145, in setUp
+    self.addCleanup(self.f.doCleanups);self.f.setUp();self.f.endpoint.enable_retirement(approved=True)
+                                       ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_network_authority.py", line 33, in setUp
+    self.f.authority();self.bare = self.f.a;self.path = self.bare._repository.path
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmplzs9tq61\\authority\\objects\\91c3fe7ed1a34a9592319fd2b9d8a053\\.lya-fake-recovery-l4swj1h8\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmplzs9tq61\\authority\\objects\\91c3fe7ed1a34a9592319fd2b9d8a053\\live.sqlite'
+
+======================================================================
+ERROR: test_invalid_roles_disabled_verification_and_mutated_context_are_refused (test_memory_witness_tls.WitnessTLSChecks.test_invalid_roles_disabled_verification_and_mutated_context_are_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_tls.py", line 67, in setUp
+    self.addCleanup(self.f.doCleanups);self.f.setUp()
+                                       ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_service.py", line 31, in setUp
+    self.w = SyntheticWitness.create(self.home/'witness.sqlite',synthetic_only=True,approved=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_custody.py", line 123, in create
+    _publish(path,write,cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmpwwjxs772\\.lya-fake-recovery-5sru2rjy\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmpwwjxs772\\witness.sqlite'
+
+======================================================================
+ERROR: test_plaintext_and_silent_handshake_are_rejected_and_socket_closes (test_memory_witness_tls.WitnessTLSChecks.test_plaintext_and_silent_handshake_are_rejected_and_socket_closes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_tls.py", line 67, in setUp
+    self.addCleanup(self.f.doCleanups);self.f.setUp()
+                                       ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_service.py", line 31, in setUp
+    self.w = SyntheticWitness.create(self.home/'witness.sqlite',synthetic_only=True,approved=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_custody.py", line 123, in create
+    _publish(path,write,cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmpgc8l41qo\\.lya-fake-recovery-13xewszw\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmpgc8l41qo\\witness.sqlite'
+
+======================================================================
+ERROR: test_tls_prepare_finish_retry_retirement_survive_service_restart (test_memory_witness_tls.WitnessTLSChecks.test_tls_prepare_finish_retry_retirement_survive_service_restart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_tls.py", line 67, in setUp
+    self.addCleanup(self.f.doCleanups);self.f.setUp()
+                                       ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_service.py", line 31, in setUp
+    self.w = SyntheticWitness.create(self.home/'witness.sqlite',synthetic_only=True,approved=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_custody.py", line 123, in create
+    _publish(path,write,cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmp3o04amcx\\.lya-fake-recovery-66bdt_zg\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmp3o04amcx\\witness.sqlite'
+
+======================================================================
+ERROR: test_tls_still_requires_protocol_authentication_and_service_recovers (test_memory_witness_tls.WitnessTLSChecks.test_tls_still_requires_protocol_authentication_and_service_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_tls.py", line 67, in setUp
+    self.addCleanup(self.f.doCleanups);self.f.setUp()
+                                       ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_service.py", line 31, in setUp
+    self.w = SyntheticWitness.create(self.home/'witness.sqlite',synthetic_only=True,approved=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_custody.py", line 123, in create
+    _publish(path,write,cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmp6x4wz953\\.lya-fake-recovery-0f254k41\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmp6x4wz953\\witness.sqlite'
+
+======================================================================
+ERROR: test_untrusted_expired_and_wrong_address_certificates_never_reach_protocol_or_fallback (test_memory_witness_tls.WitnessTLSChecks.test_untrusted_expired_and_wrong_address_certificates_never_reach_protocol_or_fallback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_tls.py", line 67, in setUp
+    self.addCleanup(self.f.doCleanups);self.f.setUp()
+                                       ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_service.py", line 31, in setUp
+    self.w = SyntheticWitness.create(self.home/'witness.sqlite',synthetic_only=True,approved=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_custody.py", line 123, in create
+    _publish(path,write,cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmp3guzv999\\.lya-fake-recovery-a2k9zy_7\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-15-memory-witness-tls\\.fixtures-1sys7vof\\tmp3guzv999\\witness.sqlite'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.389s
+
+FAILED (errors=7)

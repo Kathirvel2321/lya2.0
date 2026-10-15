@@ -1,0 +1,115 @@
+test_cpu_rate_throttles_work_without_a_lifetime_cpu_kill (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_cpu_rate_throttles_work_without_a_lifetime_cpu_kill) ... ERROR
+test_memory_cgroup_kill_rolls_back_prepare_and_restart_retries (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_memory_cgroup_kill_rolls_back_prepare_and_restart_retries) ... ERROR
+test_profile_and_repeated_tls_transactions_remain_bounded (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_profile_and_repeated_tls_transactions_remain_bounded) ... ERROR
+test_repeated_stalled_connections_release_service_for_healthy_requests (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_repeated_stalled_connections_release_service_for_healthy_requests) ... ERROR
+test_task_limit_rejects_excess_threads_and_service_recovers (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_task_limit_rejects_excess_threads_and_service_recovers) ... ERROR
+
+======================================================================
+ERROR: test_cpu_rate_throttles_work_without_a_lifetime_cpu_kill (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_cpu_rate_throttles_work_without_a_lifetime_cpu_kill)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 136, in test_cpu_rate_throttles_work_without_a_lifetime_cpu_kill
+    with managed_worker(self.values(f,probe='cpu')) as (child,client,signals,_,group):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 87, in managed_worker
+    with process.process_server(values) as (child,client,signals):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_process.py", line 79, in process_server
+    port=int(signals.get(timeout=15))
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/queue.py", line 179, in get
+    raise Empty
+_queue.Empty
+
+======================================================================
+ERROR: test_memory_cgroup_kill_rolls_back_prepare_and_restart_retries (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_memory_cgroup_kill_rolls_back_prepare_and_restart_retries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 173, in test_memory_cgroup_kill_rolls_back_prepare_and_restart_retries
+    with managed_worker(self.values(f,probe='oom')) as (child,client,_,unit,group):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 87, in managed_worker
+    with process.process_server(values) as (child,client,signals):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_process.py", line 79, in process_server
+    port=int(signals.get(timeout=15))
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/queue.py", line 179, in get
+    raise Empty
+_queue.Empty
+
+======================================================================
+ERROR: test_profile_and_repeated_tls_transactions_remain_bounded (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_profile_and_repeated_tls_transactions_remain_bounded)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 113, in test_profile_and_repeated_tls_transactions_remain_bounded
+    with managed_worker(self.values(f,probe='descendant')) as (_,client,_,_,group):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 87, in managed_worker
+    with process.process_server(values) as (child,client,signals):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_process.py", line 79, in process_server
+    port=int(signals.get(timeout=15))
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/queue.py", line 179, in get
+    raise Empty
+_queue.Empty
+
+======================================================================
+ERROR: test_repeated_stalled_connections_release_service_for_healthy_requests (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_repeated_stalled_connections_release_service_for_healthy_requests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 157, in test_repeated_stalled_connections_release_service_for_healthy_requests
+    with managed_worker(self.values(f)) as (_,client,_,_,group):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 87, in managed_worker
+    with process.process_server(values) as (child,client,signals):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_process.py", line 79, in process_server
+    port=int(signals.get(timeout=15))
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/queue.py", line 179, in get
+    raise Empty
+_queue.Empty
+
+======================================================================
+ERROR: test_task_limit_rejects_excess_threads_and_service_recovers (test_memory_witness_cgroup.LinuxWitnessCgroupChecks.test_task_limit_rejects_excess_threads_and_service_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 147, in test_task_limit_rejects_excess_threads_and_service_recovers
+    with managed_worker(self.values(f,probe='tasks')) as (_,client,_,_,group):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_cgroup.py", line 87, in managed_worker
+    with process.process_server(values) as (child,client,signals):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/kathirvel/lya-lab/test_memory_witness_process.py", line 79, in process_server
+    port=int(signals.get(timeout=15))
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/queue.py", line 179, in get
+    raise Empty
+_queue.Empty
+
+----------------------------------------------------------------------
+Ran 5 tests in 75.645s
+
+FAILED (errors=5)

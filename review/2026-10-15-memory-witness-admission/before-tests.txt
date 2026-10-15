@@ -1,0 +1,63 @@
+test_aggregate_headers_are_rejected_before_protocol_access (test_memory_witness_admission.WitnessAdmissionChecks.test_aggregate_headers_are_rejected_before_protocol_access) ... FAIL
+test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) ... 
+  test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) (secure=False, stage='headers') ... FAIL
+  test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) (secure=False, stage='body') ... FAIL
+  test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) (secure=True, stage='headers') ... FAIL
+  test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) (secure=True, stage='body') ... FAIL
+test_exact_header_budget_accepts_authenticated_body_without_counting_body_as_headers (test_memory_witness_admission.WitnessAdmissionChecks.test_exact_header_budget_accepts_authenticated_body_without_counting_body_as_headers) ... ok
+test_expired_delivery_withholds_reply_but_preserves_exact_commit_retry (test_memory_witness_admission.WitnessAdmissionChecks.test_expired_delivery_withholds_reply_but_preserves_exact_commit_retry) ... FAIL
+
+======================================================================
+FAIL: test_aggregate_headers_are_rejected_before_protocol_access (test_memory_witness_admission.WitnessAdmissionChecks.test_aggregate_headers_are_rejected_before_protocol_access)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_admission.py", line 58, in test_aggregate_headers_are_rejected_before_protocol_access
+    try:self.assertIn(connection.getresponse().status,(400,414,431))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 401 not found in (400, 414, 431)
+
+======================================================================
+FAIL: test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) (secure=False, stage='headers')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_admission.py", line 48, in test_continuous_header_and_body_drips_cannot_extend_the_io_deadline
+    self.assertTrue(closed,'Continuous input kept the connection open beyond its I/O budget.')
+AssertionError: False is not true : Continuous input kept the connection open beyond its I/O budget.
+
+======================================================================
+FAIL: test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) (secure=False, stage='body')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_admission.py", line 48, in test_continuous_header_and_body_drips_cannot_extend_the_io_deadline
+    self.assertTrue(closed,'Continuous input kept the connection open beyond its I/O budget.')
+AssertionError: False is not true : Continuous input kept the connection open beyond its I/O budget.
+
+======================================================================
+FAIL: test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) (secure=True, stage='headers')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_admission.py", line 48, in test_continuous_header_and_body_drips_cannot_extend_the_io_deadline
+    self.assertTrue(closed,'Continuous input kept the connection open beyond its I/O budget.')
+AssertionError: False is not true : Continuous input kept the connection open beyond its I/O budget.
+
+======================================================================
+FAIL: test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) (secure=True, stage='body')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_admission.py", line 48, in test_continuous_header_and_body_drips_cannot_extend_the_io_deadline
+    self.assertTrue(closed,'Continuous input kept the connection open beyond its I/O budget.')
+AssertionError: False is not true : Continuous input kept the connection open beyond its I/O budget.
+
+======================================================================
+FAIL: test_expired_delivery_withholds_reply_but_preserves_exact_commit_retry (test_memory_witness_admission.WitnessAdmissionChecks.test_expired_delivery_withholds_reply_but_preserves_exact_commit_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_admission.py", line 83, in test_expired_delivery_withholds_reply_but_preserves_exact_commit_retry
+    with self.assertRaises(OSError):client.prepare(f.initial,f.digest,request_id='1'*32)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 16.741s
+
+FAILED (failures=6)

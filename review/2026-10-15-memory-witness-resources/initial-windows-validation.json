@@ -1,0 +1,19 @@
+{
+  "tests_run": 16,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "fake_data_only": true,
+  "loopback_only": true,
+  "linux_resource_enforcement_tested": false,
+  "production_paths_connected": false,
+  "source_sha256": {
+    "brain/memory_witness_budget.py": "46c543ffb421580086026aecb2c884cafafe22a749992c76201b51880ae7a11e",
+    "brain/memory_witness_service.py": "fd77eb0f672efef47ef5b71f94fa3c80ef325a82cbb1eac9fce272a7f720bf6a",
+    "test_memory_witness_resources.py": "217ca0149c3e3b9bd442d3f38a03dd59bf013f96a753b632c893ec9ffb095bb9",
+    "test_memory_witness_process.py": "e4126722ffb6fc4679f3282d6ce14a5fc063b52e71bab25a74516921cbff525e",
+    "test_memory_witness_tls.py": "7326d0828cd720c5610842188d4d6a963db0db189199e21d8e2bb6115e2f08f1",
+    "review/2026-10-15-memory-witness-resources/check.py": "fe454ec6b413eedd34b6a06171a2a2b7eddc76e50fdc0e0bd468d8f5bbd75414"
+  }
+}

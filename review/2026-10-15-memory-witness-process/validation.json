@@ -1,0 +1,22 @@
+{
+  "tests_run": 15,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "fake_data_only": true,
+  "loopback_only": true,
+  "tls_server_separate_process": true,
+  "production_paths_connected": false,
+  "witness_independently_hosted": false,
+  "production_keys_created": false,
+  "openssl": "OpenSSL 3.5.8 25 Aug 2026",
+  "source_sha256": {
+    "brain/memory_witness_service.py": "3860ab3e9c481a4c4be8eec713a02ec7e6141408ba428ff97b27825ebc24abcc",
+    "brain/memory_network_authority.py": "2c5a3b0c83c82346dae6d04904ac5b3ea220e4065a6bba37b8ef2138f89de6ad",
+    "brain/memory_custody.py": "683434589c80e4157b0e0d5936b154940243c3e42f00105c5a0222b2fb8f88f5",
+    "test_memory_witness_process.py": "7a5c8b3da59b0755952d48a853a0729d624d26027336ef4e9cac176fb41599d0",
+    "test_memory_witness_tls.py": "7326d0828cd720c5610842188d4d6a963db0db189199e21d8e2bb6115e2f08f1",
+    "review/2026-10-15-memory-witness-process/check.py": "d2383efda755a4db0e158bb1163949513467018100ff8cc8d9b17f167a439836"
+  }
+}

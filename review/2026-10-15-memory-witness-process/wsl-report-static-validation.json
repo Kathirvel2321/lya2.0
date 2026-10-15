@@ -1,0 +1,16 @@
+{
+  "evidence_only_update": true,
+  "source_hashes_match_windows_qualification": {
+    "brain/memory_witness_service.py": true,
+    "brain/memory_network_authority.py": true,
+    "brain/memory_custody.py": true,
+    "test_memory_witness_process.py": true,
+    "test_memory_witness_tls.py": true,
+    "review/2026-10-15-memory-witness-process/check.py": true
+  },
+  "local_links_checked": 208,
+  "missing_links": [],
+  "git_diff_check_passed": true,
+  "assistant_reran_WSL": false,
+  "passed": true
+}

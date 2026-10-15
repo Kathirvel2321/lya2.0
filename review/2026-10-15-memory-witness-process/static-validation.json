@@ -1,0 +1,35 @@
+{
+  "prior_qualified_sources_unchanged": {
+    "brain/memory_witness_service.py": true,
+    "brain/memory_network_authority.py": true,
+    "test_memory_witness_tls.py": true,
+    "test_memory_receipt_retirement.py": true,
+    "test_memory_witness_capacity.py": true,
+    "test_memory_witness_service.py": true,
+    "test_memory_network_authority.py": true,
+    "review/2026-10-15-memory-witness-tls/check.py": true
+  },
+  "current_result_matches_source": true,
+  "python_files_parsed": [
+    "test_memory_witness_process.py",
+    "review/2026-10-15-memory-witness-process/check.py"
+  ],
+  "trailing_whitespace": [],
+  "local_links_checked": 221,
+  "missing_links": [],
+  "git_diff_check_passed": true,
+  "selected_accepted_sources_match_head": true,
+  "selected_accepted_sources": [
+    "desktop/experience.py",
+    "audio/voice.py",
+    "audio/nvidia_asr.py",
+    "brain/workflow.py",
+    "cloud/mobile.py",
+    "cloud/mobile.html",
+    "storage/store.py",
+    "brain/memory_custody.py"
+  ],
+  "fixture_directories_remaining": [],
+  "current_slice_linux_qualified": false,
+  "passed": true
+}

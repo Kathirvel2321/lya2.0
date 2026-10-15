@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-15",
+  "rea_package": "rea-agents@6.5.0",
+  "codex_doctor_exit_code": 0,
+  "doctor_healthy": true,
+  "doctor_environment_healthy": false,
+  "codex_registration": "aligned",
+  "unconfigured_optional_providers": [
+    "ghidra",
+    "ida",
+    "jadx"
+  ],
+  "doctor_bundled_skill_state": "missing",
+  "skill_installed_in_codex_skills_and_present_in_active_catalog": true,
+  "mcp_tools_visible_in_current_chat": 207,
+  "config_is_valid_toml": true,
+  "setup_created_original_config_backup": true,
+  "backup_valid_toml": true,
+  "only_mcp_server_change_is_addition_of_rea": true,
+  "server_command": "cmd.exe",
+  "server_args": [
+    "/d",
+    "/c",
+    "npx",
+    "-y",
+    "rea-agents@6.5.0",
+    "mcp"
+  ],
+  "runtime_mcp_operation_called": false,
+  "target_analysis": "not run; no target provided"
+}

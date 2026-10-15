@@ -1,0 +1,9 @@
+test_aggregate_headers_are_rejected_before_protocol_access (test_memory_witness_admission.WitnessAdmissionChecks.test_aggregate_headers_are_rejected_before_protocol_access) ... ok
+test_continuous_header_and_body_drips_cannot_extend_the_io_deadline (test_memory_witness_admission.WitnessAdmissionChecks.test_continuous_header_and_body_drips_cannot_extend_the_io_deadline) ... ok
+test_exact_header_budget_accepts_authenticated_body_without_counting_body_as_headers (test_memory_witness_admission.WitnessAdmissionChecks.test_exact_header_budget_accepts_authenticated_body_without_counting_body_as_headers) ... ok
+test_expired_delivery_withholds_reply_but_preserves_exact_commit_retry (test_memory_witness_admission.WitnessAdmissionChecks.test_expired_delivery_withholds_reply_but_preserves_exact_commit_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 8.752s
+
+OK

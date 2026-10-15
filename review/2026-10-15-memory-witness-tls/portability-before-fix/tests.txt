@@ -1,0 +1,14 @@
+test_fixture_pins_minimum_when_platform_default_is_unspecified (test_memory_witness_tls.WitnessTLSChecks.test_fixture_pins_minimum_when_platform_default_is_unspecified) ... FAIL
+
+======================================================================
+FAIL: test_fixture_pins_minimum_when_platform_default_is_unspecified (test_memory_witness_tls.WitnessTLSChecks.test_fixture_pins_minimum_when_platform_default_is_unspecified)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_witness_tls.py", line 82, in test_fixture_pins_minimum_when_platform_default_is_unspecified
+    self.assertEqual(client_context.minimum_version,ssl.TLSVersion.TLSv1_2)
+AssertionError: <TLSVersion.MINIMUM_SUPPORTED: -2> != <TLSVersion.TLSv1_2: 771>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.318s
+
+FAILED (failures=1)

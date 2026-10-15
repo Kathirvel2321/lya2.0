@@ -1,0 +1,23 @@
+{
+  "source_hashes_still_match_preflight": {
+    "brain/conversation.py": true,
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "brain/memory_authority.py": true,
+    "brain/memory_custody.py": true,
+    "brain/memory_witness_service.py": true,
+    "brain/memory_network_authority.py": true,
+    "test_memory_witness_process.py": true,
+    "test_memory_witness_tls.py": true,
+    "test_memory_witness_service.py": true,
+    "test_memory_network_authority.py": true,
+    "test_qualification.py": true
+  },
+  "all_15_expected_case_ids_present": true,
+  "local_links_checked": 219,
+  "missing_links": [],
+  "git_diff_check_passed": true,
+  "configuration_changes": false,
+  "passed": true
+}

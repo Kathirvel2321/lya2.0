@@ -1,0 +1,43 @@
+{
+  "prior_sources_preserved_except_requested_transport": {
+    "brain/conversation.py": true,
+    "brain/memory_prototype.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_repository.py": true,
+    "brain/memory_authority.py": true,
+    "brain/memory_custody.py": true,
+    "brain/memory_network_authority.py": true,
+    "test_memory_witness_process.py": true,
+    "test_memory_witness_tls.py": true,
+    "test_memory_witness_service.py": true,
+    "test_memory_network_authority.py": true,
+    "test_qualification.py": true
+  },
+  "windows_result_matches_source": true,
+  "linux_result_matches_source": true,
+  "all_83_expected_linux_case_ids_present": true,
+  "post_run_linux_sources_match": true,
+  "python_files_parsed": [
+    "brain/memory_witness_service.py",
+    "test_memory_witness_admission.py",
+    "review/2026-10-15-memory-witness-admission/check.py"
+  ],
+  "trailing_whitespace": [],
+  "local_links_checked": 245,
+  "missing_links": [],
+  "git_diff_check_passed": true,
+  "selected_accepted_sources_match_head": true,
+  "selected_accepted_sources": [
+    "desktop/experience.py",
+    "audio/voice.py",
+    "audio/nvidia_asr.py",
+    "brain/workflow.py",
+    "cloud/mobile.py",
+    "cloud/mobile.html",
+    "storage/store.py",
+    "brain/memory_network_authority.py",
+    "brain/memory_custody.py"
+  ],
+  "fixture_directories_remaining": [],
+  "passed": true
+}
