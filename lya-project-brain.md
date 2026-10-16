@@ -20,6 +20,7 @@ The full previous brain, including every earlier finding, owner clarification an
 
 | Area | Current source / dated evidence | Limits |
 | --- | --- | --- |
+| Public web research (2026-10-16) | `cloud/web_research.py`, `cloud/web_reader.py`, desktop/phone research routes; [guide](docs/guides/LYA_WEB_RESEARCH.md), [report](review/2026-10-16-web-research/README.md) | Bounded multi-query/page reading, discovery-based deep planning, strict page-versus-snippet evidence and local search-attempt counter implemented. Synthetic checks only; live provider/model/device acceptance and deployment remain pending. Keyless provider profile is evaluation access, not unlimited free production browsing. |
 | Answer-quality source upgrade (2026-10-16) | `cloud/answering.py`, `brain/workflow.py`, `cloud/mobile.py`, `brain/verification.py`; [report](review/2026-10-16-answer-quality/README.md) | Bounded public context/shared guidance and strict source-excerpt identity are implemented for the owner-authorized main update; 107 synthetic Linux checks pass. Live-model/device quality, Windows and deployment remain pending. Private/shared durable memory is not added. |
 | Desktop | Existing launcher → `tools/start_nvidia_lya.py` → `desktop/app.py` / `desktop/experience.py` → `brain/workflow.py`; [desktop guide](desktop/README.md), [approved body installation](review/2026-10-14-approved-body-install/README.md) | Owner-approved curved blue glass render installed as default on 2026-10-14; five isolated Qt states pass. Voice, hearing, controls and circle docking preserved. Full assistant acceptance remains separate; next normal launch loads the artwork. |
 | Face personalization / visitor review | Native one-shot YuNet/SFace worker in `security/familiar_capture.py`, `desktop/familiarity.py`, owner-scoped registry in `storage/visitors.py`, review plan in `lya-external-work/lya-face-recognition/LYA_PERSONALIZATION_PLAN.md` | Startup/wake checks, friend/family categories, encrypted opt-in pending thumbnails, owner-reviewed promotion/delete and nickname/style storage are implemented and synthetic-tested. No real enrollment, camera accuracy/liveness, tray delivery, phone push or production biometric acceptance is claimed. |
@@ -433,3 +434,43 @@ evaluation, relevant bounded context, small tested main updates, controlled
 releases and rollback. The live experiment is proposed and not run; 107 synthetic
 checks do not demonstrate improved reasoning or sound advice. No new model,
 telemetry, real-data collection, paid resources or deployment is included.
+
+
+## Work ledger — 2026-10-16 bounded public browsing and deep research
+
+Owner requested a browsing eye that investigates current information and meaningful
+constraints rather than returning the first search result. Direct main publication
+remains explicitly authorized. This work is based on main `5d7efaac79781df6a67167cf45078b01b8a1ab34`;
+it preserves unrelated UI work and does not install or activate a running release.
+
+Added shared search-only adapter, public HTTPS page reader and bounded researcher
+in `cloud/public_search.py`, `cloud/web_reader.py`, `cloud/web_research.py`. Deep mode
+uses discovery snippets to target follow-up searches; quick/smart/deep have explicit
+call/page/byte/time ceilings. Per-hostname diversity, canonical deduplication,
+robots checks, public-address validation, pinned TLS destinations, content caps,
+cancellation and a date/count-only daily quota are implemented. Page redirects,
+JavaScript, PDFs, cookies and authenticated sites are deliberately unsupported.
+
+Desktop wraps existing explicitly configured search providers. Phone adds an
+optional `public_research: keyless_evaluation` configuration entry; absent leaves
+research unconfigured. Search requests use the current public question, not prior
+chat/saved context. Shared `cloud/evidence.py` preserves the old verification API
+through `brain/verification.py`. New research rejects snippets as page facts and
+shows source provenance plus a deterministic coverage/gap notice. Labelled inference
+is still model-dependent, not a mechanical truth guarantee. Existing voice, hearing,
+UI, startup, authentication and private-memory behavior are preserved.
+
+[Implementation guide](docs/guides/LYA_WEB_RESEARCH.md),
+[report and reproducible checks](review/2026-10-16-web-research/README.md),
+[145-case passing evidence](review/2026-10-16-web-research/validation-published.json), and
+[unrun live acceptance pack](review/2026-10-16-web-research/acceptance-cases.json)
+record the changes, results and limits. An initial synthetic failure exposed swallowed
+cancellation (`InterruptedError` is an `OSError`); explicit propagation and new
+search/planner/page cancellation checks fix it. Passing Linux checks use an import-only
+DPAPI shim and fake stores; they are not Windows, provider or device qualification.
+
+Primary You.com documentation describes the keyless endpoint as evaluation-only,
+without provider contents/research tools. Production provider/allowance qualification,
+manual review of actual pricing/terms, model quality/latency, current-host staging
+and deployment remain next. No keys, purchases, real private data transfer, live
+research requests or service/configuration changes were made.

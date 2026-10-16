@@ -97,7 +97,7 @@ class ResearchAdapterChecks(unittest.TestCase):
             "TAVILY_API_KEY": "FAKE",
         }
         with patch("brain.research._setting", side_effect=lambda name: values.get(name)):
-            self.assertIsInstance(default_researcher(), TavilySearch)
+            self.assertIsInstance(default_researcher().search, TavilySearch)
         values["LYA_TAVILY_FREE_ONLY"] = "0"
         with patch("brain.research._setting", side_effect=lambda name: values.get(name)):
             self.assertIsNone(default_researcher())
@@ -146,8 +146,9 @@ class ResearchAdapterChecks(unittest.TestCase):
     def test_default_prefers_free_hybrid_without_a_key(self):
         values = {"LYA_FREE_RESEARCH_ENABLED": "1"}
         with patch("brain.research._setting", side_effect=lambda name: values.get(name)):
-            self.assertIsInstance(default_researcher(), HybridSearch)
+            self.assertIsInstance(default_researcher().search, HybridSearch)
 
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+

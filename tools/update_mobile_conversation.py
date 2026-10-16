@@ -8,13 +8,13 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from tools.setup_mobile_connection import operator
 
-FILES=['cloud/answering.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/mobile_tts.py','cloud/ssh_session.py']
+FILES=['cloud/answering.py','cloud/evidence.py','cloud/public_search.py','cloud/web_reader.py','cloud/web_research.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/mobile_tts.py','cloud/ssh_session.py']
 
 STAGE=r'''
 import json,pathlib,subprocess,sys
 body=json.load(sys.stdin);stage=pathlib.Path('/opt/lya-connect/updates/mobile-conversation-20261010')
 assert stage.is_dir() and stage.stat().st_uid==0 and not (stage/'previous').exists()
-assert set(body['files'])=={'cloud/answering.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/mobile_tts.py','cloud/ssh_session.py'}
+assert set(body['files'])=={'cloud/answering.py','cloud/evidence.py','cloud/public_search.py','cloud/web_reader.py','cloud/web_research.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/mobile_tts.py','cloud/ssh_session.py'}
 (stage/'cloud').mkdir(mode=0o755,exist_ok=True);(stage/'cloud/__init__.py').write_text('')
 for name,source in body['files'].items():
  assert isinstance(source,str) and len(source.encode())<150000
@@ -30,7 +30,7 @@ result=json.loads(p.stdout);assert result['success'];print(json.dumps(result))
 ACTIVATE=r'''
 import hashlib,http.client,json,os,pathlib,subprocess,sys,time
 body=json.load(sys.stdin);names=body['files']
-assert set(names)=={'cloud/answering.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/mobile_tts.py','cloud/ssh_session.py'}
+assert set(names)=={'cloud/answering.py','cloud/evidence.py','cloud/public_search.py','cloud/web_reader.py','cloud/web_research.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/mobile_tts.py','cloud/ssh_session.py'}
 base=pathlib.Path('/opt/lya-connect');stage=base/'updates/mobile-conversation-20261010';backup=stage/'previous';assert not backup.exists()
 config=pathlib.Path('/etc/lya-connect.json');settings=json.loads(config.read_text());assert settings.get('speech_enabled') is True and not settings.get('reply_voice_enabled')
 inference=pathlib.Path('/home/ubuntu/lya/inference.py');digest=hashlib.sha256(inference.read_bytes()).hexdigest()

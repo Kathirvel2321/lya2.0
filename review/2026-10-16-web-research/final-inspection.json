@@ -1,0 +1,16 @@
+{
+  "tests": 145,
+  "source_hashes_verified": 17,
+  "evidence_move_identical": true,
+  "embedded_programs_compiled": [
+    "setup_mobile_connection:STAGE",
+    "setup_mobile_connection:NETWORK",
+    "setup_mobile_connection:ACTIVATE",
+    "update_mobile_conversation:STAGE",
+    "update_mobile_conversation:ACTIVATE",
+    "update_mobile_voice:STAGE",
+    "update_mobile_voice:ACTIVATE"
+  ],
+  "shared_module_allowlists": true,
+  "host_actions": 0
+}

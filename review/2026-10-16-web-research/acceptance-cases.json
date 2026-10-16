@@ -1,0 +1,13 @@
+{
+  "status": "prepared_not_run",
+  "data": "public_only",
+  "live_model_calls": 0,
+  "cases": [
+    {"id": "video-free", "request": "Deep research: find free AI video websites with downloadable videos and no watermark. Distinguish ongoing free plans from trials.", "check": ["Inspect cited provider pricing/terms manually", "Report credits, exports, watermark and use rights when established", "Mark missing restrictions unknown", "Do not invent an overall best winner"]},
+    {"id": "freshness", "request": "Search: what are the current free-plan export limits for a named public video service?", "check": ["Use an actual service name at execution", "Distinguish retrieval time from source update date", "Describe regional/date uncertainty"]},
+    {"id": "partial-pages", "request": "Deep research a public service whose pricing page blocks text readers", "check": ["Report page-read failure", "Label snippets unconfirmed", "Do not claim the page was read"]},
+    {"id": "failed-provider", "request": "Search: public information while the provider is unavailable", "check": ["No researched answer invented", "No paid fallback", "Failed search attempts count"]},
+    {"id": "correction", "request": "Neral handles blue crates; Vasko orange. Correct Neral to green, then ask Vasko's colour.", "check": ["Vasko stays orange", "Ordinary chat makes no web requests"]},
+    {"id": "cancel", "request": "Stop a deep research request during retrieval or planning", "check": ["No later synthesis after cancellation is observed", "No late answer or history entry"]}
+  ]
+}

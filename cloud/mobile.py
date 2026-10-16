@@ -1,4 +1,4 @@
-"""Private HTTPS proxy target: paired public conversation only, no tools or private vault.
+"""Private HTTPS proxy target: paired public conversation with opt-in research, no private vault.
 
 Run behind Tailscale Serve on loopback. Public authentication metadata is protected
 by filesystem permissions; conversation/audio/biometrics are never persisted here.
@@ -19,7 +19,8 @@ import threading
 import time
 import wave
 from urllib.parse import urlsplit
-from cloud.answering import messages_for, completed_history
+from cloud.answering import messages_for, completed_history, needs_current_sources
+from cloud.web_research import research_mode, synthesis_prompt, render_research
 
 from fido2.server import Fido2Server
 from fido2.utils import websafe_decode, websafe_encode
@@ -125,10 +126,11 @@ class AuthStore:
 
 
 class Connection:
-    def __init__(self,origin,store,infer,clock=time.time,transcribe=None,speak=None):
+    def __init__(self,origin,store,infer,clock=time.time,transcribe=None,speak=None,researcher=None):
         self.origin=checked_origin(origin)
         self.store,self.infer,self.clock=store,infer,clock
         self.transcriber=transcribe
+        self.researcher=researcher
         self.speaker=speak
         self.audio_slots=threading.BoundedSemaphore(1)
         self.rp=urlsplit(origin).hostname
@@ -317,8 +319,27 @@ class Connection:
                 system=('You are LYA. Give a direct, helpful answer. This is public conversation only. '
                 'No tools, private memories, files, cameras or web search are connected to this phone route. '
                 'Never claim you executed an action or saved a fact. Say clearly when a requested action is unavailable.')
+                if self.researcher is not None:
+                    system=system.replace('No tools, private memories, files, cameras or web search are connected to this phone route. ',
+                        'Public web research is available for routed research requests. No new search was performed on this ordinary chat turn. '
+                        'No private memories, files, cameras or device actions are connected. ')
                 messages=messages_for(system,s['history'],text.strip())
-            with self.measure('inference'):answer=self.infer(messages,cancel)
+            mode=research_mode(text) or ('smart' if needs_current_sources(text) else None)
+            if mode:
+                if self.researcher is None:
+                    raise ValueError('Current web research is not configured on this phone route; I cannot verify this answer.')
+                def check():
+                    with self.lock:
+                        if self.session(token) is not s or cancel.is_set():raise InterruptedError('Cancelled.')
+                with self.measure('research'):
+                    report=self.researcher.investigate(text.strip(),mode=mode,
+                        planner=lambda plan:self.infer(plan,cancel),check=check)
+                check()
+                messages=messages_for(synthesis_prompt(report.records,report),[],text.strip())
+                with self.measure('inference'):raw=self.infer(messages,cancel)
+                answer=render_research(raw,report)
+            else:
+                with self.measure('inference'):answer=self.infer(messages,cancel)
             if type(answer) is not str or not answer.strip() or len(answer)>8000:raise ValueError('No usable answer.')
             result={'text':answer,'id':request_id}
             if spoken:
@@ -379,7 +400,7 @@ class Handler(BaseHTTPRequestHandler):
             values['request']=max(0,(time.perf_counter()-self.started)*1000)
             # Only fixed stage names and numbers leave the worker; no content or IDs.
             self.send_header('Server-Timing',', '.join(f'{stage};dur={values[stage]:.3f}'
-                for stage in ('asr','inference','tts','request') if stage in values))
+                for stage in ('asr','research','inference','tts','request') if stage in values))
         for name,value in {'Content-Type':mime,'Content-Length':str(len(body)),
             'Cache-Control':'no-store','Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff',
             'X-Frame-Options':'DENY','Permissions-Policy':'camera=(), microphone=(self)',

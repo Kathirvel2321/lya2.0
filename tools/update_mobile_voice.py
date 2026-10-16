@@ -14,7 +14,7 @@ import hashlib,json,os,pathlib,subprocess,sys
 body=json.load(sys.stdin);base=pathlib.Path('/opt/lya-connect');stage=base/'updates/mobile-voice-20261010'
 assert base.stat().st_uid==0 and not base.is_symlink() and not stage.exists()
 assert set(body)=={'files','checks'}
-allowed={'cloud/__init__.py','cloud/answering.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/ssh_session.py','audio/__init__.py','audio/nvidia_asr.py','audio/voice.py'}
+allowed={'cloud/__init__.py','cloud/answering.py','cloud/evidence.py','cloud/public_search.py','cloud/web_reader.py','cloud/web_research.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/ssh_session.py','audio/__init__.py','audio/nvidia_asr.py','audio/voice.py'}
 assert set(body['files'])==allowed
 before=hashlib.sha256(pathlib.Path('/home/ubuntu/lya/inference.py').read_bytes()).hexdigest()
 stage.mkdir(mode=0o755,parents=True)
@@ -63,7 +63,7 @@ assert rule.read_text()=='lya-connect ALL=(ubuntu) NOPASSWD: /usr/bin/python3 /h
 inference=pathlib.Path('/home/ubuntu/lya/inference.py');before=hashlib.sha256(inference.read_bytes()).hexdigest()
 auth=pathlib.Path('/var/lib/lya-connect/auth.sqlite');inode=auth.stat().st_ino
 backup.mkdir(mode=0o700)
-names=['cloud/__init__.py','cloud/answering.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/ssh_session.py','audio/__init__.py','audio/nvidia_asr.py','audio/voice.py','speech.py']
+names=['cloud/__init__.py','cloud/answering.py','cloud/evidence.py','cloud/public_search.py','cloud/web_reader.py','cloud/web_research.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/ssh_session.py','audio/__init__.py','audio/nvidia_asr.py','audio/voice.py','speech.py']
 old={}
 for name in names:
  path=base/name;assert not path.is_symlink()
@@ -127,7 +127,7 @@ def main():
     parser.add_argument('--copy-approved-speech-key',action='store_true')
     args=parser.parse_args()
     if args.operation=='stage':
-        files={name:(ROOT/name).read_text(encoding='utf-8') for name in ('cloud/answering.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/ssh_session.py','audio/nvidia_asr.py','audio/voice.py')}
+        files={name:(ROOT/name).read_text(encoding='utf-8') for name in ('cloud/answering.py','cloud/evidence.py','cloud/public_search.py','cloud/web_reader.py','cloud/web_research.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/mobile_speech.py','cloud/ssh_session.py','audio/nvidia_asr.py','audio/voice.py')}
         files['audio/__init__.py']=files['cloud/__init__.py']=''
         result=operator(STAGE,{'files':files,'checks':checks()},timeout=240)
     else:

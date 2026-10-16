@@ -45,6 +45,18 @@ def speak(text,cancelled):
     return answer['audio']
 
 
+def configured_researcher(config, state=STATE):
+    """Explicit evaluation profile only; no credentials or paid fallback."""
+    setting=config.get('public_research')
+    if setting is None or setting is False:
+        return None
+    if setting != 'keyless_evaluation':
+        raise ValueError('Unknown public research configuration.')
+    from cloud.public_search import YouSearchMCP
+    from cloud.web_research import PublicResearcher, DailySearchQuota
+    return PublicResearcher(YouSearchMCP(),DailySearchQuota(Path(state).with_name('research-usage.sqlite')))
+
+
 def main():
     os.umask(0o077)
     operation=sys.argv[1] if len(sys.argv)==2 else 'serve' if len(sys.argv)==1 else None
@@ -60,7 +72,8 @@ def main():
         return
     if operation!='serve':raise ValueError('Unknown operation.')
     app=Connection(config['origin'],store,infer,transcribe=transcribe if config.get('speech_enabled') is True else None,
-                   speak=speak if config.get('reply_voice_enabled') is True else None)
+                   speak=speak if config.get('reply_voice_enabled') is True else None,
+                   researcher=configured_researcher(config))
     http=PrivateHTTP(('127.0.0.1',8766),app)
     try:http.serve_forever(poll_interval=.2)
     finally:http.server_close()

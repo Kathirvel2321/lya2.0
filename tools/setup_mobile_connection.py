@@ -30,7 +30,7 @@ source=pathlib.Path('/home/ubuntu/lya/inference.py')
 before=hashlib.sha256(source.read_bytes()).hexdigest()
 for p in (pathlib.Path('/home/ubuntu'),source.parent,source):
  assert not p.is_symlink() and not p.stat().st_mode & 0o022
-assert set(body)=={'files'} and set(body['files'])=={'cloud/__init__.py','cloud/answering.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/ssh_session.py'}
+assert set(body)=={'files'} and set(body['files'])=={'cloud/__init__.py','cloud/answering.py','cloud/evidence.py','cloud/public_search.py','cloud/web_reader.py','cloud/web_research.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/ssh_session.py'}
 for name,text in body['files'].items():
  assert isinstance(text,str) and len(text.encode())<100000
  if name.endswith('.py'):compile(text,name,'exec')
@@ -141,7 +141,7 @@ def main():
     args=parser.parse_args()
     for program in (STAGE,NETWORK,ACTIVATE):compile(program,'remote-setup','exec')
     if args.operation=='stage':
-        names=['cloud/answering.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/ssh_session.py']
+        names=['cloud/answering.py','cloud/evidence.py','cloud/public_search.py','cloud/web_reader.py','cloud/web_research.py','cloud/mobile.py','cloud/mobile.html','cloud/mobile_runtime.py','cloud/ssh_session.py']
         files={name:(ROOT/name).read_text(encoding='utf-8') for name in names};files['cloud/__init__.py']=''
         result=operator(STAGE,{'files':files})
     elif args.operation=='network':result=operator(NETWORK,timeout=240)
