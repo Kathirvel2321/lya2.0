@@ -51,3 +51,12 @@ The material is baked once into one pixmap per current size/DPR/opaque setting, 
 The approved body asset, app task routing and border controller are unchanged by this correction. Battery consumption and final owner-device visual acceptance remain unmeasured.
 
 [Glass on a light desktop](native-preview-light.png) · [Glass on a dark desktop](native-preview.png)
+
+
+## Owner rejection and controlled comparison — 2026-10-16
+
+The owner correctly noted that the changed preview background exaggerated the apparent improvement. The generated reference's glass depth has **not** been reproduced. Functional test passes do not establish visual acceptance. PR #4 remains draft; no runtime change is made in this diagnostic checkpoint.
+
+[Same-background comparison](same-background-comparison.png) renders both earlier and current native materials at the same size, with the same conversation and flat desktop colour. `compare_material.py` and the preserved `glass_style_before.py` make the comparison reproducible. The result shows a modest transparency/rim/reflection improvement, not the photographic reference material. The two panel surfaces are the actual Qt painters, not ImageGen illustrations.
+
+Next material direction: isolate one real native Windows backdrop/glass prototype and qualify compatibility, text contrast and resource use on the target laptop before claiming the reference's feel. Supported Windows versions provide Desktop Acrylic, but it is not enabled or visually qualified in the current Qt implementation; compatibility cannot be inferred from an API's existence. Retain existing functional behavior while this visual gap remains open.
