@@ -10,8 +10,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from PySide6.QtCore import Qt, QRect, QPoint
-from PySide6.QtGui import QColor, QPainter, QFont, QFontDatabase, QLinearGradient, QPalette
+from PySide6.QtCore import Qt, QRect, QRectF, QPoint, QPointF
+from PySide6.QtGui import QColor, QPainter, QFont, QFontDatabase, QLinearGradient, QPalette, QRadialGradient
 from PySide6.QtWidgets import QApplication, QWidget, QLabel
 from PySide6.QtTest import QTest
 
@@ -30,6 +30,33 @@ OUTPUT = ROOT / 'review' / '2026-10-16-glass-conversation'
 
 
 class GlassChecks(unittest.TestCase):
+    def test_glass_material_transmits_background_and_opaque_mode_does_not(self):
+        from glass_style import make_material
+        clear = make_material(480, 430, 1, False).toImage()
+        opaque = make_material(480, 430, 1, True).toImage()
+        self.assertLess(clear.pixelColor(240, 215).alpha(), 235)
+        self.assertGreater(clear.pixelColor(240, 215).alpha(), 130)
+        self.assertEqual(opaque.pixelColor(240, 215).alpha(), 255)
+        self.assertEqual(clear.pixelColor(0, 0).alpha(), 0)
+
+    def test_glass_material_cache_survives_activity_and_glint_frames(self):
+        panel = CompactPanel()
+        self.addCleanup(panel.close)
+        panel.set_reduced_motion(True)
+        panel.show()
+        APP.processEvents()
+        panel.grab()
+        key = panel._glass_material.cacheKey()
+        for state in ('research', 'reason', 'approval', 'idle'):
+            panel.set_activity(state)
+            panel.advance_edge()
+            panel.grab()
+            self.assertEqual(panel._glass_material.cacheKey(), key)
+        panel.resize(panel.width()+40, panel.height())
+        panel.grab()
+        self.assertNotEqual(panel._glass_material.cacheKey(), key)
+        self.assertFalse(panel._edge_timer.isActive())
+
     def test_conversation_typing_and_literal_transcript(self):
         panel = CompactPanel()
         self.addCleanup(panel.close)
@@ -244,13 +271,37 @@ class GlassChecks(unittest.TestCase):
         callback.assert_not_called()
 
 
-def render_preview():
+class StudioDesktop(QWidget):
+    """Synthetic wallpaper makes the real surface's translucency visible."""
+    def __init__(self, light=False):
+        super().__init__()
+        self.light = light
+
+    def paintEvent(self, event):
+        p = QPainter(self)
+        p.fillRect(self.rect(), QColor('#b9c5d1' if self.light else '#071320'))
+        haze = QRadialGradient(QPointF(395, 330), 510)
+        haze.setColorAt(0, QColor(93, 124, 153, 120))
+        haze.setColorAt(.5, QColor(48, 80, 112, 48))
+        haze.setColorAt(1, QColor(7, 19, 32, 0))
+        p.fillRect(self.rect(), haze)
+        fold = QLinearGradient(80, 0, 760, 620)
+        for stop, color in ((0, QColor(7,19,32,0)), (.28, QColor(7,19,32,0)),
+                            (.39, QColor(175,196,211,16)), (.47, QColor(190,212,227,45)),
+                            (.54, QColor(10,24,42,85)), (.72, QColor(7,19,32,0)),
+                            (1, QColor(7,19,32,0))):
+            fold.setColorAt(stop,color)
+        p.fillRect(self.rect(), fold)
+        p.end()
+
+
+def render_preview(light=False):
     """Render actual widgets, with the unchanged approved repository body asset."""
     if not (ROOT/'desktop/assets/lya-reference-body.png').is_file():
         print('Preview skipped locally: exact repository body asset unavailable.')
         return
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    canvas = QWidget()
+    canvas = StudioDesktop(light)
     canvas.resize(1440, 850)
     palette = canvas.palette()
     palette.setColor(QPalette.ColorRole.Window, QColor('#071320'))
@@ -258,6 +309,8 @@ def render_preview():
     canvas.setAutoFillBackground(True)
     title = QLabel('LYA  /  NATIVE INTERFACE PREVIEW', canvas)
     title.setStyleSheet('color:#a6bed0; font:16px "Segoe UI"; background:transparent;')
+    if light:
+        title.setStyleSheet('color:#35495d; font:16px "Segoe UI"; background:transparent;')
     title.setGeometry(54, 26, 900, 40)
     crystal = Crystal(canvas)
     crystal.set_reduced_motion(True)
@@ -298,7 +351,7 @@ def render_preview():
         if surface.isVisible():
             painter.drawPixmap(surface.pos() - origin, surface.grab())
     painter.end()
-    image.save(str(OUTPUT/'native-preview.png'))
+    image.save(str(OUTPUT/('native-preview-light.png' if light else 'native-preview.png')))
     panel.set_activity('research')
     panel.set_reduced_motion(True)
     panel.grab().save(str(OUTPUT/'research-panel.png'))
@@ -312,4 +365,5 @@ if __name__ == '__main__':
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if result.wasSuccessful():
         render_preview()
+        render_preview(light=True)
     sys.exit(0 if result.wasSuccessful() else 1)

@@ -40,3 +40,12 @@ The Actions artifact includes `native-preview.png` and `research-panel.png`; the
 ## Review status
 
 Implemented in [PR #4](https://github.com/Kathirvel2321/lya2.0/pull/4), separate from the older visual prototype PR. The source revision above passes CI. This documentation/screenshot checkpoint changes no runtime code. The implementation is ready for owner visual review, not a claim that the generated reference was reproduced pixel for pixel or that the owner's laptop has been updated.
+
+
+## Glass material correction — owner feedback, 2026-10-16
+
+Owner rejected the first native surface as too flat compared with the generated reference. The earlier 244/255 base alpha was effectively opaque. Revised `glass_style.py` uses actual tinted transmission (base alpha 158–205), broad feathered light reflections, a 3.3-logical-pixel bevel, a luminous outer rim and a recessed inner edge. The composer has matching translucent glass styling and status text has stronger contrast. The existing opaque readability setting still produces an opaque body. No screenshot capture, desktop sampling, native blur API or continuous refraction was added. This is translucent glass with authored reflections, not physically accurate live frosting/refraction.
+
+The material is baked once into one pixmap per current size/DPR/opaque setting, with DPR capped at two. Task colours and glint frames reuse the same cached pixmap. Added two meaningful checks for actual alpha transmission/opaque fallback and cache stability across activity/glint frames and resize. All 13 focused Qt checks pass locally. A synthetic patterned desktop now exposes transmission in dark and light renders rather than hiding it against a flat navy background. Windows verification of this revision is pending.
+
+The approved body asset, app task routing and border controller are unchanged by this correction. Battery consumption and final owner-device visual acceptance remain unmeasured.

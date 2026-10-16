@@ -484,7 +484,9 @@ class GlassPanel(QWidget):
             QPushButton:hover { background: rgba(120,215,230,35); border-color: #9de4ee; }
             QPushButton:pressed { background: rgba(90,190,210,65); }
             QPushButton:focus, QLineEdit:focus, QListWidget:focus { border: 2px solid #9de4ee; }
-            QLineEdit { background: rgba(6,12,18,220); border: 1px solid rgba(150,215,230,68);
+            QLineEdit { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,
+                    stop:0 rgba(50,92,133,115), stop:0.5 rgba(12,31,55,155), stop:1 rgba(27,62,102,125));
+                border: 1px solid rgba(151,219,244,120);
                 border-radius: 20px; padding: 13px 18px; selection-background-color: #1d6d8c; }
             QTextBrowser { background: transparent; border: none; color: #d8e2e8;
                 font-size: 16px; selection-background-color: #296a83; }
@@ -505,7 +507,7 @@ class GlassPanel(QWidget):
         header.addWidget(brand)
         header.addStretch()
         self.state_label = QLabel("CONVERSATION")
-        self.state_label.setStyleSheet("font-size: 10px; color: #9aaeb9; letter-spacing: 1px;")
+        self.state_label.setStyleSheet("font-size: 11px; color: #c7dce8; letter-spacing: 1px;")
         header.addWidget(self.state_label)
         close = QPushButton("×")
         close.setFixedSize(32, 32)
@@ -559,7 +561,7 @@ class GlassPanel(QWidget):
         outer.addLayout(composer)
         self.footnote = QLabel("LOCAL INTERFACE  ·  CAMERA & MICROPHONE OFF")
         self.footnote.setWordWrap(True)
-        self.footnote.setStyleSheet("font-size: 10px; color: #9aadb9; letter-spacing: 1px;")
+        self.footnote.setStyleSheet("font-size: 10px; color: #b6cddd; letter-spacing: 1px;")
         outer.addWidget(self.footnote)
         self.show_answer("Right here with you.", "Your desktop stays yours.\n\nClick Project files to read the saved project plans, or type help.\n\nDrag the crystal to place me. Right-click it to preview person and task colors.")
 
