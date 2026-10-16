@@ -106,7 +106,7 @@ class MobileChecks(unittest.TestCase):
     def test_public_chat_context_is_bounded_ram_only_and_retries_do_not_repeat(self):
         token=self.pair()
         for i in range(5):self.app.chat(token,f'{i:032x}','SYNTHETIC_TEMPORARY_QUESTION')
-        self.assertLessEqual(len(self.calls[-1]),6)
+        self.assertLessEqual(len(self.calls[-1]),12)
         self.assertIn('public conversation only',self.calls[-1][0]['content'])
         self.assertNotIn(b'SYNTHETIC_TEMPORARY_QUESTION',self.store.path.read_bytes())
         with self.assertRaises(PermissionError):self.app.chat(token,f'{4:032x}','duplicate')

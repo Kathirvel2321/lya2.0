@@ -19,6 +19,7 @@ import threading
 import time
 import wave
 from urllib.parse import urlsplit
+from cloud.answering import messages_for, completed_history
 
 from fido2.server import Fido2Server
 from fido2.utils import websafe_decode, websafe_encode
@@ -313,10 +314,10 @@ class Connection:
             with self.lock:
                 self.session(token)
                 if cancel.is_set():raise InterruptedError('Cancelled.')
-                messages=[dict(role='system',content='You are LYA. Give a direct, helpful answer. This is public conversation only. '
+                system=('You are LYA. Give a direct, helpful answer. This is public conversation only. '
                 'No tools, private memories, files, cameras or web search are connected to this phone route. '
-                'Never claim you executed an action or saved a fact. Say clearly when a requested action is unavailable.')]
-                messages+=s['history']+[dict(role='user',content=text.strip())]
+                'Never claim you executed an action or saved a fact. Say clearly when a requested action is unavailable.')
+                messages=messages_for(system,s['history'],text.strip())
             with self.measure('inference'):answer=self.infer(messages,cancel)
             if type(answer) is not str or not answer.strip() or len(answer)>8000:raise ValueError('No usable answer.')
             result={'text':answer,'id':request_id}
@@ -339,7 +340,7 @@ class Connection:
             with self.lock:
                 if self.session(token) is not s or cancel.is_set():raise InterruptedError('Cancelled.')
                 if type(answer) is not str or not answer.strip() or len(answer)>8000:raise ValueError('No usable answer.')
-                s['history']=(s['history']+[dict(role='user',content=text.strip()),dict(role='assistant',content=answer)])[-4:]
+                s['history']=completed_history(s['history'],text.strip(),answer)
                 return result
 
 
@@ -456,3 +457,4 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError,KeyError,TypeError,RecursionError,UnicodeError):self.send(400,{'error':'Request rejected; retry.'})
         except Exception:self.send(503,{'error':'Connection unavailable; no action was taken.'})
         finally:self.server.app.timings.values=None
+

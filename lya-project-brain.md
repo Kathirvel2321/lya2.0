@@ -1,6 +1,6 @@
 # LYA project brain
 
-Current continuity summary: 2026-10-15. Read this first, then the relevant source and [LYA_VISION.md](LYA_VISION.md). Recorded test/deployment results are dated evidence, not proof of current behavior.
+Current continuity summary: 2026-10-16. Read this first, then the relevant source and [LYA_VISION.md](LYA_VISION.md). Recorded test/deployment results are dated evidence, not proof of current behavior.
 
 The full previous brain, including every earlier finding, owner clarification and work-ledger entry, is preserved byte for byte in [archive/history/continuity/project-brain-through-2026-10-12.md](archive/history/continuity/project-brain-through-2026-10-12.md). Consult it when earlier context is needed. [docs/README.md](docs/README.md) indexes maintained explanations; [archive/README.md](archive/README.md) explains historical material and recovery.
 
@@ -20,6 +20,7 @@ The full previous brain, including every earlier finding, owner clarification an
 
 | Area | Current source / dated evidence | Limits |
 | --- | --- | --- |
+| Answer-quality source upgrade (2026-10-16) | `cloud/answering.py`, `brain/workflow.py`, `cloud/mobile.py`, `brain/verification.py`; [report](review/2026-10-16-answer-quality/README.md) | Bounded public context/shared guidance and strict source-excerpt identity are implemented for the owner-authorized main update; 107 synthetic Linux checks pass. Live-model/device quality, Windows and deployment remain pending. Private/shared durable memory is not added. |
 | Desktop | Existing launcher → `tools/start_nvidia_lya.py` → `desktop/app.py` / `desktop/experience.py` → `brain/workflow.py`; [desktop guide](desktop/README.md), [approved body installation](review/2026-10-14-approved-body-install/README.md) | Owner-approved curved blue glass render installed as default on 2026-10-14; five isolated Qt states pass. Voice, hearing, controls and circle docking preserved. Full assistant acceptance remains separate; next normal launch loads the artwork. |
 | Face personalization / visitor review | Native one-shot YuNet/SFace worker in `security/familiar_capture.py`, `desktop/familiarity.py`, owner-scoped registry in `storage/visitors.py`, review plan in `lya-external-work/lya-face-recognition/LYA_PERSONALIZATION_PLAN.md` | Startup/wake checks, friend/family categories, encrypted opt-in pending thumbnails, owner-reviewed promotion/delete and nickname/style storage are implemented and synthetic-tested. No real enrollment, camera accuracy/liveness, tray delivery, phone push or production biometric acceptance is claimed. |
 | Visual concept asset | Standalone `visual-creativity/lya-crystal/` concept folder with GLB, OBJ/MTL, preview and generator | New reference-inspired crystal is owner-review material only; not imported, launched or connected to the desktop/mobile runtime. |
@@ -384,3 +385,51 @@ Checked: **all 93 selected assistant-executed Ubuntu cases pass**, zero failures
 Artifacts: [report/policy](review/2026-10-15-memory-witness-cgroup/README.md), [Ubuntu validation/metrics](review/2026-10-15-memory-witness-cgroup/wsl-validation.json), [Ubuntu log](review/2026-10-15-memory-witness-cgroup/wsl-tests.txt), [Windows validation](review/2026-10-15-memory-witness-cgroup/validation.json), [Windows log](review/2026-10-15-memory-witness-cgroup/tests.txt), [source manifest](review/2026-10-15-memory-witness-cgroup/lab-source-manifest.json), [allowlisted refresh](review/2026-10-15-memory-witness-cgroup/wsl-refresh-validation.json), [accepted-source preservation](review/2026-10-15-memory-witness-cgroup/accepted-source-preservation.json), [static/cleanup checks](review/2026-10-15-memory-witness-cgroup/static-validation.json). Focused pass and initial failed startup/property attempt are preserved separately in that folder. Replaced unsupported `MemoryOOMGroup` with locally verified `OOMPolicy=kill`; no global setting changed. Only the new lab test was added/refreshed, preserving its earlier revision as a numbered backup. All 19 selected source hashes match before/after; fixture stores, fake certificates/keys and test-owned services/processes clean up. No owner command/paste is needed.
 
 Limits/next: this finite qualification supplies continuous CPU-rate and aggregate charged-memory/task controls, not a long soak, total-filesystem/journal/WAL quota, persistent supervision or independent deployment. Select a concrete independent free placement, storage quota, restricted service identity/storage, restart policy and certificate/key custody, then qualify that environment before a separate real-data/device pilot. Oracle/ARM64 execution, whole-witness rollback protection, real custody and production integration remain pending. Accepted voice/hearing/UI/startup/storage and unrelated existing work are preserved. No installation, dependency, account, real key/store, enrollment, private collection/transfer, external host, paid resource, deployment, commit or push.
+
+
+
+## Work ledger — 2026-10-16 answer context and evidence candidate
+
+Owner requested building a more situational, honest answering system after the
+crate-correction trial. Read the pinned REA skill and followed its complete-source
+coding route. Worked in an isolated snapshot of GitHub main 945eeec; concurrent
+visual work in another checkout was not edited. Added shared answer guidance and
+bounded public RAM context to desktop/phone, context-clear and identity boundaries,
+local-name exclusion from cloud history, conservative current-fact research routing,
+and complete-excerpt identity checks with explicit unverified quotation/inference
+labels. Mobile packaging helpers include the new module. Existing provider, model,
+voice/hearing/UI/startup, authentication and durable/private storage are preserved.
+
+[Report and limits](review/2026-10-16-answer-quality/README.md),
+[107-case final evidence](review/2026-10-16-answer-quality/validation-final.json),
+[test log](review/2026-10-16-answer-quality/validation-final.txt),
+[reproducible runner](review/2026-10-16-answer-quality/run_checks.py), and
+[ten live acceptance scenarios, not run](review/2026-10-16-answer-quality/acceptance-cases.json).
+All selected fake-data Linux checks pass, zero failures/errors/skips; import-only
+DPAPI shim is explicitly not Windows qualification. Earlier 105-case evidence
+overlaps. The initial exploratory missing-source errors are documented.
+
+No live model, native device, Oracle deployment, billing change, real data transfer,
+enrollment or independent quality benchmark was performed. Prompt guidance remains
+model-dependent, and exact quotations do not establish truth. Next review the
+candidate, then qualify actual model/device replies before claiming improved
+judgment or activating a release. Full private and cross-device memory remain open.
+
+
+## Work ledger — 2026-10-16 direct main authorization and engineering research
+
+Owner explicitly requested publishing the tested answering upgrade directly to
+`Kathirvel2321/lya2.0` main. This supersedes the earlier branch/PR proposal and
+resolves the previous publication-authorization blocker for this exact change.
+Main was freshly checked at 945eeec; the nine tested source hashes still match
+the 107-case passing evidence. Publish with that current head as parent and an
+exact expected-head guard; preserve unrelated files and existing visual work.
+Git publication remains distinct from installing/running a release.
+
+Researched primary engineering accounts from Anthropic, DORA and Google SRE. Added
+[the engineering method](docs/guides/LYA_ENGINEERING_METHOD.md) and linked it in the
+documentation index. Findings prioritize measurable outcomes, failure-derived
+evaluation, relevant bounded context, small tested main updates, controlled
+releases and rollback. The live experiment is proposed and not run; 107 synthetic
+checks do not demonstrate improved reasoning or sound advice. No new model,
+telemetry, real-data collection, paid resources or deployment is included.

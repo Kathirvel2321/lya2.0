@@ -37,17 +37,15 @@ def _content_words(text):
 
 
 def source_supports_claim(claim, record):
-    """Conservative lexical gate; ambiguous paraphrases must be labelled inference."""
-    evidence = f"{record['claim']} {record['excerpt']}"
-    claim_numbers = set(NUMBER.findall(claim))
-    if not claim_numbers.issubset(set(NUMBER.findall(evidence))):
-        return False
-    words = set(_content_words(claim))
-    if not words:
-        return bool(claim_numbers)
-    overlap = words.intersection(_content_words(evidence))
-    required = len(words) if len(words) <= 2 else max(2, math.ceil(len(words) * .45))
-    return len(overlap) >= required
+    """Check complete excerpt identity, never semantic entailment or source truth.
+
+    Word overlap allowed negation, swapped subjects and changed relationships.
+    Keep paraphrases as labelled inference; preserve the full excerpt's qualifiers.
+    The adapter's generated short 'claim' field is not independent evidence.
+    """
+    def normalized(text):
+        return ' '.join(unicodedata.normalize('NFC', text).split())
+    return bool(claim.strip()) and normalized(claim) == normalized(record['excerpt'])
 
 
 def render_unverified_code(answer):
@@ -111,7 +109,7 @@ def check_claim_contract(claims, source_ids, records=None):
             errors.append(f'claim {index}: unknown source')
         if kind == 'fact' and not citations:
             errors.append(f'claim {index}: fact has no source')
-        if kind == 'fact' and citations and sources and not any(
+        if kind == 'fact' and isinstance(text, str) and citations and sources and not any(
                 source_supports_claim(text, sources[source_id])
                 for source_id in citations if source_id in sources):
             errors.append(f'claim {index}: cited source does not support fact')
@@ -119,6 +117,10 @@ def check_claim_contract(claims, source_ids, records=None):
             errors.append(f'claim {index}: verification status required')
         if kind == 'code' and claim.get('verification') != 'passed' and claim.get('status') == 'works':
             errors.append(f'claim {index}: untested code cannot be called working')
+        if kind in {'code', 'calculation'} and claim.get('verification') != 'not_run':
+            errors.append(f'claim {index}: research has no trusted execution evidence')
+        if kind == 'code' and isinstance(text, str) and UNVERIFIED_SUCCESS.search(text):
+            errors.append(f'claim {index}: code success requires trusted execution evidence')
     return errors
 
 
@@ -139,7 +141,11 @@ def render_verified_claims(raw, records):
     for claim in decoded['claims']:
         citations = claim.get('source_ids', [])
         suffix = ' ' + ' '.join(f'[{source_id}]' for source_id in citations) if citations else ''
-        label = {'inference': 'Inference: ', 'unknown': 'Uncertain: '}.get(claim['kind'], '')
+        label = {'fact': 'Source excerpt (not independently verified): ',
+                 'inference': 'Inference: ', 'proposal': 'Suggestion: ',
+                 'code': 'Proposed code (not executed): ',
+                 'calculation': 'Unverified calculation: ',
+                 'unknown': 'Uncertain: '}.get(claim['kind'], '')
         lines.append(label + claim['text'].strip() + suffix)
         used.extend(source_id for source_id in citations if source_id not in used)
     if not lines:
@@ -187,3 +193,4 @@ def verified_calculation(text):
     except (ArithmeticError, OverflowError) as exc:
         raise ValueError('Calculation could not be verified.') from exc
     return str(int(value) if isinstance(value, float) and value.is_integer() else value)
+
