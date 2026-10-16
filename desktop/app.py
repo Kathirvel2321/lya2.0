@@ -334,6 +334,8 @@ class Crystal(QWidget):
         p.setOpacity(self.mix * (1 - morph))
         p.drawPixmap(destination, spin if spin is not None else self.current, QRectF(self.current.rect()))
         p.setOpacity(1 - morph)
+        if getattr(self, 'conversation_present', False):
+            p.setOpacity(0)  # The conversation stage uses the body without a plinth or badge.
         # A quiet plinth and suspended facet give the original artwork an anchor.
         c = QColor(self.color)
         c.setAlpha(110)
@@ -466,6 +468,14 @@ class GlassPanel(QWidget):
         self.resize(480, 510)
         self.color = QColor("#9cdfe8")
         self.opaque = False
+        self._activity = 'idle'
+        self._edge_phase = 0
+        self._edge_timer = QTimer(self)
+        self._edge_timer.setInterval(80)
+        self._edge_timer.timeout.connect(self.advance_edge)
+        self._activity_clear = QTimer(self)
+        self._activity_clear.setSingleShot(True)
+        self._activity_clear.timeout.connect(lambda: self.set_activity('idle'))
         self.setStyleSheet("""
             QWidget { color: #e9eff2; font-family: 'Segoe UI'; font-size: 13px; }
             QLabel { background: transparent; }
@@ -475,7 +485,7 @@ class GlassPanel(QWidget):
             QPushButton:pressed { background: rgba(90,190,210,65); }
             QPushButton:focus, QLineEdit:focus, QListWidget:focus { border: 2px solid #9de4ee; }
             QLineEdit { background: rgba(6,12,18,220); border: 1px solid rgba(150,215,230,68);
-                border-radius: 7px; padding: 13px; selection-background-color: #1d6d8c; }
+                border-radius: 20px; padding: 13px 18px; selection-background-color: #1d6d8c; }
             QTextBrowser { background: transparent; border: none; color: #d8e2e8;
                 font-size: 16px; selection-background-color: #296a83; }
             QListWidget { background: transparent; border: none; outline: 0; }
@@ -543,6 +553,7 @@ class GlassPanel(QWidget):
         send = QPushButton("↑")
         send.setAccessibleName("Send command")
         send.setFixedSize(42, 42)
+        self.send_button = send
         send.clicked.connect(self.send)
         composer.addWidget(send)
         outer.addLayout(composer)
@@ -551,6 +562,47 @@ class GlassPanel(QWidget):
         self.footnote.setStyleSheet("font-size: 10px; color: #9aadb9; letter-spacing: 1px;")
         outer.addWidget(self.footnote)
         self.show_answer("Right here with you.", "Your desktop stays yours.\n\nClick Project files to read the saved project plans, or type help.\n\nDrag the crystal to place me. Right-click it to preview person and task colors.")
+
+    def set_activity(self, state, label=None):
+        from glass_style import ACTIVITY, MOVING
+        if state not in ACTIVITY:
+            return
+        self._activity_clear.stop()
+        self._activity = state
+        self._edge_phase = 0
+        if state != 'idle':
+            self.state_label.setText(label or ACTIVITY[state][1])
+        else:
+            self.state_label.setText('CONVERSATION')
+        if state == 'done':
+            self._activity_clear.start(1400)
+        self.sync_edge_motion()
+        self.update()
+
+    def sync_edge_motion(self):
+        from glass_style import MOVING
+        moving = self.isVisible() and not getattr(self, 'reduced', False) and self._activity in MOVING
+        if moving and not self._edge_timer.isActive():
+            self._edge_timer.start()
+        elif not moving:
+            self._edge_timer.stop()
+
+    def set_reduced_motion(self, reduced):
+        self.reduced = bool(reduced)
+        self.sync_edge_motion()
+
+    def advance_edge(self):
+        self._edge_phase = (self._edge_phase + .018) % 1
+        self.update(QRect(22, 7, max(0, self.width() - 44), 8))
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.sync_edge_motion()
+
+    def hideEvent(self, event):
+        self._edge_timer.stop()
+        self._activity_clear.stop()
+        super().hideEvent(event)
 
     def send(self):
         text = self.entry.text().strip()
@@ -593,58 +645,8 @@ class GlassPanel(QWidget):
         self.files.setCurrentRow(0)
 
     def paintEvent(self, event):
-        p = QPainter(self)
-        p.setRenderHint(QPainter.RenderHint.Antialiasing)
-        if self.isWindow():
-            p.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
-            p.fillRect(self.rect(), Qt.GlobalColor.transparent)
-            p.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
-        body = QRectF(self.rect()).adjusted(10, 10, -10, -10)
-        # Faceted native surface; no backdrop capture, blur or added paint timer.
-        path = QPainterPath()
-        path.moveTo(body.left() + 22, body.top())
-        path.lineTo(body.right() - 48, body.top())
-        path.lineTo(body.right(), body.top() + 48)
-        path.lineTo(body.right(), body.bottom() - 22)
-        path.lineTo(body.right() - 22, body.bottom())
-        path.lineTo(body.left() + 22, body.bottom())
-        path.lineTo(body.left(), body.bottom() - 22)
-        path.lineTo(body.left(), body.top() + 22)
-        path.closeSubpath()
-        p.setPen(Qt.PenStyle.NoPen)
-        p.save()
-        p.translate(0, 4)
-        p.setBrush(QColor(0, 0, 0, 75))
-        p.drawPath(path)
-        p.restore()
-        glass = QLinearGradient(body.topLeft(), body.bottomRight())
-        glass.setColorAt(0.0, QColor(28, 39, 47, 255 if self.opaque else 250))
-        glass.setColorAt(0.45, QColor(14, 24, 31, 255 if self.opaque else 251))
-        glass.setColorAt(1.0, QColor(9, 16, 22, 255 if self.opaque else 252))
-        p.setBrush(glass)
-        p.setPen(QPen(QColor(166, 201, 213, 100), 1))
-        p.drawPath(path)
-        p.save()
-        p.setClipPath(path)
-        c = QColor(self.color)
-        c.setAlpha(85)
-        p.setPen(QPen(c, .8))
-        if self.height() > 150:
-            for offset in (0, 9, 18):
-                p.drawLine(QPointF(body.right() - 80 - offset, body.top()),
-                           QPointF(body.right(), body.top() + 80 + offset))
-            # Native mark avoids depending on a font's diamond glyph support.
-            p.drawPolygon(QPolygonF([QPointF(36, 31), QPointF(41, 37),
-                                    QPointF(36, 43), QPointF(31, 37)]))
-            p.setPen(QPen(QColor(190, 213, 225, 22), 1))
-            p.drawLine(QPointF(34, 76), QPointF(self.width() - 34, 76))
-        c.setAlpha(200)
-        p.setPen(QPen(c, 1.6))
-        p.drawLine(QPointF(34, 10), QPointF(min(170, self.width() - 75), 10))
-        p.setPen(QPen(QColor(212, 193, 151, 140), 1.2))
-        p.drawLine(QPointF(body.right() - 22, body.bottom()), QPointF(body.right(), body.bottom() - 22))
-        p.restore()
-        p.end()
+        from glass_style import paint_glass
+        paint_glass(self)
 
 
 class ReadSignals(QObject):
@@ -660,6 +662,7 @@ class VoiceSignals(QObject):
 
 class BrainSignals(QObject):
     finished = Signal(int, object)
+    progress = Signal(int, object)
 
 
 class BrainJob(QRunnable):
@@ -682,7 +685,8 @@ class BrainJob(QRunnable):
                                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
                 answer = Answer(p.stdout if p.returncode == 0 else "The isolated demo failed. Run brain/demo.py to inspect it.", "demo")
             else:
-                answer = self.brain.respond(self.text, self.cancelled)
+                answer = self.brain.respond(self.text, self.cancelled,
+                    progress=lambda event: self.signals.progress.emit(self.generation, event))
         except Exception:
             answer = Answer("The brain request failed safely.", "error")
         if self.cancelled.is_set():
@@ -736,6 +740,12 @@ class Desktop(QObject):
         self.brain_cancel = threading.Event()
         self.brain_signals = BrainSignals(self)
         self.brain_signals.finished.connect(self.on_brain)
+        self.brain_signals.progress.connect(self.on_task_progress)
+        from task_border import TaskBorder
+        self.task_border = TaskBorder(self, reduced=reduced_motion)
+        self.launch_receipt = None
+        self.orb.motion_changed.connect(self.task_border.set_reduced)
+        self.orb.motion_changed.connect(self.panel.set_reduced_motion)
         self.signals = ReadSignals(self)
         self.signals.finished.connect(self.on_document)
         self.voice_signals = VoiceSignals(self)
@@ -940,6 +950,9 @@ class Desktop(QObject):
 
     def close_panel(self):
         from audio import voice
+        self.task_border.stop()
+        self.launch_receipt = None
+        self.panel.set_activity('idle')
         voice._THINKING.clear()
         self.brain_cancel.set()
         if not self.brain_busy:
@@ -1158,6 +1171,7 @@ class Desktop(QObject):
                 " · idle " + str(health.get('idle_seconds')) + "s")
 
     def quit(self):
+        self.task_border.close()
         self.brain_cancel.set()
         self.stop_voice()
         self.generation += 1
@@ -1170,9 +1184,10 @@ class Desktop(QObject):
     def set_state(self, person=None, task=None):
         self.orb.set_state(person, task)
         self.panel.color = self.orb.target_color
-        self.panel.state_label.setText({'idle': 'CONVERSATION', 'files': 'DOCUMENTS',
-                                       'success': 'REPLY', 'approval': 'YOUR APPROVAL',
-                                       'error': 'NEEDS ATTENTION'}.get(self.orb.task, self.orb.task.upper()))
+        if self.panel._activity == 'idle':
+            self.panel.state_label.setText({'idle': 'CONVERSATION', 'files': 'DOCUMENTS',
+                                           'success': 'REPLY', 'approval': 'YOUR APPROVAL',
+                                           'error': 'NEEDS ATTENTION'}.get(self.orb.task, self.orb.task.upper()))
         self.panel.update()
 
     def show_files(self):
@@ -1200,6 +1215,9 @@ class Desktop(QObject):
         import threading
         self.brain_cancel = threading.Event()
         self.brain_busy = True
+        self.launch_receipt = None
+        self.task_border.stop()
+        self.panel.set_activity('working')
         from audio import voice
         voice._THINKING.set()
         self.orb.set_voice_phase('thinking')
@@ -1214,6 +1232,11 @@ class Desktop(QObject):
         voice._THINKING.clear()
         if generation != self.generation or self.brain_cancel.is_set():
             return
+        self.task_border.stop()
+        self.panel.set_activity('approval' if answer.route == 'blocked' else 'error' if answer.route == 'error' else 'done')
+        if answer.route == 'limited-app' and self.launch_receipt is not None:
+            self.task_border.opened(generation, self.launch_receipt)
+        self.launch_receipt = None
         self.set_state(task="approval" if answer.route == "blocked" else "error" if answer.route == "error" else "idle")
         titles = {"demo": "Brain workflow · synthetic demo", "blocked": "One step is missing.", "council": "Council review", "recall": "Your active memories"}
         self.panel.show_answer(titles.get(answer.route, "LYA"), answer.text)
@@ -1223,6 +1246,18 @@ class Desktop(QObject):
         elif (isinstance(route, dict) and isinstance(route.get('route'), str)
                 and type(route.get('attempts')) is int):
             self.panel.footnote.setText('CLOUD · ' + route['route'] + (' · BACKUP USED' if route['attempts'] > 1 else ''))
+
+    def on_task_progress(self, generation, event):
+        if generation != self.generation or self.brain_cancel.is_set() or not self.brain_busy:
+            return
+        if not isinstance(event, dict):
+            return
+        stage = event.get('stage')
+        if stage == 'launched':
+            pid = event.get('pid')
+            self.launch_receipt = pid if type(pid) is int and pid > 0 else None
+        elif stage in ('working', 'research', 'reason', 'launching'):
+            self.panel.set_activity(stage)
 
     def command(self, text):
         low = " ".join(text.casefold().split())
@@ -1340,3 +1375,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

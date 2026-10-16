@@ -4,7 +4,7 @@ from pathlib import Path
 import subprocess
 
 
-def launch(name):
+def launch(name, *, on_launch=None):
     if name=='calculator':
         command=[str(Path(os.environ.get('SystemRoot',r'C:\Windows'))/'System32/calc.exe')]
     elif name=='youtube':
@@ -16,5 +16,10 @@ def launch(name):
         command=[str(browser),'--guest','--new-window','--no-first-run','https://www.youtube.com/']
     else:
         raise ValueError('Only calculator and YouTube guest browsing are permitted here.')
-    subprocess.Popen(command)
+    process = subprocess.Popen(command)
+    if on_launch is not None:
+        try:
+            on_launch(process.pid)
+        except Exception:
+            pass
     return 'Opened '+name+'.'

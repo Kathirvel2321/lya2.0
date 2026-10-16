@@ -20,6 +20,7 @@ def is_owner_access_request(text):
 class CompactPanel(GlassPanel):
     resized_mode = Signal()
     drag_started = Signal()
+    surface_moved = Signal()
 
     def __init__(self):
         self.mode = 'answer'
@@ -45,7 +46,6 @@ class CompactPanel(GlassPanel):
             blocked = Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.MetaModifier
             text = event.text() if not modifiers & blocked else ''
             if (text and not text.isspace()) or event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
-                self.set_mode('input')
                 self.entry.setText(text)
                 self.entry.setFocus()
                 self.entry.setCursorPosition(len(text))
@@ -68,10 +68,14 @@ class CompactPanel(GlassPanel):
         self.drag_offset = None
         super().mouseReleaseEvent(event)
 
+    def moveEvent(self, event):
+        super().moveEvent(event)
+        self.surface_moved.emit()
+
     def set_mode(self, mode):
         self.mode = mode
         layout = self.layout()
-        # Reuse existing widgets; only the composer is visible in input mode.
+        # Preserve the same widgets and keyboard paths; typing stays available.
         def visible(item, show):
             if item.widget():
                 item.widget().setVisible(show)
@@ -81,12 +85,13 @@ class CompactPanel(GlassPanel):
         for i in range(layout.count()):
             visible(layout.itemAt(i), mode != 'input' or i == 5)
         self.eyebrow.hide()
-        if mode == 'answer':
-            visible(layout.itemAt(5), False)
+        if mode == 'chat':
+            self.title_label.hide()
         if mode == 'files':
             visible(layout.itemAt(5), False)
-        if mode != 'chat':
-            visible(layout.itemAt(4), False)
+        visible(layout.itemAt(4), False)
+        self.entry.setPlaceholderText('Ask LYA anything…')
+        self.send_button.hide()  # Enter sends; voice still uses the existing listener.
         layout.setContentsMargins(30, 22, 30, 24)
         layout.setSpacing(18)
         self.title_label.setStyleSheet('font-size: 23px; font-weight: 600; color: #f1f4f3;')
@@ -227,6 +232,8 @@ class OrbDesktop(Desktop):
         # The original fixed-size silhouette mask clipped the resized circle.
         self.orb.clearMask()
         self.orb.relocated.disconnect(self.position_panel)
+        self.conversation_anchor = None
+        self.panel.surface_moved.connect(self.position_conversation_body)
         self.keep_crystal = False
         self.file_windows = []
         self.spin_frames = []
@@ -310,6 +317,7 @@ class OrbDesktop(Desktop):
 
     def set_motion_mode(self, reduced):
         self.panel.reduced = reduced
+        self.panel.sync_edge_motion()
         if reduced:
             spinning = self.spin_timer.isActive()
             self.spin_timer.stop()
@@ -509,19 +517,38 @@ class OrbDesktop(Desktop):
         self.orb.timer.stop()
 
     def panel_target(self):
-        screen = self.app.screenAt(self.orb.geometry().center()) or self.app.primaryScreen()
-        size = {'input': (460, 100), 'answer': (500, 320), 'chat': (560, 590), 'files': (520, 470)}[self.panel.mode]
+        anchor = getattr(self, 'conversation_anchor', None) or self.orb.geometry()
+        screen = self.app.screenAt(anchor.center()) or self.app.primaryScreen()
+        size = {'input': (460, 100), 'answer': (480, 370), 'chat': (500, 500), 'files': (520, 470)}[self.panel.mode]
         area = screen.availableGeometry()
         width = min(size[0], area.width() - 24)
         height = min(size[1], area.height() - 24)
-        x = max(area.left() + 12, min(self.orb.geometry().center().x() - width // 2, area.right() - width - 12))
+        x = max(area.left() + 12, min(anchor.center().x() - width // 2, area.right() - width - 12))
         if self.panel.detached:
             return Box(self.panel.x(), self.panel.y(), width, height)
-        if self.orb.y() - height - 12 >= area.top() + 12:
-            return Box(x, self.orb.y() - height - 12, width, height)
+        if anchor.y() - height - 12 >= area.top() + 12:
+            return Box(x, anchor.y() - height - 12, width, height)
         # Keep the full card beside the crystal when there is no room above it.
-        return place_panel(Box(self.orb.x(), self.orb.y(), self.orb.width(), self.orb.height()),
+        return place_panel(Box(anchor.x(), anchor.y(), anchor.width(), anchor.height()),
                            Box(area.x(), area.y(), area.width(), area.height()), (width, height))
+
+    def position_conversation_body(self):
+        if not getattr(self, 'conversation_anchor', None) or self.panel.isFullScreen():
+            return
+        area = (self.panel.screen() or self.app.primaryScreen()).availableGeometry()
+        w, h, gap = 210, 285, 8
+        x = self.panel.x() - w + gap
+        if x < area.left() + 8:
+            x = self.panel.x() + self.panel.width() - gap
+        if x + w > area.right() - 8:
+            # Narrow monitors keep the body above the panel; never cover its text.
+            x = max(area.left() + 8, area.right() - w - 8)
+            y = max(area.top() + 8, self.panel.y() - h + gap)
+        else:
+            y = self.panel.y() + self.panel.height() - h - 6
+        self.orb.setGeometry(x, max(area.top() + 8, min(y, area.bottom() - h - 8)), w, h)
+        self.orb.conversation_present = True
+        self.set_circle(0)
 
     def _speaking_changed(self, active):
         from audio import voice
@@ -542,7 +569,7 @@ class OrbDesktop(Desktop):
         labels = {'listening': 'LISTENING', 'hearing': 'HEARING YOU', 'thinking': 'THINKING',
                   'speaking': 'SPEAKING · SAY STOP', 'uncertain': 'WORDS UNCERTAIN',
                   'standby': 'VOICE ON', 'off': 'VOICE OFF'}
-        if phase in labels:
+        if phase in labels and self.panel._activity == 'idle':
             self.panel.state_label.setText(labels[phase])
 
     def on_voice_phase(self, phase):
@@ -717,7 +744,14 @@ class OrbDesktop(Desktop):
             self.registration_dialog.raise_()
             return
         was_visible = self.panel.isVisible()
+        if self.panel.mode in ('answer', 'chat') and hasattr(self, 'docking'):
+            if self.conversation_anchor is None:
+                self.conversation_anchor = QRect(self.orb.geometry())
+            self.intro_timer.stop()
+            self.docking.stop()
+            self.morph.stop()
         super().open_panel()
+        self.position_conversation_body()
         if self.panel.mode == 'answer':
             self.panel.answer.setFocus()
         if not was_visible and not self.orb.reduced_motion:
@@ -789,6 +823,8 @@ class OrbDesktop(Desktop):
             self._speaking_changed(False)
 
     def close_panel(self):
+        self.conversation_anchor = None
+        self.orb.conversation_present = False
         self.cancel_vision()
         self.stop_wake_greeting()
         if hasattr(self, 'speech'):
@@ -1060,8 +1096,7 @@ class OrbDesktop(Desktop):
                 self.panel.preserve_chat = False
             return
         super().ask_brain(text)
-        if self.voice_dispatch:
-            self.panel.hide()
+        # Voice and typed requests share the visible conversation stage.
 
     def read_document(self, name):
         # Preserve the existing four-document allowlist and bounded local reader.
@@ -1102,6 +1137,8 @@ class OrbDesktop(Desktop):
         target = min(candidates, key=overlap) if candidates else QRect(area.topLeft(), self.panel.size())
         window.setGeometry(target)
         window.show()
+        from task_border import QtTarget
+        self.task_border.begin(self.generation, QtTarget(window), 'Document opened', 'done', .6)
         self.file_windows.append(window)
         self.set_state(task='files')
         self.speak_reply('Your document is open.' if opened else 'I could not open that document.')
@@ -1183,5 +1220,6 @@ class OrbDesktop(Desktop):
         self.panel.reveal.stop()
         self.transcript.clear()
         super().quit()
+
 
 
