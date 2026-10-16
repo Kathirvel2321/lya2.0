@@ -780,10 +780,16 @@ class Desktop(QObject):
         self.orb.screen().availableGeometryChanged.connect(self.recenter)
         self.app.screenRemoved.connect(lambda *_: self.recenter())
         self.recenter()
+        from desktop.news import NewsController
+        self.news = NewsController(self)
+
+    def show_technology_updates(self):
+        self.news.show_brief()
 
     def make_menu(self):
         menu = QMenu()
         menu.addAction("Open LYA", self.wake)
+        menu.addAction("Technology updates", self.show_technology_updates)
         menu.addAction("Project files", self.show_files)
         menu.addAction("Sign in / register admin", lambda: self.command("register admin"))
         review_visitors = getattr(self, 'review_visitors', None)
@@ -927,6 +933,7 @@ class Desktop(QObject):
         self.panel.raise_()
         self.panel.activateWindow()
         self.panel.entry.setFocus()
+        if hasattr(self, 'news'): self.news.opened()
         if not self.orb.reduced_motion:
             self.motion.setStartValue(destination + QPoint(offset, 14))
             self.motion.setEndValue(destination)
@@ -954,10 +961,12 @@ class Desktop(QObject):
         self.set_state(task="idle")
 
     def wake(self):
+        if hasattr(self, 'news'): self.news.opened()
         self.orb.show()
         self.open_panel()
 
     def sleep(self):
+        if hasattr(self, 'news'): self.news.suspend()
         if not self.tray.isVisible():
             self.close_panel()  # Keep a recoverable orb if Windows has no tray.
             return
@@ -1158,6 +1167,7 @@ class Desktop(QObject):
                 " · idle " + str(health.get('idle_seconds')) + "s")
 
     def quit(self):
+        if hasattr(self, 'news'): self.news.shutdown()
         self.brain_cancel.set()
         self.stop_voice()
         self.generation += 1
@@ -1225,6 +1235,7 @@ class Desktop(QObject):
             self.panel.footnote.setText('CLOUD · ' + route['route'] + (' · BACKUP USED' if route['attempts'] > 1 else ''))
 
     def command(self, text):
+        if hasattr(self, 'news'): self.news.interrupt()
         low = " ".join(text.casefold().split())
         if self.brain_busy and low not in ("stop", "cancel", "close", "close panel", "sleep", "quit", "exit"):
             self.panel.show_answer("A request is running.",
@@ -1237,6 +1248,10 @@ class Desktop(QObject):
             self.sleep()
         elif low in ("quit", "exit"):
             self.quit()
+        elif low.strip(' .!?') in ('technology updates', 'tech updates', 'ai news', 'show technology updates',
+                     'any news about technology updates', 'tell me any technology updates',
+                     'tell me whether any news about technology updates', 'latest ai news'):
+            self.show_technology_updates()
         elif low in ("show files", "show saved files", "files", "show project files"):
             self.show_files()
         elif low in ("reduce motion", "motion off", "motion on"):
@@ -1279,6 +1294,7 @@ class Desktop(QObject):
             self.panel.show_answer("LYA Commands",
                 "Available commands:\n" + self.brain.capability_help() +
                 "\n\nDesktop controls:\n"
+                "• technology updates — official-source catch-up and background check controls\n"
                 "• status — check local dependency readiness\n"
                 "• can you hear me — count what reaches the microphone (diagnostic, nothing recorded)\n"
                 "• show files — preview the listed project documents\n"
@@ -1340,3 +1356,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

@@ -121,7 +121,7 @@ class PublicPageReader:
     def __init__(self, *, resolve=socket.getaddrinfo, connect=_PinnedHTTPS, monotonic=time.monotonic):
         self.resolve, self.connect, self.monotonic = resolve, connect, monotonic
 
-    def _get(self, url, deadline, check, reserve, max_bytes=MAX_PAGE_BYTES, redirects=3):
+    def _get(self, url, deadline, check, reserve, max_bytes=MAX_PAGE_BYTES, redirects=3, accepted_mimes=None):
         for hop in range(redirects + 1):
             check()
             url = public_url(url)
@@ -148,7 +148,8 @@ class PublicPageReader:
                     return url, response.status, '', b''
                 mime = (response.getheader('Content-Type') or '').split(';')[0].strip().lower()
                 encoding = (response.getheader('Content-Encoding') or 'identity').lower()
-                if mime not in ('text/html', 'text/plain', 'application/xhtml+xml') or encoding != 'identity':
+                allowed = accepted_mimes or ('text/html', 'text/plain', 'application/xhtml+xml')
+                if mime not in allowed or encoding != 'identity':
                     raise ValueError('Only uncompressed public text pages are supported.')
                 length = response.getheader('Content-Length')
                 if length and (not length.isdigit() or int(length) > max_bytes):

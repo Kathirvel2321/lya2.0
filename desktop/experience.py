@@ -758,6 +758,7 @@ class OrbDesktop(Desktop):
             self.open_panel()
 
     def wake(self):
+        if hasattr(self, 'news'): self.news.opened()
         # Voice wake stays in the compact circle instead of replaying the
         # crystal introduction while the owner waits to ask their question.
         self.close_panel()
@@ -1183,5 +1184,6 @@ class OrbDesktop(Desktop):
         self.panel.reveal.stop()
         self.transcript.clear()
         super().quit()
+
 
 

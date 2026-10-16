@@ -1,0 +1,11 @@
+{
+  "synthetic_checks": 187,
+  "matching_source_hashes": 23,
+  "python_sources_compiled": true,
+  "qt_dialog_visually_inspected": true,
+  "qt_mode": "offscreen",
+  "windows_toast": "not_tested",
+  "live_feeds": "not_qualified",
+  "scope": "source_only_no_deployment",
+  "evidence": "validation-published.json"
+}

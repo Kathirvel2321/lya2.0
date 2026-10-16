@@ -20,6 +20,7 @@ The full previous brain, including every earlier finding, owner clarification an
 
 | Area | Current source / dated evidence | Limits |
 | --- | --- | --- |
+| Proactive technology updates (2026-10-16) | `cloud/news_sources.py`, `cloud/tech_news.py`, `desktop/news.py`, minimal desktop hooks; [guide](docs/guides/LYA_TECHNOLOGY_UPDATES.md), [report](review/2026-10-16-tech-news/README.md) | Hourly official-source discovery, seven-day opening catch-up, public cache, duplicate-safe notification requests and pause/quiet controls implemented; 187 synthetic/offscreen Qt checks pass. Live endpoints, Windows toast/whole-desktop acceptance, resource measurements and deployment remain pending. No model/search calls in routine polling. |
 | Public web research (2026-10-16) | `cloud/web_research.py`, `cloud/web_reader.py`, desktop/phone research routes; [guide](docs/guides/LYA_WEB_RESEARCH.md), [report](review/2026-10-16-web-research/README.md) | Bounded multi-query/page reading, discovery-based deep planning, strict page-versus-snippet evidence and local search-attempt counter implemented. Synthetic checks only; live provider/model/device acceptance and deployment remain pending. Keyless provider profile is evaluation access, not unlimited free production browsing. |
 | Answer-quality source upgrade (2026-10-16) | `cloud/answering.py`, `brain/workflow.py`, `cloud/mobile.py`, `brain/verification.py`; [report](review/2026-10-16-answer-quality/README.md) | Bounded public context/shared guidance and strict source-excerpt identity are implemented for the owner-authorized main update; 107 synthetic Linux checks pass. Live-model/device quality, Windows and deployment remain pending. Private/shared durable memory is not added. |
 | Desktop | Existing launcher → `tools/start_nvidia_lya.py` → `desktop/app.py` / `desktop/experience.py` → `brain/workflow.py`; [desktop guide](desktop/README.md), [approved body installation](review/2026-10-14-approved-body-install/README.md) | Owner-approved curved blue glass render installed as default on 2026-10-14; five isolated Qt states pass. Voice, hearing, controls and circle docking preserved. Full assistant acceptance remains separate; next normal launch loads the artwork. |
@@ -474,3 +475,42 @@ without provider contents/research tools. Production provider/allowance qualific
 manual review of actual pricing/terms, model quality/latency, current-host staging
 and deployment remain next. No keys, purchases, real private data transfer, live
 research requests or service/configuration changes were made.
+
+
+## Work ledger — 2026-10-16 proactive public technology news
+
+Owner explicitly requested implementation after reviewing opening catch-up and
+background launch-alert behavior. Based on main `d9bcc0f596f25293e6ae160554402cbb0f5025ab`;
+direct main publication remains authorized. Added official feed/listing/date parsers,
+public announcement cache and hourly monitor (`cloud/news_sources.py`,
+`cloud/tech_news.py`), a separate plain-text Qt brief and tray delivery controller
+(`desktop/news.py`), minimal `desktop/app.py` hooks and one subclass wake hook in
+`desktop/experience.py`. The shared reader now permits caller-selected XML MIME
+for news while keeping existing research-page defaults. No unrelated visual work,
+voice/hearing, private stores, enrollment or startup registration was changed.
+
+[Guide](docs/guides/LYA_TECHNOLOGY_UPDATES.md),
+[report](review/2026-10-16-tech-news/README.md),
+[187-case final evidence](review/2026-10-16-tech-news/validation-published.json),
+[runner](review/2026-10-16-tech-news/run_checks.py) and
+[failed public-access probe](review/2026-10-16-tech-news/public-access-probe.json)
+record behavior and limits. All selected checks pass, zero failures/errors/skips:
+42 new monitor/parser/cache/Qt checks plus 145 prior regressions. Initial failure
+was a fake-owner fixture attribute deletion, corrected without weakening a rule.
+Actual PySide6 6.8.3 offscreen widgets and a synthetic brief render were inspected;
+this is not a real Windows toast, full assistant or device qualification.
+
+Monitor checks use no LLM/search/provider key, account session, camera or microphone.
+Public cached excerpts, dates, seen state and pause/reservation settings stay separate
+from protected memory. It yields to user commands, busy speech/chat, private mode,
+sleep, setup/camera windows and quit; generations reject late queued results. Fixed
+sources, robots policy, HTTPS/public-address/TLS checks, byte/request/parse/count
+budgets, hourly reservation and seven-day freshness window bound its scope.
+
+Publisher announcements are not independent capability/access/ranking proof. It
+reports unknown pricing/access, partial source coverage and date-only precision;
+no automatic model switch, browser opening or Gemini subscription integration.
+Three direct source probes failed in this environment. Current live formats/source
+access, native device/OS notification behavior, battery/network measurements and
+runtime installation with rollback remain next. No host deployment or real private
+data export occurred; another UI chat's working files remain untouched.

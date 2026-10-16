@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-10-16T10:39:25.075409+00:00",
+  "probe": "stdlib_urlopen_diagnostic_no_credentials",
+  "result": "no_successful_endpoint_access",
+  "model_calls": 0,
+  "lya_monitor_live_round": "not_qualified",
+  "sources": [
+    {
+      "url": "https://openai.com/news/rss.xml",
+      "result": "URLError"
+    },
+    {
+      "url": "https://gemini.google/release-notes/",
+      "result": "URLError"
+    },
+    {
+      "url": "https://www.anthropic.com/news",
+      "result": "HTTPError"
+    }
+  ]
+}
