@@ -11,16 +11,20 @@ from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from PySide6.QtCore import Qt, QRect, QPoint
-from PySide6.QtGui import QColor, QPainter, QFont, QLinearGradient, QPalette
+from PySide6.QtGui import QColor, QPainter, QFont, QFontDatabase, QLinearGradient, QPalette
 from PySide6.QtWidgets import QApplication, QWidget, QLabel
 from PySide6.QtTest import QTest
 
 from app import GlassPanel, Desktop, BrainJob, BrainSignals, Crystal
 from experience import CompactPanel
-from task_border import TaskBorder, QtTarget, logical_rect, FLAGS
+from task_border import TaskBorder, QtTarget, logical_rect, monitor_screen, FLAGS
 
 APP = QApplication.instance() or QApplication([])
 APP.setQuitOnLastWindowClosed(False)
+if sys.platform == 'win32':
+    for name in ('segoeui.ttf', 'segoeuib.ttf'):
+        QFontDatabase.addApplicationFont(str(Path(os.environ.get('SystemRoot', r'C:\Windows'))/'Fonts'/name))
+    APP.setFont(QFont('Segoe UI', 10))
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'review' / '2026-10-16-glass-conversation'
 
@@ -119,6 +123,12 @@ class GlassChecks(unittest.TestCase):
         screen = SimpleNamespace(devicePixelRatio=lambda: 1.5, geometry=lambda: QRect(-1707, 0, 1707, 960))
         self.assertEqual(logical_rect((-2400, 150, -1500, 750), (-2560, 0), screen),
                          QRect(-1600, 100, 600, 400))
+
+    def test_monitor_friendly_name_uses_unique_geometry_match(self):
+        screen = SimpleNamespace(name=lambda:'HyperVMonitor', devicePixelRatio=lambda:1.5,
+                                 geometry=lambda:QRect(-2560, 0, 1707, 960))
+        self.assertIs(monitor_screen([screen], r'\\.\DISPLAY1', (-2560,0,0,1440)), screen)
+        self.assertIsNone(monitor_screen([screen,screen], 'unknown', (-2560,0,0,1440)))
 
     def test_stale_cancelled_and_invalid_progress_cannot_show_work(self):
         panel = Mock()

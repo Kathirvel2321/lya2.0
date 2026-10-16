@@ -29,6 +29,20 @@ def logical_rect(bounds, monitor, screen):
                  round((right - x) / dpr), round((bottom - y) / dpr))
 
 
+def monitor_screen(screens, device, bounds):
+    """Qt may expose a monitor's friendly name instead of its Win32 device name."""
+    named = [s for s in screens if s.name().casefold() == device.casefold()]
+    if len(named) == 1:
+        return named[0]
+    left, top, right, bottom = bounds
+    # Windows Qt keeps native monitor origins and scales the screen's size.
+    matches = [s for s in screens if abs(s.geometry().left() - left) <= 1
+               and abs(s.geometry().top() - top) <= 1
+               and abs(s.geometry().width()*s.devicePixelRatio() - (right-left)) <= 2
+               and abs(s.geometry().height()*s.devicePixelRatio() - (bottom-top)) <= 2]
+    return matches[0] if len(matches) == 1 else None
+
+
 class QtTarget:
     """An explicitly supplied app-owned window, used by document UI and tests."""
     def __init__(self, widget):
@@ -93,7 +107,8 @@ class WindowsTarget:
         monitor = self.u.MonitorFromWindow(self.hwnd, 2)
         if not self.u.GetMonitorInfoW(monitor, ctypes.byref(info)):
             return QRect()
-        screen = next((s for s in QApplication.screens() if s.name().casefold() == info.szDevice.casefold()), None)
+        screen = monitor_screen(QApplication.screens(), info.szDevice,
+                                (info.rcMonitor.left, info.rcMonitor.top, info.rcMonitor.right, info.rcMonitor.bottom))
         if screen is None:
             return QRect()
         return logical_rect((rect.left, rect.top, rect.right, rect.bottom),
