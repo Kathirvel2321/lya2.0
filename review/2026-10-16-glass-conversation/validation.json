@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-16",
+  "base_commit": "945eeec364fa743ef56c1ec5276f06d4f581cd44",
+  "tested_runtime_commit": "31ac97189308cc85d0b905c10d0424216a6d5215",
+  "windows_run": "https://github.com/Kathirvel2321/lya2.0/actions/runs/38859135219",
+  "existing_backend_research_tests": 51,
+  "new_qt_task_tests": 11,
+  "native_windows_smoke": "pass",
+  "native_font_preview_visually_inspected": true,
+  "approved_asset_git_sha": "eae05c6ea7ccecc3e7bcced1db3c7060a62f5697",
+  "approved_asset_unchanged": true,
+  "battery_measured": false,
+  "physical_multimonitor_tested": false,
+  "live_voice_tested": false,
+  "general_external_app_executor": false,
+  "source_changes": {
+    "desktop/app.py": {
+      "changed": [
+        "Crystal.paintEvent",
+        "GlassPanel.__init__",
+        "GlassPanel.paintEvent",
+        "BrainJob.run",
+        "Desktop.__init__",
+        "Desktop.close_panel",
+        "Desktop.quit",
+        "Desktop.set_state",
+        "Desktop.ask_brain",
+        "Desktop.on_brain"
+      ],
+      "added": [
+        "GlassPanel.set_activity",
+        "GlassPanel.sync_edge_motion",
+        "GlassPanel.set_reduced_motion",
+        "GlassPanel.advance_edge",
+        "GlassPanel.showEvent",
+        "GlassPanel.hideEvent",
+        "Desktop.on_task_progress"
+      ],
+      "removed": []
+    },
+    "desktop/experience.py": {
+      "changed": [
+        "CompactPanel.eventFilter",
+        "CompactPanel.set_mode",
+        "OrbDesktop.__init__",
+        "OrbDesktop.set_motion_mode",
+        "OrbDesktop.panel_target",
+        "OrbDesktop.refresh_voice_phase",
+        "OrbDesktop.open_panel",
+        "OrbDesktop.close_panel",
+        "OrbDesktop.ask_brain",
+        "OrbDesktop.read_document"
+      ],
+      "added": [
+        "CompactPanel.moveEvent",
+        "OrbDesktop.position_conversation_body"
+      ],
+      "removed": []
+    },
+    "brain/workflow.py": {
+      "changed": [
+        "Brain.respond"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "skills/limited_apps.py": {
+      "changed": [
+        "launch"
+      ],
+      "added": [],
+      "removed": []
+    }
+  }
+}

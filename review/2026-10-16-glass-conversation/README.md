@@ -6,7 +6,7 @@ Implemented against main `945eeec364fa743ef56c1ec5276f06d4f581cd44` after the ow
 
 - `desktop/glass_style.py`: rounded navy surface, fixed reflective gradients and a restrained hairline. No screenshot capture, live backdrop blur, WebView or live 3D renderer.
 - `desktop/experience.py`: existing approved body appears beside answers/chat; optional typing remains available. Voice requests reveal the same panel. Existing transcript bounds, phrase captions, speech engine, startup and circle docking are preserved. Close returns to the existing dock.
-- `desktop/task_border.py`: four narrow native input-transparent/no-focus strips and a small readable status tag. `begin(generation, target, label, state)` accepts an explicit `QtTarget` or pinned `WindowsTarget`. Native bounds are verified against HWND/PID and converted from DWM physical pixels using the matching Qt monitor. Unrelated foreground, invisible/minimized/cloaked and destroyed windows are not outlined.
+- `desktop/task_border.py`: four narrow native input-transparent/no-focus strips and a small readable status tag. `begin(generation, target, label, state)` accepts an explicit `QtTarget` or pinned `WindowsTarget`. Native bounds are verified against HWND/PID and converted from DWM physical pixels using the matching Qt monitor. Unrelated foreground, invisible/minimized/cloaked and destroyed windows are hidden on the next state check (up to 250 ms).
 - `brain/workflow.py`/`desktop/app.py`: optional observer reports actual source retrieval and model invocation stages; public/private routing and existing authorization remain authoritative. Research runs through HTTP adapters, so its progress appears around LYA's own panel. It does not surround whichever browser happens to be open.
 - `skills/limited_apps.py`: the same permitted commands emit an optional receipt after `Popen` succeeds. Only a window attributable to that PID receives a 0.6-second “App opened” highlight. Calculator/browser process handoffs can prevent attribution; the implementation skips the border rather than guessing. A launch is not continuing work in the app.
 
@@ -22,10 +22,21 @@ This limits unnecessary painting; it is not a measured battery guarantee. Laptop
 
 `QT_QPA_PLATFORM=offscreen python desktop/check_glass.py`
 
-Ten local real-Qt checks pass: optional typing and literal transcript text, actual worker progress, real public research stages with a fake provider, observer failure isolation, launch receipt ordering, stale/cancelled events, full desktop request/cancellation, native flag declarations, follow/move/resize/hide/close, deadline cleanup and mixed-DPI/negative-origin geometry. No sensor or provider is opened. The exact binary body could not be fetched by the connector locally; an earlier reference is used as an uncommitted local fixture. Do not treat that local image as the accepted installed body.
+Eleven local real-Qt checks pass: optional typing and literal transcript text, actual worker progress, real public research stages with a fake provider, observer failure isolation, launch receipt ordering, stale/cancelled events, full desktop request/cancellation, native flag declarations, follow/move/resize/hide/close, deadline cleanup and mixed-DPI/negative-origin geometry. No sensor or provider is opened. The approved binary asset was recovered from the Windows CI artifact and its Git blob SHA verified as `eae05c6ea7ccecc3e7bcced1db3c7060a62f5697`, exactly matching main. Earlier local fixture previews were replaced before the final review.
 
 `QT_QPA_PLATFORM=windows python desktop/check_glass_windows.py`
 
-Native Windows smoke check uses a synthetic foreground window to verify real DWM bounds, HWND/PID pinning, movement/minimize, no focus stealing and actual Windows input-transparent/no-activate styles. GitHub Actions checks and a preview rendered with the unchanged repository asset are pending at this checkpoint.
+Native Windows smoke check uses a synthetic foreground window to verify real DWM bounds, HWND/PID pinning, movement/minimize, no focus stealing and actual Windows input-transparent/no-activate styles. Both the native Windows check and offscreen suite pass in [run 38859135219](https://github.com/Kathirvel2321/lya2.0/actions/runs/38859135219) at runtime commit `31ac97189308cc85d0b905c10d0424216a6d5215`.
+
+The first Windows run passed 51 existing backend/research checks and ten new offscreen Qt checks. Its native smoke test exposed a real Qt/Win32 monitor-name mismatch. The implementation now accepts a unique physical-origin/size/DPR match when friendly and device names differ, with an eleventh regression test. Offscreen Windows previews explicitly load Segoe UI fonts. Native requalification passes at the runtime commit above: 51 existing backend/research cases, 11 new Qt/task cases and the native Windows smoke check. The actual Windows-rendered preview was downloaded, digest-verified and visually inspected with correct Segoe UI text.
+
+![Actual native Windows preview with synthetic content](native-preview.png)
+
+[Validation record](validation.json) · [Research panel](research-panel.png)
 
 The Actions artifact includes `native-preview.png` and `research-panel.png`; the preview is rendered from actual Qt widgets with synthetic content. It is not a screenshot of a running real research task or proof of a pixel-exact concept match. Main, deployed mobile service and owner laptop are not changed by this branch.
+
+
+## Review status
+
+Implemented in [PR #4](https://github.com/Kathirvel2321/lya2.0/pull/4), separate from the older visual prototype PR. The source revision above passes CI. This documentation/screenshot checkpoint changes no runtime code. The implementation is ready for owner visual review, not a claim that the generated reference was reproduced pixel for pixel or that the owner's laptop has been updated.
