@@ -21,9 +21,19 @@ def main():
     window.activateWindow()
     QTest.qWait(150)
     target = WindowsTarget(int(window.winId()), os.getpid())
+    target.u.SetForegroundWindow.argtypes = [w.HWND]
+    target.u.SetForegroundWindow.restype = w.BOOL
+    target.u.SetForegroundWindow(int(window.winId()))
+    for _ in range(10):
+        if target.u.GetForegroundWindow() == int(window.winId()):
+            break
+        QTest.qWait(50)
     border = TaskBorder(reduced=True)
     try:
         rect = target.geometry()
+        print('Synthetic native target:', dict(visible=bool(target.u.IsWindowVisible(target.hwnd)),
+              foreground=target.u.GetForegroundWindow() == target.hwnd,
+              screens=[s.name() for s in application.screens()], bounds=str(rect)))
         assert rect is not None and not rect.isEmpty(), 'Could not establish synthetic foreground target'
         border.begin(1, target, 'Synthetic task')
         application.processEvents()
