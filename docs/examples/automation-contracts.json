@@ -1,0 +1,83 @@
+{
+  "status": "drafts_not_authorized_or_scheduled",
+  "examples": [
+    {
+      "purpose": "Daily selected-source technology digest",
+      "contract": {
+        "id": "technology_digest",
+        "revision": 1,
+        "kind": "technology_updates",
+        "placement": "oracle",
+        "sensitivity": "public",
+        "start": "13:00",
+        "notify": "13:05",
+        "zone": "Asia/Kolkata",
+        "account": "",
+        "owner": "owner_not_connected",
+        "catchup_seconds": 1800,
+        "retention_hours": 24,
+        "lookback_hours": 168,
+        "importance_rules": [],
+        "notification_filter": "important_or_uncertain",
+        "send_mode": "draft_only",
+        "catalog": [],
+        "private_remote": false,
+        "zero_spend": true,
+        "limits": {
+          "seconds": 60,
+          "requests": 8,
+          "items": 100,
+          "result_bytes": 32768,
+          "sends": 0
+        }
+      },
+      "unresolved": [
+        "verified owner delegation",
+        "qualified server and report sink",
+        "owner notification route"
+      ]
+    },
+    {
+      "purpose": "18:00 inbox review, 19:00 important-message summary",
+      "contract": {
+        "id": "message_review",
+        "revision": 1,
+        "kind": "inbox_review",
+        "placement": "oracle",
+        "sensitivity": "private",
+        "start": "18:00",
+        "notify": "19:00",
+        "zone": "Asia/Kolkata",
+        "account": "account_not_connected",
+        "owner": "owner_not_connected",
+        "catchup_seconds": 1800,
+        "retention_hours": 24,
+        "lookback_hours": 24,
+        "importance_rules": [
+          "owner_definition_required"
+        ],
+        "notification_filter": "important_or_uncertain",
+        "send_mode": "draft_only",
+        "catalog": [],
+        "private_remote": false,
+        "zero_spend": true,
+        "limits": {
+          "seconds": 60,
+          "requests": 8,
+          "items": 100,
+          "result_bytes": 32768,
+          "sends": 0
+        }
+      },
+      "unresolved": [
+        "personal WhatsApp vs business account vs YouTube channel",
+        "account connection and scopes",
+        "owner-defined importance rules",
+        "explicit private-to-server permission",
+        "protected report sink",
+        "approved link catalogue and send delegation if desired",
+        "notification route"
+      ]
+    }
+  ]
+}

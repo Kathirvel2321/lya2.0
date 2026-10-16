@@ -20,6 +20,7 @@ The full previous brain, including every earlier finding, owner clarification an
 
 | Area | Current source / dated evidence | Limits |
 | --- | --- | --- |
+| Automation governance foundation (2026-10-16) | `cloud/job_policy.py`, `cloud/job_store.py`, `cloud/job_runner.py`, `cloud/job_adapters.py`; [master strategy](docs/guides/LYA_AUTOMATION_STRATEGY.md), [report](review/2026-10-16-job-strategy/README.md) | Structured daily contracts, exact scoped delegation, cooperative budgets, durable run/action/outbox state and fake-account 18:00/19:00 lab implemented; 228 isolated checks pass. Not wired to speech, real accounts, private production storage, phone push or a server scheduler. Default authority denies. Existing desktop watcher remains unchanged. |
 | Proactive technology updates (2026-10-16) | `cloud/news_sources.py`, `cloud/tech_news.py`, `desktop/news.py`, minimal desktop hooks; [guide](docs/guides/LYA_TECHNOLOGY_UPDATES.md), [report](review/2026-10-16-tech-news/README.md) | Hourly official-source discovery, seven-day opening catch-up, public cache, duplicate-safe notification requests and pause/quiet controls implemented; 187 synthetic/offscreen Qt checks pass. Live endpoints, Windows toast/whole-desktop acceptance, resource measurements and deployment remain pending. No model/search calls in routine polling. |
 | Public web research (2026-10-16) | `cloud/web_research.py`, `cloud/web_reader.py`, desktop/phone research routes; [guide](docs/guides/LYA_WEB_RESEARCH.md), [report](review/2026-10-16-web-research/README.md) | Bounded multi-query/page reading, discovery-based deep planning, strict page-versus-snippet evidence and local search-attempt counter implemented. Synthetic checks only; live provider/model/device acceptance and deployment remain pending. Keyless provider profile is evaluation access, not unlimited free production browsing. |
 | Answer-quality source upgrade (2026-10-16) | `cloud/answering.py`, `brain/workflow.py`, `cloud/mobile.py`, `brain/verification.py`; [report](review/2026-10-16-answer-quality/README.md) | Bounded public context/shared guidance and strict source-excerpt identity are implemented for the owner-authorized main update; 107 synthetic Linux checks pass. Live-model/device quality, Windows and deployment remain pending. Private/shared durable memory is not added. |
@@ -514,3 +515,43 @@ Three direct source probes failed in this environment. Current live formats/sour
 access, native device/OS notification behavior, battery/network measurements and
 runtime installation with rollback remain next. No host deployment or real private
 data export occurred; another UI chat's working files remain untouched.
+
+
+## Work ledger — 2026-10-16 master automation strategy and bounded task contracts
+
+Owner requested the strategy/execution foundation first: what, when, where, permitted
+scope, budget, stop rules and follow-up, with an 18:00 message-review / 19:00 report
+example. Based on main `0e66f13e675b64a25b32dbc58d7ca98d318026c2`; direct main publication
+remains authorized. Added [master strategy](docs/guides/LYA_AUTOMATION_STRATEGY.md),
+[draft contracts](docs/examples/automation-contracts.json), policy/store/runner/public
+adapter modules under `cloud/job_*.py` and a no-network synthetic lab in
+`tools/job_policy_lab.py`. No existing runtime watcher, task-list, voice/hearing,
+UI, private storage or startup was replaced or migrated.
+
+The exact approved contract binds daily timezone-aware collection/report times,
+input lookback/cutoff, account, logical placement, privacy, importance-rule references,
+zero-spend status, resource caps, approved-link scope and expiry. Verification denies
+by default; real identity/account/notification/storage adapters remain absent. Durable
+slot/action/outbox records separate collection from delayed notifications, suppress
+normal repeats and quarantine uncertain external sends. Epoch checks fence revoked
+work at cooperative boundaries. Provider receipts and recipient identity are trusted
+connector responsibilities, not established by model text. Private report bodies
+are refused by the built-in public sink and absent from control metadata.
+
+[228-case evidence](review/2026-10-16-job-strategy/validation-release.json),
+[log/runner/report](review/2026-10-16-job-strategy/README.md) and
+[synthetic 18:00/19:00 result](review/2026-10-16-job-strategy/synthetic-example.json)
+record 41 new cases plus 187 previous selected regressions, zero failures/errors/skips.
+The initial test helper shadowed unittest.run and was renamed; corrected preceding
+runs remain separate. Linux fake stores/credentials and offscreen Qt only; no native
+Windows, live provider, real account or server qualification is claimed.
+
+Reviewed Meta-maintained business Cloud API and official YouTube comment/OAuth
+references. Personal WhatsApp access, actual account/channel, owner importance rules,
+resource mappings, private server consent and notification route remain unresolved.
+A 6 PM snapshot excludes later arrivals unless a second explicit check is planned.
+Cooperative budgets are not hard OS/process limits; isolated worker supervision,
+real owner/delegation wiring, protected storage/custody, source-window conformance,
+reconciliation and retention maintenance are prerequisites to production scheduling.
+No real message was read/sent, key enrolled, timer installed, private data exported,
+paid service enabled or laptop/Oracle deployment performed.

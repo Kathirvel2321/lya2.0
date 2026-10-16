@@ -1,0 +1,13 @@
+{
+  "data": "synthetic_only",
+  "network_calls": 0,
+  "real_messages_sent": 0,
+  "collection_state": "completed",
+  "mock_link_replies": 1,
+  "notification_before_19_00": false,
+  "mock_notification_at_19_00": true,
+  "repeated_notification": false,
+  "private_report_in_plain_control_store": false,
+  "real_account_connection": "not_configured",
+  "production_deployment": "not_run"
+}

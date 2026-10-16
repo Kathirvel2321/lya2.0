@@ -1,0 +1,11 @@
+{
+  "tests": 228,
+  "source_hashes_verified": 29,
+  "synthetic_only": true,
+  "real_account_reads": 0,
+  "real_messages_sent": 0,
+  "live_scheduler_installed": false,
+  "private_production_store_qualified": false,
+  "existing_runtime_files_changed": false,
+  "main_base": "0e66f13e675b64a25b32dbc58d7ca98d318026c2"
+}

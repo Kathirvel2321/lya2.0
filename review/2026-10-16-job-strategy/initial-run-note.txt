@@ -1,0 +1,1 @@
+Initial regression runner stopped before producing a test report: a test helper named run shadowed unittest.TestCase.run. Renamed it execute_fixture. No production assertion or policy was weakened. The corrected full runner is recorded separately.
