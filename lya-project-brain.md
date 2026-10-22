@@ -1,6 +1,6 @@
 # LYA project brain
 
-Current continuity summary: 2026-10-16. Read this first, then the relevant source and [LYA_VISION.md](LYA_VISION.md). Recorded test/deployment results are dated evidence, not proof of current behavior.
+Current continuity summary: 2026-10-22. Read this first, then the relevant source and [LYA_VISION.md](LYA_VISION.md). Recorded test/deployment results are dated evidence, not proof of current behavior.
 
 The full previous brain, including every earlier finding, owner clarification and work-ledger entry, is preserved byte for byte in [archive/history/continuity/project-brain-through-2026-10-12.md](archive/history/continuity/project-brain-through-2026-10-12.md). Consult it when earlier context is needed. [docs/README.md](docs/README.md) indexes maintained explanations; [archive/README.md](archive/README.md) explains historical material and recovery.
 
@@ -20,6 +20,7 @@ The full previous brain, including every earlier finding, owner clarification an
 
 | Area | Current source / dated evidence | Limits |
 | --- | --- | --- |
+| Routine draft review (2026-10-22) | `cloud/routine_drafts.py`, `desktop/routines.py`, manual desktop tray/command hooks; [guide](docs/guides/LYA_ROUTINE_SETUP.md), [report](review/2026-10-22-routine-drafts/README.md) | Review/save/reopen/remove bounded schedule proposals with explicit missing connections and zero outgoing replies; 243 selected synthetic/offscreen checks pass. Drafts cannot enable jobs, approve private cloud access or connect accounts. General language-to-schedule parsing, real owner activation, worker/timer and account/notifier integrations remain pending. |
 | Automation governance foundation (2026-10-16) | `cloud/job_policy.py`, `cloud/job_store.py`, `cloud/job_runner.py`, `cloud/job_adapters.py`; [master strategy](docs/guides/LYA_AUTOMATION_STRATEGY.md), [report](review/2026-10-16-job-strategy/README.md) | Structured daily contracts, exact scoped delegation, cooperative budgets, durable run/action/outbox state and fake-account 18:00/19:00 lab implemented; 228 isolated checks pass. Not wired to speech, real accounts, private production storage, phone push or a server scheduler. Default authority denies. Existing desktop watcher remains unchanged. |
 | Proactive technology updates (2026-10-16) | `cloud/news_sources.py`, `cloud/tech_news.py`, `desktop/news.py`, minimal desktop hooks; [guide](docs/guides/LYA_TECHNOLOGY_UPDATES.md), [report](review/2026-10-16-tech-news/README.md) | Hourly official-source discovery, seven-day opening catch-up, public cache, duplicate-safe notification requests and pause/quiet controls implemented; 187 synthetic/offscreen Qt checks pass. Live endpoints, Windows toast/whole-desktop acceptance, resource measurements and deployment remain pending. No model/search calls in routine polling. |
 | Public web research (2026-10-16) | `cloud/web_research.py`, `cloud/web_reader.py`, desktop/phone research routes; [guide](docs/guides/LYA_WEB_RESEARCH.md), [report](review/2026-10-16-web-research/README.md) | Bounded multi-query/page reading, discovery-based deep planning, strict page-versus-snippet evidence and local search-attempt counter implemented. Synthetic checks only; live provider/model/device acceptance and deployment remain pending. Keyless provider profile is evaluation access, not unlimited free production browsing. |
@@ -555,3 +556,27 @@ real owner/delegation wiring, protected storage/custody, source-window conforman
 reconciliation and retention maintenance are prerequisites to production scheduling.
 No real message was read/sent, key enrolled, timer installed, private data exported,
 paid service enabled or laptop/Oracle deployment performed.
+
+
+### 2026-10-22 — Routine proposal review connected to desktop
+
+Added `cloud/routine_drafts.py`, `desktop/routines.py` and the **Routine drafts**
+tray/explicit command entry point. The manual form reviews daily collection/report
+times, timezone, placement, input cutoff, missed-run grace, expiry, filters and
+fixed budgets, with unresolved prerequisites shown before any future activation.
+Bounded metadata-only drafts can be saved/reopened/removed; all editable choices
+change the fingerprint. Private server consent stays false; no owner proof,
+provider access, catalogue sends or execution authority is manufactured. Existing
+news watcher scheduling and accepted voice/hearing/artwork remain unchanged; news
+automatic presentation yields while the review is visible. New dialog hides on
+sleep and closes on quit.
+
+[Setup guide](docs/guides/LYA_ROUTINE_SETUP.md) and
+[report/runner/evidence](review/2026-10-22-routine-drafts/README.md): 243 selected
+checks pass, zero failures/errors/skips (15 new plus 228 prior regressions). Actual
+offscreen Qt render inspected with synthetic 18:00/19:00 choices. No whole-assistant
+Windows/voice acceptance, real message read/send, account connection, key enrollment,
+notification delivery, timer installation or laptop/Oracle deployment is claimed.
+Personal versus Business WhatsApp/channel remains unanswered. Next: bind verified
+owner review and qualify one public-only server job/notifier, then supported private
+read-only integration with protected storage and explicit account/rule scope.

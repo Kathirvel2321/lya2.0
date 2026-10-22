@@ -18,4 +18,6 @@ Read [the current project brain](../lya-project-brain.md) and [owner requirement
 
 `review/` holds newer work and still-referenced fixtures/helpers. Historical reviews through 2026-10-09 moved into the archive, except `2026-10-03-voice-conversation` (an existing speech-check fixture location) and `2026-10-05-conversation-design` (the supported design-renderer's output location). Their age alone does not make them unused.
 
+The [routine setup guide](guides/LYA_ROUTINE_SETUP.md) covers the desktop draft review window, explicit commands, saved proposals and activation boundaries.
+
 Add new explanations in the appropriate `docs/` section and new validation evidence in a dated `review/` folder. Keep runtime code, private data and large generated outputs out of the project brain. Append short dated continuity entries with links instead of duplicating entire reports.

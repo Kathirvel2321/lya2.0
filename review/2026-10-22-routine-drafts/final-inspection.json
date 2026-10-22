@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-22",
+  "baseline": "0e527a9f537046f0dc99f8f9508666150094d775",
+  "source_hashes_match_validation": true,
+  "source_files_checked": 32,
+  "tests": 243,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "actual_offscreen_widget_inspected": true,
+  "real_message_reads": 0,
+  "real_messages_sent": 0,
+  "accounts_connected": 0,
+  "jobs_enabled": 0,
+  "timers_installed": 0,
+  "deployment": "not_run",
+  "general_natural_language_schedule_parser": "not_implemented",
+  "authority": "drafts_only_no_grant"
+}
