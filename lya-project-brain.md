@@ -24,6 +24,7 @@ The full previous brain, including every earlier finding, owner clarification an
 
 | Area | Current source / dated evidence | Limits |
 | --- | --- | --- |
+| Routine draft review (2026-10-22) | `cloud/routine_drafts.py`, `desktop/routines.py`, manual desktop tray/command hooks; [guide](docs/guides/LYA_ROUTINE_SETUP.md), [report](review/2026-10-22-routine-drafts/README.md) | Review/save/reopen/remove bounded schedule proposals with explicit missing connections and zero outgoing replies; 243 selected synthetic/offscreen checks pass. Drafts cannot enable jobs, approve private cloud access or connect accounts. General language-to-schedule parsing, real owner activation, worker/timer and account/notifier integrations remain pending. |
 | Automation governance foundation (2026-10-16) | `cloud/job_policy.py`, `cloud/job_store.py`, `cloud/job_runner.py`, `cloud/job_adapters.py`; [master strategy](docs/guides/LYA_AUTOMATION_STRATEGY.md), [report](review/2026-10-16-job-strategy/README.md) | Structured daily contracts, exact scoped delegation, cooperative budgets, durable run/action/outbox state and fake-account 18:00/19:00 lab implemented; 228 isolated checks pass. Not wired to speech, real accounts, private production storage, phone push or a server scheduler. Default authority denies. Existing desktop watcher remains unchanged. |
 | Proactive technology updates (2026-10-16) | `cloud/news_sources.py`, `cloud/tech_news.py`, `desktop/news.py`, minimal desktop hooks; [guide](docs/guides/LYA_TECHNOLOGY_UPDATES.md), [report](review/2026-10-16-tech-news/README.md) | Hourly official-source discovery, seven-day opening catch-up, public cache, duplicate-safe notification requests and pause/quiet controls implemented; 187 synthetic/offscreen Qt checks pass. Live endpoints, Windows toast/whole-desktop acceptance, resource measurements and deployment remain pending. No model/search calls in routine polling. |
 | Public web research (2026-10-16) | `cloud/web_research.py`, `cloud/web_reader.py`, desktop/phone research routes; [guide](docs/guides/LYA_WEB_RESEARCH.md), [report](review/2026-10-16-web-research/README.md) | Bounded multi-query/page reading, discovery-based deep planning, strict page-versus-snippet evidence and local search-attempt counter implemented. Synthetic checks only; live provider/model/device acceptance and deployment remain pending. Keyless provider profile is evaluation access, not unlimited free production browsing. |
@@ -571,6 +572,7 @@ reconciliation and retention maintenance are prerequisites to production schedul
 No real message was read/sent, key enrolled, timer installed, private data exported,
 paid service enabled or laptop/Oracle deployment performed.
 
+<<<<<<< HEAD
 ## Work ledger — 2026-10-17 brain priority and deferred face work
 
 Owner explicitly deferred face anti-spoofing and reaffirmed continued brain implementation. Recorded that scope above so future work preserves the accepted interfaces and does not restore or modify the face dependency opportunistically. The current unfinished tracks remain memory/recovery placement and aggregate storage limits, live answer/research qualification, and owner-bound automation integration; their existing dated reports remain the evidence. This is a scope/continuity update only. No runtime source, dependency, test fixture, account, sensor, service or deployment changed; no tests were rerun.
@@ -797,3 +799,28 @@ Implemented a bounded catalogue journal containing command hashes and resolved I
 [Fourteen initial focused Windows cases pass](review/2026-10-22-shared-memory/windows-1.json): eight new connected-client cases plus six existing private/public/voice regressions. Then expanded the transport test to execute the real runtime stdin operation in an isolated child; its [focused check passes](review/2026-10-22-shared-memory/windows-runtime.json). After a bounded-response/parser preflight change, the [full current selection](review/2026-10-22-shared-memory/windows-final.json) passed thirteen with one first-save refusal in the retry case. Completion was unconfirmed, not acknowledged; original cause was not captured. An [exact-case diagnostic rerun](review/2026-10-22-shared-memory/windows-retry-diagnosis.json) passes on unchanged source, with [zero observed exceptions](review/2026-10-22-shared-memory/retry-diagnosis.json); the earlier refusal remains unexplained, and no deadline/security check was weakened. Thus fourteen distinct cases have passing current-source evidence across runs, but the latest full run was not wholly green; load/availability qualification is pending. All fixtures use signed generated identities, injected trusted native approval and temporary encrypted stores; no real store, provider or SSH is contacted. [Six synthetic submission checks](review/2026-10-22-shared-memory/client-validation.json) and full script syntax pass; fixed only the checker's initial nonce-tag extraction before its successful run.
 
 [Final static validation](review/2026-10-22-shared-memory/static-validation.json) records source hashes, preserved preceding backbone/evidence, accepted unrelated feature sources, affected links/whitespace, ignored setting paths and fixture cleanup. Prior results/logs are preserved. Live owner testing stays deferred; no real enrollment, private migration/transmission, actual provider/account/key/vault/clipboard access, service/configuration/certificate change, dependency install, remote deployment, commit or push occurred. Scope is the first implemented shared-client connection, disabled until explicit configuration. Next delivery work is configured-service/runtime activation and the actual desktop/phone journey when that phase resumes, including investigating the refused write; production owner/key rotation, independent catalogue/latest/unlock custody, acknowledged complete-catalogue publication and general-answer retrieval remain unfinished parts of the larger task. Do not substitute another isolated recovery helper for that connected delivery. Face anti-spoofing remains deferred.
+=======
+
+### 2026-10-22 — Routine proposal review connected to desktop
+
+Added `cloud/routine_drafts.py`, `desktop/routines.py` and the **Routine drafts**
+tray/explicit command entry point. The manual form reviews daily collection/report
+times, timezone, placement, input cutoff, missed-run grace, expiry, filters and
+fixed budgets, with unresolved prerequisites shown before any future activation.
+Bounded metadata-only drafts can be saved/reopened/removed; all editable choices
+change the fingerprint. Private server consent stays false; no owner proof,
+provider access, catalogue sends or execution authority is manufactured. Existing
+news watcher scheduling and accepted voice/hearing/artwork remain unchanged; news
+automatic presentation yields while the review is visible. New dialog hides on
+sleep and closes on quit.
+
+[Setup guide](docs/guides/LYA_ROUTINE_SETUP.md) and
+[report/runner/evidence](review/2026-10-22-routine-drafts/README.md): 243 selected
+checks pass, zero failures/errors/skips (15 new plus 228 prior regressions). Actual
+offscreen Qt render inspected with synthetic 18:00/19:00 choices. No whole-assistant
+Windows/voice acceptance, real message read/send, account connection, key enrollment,
+notification delivery, timer installation or laptop/Oracle deployment is claimed.
+Personal versus Business WhatsApp/channel remains unanswered. Next: bind verified
+owner review and qualify one public-only server job/notifier, then supported private
+read-only integration with protected storage and explicit account/rule scope.
+>>>>>>> 67aea64974928284d8eac3fabbdd149462159197
