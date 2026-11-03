@@ -1,0 +1,275 @@
+test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive (test_memory_publication_authority.PublicationAuthorityChecks.test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive) ... ERROR
+test_authority_recovery_revokes_old_writer_only_after_published_epoch (test_memory_publication_authority.PublicationAuthorityChecks.test_authority_recovery_revokes_old_writer_only_after_published_epoch) ... ERROR
+test_committed_source_waits_for_publication_and_retry_does_not_replay (test_memory_publication_authority.PublicationAuthorityChecks.test_committed_source_waits_for_publication_and_retry_does_not_replay) ... ERROR
+test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation (test_memory_publication_authority.PublicationAuthorityChecks.test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation) ... ERROR
+test_process_death_at_reservation_source_confirmation_and_journal_boundaries (test_memory_publication_authority.PublicationAuthorityChecks.test_process_death_at_reservation_source_confirmation_and_journal_boundaries) ... ERROR
+test_rollback_reservation_blocks_even_old_code_archive_then_reconciles (test_memory_publication_authority.PublicationAuthorityChecks.test_rollback_reservation_blocks_even_old_code_archive_then_reconciles) ... ERROR
+test_rolled_back_source_catalogue_cannot_replace_current_latest (test_memory_publication_authority.PublicationAuthorityChecks.test_rolled_back_source_catalogue_cannot_replace_current_latest) ... ERROR
+test_successful_mutations_and_exact_retry_are_published_before_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_successful_mutations_and_exact_retry_are_published_before_reply) ... ERROR
+test_turn_expiring_during_publication_cannot_receive_a_success_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_turn_expiring_during_publication_cannot_receive_a_success_reply) ... ERROR
+test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none (test_memory_publication_authority.PublicationAuthorityChecks.test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none) ... ERROR
+
+======================================================================
+ERROR: test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive (test_memory_publication_authority.PublicationAuthorityChecks.test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 172, in test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive
+    f,a,latest,_,_=self.make();f.latest();lineage=f.f.anchor.lineage;pack,trust=self.files(a,latest,lineage)
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-16rmdifp\\1\\publications\\e777e7f48ace4c7f90f39836487178ce\\f0578f63fd0646aca9659cba8664b4e3-1\\pack\\.lya-fake-recovery-j4941ph4'
+
+======================================================================
+ERROR: test_authority_recovery_revokes_old_writer_only_after_published_epoch (test_memory_publication_authority.PublicationAuthorityChecks.test_authority_recovery_revokes_old_writer_only_after_published_epoch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 163, in test_authority_recovery_revokes_old_writer_only_after_published_epoch
+    f,a,latest,_,_=self.make();lineage=f.f.anchor.lineage
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-orqhfvcj\\1\\publications\\f25cddba3745450eacee01587a654c48\\807f8a18336245f49ca763fffff0b010-1\\pack\\.lya-fake-recovery-fvcjm532'
+
+======================================================================
+ERROR: test_committed_source_waits_for_publication_and_retry_does_not_replay (test_memory_publication_authority.PublicationAuthorityChecks.test_committed_source_waits_for_publication_and_retry_does_not_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 113, in test_committed_source_waits_for_publication_and_retry_does_not_replay
+    f,a,latest,_,_=self.make();anchor=f.f.anchor;request=f.f.packet('committed')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-sn7e7ud3\\1\\publications\\a1d6f16d73154af5bb12b31d631d26a2\\114176fd602246818803744b41198e8e-1\\pack\\.lya-fake-recovery-anpn71jq'
+
+======================================================================
+ERROR: test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation (test_memory_publication_authority.PublicationAuthorityChecks.test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 145, in test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation
+    f,a,latest,_,record=self.make()
+                        ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-zec7wmo6\\1\\publications\\879a91b35c574c95af2573db116bd22f\\5247977316504a28be485f848657bebf-1\\pack\\.lya-fake-recovery-1k2uemvw'
+
+======================================================================
+ERROR: test_process_death_at_reservation_source_confirmation_and_journal_boundaries (test_memory_publication_authority.PublicationAuthorityChecks.test_process_death_at_reservation_source_confirmation_and_journal_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 190, in test_process_death_at_reservation_source_confirmation_and_journal_boundaries
+    f,a,latest,_,_=self.make();anchor=f.f.anchor;grant=f.f.grant;request=f.f.packet('crash-'+mode)
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-hf2mcagd\\1\\publications\\7aeb277e9730423881cf05283774ca0a\\5e50b6ba513b445dbac2d9c280f3fd77-1\\pack\\.lya-fake-recovery-82ny6v4b'
+
+======================================================================
+ERROR: test_rollback_reservation_blocks_even_old_code_archive_then_reconciles (test_memory_publication_authority.PublicationAuthorityChecks.test_rollback_reservation_blocks_even_old_code_archive_then_reconciles)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 101, in test_rollback_reservation_blocks_even_old_code_archive_then_reconciles
+    f,a,latest,old_pack,old_trust=self.make();anchor=f.f.anchor;request=f.f.packet('rolled-back')
+                                  ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-1ka05ga1\\1\\publications\\8e08586abc37483594e2c5da4585b5da\\a42a8f6faa1a4db398b1e2c84a8bf968-1\\pack\\.lya-fake-recovery-9x2brtnd'
+
+======================================================================
+ERROR: test_rolled_back_source_catalogue_cannot_replace_current_latest (test_memory_publication_authority.PublicationAuthorityChecks.test_rolled_back_source_catalogue_cannot_replace_current_latest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 155, in test_rolled_back_source_catalogue_cannot_replace_current_latest
+    f,a,latest,_,_=self.make();catalog=a._repository.catalog;old=catalog.read_bytes()
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-egiugji5\\1\\publications\\fba7ce0588154ee590834cb896b65346\\af170e5d2d334f4badfe97ca3978f5b3-1\\pack\\.lya-fake-recovery-j29g9_yy'
+
+======================================================================
+ERROR: test_successful_mutations_and_exact_retry_are_published_before_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_successful_mutations_and_exact_retry_are_published_before_reply)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 90, in test_successful_mutations_and_exact_retry_are_published_before_reply
+    f,a,latest,_,_=self.make();request=f.f.packet('acknowledged')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-6a2sqq0i\\1\\publications\\4837edba162d4b0ea8c68fa36d6c5dcf\\44bb8e22ba1f4e8fbed19a5f89ca9aa9-1\\pack\\.lya-fake-recovery-9dohu0lo'
+
+======================================================================
+ERROR: test_turn_expiring_during_publication_cannot_receive_a_success_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_turn_expiring_during_publication_cannot_receive_a_success_reply)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 136, in test_turn_expiring_during_publication_cannot_receive_a_success_reply
+    f,a,latest,_,_=self.make();request=f.f.packet('expired-turn');original=a._stage
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-31lc_5kg\\1\\publications\\86226748134a49a0a064a2e49de82884\\882ebe6afdcb441683effdad520c1ea1-1\\pack\\.lya-fake-recovery-gis4eabj'
+
+======================================================================
+ERROR: test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none (test_memory_publication_authority.PublicationAuthorityChecks.test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 126, in test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none
+    f,a,latest,_,_=self.make();lineage=f.f.anchor.lineage;old=f.f.grant
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 76, in make
+    a.bind_publication(pins.state.anchor.lineage,record,approved=True);f.f.a=a
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 115, in bind_publication
+    staged,_,_=self._stage(pins,row,paths,trust_blob(trust_path))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 91, in _stage
+    else:_publish(target,lambda stage,data=blob:stage.write_bytes(data),lambda:False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 77, in _publish
+    with tempfile.TemporaryDirectory(prefix='.lya-fake-recovery-', dir=path.parent) as folder:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 886, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tempfile.py", line 384, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-21-memory-publication-ack\\.fake-publication-check-x949y64f\\fake-publication-_g_qvsul\\1\\publications\\1f5a88da9c5748f8b191529364cadada\\ca6e7b587b344defb9ecf6557c8c14b4-1\\pack\\.lya-fake-recovery-4xc2hk5f'
+
+----------------------------------------------------------------------
+Ran 10 tests in 18.366s
+
+FAILED (errors=10)

@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-17",
+  "completed_fake_browser_roundtrip": true,
+  "preceding_source_hashes_match": 23,
+  "original_and_downloaded_hashes_match": true,
+  "original_fixture_absent": true,
+  "local_links_checked": 338,
+  "missing_links": [],
+  "source_sha256": {
+    "prepare.py": "51660f6dd222fa9bc446a09cc8ed39a9a1cddb60ab84ab93c454a63afb0278fc",
+    "verify.py": "11287557ec5713f42d55794141648ffc4543a53683bcb974aa5baec6e7d5ef8b"
+  },
+  "cloud_report_sha256": "46d8c9bb13827b637272a002a9e8ea1beb4513e8833be79cbd9befaa39b05ac2"
+}

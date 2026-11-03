@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-17",
+  "fake_data_only": true,
+  "owner_approved_exact_three_files": true,
+  "upload_via_existing_browser_filechooser": true,
+  "private_destination_observed": true,
+  "sse_b2_observed_for_all_objects": true,
+  "completed_object_names_observed": [
+    "backup.enc",
+    "checkpoint.enc",
+    "keys.enc"
+  ],
+  "actual_object_downloads_captured_by_browser": true,
+  "downloaded_files_sha256": {
+    "backup.enc": "a2b3d4a3a0f29d66e9dd584f466466ce5fcecb1268a40ccc02f6fbd9f17af668",
+    "checkpoint.enc": "1b8032d051dc1b5f044a2f6152ed3b760c2a7e71301f29d646c252bdb3edb82c",
+    "keys.enc": "5202f593dc7bd146816598bd8a634e41a80be2e504d0cb682c48e4b29fbc5828"
+  },
+  "encrypted_bytes": 5395,
+  "all_lengths_and_hashes_match": true,
+  "fresh_process": {
+    "recovered": true,
+    "quarantined": true,
+    "correction_preserved": true,
+    "forgotten_absent": true,
+    "expired_absent": true,
+    "old_binding_denied": true,
+    "active_bindings": 0,
+    "resumed_jobs": 0
+  },
+  "original_source_fixture_absent": true,
+  "unlock_and_pins_kept_local": true,
+  "application_key_created": false,
+  "real_data_used": false,
+  "google_drive_accessed": false,
+  "remote_objects_deleted": false,
+  "cloud_objects_retained": 3,
+  "independent_host_recovery_tested": false,
+  "independent_trust_or_key_survival_tested": false,
+  "production_connected": false,
+  "raw_account_or_object_identifiers_recorded": false,
+  "verifier_report_sha256": "61400e7536756f86e25e91d8e459089b7f6a2136bd807fefd29d30d6dfc67c6e"
+}

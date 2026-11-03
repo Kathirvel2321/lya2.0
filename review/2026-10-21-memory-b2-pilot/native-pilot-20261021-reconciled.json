@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "fake_data_only": true,
+  "encrypted_bytes": 5395,
+  "artifacts": [
+    "backup.enc",
+    "checkpoint.enc",
+    "keys.enc"
+  ],
+  "uploader_receipt_verified": true,
+  "scope_read_denials_http": {
+    "outside_prefix": 401,
+    "file_listing": 401
+  },
+  "downloaded_hashes_match": true,
+  "fresh_process": {
+    "recovered": true,
+    "quarantined": true,
+    "correction_preserved": true,
+    "forgotten_absent": true,
+    "expired_absent": true,
+    "old_binding_denied": true,
+    "active_bindings": 0,
+    "resumed_jobs": 0
+  },
+  "extra_client_calls": 7,
+  "prior_manual_verifier_reused": true,
+  "credential_printed": false,
+  "master_key_used": false,
+  "new_key_created": false,
+  "delete_requested": false,
+  "independent_trust_or_clean_machine_qualified": false,
+  "pilot_source_sha256": "9a42eeebf2aced5552d1addfb95329b74df2160340037b8de00e1e10686d58cd"
+}

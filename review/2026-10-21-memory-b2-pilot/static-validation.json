@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-21",
+  "passed": true,
+  "preceding_reviewed_sources_unchanged": 27,
+  "new_mock_checks_passed": 4,
+  "fake_file_sizes": {
+    "backup.enc": 3658,
+    "checkpoint.enc": 1358,
+    "keys.enc": 379
+  },
+  "encrypted_bytes": 5395,
+  "local_links_checked": 395,
+  "whitespace_passed": true,
+  "temporary_mock_fixtures_remaining": 0,
+  "live_credential_read": false,
+  "live_upload": false,
+  "full_runtime_suite_repeated": false,
+  "reviewed_source_sha256": {
+    "review\\2026-10-21-memory-b2-pilot\\pilot.py": "9a42eeebf2aced5552d1addfb95329b74df2160340037b8de00e1e10686d58cd",
+    "review\\2026-10-21-memory-b2-pilot\\check.py": "249007748784baddc0223647b6777d11b2464c2dc364ab156dfed43f343dacf3",
+    "review\\2026-10-21-memory-b2-pilot\\README.md": "e6161bec329556d2397f4a9b80d67af2dd45fd9a630bb6d7e3269c45a4d604f6",
+    "docs\\README.md": "1a5643397f9eabd9bbf140b47792e4e3b65ec261cf22fcda1d88446f28374dc4",
+    "docs\\guides\\LYA_MEMORY_KEY_CUSTODY.md": "5edc0b71e6d7873f675a8548314bccaa9e742e3bce80e9cdb3e84c8c4fe65176",
+    "lya-project-brain.md": "838658cd8ce70eaf3a9797dc2e702d194d2f5b51f6fce52e8c55e7cc31a3f015"
+  }
+}

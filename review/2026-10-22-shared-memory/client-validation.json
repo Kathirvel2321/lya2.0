@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "checks": 6,
+  "whole_script_syntax": true,
+  "shared_request_retry_and_admission": true,
+  "synthetic_function_harness": true,
+  "real_browser_or_phone": false,
+  "live_network": false,
+  "source_sha256": "9151147d7777887026c6dc0456a2b5833cf93c0740c3349c5cc275ad9ca2f4a0"
+}

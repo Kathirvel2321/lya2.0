@@ -18,6 +18,8 @@ oracle_known_hosts.local
 .env
 desktop/oracle.local.json
 desktop/mobile.local.json
+desktop/shared-memory.local.json
+shared-memory.local.json
 security/public-archive-identity.local/
 cloud/provider.json
 cloud/router-state.sqlite*
@@ -78,3 +80,6 @@ models/voice/*.bin
 models/voice/*.part
 models/vision/*.onnx
 models/speech/
+
+# Disposable fake-only cloud transfer fixtures; never production key custody.
+/review/2026-10-17-memory-b2-transfer/.fake-local/

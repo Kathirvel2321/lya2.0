@@ -1,0 +1,11 @@
+test_unsupported_platform_and_unknown_probe_refuse_before_launch (test_memory_witness_disk.DiskContractChecks.test_unsupported_platform_and_unknown_probe_refuse_before_launch) ... ok
+test_bytes_and_inode_exhaustion_block_prepare_without_a_receipt (test_memory_witness_disk.LinuxWitnessDiskChecks.test_bytes_and_inode_exhaustion_block_prepare_without_a_receipt) ... ok
+test_committed_finish_with_disk_full_reply_loss_retries_after_restart (test_memory_witness_disk.LinuxWitnessDiskChecks.test_committed_finish_with_disk_full_reply_loss_retries_after_restart) ... ok
+test_disk_full_cannot_advance_retirement_floor_or_discard_receipts (test_memory_witness_disk.LinuxWitnessDiskChecks.test_disk_full_cannot_advance_retirement_floor_or_discard_receipts) ... ok
+test_disk_full_preserves_pending_finish_and_exact_retry (test_memory_witness_disk.LinuxWitnessDiskChecks.test_disk_full_preserves_pending_finish_and_exact_retry) ... ok
+test_encrypted_source_commit_reconciles_after_witness_disk_full (test_memory_witness_disk.LinuxWitnessDiskChecks.test_encrypted_source_commit_reconciles_after_witness_disk_full) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 33.399s
+
+OK

@@ -1,0 +1,6 @@
+test_shared_exact_retry_is_idempotent_and_changed_text_is_rejected (test_shared_memory.SharedMemoryChecks.test_shared_exact_retry_is_idempotent_and_changed_text_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 67.870s
+
+OK

@@ -1,0 +1,22 @@
+test_transfer_authentication_literal_approval_and_encryption_boundaries (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_authentication_literal_approval_and_encryption_boundaries) ... ok
+test_transfer_capture_refuses_pending_source_and_pending_owner_recovery (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_capture_refuses_pending_source_and_pending_owner_recovery) ... ok
+test_transfer_committed_fence_reconciles_without_replaying_restore (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_committed_fence_reconciles_without_replaying_restore) ... ok
+test_transfer_fresh_child_restores_without_original_source_or_catalogue (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_fresh_child_restores_without_original_source_or_catalogue) ... ok
+test_transfer_refuses_overwrite_missing_latest_and_byte_budget (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_refuses_overwrite_missing_latest_and_byte_budget) ... ok
+test_transfer_rollback_preserves_incomplete_candidate_and_explicit_retry_quarantine (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_rollback_preserves_incomplete_candidate_and_explicit_retry_quarantine) ... ok
+test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation) ... ERROR
+test_transfer_stale_record_or_writer_epoch_is_refused_before_destination (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_stale_record_or_writer_epoch_is_refused_before_destination) ... ok
+
+======================================================================
+ERROR: test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/kathirvel/Downloads/lya-main/lya-main/test_memory_authority_transfer.py", line 69, in test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation
+    self.assertEqual(result['result']['value'],{'text':'SYNTHETIC_PACK_CORRECTION'})
+                     ~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: 'value'
+
+----------------------------------------------------------------------
+Ran 8 tests in 116.891s
+
+FAILED (errors=1)

@@ -126,11 +126,12 @@ class AuthStore:
 
 
 class Connection:
-    def __init__(self,origin,store,infer,clock=time.time,transcribe=None,speak=None,researcher=None):
+    def __init__(self,origin,store,infer,clock=time.time,transcribe=None,speak=None,researcher=None,shared_memory=None):
         self.origin=checked_origin(origin)
         self.store,self.infer,self.clock=store,infer,clock
         self.transcriber=transcribe
         self.researcher=researcher
+        self.shared_memory=shared_memory
         self.speaker=speak
         self.audio_slots=threading.BoundedSemaphore(1)
         self.rp=urlsplit(origin).hostname
@@ -243,10 +244,12 @@ class Connection:
     def status(self,token):
         with self.lock:
             s=self.session(token)
-            return dict(verified=True,expires_in=max(0,int(s['until']-self.clock())),
+            result=dict(verified=True,expires_in=max(0,int(s['until']-self.clock())),
                         owner_verified=self.clock()<s['owner_until'],
                         owner_expires_in=max(0,int(s['owner_until']-self.clock())),
                         scope='public_chat',voice_available=self.transcriber is not None)
+            if self.shared_memory is not None:result['shared_memory_demo']=True
+            return result
 
     @contextmanager
     def audio_job(self):
@@ -256,15 +259,17 @@ class Connection:
         finally:self.audio_slots.release()
 
     @contextmanager
-    def job(self,token,request_id):
+    def job(self,token,request_id,*,shared_digest=None):
         if type(request_id) is not str or not re.fullmatch('[a-f0-9]{32}',request_id):
             raise ValueError('Invalid request ID.')
         with self.lock:
             s=self.session(token)
-            if s['active'] or request_id in s['used'] or len(s['used'])>=50:
+            retry=shared_digest is not None and s.get('shared_used',{}).get(request_id)==shared_digest
+            if s['active'] or (request_id in s['used'] and not retry) or (len(s['used'])>=50 and not retry):
                 raise PermissionError('Request already used, busy, or session limit reached. Sign in again if needed.')
             if not self.infer_slots.acquire(blocking=False):raise PermissionError('LYA is busy; try again shortly.')
             s['used'].add(request_id)
+            if shared_digest is not None:s.setdefault('shared_used',{})[request_id]=shared_digest
             cancel=threading.Event();s['active']=(request_id,cancel)
         try:yield s,cancel
         finally:
@@ -312,10 +317,12 @@ class Connection:
                 or not re.fullmatch('[a-f0-9]{32}',request_id)):
             raise ValueError('Use a question of up to 4000 characters.')
         if type(spoken) is not bool:raise ValueError('Invalid voice request.')
-        with self.job(token,request_id) as (s,cancel):
+        shared=re.match(r'^shared memory\b',text.strip(),re.I) is not None
+        with self.job(token,request_id,shared_digest=digest(text) if shared else None) as (s,cancel):
             with self.lock:
                 self.session(token)
                 if cancel.is_set():raise InterruptedError('Cancelled.')
+                if shared:s['history'].clear()
                 system=('You are LYA. Give a direct, helpful answer. This is public conversation only. '
                 'No tools, private memories, files, cameras or web search are connected to this phone route. '
                 'Never claim you executed an action or saved a fact. Say clearly when a requested action is unavailable.')
@@ -323,9 +330,15 @@ class Connection:
                     system=system.replace('No tools, private memories, files, cameras or web search are connected to this phone route. ',
                         'Public web research is available for routed research requests. No new search was performed on this ordinary chat turn. '
                         'No private memories, files, cameras or device actions are connected. ')
-                messages=messages_for(system,s['history'],text.strip())
-            mode=research_mode(text) or ('smart' if needs_current_sources(text) else None)
-            if mode:
+                messages=[] if shared else messages_for(system,s['history'],text.strip())
+            mode=None if shared else research_mode(text) or ('smart' if needs_current_sources(text) else None)
+            if shared:
+                if self.shared_memory is None:raise ValueError('Shared memory is not configured on this connection.')
+                from brain.conversation import phone_turn
+                turn=phone_turn(self,token,{'id':request_id,'text':text},cancel)
+                shared_reply=self.shared_memory.respond(turn)
+                answer=shared_reply['text']
+            elif mode:
                 if self.researcher is None:
                     raise ValueError('Current web research is not configured on this phone route; I cannot verify this answer.')
                 def check():
@@ -345,6 +358,7 @@ class Connection:
             if spoken:
                 with self.lock:
                     if self.session(token) is not s or cancel.is_set():raise InterruptedError('Cancelled.')
+                    if shared:turn.check()
                 try:
                     if self.speaker is None:raise ValueError('LYA voice unavailable.')
                     with self.measure('tts'):
@@ -360,8 +374,13 @@ class Connection:
                 except Exception:result['voice_unavailable']=True
             with self.lock:
                 if self.session(token) is not s or cancel.is_set():raise InterruptedError('Cancelled.')
+                if shared:
+                    turn.check()
+                    expiry=shared_reply.get('expires_at')
+                    if expiry is not None and self.clock()>=expiry:raise PermissionError('Shared memory expired before delivery.')
                 if type(answer) is not str or not answer.strip() or len(answer)>8000:raise ValueError('No usable answer.')
-                s['history']=completed_history(s['history'],text.strip(),answer)
+                if shared:s['history'].clear()
+                else:s['history']=completed_history(s['history'],text.strip(),answer)
                 return result
 
 
@@ -475,7 +494,9 @@ class Handler(BaseHTTPRequestHandler):
             raise ValueError('Unknown operation or fields.')
         except InterruptedError:self.send(409,{'error':'Cancelled.'})
         except PermissionError:self.send(403,{'error':'Sign in or retry the approved pairing.'})
-        except (ValueError,KeyError,TypeError,RecursionError,UnicodeError):self.send(400,{'error':'Request rejected; retry.'})
+        except (ValueError,KeyError,TypeError,RecursionError,UnicodeError) as exc:
+            if getattr(exc,'shared_memory_uncertain',False):self.send(503,{'error':str(exc)})
+            else:self.send(400,{'error':'Request rejected; retry.'})
         except Exception:self.send(503,{'error':'Connection unavailable; no action was taken.'})
         finally:self.server.app.timings.values=None
 

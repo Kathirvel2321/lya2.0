@@ -1,0 +1,28 @@
+{
+  "fake_data_only": true,
+  "contains_runtime_data_or_keys": false,
+  "contains_native_dependencies": false,
+  "files": [
+    "__main__.py",
+    "brain/__init__.py",
+    "brain/conversation.py",
+    "brain/memory_custody.py",
+    "brain/memory_prototype.py",
+    "brain/memory_recovery.py",
+    "brain/memory_recovery_latest.py",
+    "brain/memory_recovery_pack.py",
+    "brain/memory_recovery_trust.py"
+  ],
+  "bytes": 23177,
+  "sha256": "6a348ceb85f35f2542165eee49cd1c1a1c7a887bd27b20495cef47f2f7746f7d",
+  "source_sha256": {
+    "brain/conversation.py": "2b9f3381fc6af93013409eff2bbfe0f62692d130ba349b0a7d4c24e9388e6a2e",
+    "brain/memory_prototype.py": "4603af22320cbec471e517b15385eaa5ba6f72ab41fada4759bbb54cfd16efd8",
+    "brain/memory_recovery.py": "a19c9d7e176c47207ca7ad20a9cb9e8ff92f68d0588e903f3606097a70ff8ed9",
+    "brain/memory_custody.py": "683434589c80e4157b0e0d5936b154940243c3e42f00105c5a0222b2fb8f88f5",
+    "brain/memory_recovery_pack.py": "728d9d632d8d4d27f204a401338606056461d11625c01c63aff0c14b00ae07e9",
+    "brain/memory_recovery_trust.py": "346fcb8dc4f25cfdfe152891f43b3788f5a3aaf26d5b7c0806f3ba40da6bb9bd",
+    "brain/memory_recovery_latest.py": "33f3c96c57583701531d8bbe272ac139c3ec2b1e7cd708ada508dbdac5e8d117",
+    "tools/memory_recovery_host.py": "efe247068bb7de5adc24275e496300738042c9c3109e71f81ef5d01595023cd7"
+  }
+}

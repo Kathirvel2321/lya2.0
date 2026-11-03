@@ -1,0 +1,31 @@
+# Portable encrypted recovery trust — 2026-10-21
+
+Continued the memory/recovery foundation after the completed native B2 fake-data roundtrip. Added [memory_recovery_trust.py](../../brain/memory_recovery_trust.py) and [eight focused cases](../../test_memory_recovery_trust.py). No existing runtime/test source was changed. The original three-file pack, its prepared source hashes, accepted assistant features and cloud objects remain intact. No B2 request, saved application credential, vault/clipboard, enrollment or real memory/key was used.
+
+## What this adds
+
+`seal_trust()` stores existing caller-supplied `RecoveryPins` in a bounded, versioned, authenticated encrypted record using the existing generated-key/Fernet and atomic-create helpers. It creates a new file, reads it back before and after publication, and returns its SHA-256 fingerprint. The record contains only the checkpoint/writer state and capsule/backup digests; it contains no unlock, storage or recovery key and no records. It is kept outside the three-file backup pack.
+
+`open_trust()` requires both the separately held generated unlock key and an exact **current independently trusted fingerprint**, supplied by the caller. It checks the fingerprint before decrypting, refuses duplicate/unknown/malformed fields and invalid states, and reconstructs the existing `RecoveryPins` type. Both operations require exact synthetic/approval flags, reuse link/junction refusal and cancellation, and cap the encrypted input at eight KiB. There is no password input, key generation, provider integration or production caller in the helper.
+
+The same fake unlock key opens the existing sealed key capsule and the new encrypted trust record. The caller must keep that unlock key separate from the ciphertext. The returned record fingerprint is a separate trust input, not a field that this record or the backup can certify for itself. Do not use a fingerprint obtained only from the same untrusted backup location or an old transfer receipt.
+
+## Source-loss drill and boundaries
+
+The test creates new fake SQLCipher memory, corrections, forget/expiry state, catalogue and local witness. It copies the three encrypted artifacts to a simulated cloud folder and the trust record to a separate simulated offline folder. Then it deletes the owned original fixture before starting a fresh isolated Python process. The child receives the separate fake unlock and current fingerprint through stdin; it receives neither plaintext pins nor a storage key, and does not read the earlier cloud pilot's `local-only.json` or credential file. It opens the trust record, opens the existing capsule to obtain keys, and reuses the prior pack verifier to check encrypted quarantined recovery, correction/forget/expiry behavior, old-binding refusal and zero active bindings/jobs.
+
+This tests a portable handoff and logical source loss on one laptop. Separate folders/processes are **not independent physical hosts**. The fake unlock/fingerprint channel is simulated; no password-manager item, physical offline copy or production trust service was created or inspected.
+
+Stale authenticated trust records fail against the current independent fingerprint; old packs fail against current decoded pins. A separate assertion documents the remaining limit: if both the old trust record **and its supposed trusted fingerprint** are rolled back together, this local reader cannot discover that a newer state existed. Encryption authenticates content, not freshness. Independently surviving latest-state publication, protected authority catalogue, real key custody, physical failure domains, rollback resistance and power-loss durability remain open. Existing per-file publication has no portable directory-fsync guarantee.
+
+## Checks and evidence
+
+The [reviewed runner](check.py) explicitly selects eight new trust cases and ten existing pack cases; it uses generated fake keys and temporary stores, hashes 33 reviewed sources before/after, records exact case IDs and refuses to overwrite evidence. All 30 preceding source hashes are unchanged. [Current manifest](source-manifest-2.json); [initial manifest](source-manifest.json) remains preserved.
+
+The first Windows run passed source-loss recovery but failed one corruption-test assertion: it appended a character to a Fernet token and deliberately supplied a new matching trusted fingerprint. The installed decoder accepts that spelling of the same authenticated data. Corrected the test to check appended bytes against the original independent fingerprint, then damage authenticated ciphertext for the re-pinned malformed-input check. No runtime validation was removed or relaxed. [Preserved first run](windows-validation.json), [log](windows-validation.txt).
+
+All **18 selected cases pass on Windows and Ubuntu**, zero failures/errors/skips on each: eight new trust cases plus ten existing pack cases. These are the same cases across platforms, not 36 distinct cases. [Windows result](windows-validation-2.json), [Windows log](windows-validation-2.txt), [Ubuntu result](ubuntu-validation.json), [Ubuntu log](ubuntu-validation.txt). Source hashes match before/after both runs. Ubuntu used the existing lab Python/SQLCipher directly against the reviewed mounted workspace; no source synchronization, installation or profile/service change was needed. Its Python import preflight emitted a systemd user-session startup warning but Python/SQLCipher and the finite test command completed; user-service operation was not qualified or repaired.
+
+[Static validation](static-validation.json) covers source/artifact preservation, accepted-feature sources, links/whitespace and cleanup. No full repository, real cloud/device, clean-machine or real-custody acceptance is claimed. Temporary fake fixtures are removed after tests; reports contain no generated unlock/storage/recovery keys.
+
+Next: design/qualify how a current trust-record fingerprint and protected authority metadata survive independently, including publication failure and rollback. Real Bitwarden/offline enrollment, extra cloud uploads, permission/key changes and production activation need separately scoped work; this local qualification does not authorize them.

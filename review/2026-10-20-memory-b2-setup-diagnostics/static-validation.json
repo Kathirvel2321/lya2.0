@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-20",
+  "passed": true,
+  "windows_distinct_cases": 65,
+  "reviewed_sources_match": 27,
+  "unchanged_preceding_sources": 24,
+  "changed_sources": [
+    "brain/memory_b2_backup.py",
+    "brain/memory_b2_credential.py",
+    "test_memory_b2_credential.py"
+  ],
+  "accepted_head_sources_preserved": [
+    "brain/workflow.py",
+    "cloud/mobile.py",
+    "cloud/answering.py",
+    "cloud/web_research.py",
+    "cloud/web_reader.py",
+    "cloud/news_sources.py",
+    "cloud/tech_news.py",
+    "desktop/app.py",
+    "desktop/experience.py",
+    "audio/voice.py",
+    "security/vault.py",
+    "brain/memory_authority.py",
+    "brain/memory_network_authority.py",
+    "brain/memory_custody.py",
+    "brain/memory_recovery.py",
+    "brain/memory_repository.py",
+    "brain/memory_witness_service.py",
+    "brain/memory_witness_budget.py"
+  ],
+  "local_links_checked": 388,
+  "whitespace_passed": true,
+  "cli_help_includes_check_only": true,
+  "temporary_suite_fixtures_remaining": 0,
+  "public_unauthenticated_endpoint_reached": true,
+  "live_issuer_verified": false,
+  "owner_failure_root_cause_established": false,
+  "live_key_created": false,
+  "live_upload_performed": false,
+  "saved_secret_or_credential_file_read": false,
+  "affected_source_sha256": {
+    "brain\\memory_b2_backup.py": "1aa38bcfd4136e3fa0f19178d9da143f7cf2015130c04f98171c6309e3ce1a45",
+    "brain\\memory_b2_credential.py": "ccfe426860a1176cc9b36cc9e195482f897ec35bd2afcf095cece1c6a8a593fe",
+    "test_memory_b2_credential.py": "91098022f246b68b49944daef95499d86c525ae6b8a4f7f8f4e411a0451c3538",
+    "review\\2026-10-20-memory-b2-setup-diagnostics\\check.py": "7b60a924b5a452cf02131b447bad5d0e66a95f9f1ad72ff04d87976fd29764b2",
+    "review\\2026-10-20-memory-b2-setup-diagnostics\\README.md": "b9696541c528186da4a5b9c113cd1d8ca48aba545e4e4469cbb7e4606e9f8406",
+    "review\\2026-10-18-memory-b2-credential\\README.md": "cef446a497983f34ebf31dc83b049f22967b9ea78ededa146f5acf4f2a084c86",
+    "docs\\README.md": "387edadeea28c67e79adc426899de8f76565c6658bb43e7010d6e6cd0a307797",
+    "docs\\guides\\LYA_MEMORY_KEY_CUSTODY.md": "8e9c24005220fb1fa13bfbdc40b54dcce8663bb443f6268c5ac8d7e91dc2d279",
+    "lya-project-brain.md": "e2ba6166602ef9d20e1f727070091a507fa0bcaf596c54336b5e4a9be8d62bde"
+  }
+}

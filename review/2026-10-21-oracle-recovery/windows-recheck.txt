@@ -1,0 +1,6 @@
+test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation (test_memory_authority_transfer.AuthorityTransferChecks.test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 10.720s
+
+OK

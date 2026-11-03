@@ -1,0 +1,22 @@
+{
+  "fake_data_only": true,
+  "input_sha256": {
+    "backup.enc": "a2b3d4a3a0f29d66e9dd584f466466ce5fcecb1268a40ccc02f6fbd9f17af668",
+    "checkpoint.enc": "1b8032d051dc1b5f044a2f6152ed3b760c2a7e71301f29d646c252bdb3edb82c",
+    "keys.enc": "5202f593dc7bd146816598bd8a634e41a80be2e504d0cb682c48e4b29fbc5828"
+  },
+  "all_prepared_bytes_match": true,
+  "fresh_process": {
+    "recovered": true,
+    "quarantined": true,
+    "correction_preserved": true,
+    "forgotten_absent": true,
+    "expired_absent": true,
+    "old_binding_denied": true,
+    "active_bindings": 0,
+    "resumed_jobs": 0
+  },
+  "remote_provenance_established_by_script": false,
+  "verifier_sha256": "11287557ec5713f42d55794141648ffc4543a53683bcb974aa5baec6e7d5ef8b",
+  "prepared_report_sha256": "37e5f8b9aac4a4f431fe3ee0aefc5b5cb0b862f1498a9f4a3101301d5c68a676"
+}

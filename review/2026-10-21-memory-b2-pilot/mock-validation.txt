@@ -1,0 +1,9 @@
+test_changed_fake_pack_refuses_before_credential_or_network (__main__.PilotChecks.test_changed_fake_pack_refuses_before_credential_or_network) ... ok
+test_missing_provider_scope_denial_stops_before_upload (__main__.PilotChecks.test_missing_provider_scope_denial_stops_before_upload) ... ok
+test_mock_upload_scope_denials_download_and_fresh_process_restore (__main__.PilotChecks.test_mock_upload_scope_denials_download_and_fresh_process_restore) ... ok
+test_preview_approval_and_existing_output_guards (__main__.PilotChecks.test_preview_approval_and_existing_output_guards) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.920s
+
+OK

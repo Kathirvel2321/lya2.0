@@ -1,0 +1,15 @@
+{
+  "read_only": true,
+  "upload_requested": false,
+  "key_creation_requested": false,
+  "protected_child_loaded": true,
+  "more_than_one_minute_remaining": true,
+  "child_authorized": true,
+  "outside_prefix": {
+    "http_status": 401
+  },
+  "file_listing": {
+    "http_status": 401
+  },
+  "stage": "completed_read_only_checks"
+}

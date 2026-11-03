@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-20",
+  "passed": true,
+  "focused_windows_checks": 19,
+  "reviewed_sources_match": 27,
+  "unchanged_preceding_sources": 25,
+  "changed_sources": [
+    "brain/memory_b2_credential.py",
+    "test_memory_b2_credential.py"
+  ],
+  "accepted_head_sources_preserved": [
+    "brain/workflow.py",
+    "cloud/mobile.py",
+    "cloud/answering.py",
+    "cloud/web_research.py",
+    "cloud/web_reader.py",
+    "cloud/news_sources.py",
+    "cloud/tech_news.py",
+    "desktop/app.py",
+    "desktop/experience.py",
+    "audio/voice.py",
+    "security/vault.py",
+    "brain/memory_authority.py",
+    "brain/memory_network_authority.py",
+    "brain/memory_custody.py",
+    "brain/memory_recovery.py",
+    "brain/memory_repository.py",
+    "brain/memory_witness_service.py",
+    "brain/memory_witness_budget.py"
+  ],
+  "local_links_checked": 333,
+  "whitespace_passed": true,
+  "temporary_suite_fixtures_remaining": 0,
+  "private_key_or_clipboard_read": false,
+  "live_auth_requested": false,
+  "live_key_created": false,
+  "owner_paste_method_established": false,
+  "full_regression_suite_repeated": false,
+  "source_sha256": {
+    "brain\\memory_b2_credential.py": "d27cbc90881473b52aafa6896eeae6fd7c5388a32059b0b421a094e1611edbbd",
+    "test_memory_b2_credential.py": "8adae9210d6119d5c54fbd56d38f4f4e1c24a6e9b660f43ca5c46d235a2fcb2b",
+    "review\\2026-10-20-memory-b2-setup-diagnostics\\input-check.py": "aad57abe49d39712e5a704633d84b89087c0a81556ce0f4dcef2a71047ef4ad9",
+    "review\\2026-10-20-memory-b2-setup-diagnostics\\input-validation.md": "2096c7edad009c817e6a9839700fb45e6e4d8ff5b04a7400223fa1a46e6bbce8",
+    "review\\2026-10-20-memory-b2-setup-diagnostics\\README.md": "ddfbd86a78ba54bbf95ce1512eca9540c789ebe941984c243dbed3643e074a31",
+    "docs\\guides\\LYA_MEMORY_KEY_CUSTODY.md": "b603d14bb1f24f882e1a87320c0b29b027f2200d0f87646aa25ede7d4060349b",
+    "lya-project-brain.md": "359721746d2901b8a68495d6cf215f9df7ec29cd56a94b55a7f026a479e76921"
+  }
+}

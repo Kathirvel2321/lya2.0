@@ -1,0 +1,58 @@
+test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive (test_memory_publication_authority.PublicationAuthorityChecks.test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive) ... ok
+test_authority_recovery_revokes_old_writer_only_after_published_epoch (test_memory_publication_authority.PublicationAuthorityChecks.test_authority_recovery_revokes_old_writer_only_after_published_epoch) ... ok
+test_committed_source_waits_for_publication_and_retry_does_not_replay (test_memory_publication_authority.PublicationAuthorityChecks.test_committed_source_waits_for_publication_and_retry_does_not_replay) ... ok
+test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation (test_memory_publication_authority.PublicationAuthorityChecks.test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation) ... ok
+test_process_death_at_reservation_source_confirmation_and_journal_boundaries (test_memory_publication_authority.PublicationAuthorityChecks.test_process_death_at_reservation_source_confirmation_and_journal_boundaries) ... ok
+test_rollback_reservation_blocks_even_old_code_archive_then_reconciles (test_memory_publication_authority.PublicationAuthorityChecks.test_rollback_reservation_blocks_even_old_code_archive_then_reconciles) ... ok
+test_rolled_back_source_catalogue_cannot_replace_current_latest (test_memory_publication_authority.PublicationAuthorityChecks.test_rolled_back_source_catalogue_cannot_replace_current_latest) ... ok
+test_successful_mutations_and_exact_retry_are_published_before_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_successful_mutations_and_exact_retry_are_published_before_reply) ... ok
+test_turn_expiring_during_publication_cannot_receive_a_success_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_turn_expiring_during_publication_cannot_receive_a_success_reply) ... ok
+test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none (test_memory_publication_authority.PublicationAuthorityChecks.test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none) ... ok
+test_reactivation_committed_publication_failure_never_reissues_lost_grant (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_committed_publication_failure_never_reissues_lost_grant) ... ok
+test_reactivation_guards_keep_recovery_pending_and_do_not_enroll (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_guards_keep_recovery_pending_and_do_not_enroll) ... ok
+test_reactivation_missing_latest_refuses_without_recreation_or_source_commit (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_missing_latest_refuses_without_recreation_or_source_commit) ... ok
+test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) ... ok
+test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication) ... ok
+test_reactivation_rolled_back_source_reconciles_before_safe_retry (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rolled_back_source_reconciles_before_safe_retry) ... ok
+test_reactivation_success_publishes_one_owner_and_fences_old_writer (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_success_publishes_one_owner_and_fences_old_writer) ... ERROR
+
+======================================================================
+ERROR: test_reactivation_success_publishes_one_owner_and_fences_old_writer (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_success_publishes_one_owner_and_fences_old_writer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 47, in test_reactivation_success_publishes_one_owner_and_fences_old_writer
+    self.assertTrue(self.call(f,f.f.packet('fresh-writer'))['publication_confirmed'])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 80, in call
+    def call(self,f,request):return f.f.a.handle(f.f.grant,f.f.turn(),request,expected_anchor=f.f.anchor,approved=True)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 192, in handle
+    reply=super().handle(grant,turn,request,expected_anchor=expected_anchor,approved=approved,cancelled=cancelled)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 263, in handle
+    with self._transaction(grant.lineage,cancelled) as db:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_publication_authority.py", line 150, in _transaction
+    if self._latest._confirmed(trusted,lineage)!=head:raise Conflict('Latest state changed outside the authority.')
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery_latest.py", line 90, in _confirmed
+    current,pending=cls._row(db,lineage)
+                    ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery_latest.py", line 83, in _row
+    values=tuple(_decode(raw) for raw in row)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery_latest.py", line 83, in <genexpr>
+    values=tuple(_decode(raw) for raw in row)
+                 ^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery_latest.py", line 44, in _decode
+    except (ValueError,KeyError,TypeError,RecursionError):raise ValueError('Malformed publication head.') from None
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Malformed publication head.
+
+----------------------------------------------------------------------
+Ran 17 tests in 320.411s
+
+FAILED (errors=1)

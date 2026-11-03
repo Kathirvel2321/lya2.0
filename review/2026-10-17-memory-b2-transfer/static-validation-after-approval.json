@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-17",
+  "preceding_source_hashes_match": 23,
+  "prepared_hashes_match": true,
+  "local_links_checked": 327,
+  "missing_links": [],
+  "upload_approved": true,
+  "upload_submitted": false,
+  "remote_transfer_tested": false,
+  "verifier_sha256": "11287557ec5713f42d55794141648ffc4543a53683bcb974aa5baec6e7d5ef8b"
+}

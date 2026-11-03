@@ -1,0 +1,37 @@
+{
+  "fake_data_only": true,
+  "upload_folder": "C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-17-memory-b2-transfer\\.fake-local\\lya-fake-b2-transfer-j3ymaaf2\\upload-only",
+  "local_only_inputs": "C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\review\\2026-10-17-memory-b2-transfer\\.fake-local\\lya-fake-b2-transfer-j3ymaaf2\\local-only.json",
+  "encrypted_bytes": 5395,
+  "files": {
+    "backup.enc": {
+      "bytes": 3658,
+      "sha256": "a2b3d4a3a0f29d66e9dd584f466466ce5fcecb1268a40ccc02f6fbd9f17af668"
+    },
+    "checkpoint.enc": {
+      "bytes": 1358,
+      "sha256": "1b8032d051dc1b5f044a2f6152ed3b760c2a7e71301f29d646c252bdb3edb82c"
+    },
+    "keys.enc": {
+      "bytes": 379,
+      "sha256": "5202f593dc7bd146816598bd8a634e41a80be2e504d0cb682c48e4b29fbc5828"
+    }
+  },
+  "source_fixture_removed": true,
+  "local_fresh_process": {
+    "recovered": true,
+    "quarantined": true,
+    "correction_preserved": true,
+    "forgotten_absent": true,
+    "expired_absent": true,
+    "old_binding_denied": true,
+    "active_bindings": 0,
+    "resumed_jobs": 0
+  },
+  "uploaded": false,
+  "source_sha256": {
+    "review\\2026-10-17-memory-b2-transfer\\prepare.py": "51660f6dd222fa9bc446a09cc8ed39a9a1cddb60ab84ab93c454a63afb0278fc",
+    "brain\\memory_recovery_pack.py": "728d9d632d8d4d27f204a401338606056461d11625c01c63aff0c14b00ae07e9",
+    "test_memory_recovery_pack.py": "fde65fdd03851c5d429c737c4553d1ee6e5871b4e90040e2182519a699f2d80c"
+  }
+}

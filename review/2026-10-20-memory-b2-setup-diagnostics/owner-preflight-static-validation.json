@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-20",
+  "passed": true,
+  "reviewed_sources_unchanged": 27,
+  "affected_links_checked": 322,
+  "whitespace_passed": true,
+  "owner_evidence_provenance_explicit": true,
+  "runtime_tests_repeated": false,
+  "assistant_live_account_action": false
+}

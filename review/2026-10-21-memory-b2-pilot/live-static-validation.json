@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-21",
+  "passed": true,
+  "focused_checks_passed": 41,
+  "selected_source_hashes_unchanged_since_test": 30,
+  "accepted_head_sources_unchanged": 18,
+  "changed_preceding_sources": [
+    "brain/memory_b2_backup.py",
+    "test_memory_b2_backup.py"
+  ],
+  "live_native_fake_roundtrip_passed": true,
+  "exact_encrypted_bytes": 5395,
+  "both_permission_probes_http_401": true,
+  "original_pack_and_remote_readback_hashes_match": true,
+  "first_attempt_preserved_empty": true,
+  "original_synthetic_source_absent": true,
+  "temporary_mock_fixtures_remaining": 0,
+  "local_links_checked": 414,
+  "whitespace_passed": true,
+  "linux_or_full_repository_suite_repeated": false,
+  "no_additional_cloud_request_in_static_checks": true,
+  "artifact_sha256": {
+    "lya-project-brain.md": "5a74b7d1de0a5e43cb23b8e989f39b55e51e94384e3a6639a67497da5d996688",
+    "docs/README.md": "283de91352536f8afb78994162afdb552cb7f6039d8622239d0d759a7505f434",
+    "docs/guides/LYA_MEMORY_KEY_CUSTODY.md": "2ec8208a5b9d7cfddd5ecd04882c7c34960b1d62d72982fdf565f9326bddd49f",
+    "review/2026-10-21-memory-b2-pilot/README.md": "966e1db0f0858044aabb2ac843539ab41243846f68a85c8e08ebc65cbef965dd",
+    "brain/memory_b2_backup.py": "95ee7a413fc6854d1da40f95154a6e43039514a6bd14d990223aa28625c2ba65",
+    "test_memory_b2_backup.py": "aaefe7a6b4bb006dec854271c705d58d5e5b64b392df9eb48aa3ebe119e99da9",
+    "review/2026-10-21-memory-b2-pilot/pilot.py": "9a42eeebf2aced5552d1addfb95329b74df2160340037b8de00e1e10686d58cd",
+    "review/2026-10-21-memory-b2-pilot/check.py": "249007748784baddc0223647b6777d11b2464c2dc364ab156dfed43f343dacf3",
+    "review/2026-10-21-memory-b2-pilot/validate.py": "bfee7ed2fa4b2988c994d53445078ad1a7ff2ebe3e42fcad77d79a11ba34aee5",
+    "review/2026-10-21-memory-b2-pilot/native-pilot-20261021-reconciled.json": "e4008a8c62b9286151d6a0a3165ea19f952d646476931906f2058f6136cd3f9a",
+    "review/2026-10-21-memory-b2-pilot/compatibility-validation-2.json": "c72a64592fc9a982f51dbf6fc28437ab2600600123528cd17e08a97e5e502ac6"
+  }
+}

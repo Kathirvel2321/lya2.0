@@ -1,0 +1,8 @@
+{
+  "accountId": "OWNER_LOCAL_ACCOUNT_ID",
+  "keyName": "lya-memory-lab-worker-pilot",
+  "capabilities": ["listBuckets", "readFiles", "writeFiles"],
+  "validDurationInSeconds": 3600,
+  "bucketIds": ["OWNER_LOCAL_LAB_BUCKET_ID"],
+  "namePrefix": "lya-memory-lab/worker/"
+}

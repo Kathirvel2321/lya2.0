@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-21",
+  "evidence_source": "owner-supplied terminal success message",
+  "reported_pilot_credential_stored_with_windows_dpapi": true,
+  "reported_upload_performed": false,
+  "assistant_read_credential_or_secret_view": false,
+  "assistant_created_or_rotated_key": false,
+  "current_expiry_or_provider_state_independently_verified": false,
+  "live_native_uploader_qualified": false
+}

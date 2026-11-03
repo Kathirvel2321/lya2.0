@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "tests_run": 4,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "b2_https_mocked": true,
+  "live_credential_loaded": false,
+  "live_upload_performed": false
+}

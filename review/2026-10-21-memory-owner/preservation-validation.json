@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "accepted_head_sources_unchanged": 18,
+  "preserved_prior_artifacts": 37,
+  "original_three_ciphertext_files_unchanged": true,
+  "ast_passed": true,
+  "cloud_vault_or_credential_access": false
+}

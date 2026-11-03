@@ -1,0 +1,641 @@
+test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive (test_memory_publication_authority.PublicationAuthorityChecks.test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive) ... ERROR
+test_authority_recovery_revokes_old_writer_only_after_published_epoch (test_memory_publication_authority.PublicationAuthorityChecks.test_authority_recovery_revokes_old_writer_only_after_published_epoch) ... ERROR
+test_committed_source_waits_for_publication_and_retry_does_not_replay (test_memory_publication_authority.PublicationAuthorityChecks.test_committed_source_waits_for_publication_and_retry_does_not_replay) ... ERROR
+test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation (test_memory_publication_authority.PublicationAuthorityChecks.test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation) ... ERROR
+test_process_death_at_reservation_source_confirmation_and_journal_boundaries (test_memory_publication_authority.PublicationAuthorityChecks.test_process_death_at_reservation_source_confirmation_and_journal_boundaries) ... ERROR
+test_rollback_reservation_blocks_even_old_code_archive_then_reconciles (test_memory_publication_authority.PublicationAuthorityChecks.test_rollback_reservation_blocks_even_old_code_archive_then_reconciles) ... ERROR
+test_rolled_back_source_catalogue_cannot_replace_current_latest (test_memory_publication_authority.PublicationAuthorityChecks.test_rolled_back_source_catalogue_cannot_replace_current_latest) ... ERROR
+test_successful_mutations_and_exact_retry_are_published_before_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_successful_mutations_and_exact_retry_are_published_before_reply) ... ERROR
+test_turn_expiring_during_publication_cannot_receive_a_success_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_turn_expiring_during_publication_cannot_receive_a_success_reply) ... ERROR
+test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none (test_memory_publication_authority.PublicationAuthorityChecks.test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none) ... ERROR
+test_reactivation_committed_publication_failure_never_reissues_lost_grant (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_committed_publication_failure_never_reissues_lost_grant) ... ERROR
+test_reactivation_guards_keep_recovery_pending_and_do_not_enroll (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_guards_keep_recovery_pending_and_do_not_enroll) ... ERROR
+test_reactivation_missing_latest_refuses_without_recreation_or_source_commit (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_missing_latest_refuses_without_recreation_or_source_commit) ... ERROR
+test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) ... 
+  test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='reserve_after') ... ERROR
+  test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='source_before') ... ERROR
+  test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='source_after') ... ERROR
+  test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='confirm_after') ... ERROR
+  test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='journal_after') ... ERROR
+test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication) ... 
+  test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication) (mode='expiry') ... ERROR
+  test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication) (mode='identity') ... ERROR
+  test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication) (mode='cancellation') ... ERROR
+test_reactivation_rolled_back_source_reconciles_before_safe_retry (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rolled_back_source_reconciles_before_safe_retry) ... ERROR
+test_reactivation_success_publishes_one_owner_and_fences_old_writer (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_success_publishes_one_owner_and_fences_old_writer) ... ERROR
+
+======================================================================
+ERROR: test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive (test_memory_publication_authority.PublicationAuthorityChecks.test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 180, in test_acknowledged_correction_forget_and_expiry_survive_source_loss_in_old_archive
+    f,a,latest,_,_=self.make();f.latest();lineage=f.f.anchor.lineage;pack,trust=self.files(a,latest,lineage)
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpa6cg__g7\\authority\\objects\\2907cc545fc545ac9699751261c6f011\\.lya-fake-recovery-r121233q\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpa6cg__g7\\authority\\objects\\2907cc545fc545ac9699751261c6f011\\live.sqlite'
+
+======================================================================
+ERROR: test_authority_recovery_revokes_old_writer_only_after_published_epoch (test_memory_publication_authority.PublicationAuthorityChecks.test_authority_recovery_revokes_old_writer_only_after_published_epoch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 169, in test_authority_recovery_revokes_old_writer_only_after_published_epoch
+    f,a,latest,_,_=self.make();lineage=f.f.anchor.lineage
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpi3zx44sh\\authority\\objects\\3f6ddeb9c36443fb88a6a4f214aa3eef\\.lya-fake-recovery-lxgg8mv7\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpi3zx44sh\\authority\\objects\\3f6ddeb9c36443fb88a6a4f214aa3eef\\live.sqlite'
+
+======================================================================
+ERROR: test_committed_source_waits_for_publication_and_retry_does_not_replay (test_memory_publication_authority.PublicationAuthorityChecks.test_committed_source_waits_for_publication_and_retry_does_not_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 114, in test_committed_source_waits_for_publication_and_retry_does_not_replay
+    f,a,latest,_,_=self.make();anchor=f.f.anchor;request=f.f.packet('committed')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpf_14pa5b\\authority\\objects\\e8a8fcb4e9324f90ae709ef2b7557700\\.lya-fake-recovery-ygz1tc5b\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpf_14pa5b\\authority\\objects\\e8a8fcb4e9324f90ae709ef2b7557700\\live.sqlite'
+
+======================================================================
+ERROR: test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation (test_memory_publication_authority.PublicationAuthorityChecks.test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 146, in test_cutover_refuses_legacy_authority_and_missing_custody_without_recreation
+    f,a,latest,_,record=self.make()
+                        ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpiikoksgp\\authority\\objects\\98f4bf975d5b41da97ce569a440b8ab2\\.lya-fake-recovery-ofhc21qq\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpiikoksgp\\authority\\objects\\98f4bf975d5b41da97ce569a440b8ab2\\live.sqlite'
+
+======================================================================
+ERROR: test_process_death_at_reservation_source_confirmation_and_journal_boundaries (test_memory_publication_authority.PublicationAuthorityChecks.test_process_death_at_reservation_source_confirmation_and_journal_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 198, in test_process_death_at_reservation_source_confirmation_and_journal_boundaries
+    f,a,latest,_,_=self.make();anchor=f.f.anchor;grant=f.f.grant;request=f.f.packet('crash-'+mode)
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmp46qiq06s\\authority\\objects\\b113e6e262f64f45a310f58ecea9cd0e\\.lya-fake-recovery-c0kh_2vs\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmp46qiq06s\\authority\\objects\\b113e6e262f64f45a310f58ecea9cd0e\\live.sqlite'
+
+======================================================================
+ERROR: test_rollback_reservation_blocks_even_old_code_archive_then_reconciles (test_memory_publication_authority.PublicationAuthorityChecks.test_rollback_reservation_blocks_even_old_code_archive_then_reconciles)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 102, in test_rollback_reservation_blocks_even_old_code_archive_then_reconciles
+    f,a,latest,old_pack,old_trust=self.make();anchor=f.f.anchor;request=f.f.packet('rolled-back')
+                                  ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpmic9qltm\\authority\\objects\\b5a8ebdfb0c64629a36f9cb23fa10e90\\.lya-fake-recovery-l5rccwo7\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpmic9qltm\\authority\\objects\\b5a8ebdfb0c64629a36f9cb23fa10e90\\live.sqlite'
+
+======================================================================
+ERROR: test_rolled_back_source_catalogue_cannot_replace_current_latest (test_memory_publication_authority.PublicationAuthorityChecks.test_rolled_back_source_catalogue_cannot_replace_current_latest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 161, in test_rolled_back_source_catalogue_cannot_replace_current_latest
+    f,a,latest,_,_=self.make();catalog=a._repository.catalog;old=catalog.read_bytes()
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpryt9or04\\authority\\objects\\779596930d514e76bfbf8dd52ac72166\\.lya-fake-recovery-7ncciqdk\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpryt9or04\\authority\\objects\\779596930d514e76bfbf8dd52ac72166\\live.sqlite'
+
+======================================================================
+ERROR: test_successful_mutations_and_exact_retry_are_published_before_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_successful_mutations_and_exact_retry_are_published_before_reply)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 91, in test_successful_mutations_and_exact_retry_are_published_before_reply
+    f,a,latest,_,_=self.make();request=f.f.packet('acknowledged')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpzrfm88vo\\authority\\objects\\902ce122e6e34bfaa47ef50178b45d53\\.lya-fake-recovery-reaspprs\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpzrfm88vo\\authority\\objects\\902ce122e6e34bfaa47ef50178b45d53\\live.sqlite'
+
+======================================================================
+ERROR: test_turn_expiring_during_publication_cannot_receive_a_success_reply (test_memory_publication_authority.PublicationAuthorityChecks.test_turn_expiring_during_publication_cannot_receive_a_success_reply)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 137, in test_turn_expiring_during_publication_cannot_receive_a_success_reply
+    f,a,latest,_,_=self.make();request=f.f.packet('expired-turn');original=a._stage
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmp6_k_65ie\\authority\\objects\\4d9fa194a52d450fb9d0a253d1fd9b4c\\.lya-fake-recovery-agb93_vd\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmp6_k_65ie\\authority\\objects\\4d9fa194a52d450fb9d0a253d1fd9b4c\\live.sqlite'
+
+======================================================================
+ERROR: test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none (test_memory_publication_authority.PublicationAuthorityChecks.test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 127, in test_writer_grant_is_not_returned_until_publication_and_reconcile_issues_none
+    f,a,latest,_,_=self.make();lineage=f.f.anchor.lineage;old=f.f.grant
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpdpqt4umb\\authority\\objects\\5eafdee1f97b4fca879f14befd6745cc\\.lya-fake-recovery-jwo7zsjp\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpdpqt4umb\\authority\\objects\\5eafdee1f97b4fca879f14befd6745cc\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_committed_publication_failure_never_reissues_lost_grant (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_committed_publication_failure_never_reissues_lost_grant)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 87, in test_reactivation_committed_publication_failure_never_reissues_lost_grant
+    f,a,latest,target,restored=self.prepare();lineage=f.f.anchor.lineage
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpvk70iepy\\authority\\objects\\6aa0b3731c6b43afbc6821ebffc3e1ef\\.lya-fake-recovery-5_ogp82e\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpvk70iepy\\authority\\objects\\6aa0b3731c6b43afbc6821ebffc3e1ef\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_guards_keep_recovery_pending_and_do_not_enroll (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_guards_keep_recovery_pending_and_do_not_enroll)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 58, in test_reactivation_guards_keep_recovery_pending_and_do_not_enroll
+    f,a,latest,target,restored=self.prepare();lineage=f.f.anchor.lineage;head=latest.head(lineage)
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpnnofv3tj\\authority\\objects\\7048e019f62746fb9d6e9b599e4a01a0\\.lya-fake-recovery-fhimb0gd\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpnnofv3tj\\authority\\objects\\7048e019f62746fb9d6e9b599e4a01a0\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_missing_latest_refuses_without_recreation_or_source_commit (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_missing_latest_refuses_without_recreation_or_source_commit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 124, in test_reactivation_missing_latest_refuses_without_recreation_or_source_commit
+    f,a,latest,target,restored=self.prepare();catalog=a._repository.catalog.read_bytes()
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpgz6e6b7o\\authority\\objects\\8de187c91492443d8a1526069e4163d2\\.lya-fake-recovery-5na_uay8\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpgz6e6b7o\\authority\\objects\\8de187c91492443d8a1526069e4163d2\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='reserve_after')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 137, in test_reactivation_process_death_at_five_commit_boundaries
+    f,a,latest,target,restored=self.prepare();grant=f.f.grant;root=Path(__file__).resolve().parent
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpfp7gieep\\authority\\objects\\ab697db2231346eb97047ac62ebb2ef7\\.lya-fake-recovery-2ixsxfu1\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpfp7gieep\\authority\\objects\\ab697db2231346eb97047ac62ebb2ef7\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='source_before')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 137, in test_reactivation_process_death_at_five_commit_boundaries
+    f,a,latest,target,restored=self.prepare();grant=f.f.grant;root=Path(__file__).resolve().parent
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpey1godle\\authority\\objects\\00a77966fc9e42c28fcd269f1dc1efe8\\.lya-fake-recovery-if6091p3\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpey1godle\\authority\\objects\\00a77966fc9e42c28fcd269f1dc1efe8\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='source_after')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 137, in test_reactivation_process_death_at_five_commit_boundaries
+    f,a,latest,target,restored=self.prepare();grant=f.f.grant;root=Path(__file__).resolve().parent
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmp0y06vgp4\\authority\\objects\\d6d49dbaf6ac47c8aa0195b54ee69af8\\.lya-fake-recovery-c6f2jqsf\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmp0y06vgp4\\authority\\objects\\d6d49dbaf6ac47c8aa0195b54ee69af8\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='confirm_after')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 137, in test_reactivation_process_death_at_five_commit_boundaries
+    f,a,latest,target,restored=self.prepare();grant=f.f.grant;root=Path(__file__).resolve().parent
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpag2vgzjm\\authority\\objects\\0e4d34176c984129948fe00a0134e41a\\.lya-fake-recovery-o2p3nynp\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpag2vgzjm\\authority\\objects\\0e4d34176c984129948fe00a0134e41a\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_process_death_at_five_commit_boundaries (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_process_death_at_five_commit_boundaries) (mode='journal_after')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 137, in test_reactivation_process_death_at_five_commit_boundaries
+    f,a,latest,target,restored=self.prepare();grant=f.f.grant;root=Path(__file__).resolve().parent
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpm4aiazlo\\authority\\objects\\55be0239405540ffb061091916766c20\\.lya-fake-recovery-n3p3jwil\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpm4aiazlo\\authority\\objects\\55be0239405540ffb061091916766c20\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication) (mode='expiry')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 105, in test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication
+    f,a,latest,target,restored=self.prepare();turn=f.f.turn();context=[turn.context]
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpz5vupx4k\\authority\\objects\\5dda89783357443db8467eceff7f9f75\\.lya-fake-recovery-elcisaxr\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpz5vupx4k\\authority\\objects\\5dda89783357443db8467eceff7f9f75\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication) (mode='identity')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 105, in test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication
+    f,a,latest,target,restored=self.prepare();turn=f.f.turn();context=[turn.context]
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpenlyrq7f\\authority\\objects\\9f139f1cb2aa4ea4acc8501e5d5a01e7\\.lya-fake-recovery-vbh280qf\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpenlyrq7f\\authority\\objects\\9f139f1cb2aa4ea4acc8501e5d5a01e7\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication) (mode='cancellation')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 105, in test_reactivation_rechecks_owner_expiry_identity_and_cancellation_after_publication
+    f,a,latest,target,restored=self.prepare();turn=f.f.turn();context=[turn.context]
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmprda8u791\\authority\\objects\\48a77a0543d7493eb788b151ca5cc0bb\\.lya-fake-recovery-i39lmfgv\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmprda8u791\\authority\\objects\\48a77a0543d7493eb788b151ca5cc0bb\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_rolled_back_source_reconciles_before_safe_retry (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_rolled_back_source_reconciles_before_safe_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 77, in test_reactivation_rolled_back_source_reconciles_before_safe_retry
+    f,a,latest,target,restored=self.prepare();head=latest.head(f.f.anchor.lineage)
+                               ^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 16, in prepare
+    f,a,latest,_,_=self.make();target=self.home/('q'+str(self.number)+'.sqlite')
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpw_euii62\\authority\\objects\\5719e489e9244728910859644ec173b2\\.lya-fake-recovery-199uvij4\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmpw_euii62\\authority\\objects\\5719e489e9244728910859644ec173b2\\live.sqlite'
+
+======================================================================
+ERROR: test_reactivation_success_publishes_one_owner_and_fences_old_writer (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_success_publishes_one_owner_and_fences_old_writer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_reactivation.py", line 26, in test_reactivation_success_publishes_one_owner_and_fences_old_writer
+    f,a,latest,_,_=self.make();f.latest();target=self.home/'q.sqlite'
+                   ^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_publication_authority.py", line 68, in make
+    f=RecoveryPackChecks(methodName='runTest');self.addCleanup(f.doCleanups);f.setUp()
+                                                                             ^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\test_memory_recovery_pack.py", line 66, in setUp
+    self.f.authority();self.unlock=Fernet.generate_key();self.capsule=self.f.home/'keys.enc'
+    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\review\2026-10-13-memory-linux\test_qualification.py", line 47, in authority
+    self.anchor = self.a.register(self.memory,approved=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 211, in register
+    anchor,digest = self._publish(db,candidate,cancelled)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_authority.py", line 184, in _publish
+    _publish(folder/'live.sqlite',lambda stage:shutil.copyfile(candidate.path,stage),cancelled)
+  File "C:\Users\kathirvel\Downloads\lya-main\lya-main\brain\memory_recovery.py", line 83, in _publish
+    os.link(stage,path)
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmp7j12zb1r\\authority\\objects\\f9606085c9a943c395cc2a6d1efb3cb3\\.lya-fake-recovery-t37n3uam\\staged' -> 'C:\\Users\\kathirvel\\Downloads\\lya-main\\lya-main\\.own-lplwfvcb\\tmp7j12zb1r\\authority\\objects\\f9606085c9a943c395cc2a6d1efb3cb3\\live.sqlite'
+
+----------------------------------------------------------------------
+Ran 17 tests in 16.677s
+
+FAILED (errors=23)

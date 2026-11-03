@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-20",
+  "evidence_source": "owner-supplied terminal output",
+  "assistant_executed_this_authenticated_check": false,
+  "owner_reported_check_only_passed": true,
+  "reported_stages": [
+    "local protected storage",
+    "issuer key ID format",
+    "issuer application key format",
+    "B2 issuer authentication",
+    "issuer permissions",
+    "private lab bucket"
+  ],
+  "reported_command_created_key": false,
+  "reported_command_wrote_credential_file": false,
+  "reported_command_uploaded_files": false,
+  "credential_values_recorded_or_seen": false,
+  "pilot_credential_creation_confirmed": false,
+  "live_backup_integration_qualified": false
+}

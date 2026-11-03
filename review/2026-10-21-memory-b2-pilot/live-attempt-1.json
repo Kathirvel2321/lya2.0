@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-21",
+  "owner_approved_exact_three_fake_files": true,
+  "owner_approved_restricted_child_use": true,
+  "owner_approved_two_read_only_permission_probes": true,
+  "encrypted_bytes": 5395,
+  "attempt_name": "native-pilot-20261021",
+  "exit_code": 1,
+  "receipt_or_readback_files_created": false,
+  "completion_confirmed": false,
+  "failure_reconciled_before_resume": true,
+  "all_three_expected_remote_names_absent_on_read_only_reconciliation": true,
+  "documented_missing_response": "HTTP 404 / not_found",
+  "old_worker_expected_missing_response": "HTTP 404 / file_not_present",
+  "diagnostic_reports": [
+    "live-read-only-diagnosis.json",
+    "live-reconciliation.json",
+    "live-missing-object-diagnosis.json"
+  ],
+  "official_response_reference": "https://www.backblaze.com/apidocs/b2-download-file-by-name",
+  "master_used": false,
+  "new_key_created": false,
+  "delete_requested": false,
+  "real_memories_used": false,
+  "blind_retry_performed": false
+}

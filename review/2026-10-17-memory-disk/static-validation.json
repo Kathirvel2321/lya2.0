@@ -1,0 +1,21 @@
+{
+  "prior_19_selected_source_contents_preserved": true,
+  "reviewed_20_source_hashes_match_both_platforms": true,
+  "recorded_runner_digest_matches": true,
+  "all_99_expected_linux_cases_present": true,
+  "all_21_windows_case_ids_in_linux_selection": true,
+  "all_6_actual_ENOSPC_scenarios_pass": true,
+  "python_files_parsed": [
+    "test_memory_witness_disk.py",
+    "review/2026-10-17-memory-disk/check.py"
+  ],
+  "local_links_checked": 316,
+  "missing_links": [],
+  "trailing_whitespace": [],
+  "git_diff_check_passed": true,
+  "accepted_sources_preserved": true,
+  "remaining_synthetic_units": 0,
+  "remaining_linux_disk_fixtures": 0,
+  "remaining_windows_fixtures": [],
+  "passed": true
+}

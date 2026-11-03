@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-21",
+  "passed": true,
+  "windows_cases": 27,
+  "ubuntu_cases": 27,
+  "distinct_cases": 27,
+  "source_hashes_match_both_platforms": 36,
+  "preceding_sources_unchanged": 33,
+  "accepted_head_sources_unchanged": 18,
+  "prior_trust_pilot_and_fake_pack_preserved": true,
+  "local_links_checked": 424,
+  "whitespace_passed": true,
+  "temporary_test_fixtures_remaining": 0,
+  "previous_runtime_or_test_source_modified": false,
+  "cloud_vault_or_credential_access": false,
+  "independent_physical_host_or_whole_latest_store_rollback_qualified": false,
+  "live_authority_acknowledgement_connected": false,
+  "full_repository_suite_run": false,
+  "artifact_sha256": {
+    "lya-project-brain.md": "3b118b2ea6cd07f29baa3ca647470ba84bebc840f125665d00ca704a73957050",
+    "docs/README.md": "5ff1434c4f6746971d41b6b74085b64b7a062ca0cb8dd91b3e9597fa4cd4c859",
+    "docs/guides/LYA_MEMORY_RECOVERY_PACK.md": "d35ecaf80a0e18157ce7fea84e3bb4b72dd31ad5910f45d47c65d97f01626c43",
+    "review/2026-10-21-memory-recovery-latest/README.md": "a555cf23f6cef323938783f528a33514f41f33307db8249917bcf4113c2659a1",
+    "brain/memory_recovery_latest.py": "33f3c96c57583701531d8bbe272ac139c3ec2b1e7cd708ada508dbdac5e8d117",
+    "test_memory_recovery_latest.py": "2ff9cb59c06bf7ad0663fe163a99ea2f8f98cf0224e468f1ffc913d5c903a2ac",
+    "review/2026-10-21-memory-recovery-latest/check.py": "eecca9da46d42f02069695b6134ce3bfab456716f7f604110ff31ee4a39928bf",
+    "review/2026-10-21-memory-recovery-latest/source-manifest.json": "d8cff7fef685242a2548dbb02d747cd709345beb59168a926a81af02d399874f",
+    "review/2026-10-21-memory-recovery-latest/windows-validation.json": "98b9f028bd357fb4725bed76dc12a7e626d0a0b7b9c8b13b0cd6a9c84a1baaa6",
+    "review/2026-10-21-memory-recovery-latest/ubuntu-validation.json": "9f8236f5b294edf6bebeb7390497e3343692fc8600026ba2e0f325c443e14e01"
+  }
+}

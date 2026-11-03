@@ -1,0 +1,13 @@
+{
+  "read_only": true,
+  "upload_requested": false,
+  "objects": {},
+  "error_type": "B2RequestRefused",
+  "http_status": 404,
+  "failure_location": {
+    "file": "memory_b2_backup.py",
+    "function": "request",
+    "line": 78
+  },
+  "stage": "read_backup.enc"
+}

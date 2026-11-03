@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-18",
+  "passed": true,
+  "request_matches_worker_capabilities": true,
+  "one_hour_lab_prefix_only": true,
+  "placeholder_identifiers_only": true,
+  "affected_document_links_checked": 311,
+  "whitespace_passed": true,
+  "runtime_tests_rerun": false,
+  "live_key_created": false,
+  "protected_provisioning_implemented": false
+}

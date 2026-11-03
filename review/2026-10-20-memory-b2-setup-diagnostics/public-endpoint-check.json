@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-20",
+  "credentials_sent": false,
+  "account_data_read": false,
+  "key_creation_requested": false,
+  "verified_https_used": true,
+  "http_status": 401,
+  "reached_b2": true
+}

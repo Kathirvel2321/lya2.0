@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-17",
+  "fake_data_only": true,
+  "checks": [
+    "original-upload-folder-refused",
+    "damaged-ciphertext-refused",
+    "separate-local-copy-fresh-process-restore-passed",
+    "existing-evidence-preserved"
+  ],
+  "positive_evidence": "local-verifier-self-check.json",
+  "remote_transfer_tested": false
+}

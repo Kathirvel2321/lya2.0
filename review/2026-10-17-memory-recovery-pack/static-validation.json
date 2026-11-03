@@ -1,0 +1,23 @@
+{
+  "prior_20_selected_source_contents_preserved": true,
+  "reviewed_23_source_hashes_match_both_platforms": true,
+  "recorded_runner_digest_matches": true,
+  "all_129_expected_linux_cases_present": true,
+  "all_51_windows_case_ids_in_linux_selection": true,
+  "fresh_process_quarantine_evidence_matches_both_platforms": true,
+  "production_callers": [],
+  "python_files_parsed": [
+    "brain/memory_recovery_pack.py",
+    "test_memory_recovery_pack.py",
+    "review/2026-10-17-memory-recovery-pack/check.py"
+  ],
+  "local_links_checked": 330,
+  "missing_links": [],
+  "trailing_whitespace": [],
+  "git_diff_check_passed": true,
+  "accepted_sources_preserved": true,
+  "remaining_synthetic_units": 0,
+  "remaining_linux_pack_or_disk_fixtures": 0,
+  "remaining_windows_fixtures": [],
+  "passed": true
+}

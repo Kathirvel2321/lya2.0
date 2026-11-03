@@ -1,0 +1,6 @@
+{
+  "fake_only": true,
+  "constructor_refused": true,
+  "empty_catalogue_modified_before_refusal": false,
+  "raw_values_or_keys_logged": false
+}

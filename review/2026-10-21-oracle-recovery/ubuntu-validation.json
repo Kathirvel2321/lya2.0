@@ -1,0 +1,24 @@
+{
+  "passed": false,
+  "tests_run": 8,
+  "failures": 0,
+  "errors": 1,
+  "skipped": 0,
+  "case_names": [
+    "test_transfer_authentication_literal_approval_and_encryption_boundaries",
+    "test_transfer_capture_refuses_pending_source_and_pending_owner_recovery",
+    "test_transfer_committed_fence_reconciles_without_replaying_restore",
+    "test_transfer_fresh_child_restores_without_original_source_or_catalogue",
+    "test_transfer_refuses_overwrite_missing_latest_and_byte_budget",
+    "test_transfer_rollback_preserves_incomplete_candidate_and_explicit_retry_quarantine",
+    "test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation",
+    "test_transfer_stale_record_or_writer_epoch_is_refused_before_destination"
+  ],
+  "platform": "linux",
+  "source_hashes_match_before_after": true,
+  "reviewed_sources": 48,
+  "fake_data_only": true,
+  "real_enrollment": false,
+  "production_connected": false,
+  "cloud_or_vault_access": false
+}

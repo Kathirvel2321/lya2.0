@@ -70,10 +70,22 @@ def main():
         elif result.get('paired'):result={'url':config['origin']+'/','paired':True}
         print(json.dumps(result))
         return
-    if operation!='serve':raise ValueError('Unknown operation.')
+    if operation not in ('serve','shared-memory'):raise ValueError('Unknown operation.')
+    memory=None
+    if config.get('shared_memory') is not None and config.get('shared_memory') is not False:
+        from cloud.shared_memory import configured_service
+        memory=configured_service(config)
+    if operation=='shared-memory':
+        from cloud.shared_memory import desktop_request
+        from brain.memory_recovery import _unique
+        raw=sys.stdin.buffer.read(65537)
+        if len(raw)>65536:raise ValueError('Shared control request is too large.')
+        packet=json.loads(raw,object_pairs_hook=_unique)
+        print(json.dumps(desktop_request(packet,store,memory)))
+        return
     app=Connection(config['origin'],store,infer,transcribe=transcribe if config.get('speech_enabled') is True else None,
                    speak=speak if config.get('reply_voice_enabled') is True else None,
-                   researcher=configured_researcher(config))
+                   researcher=configured_researcher(config),shared_memory=memory)
     http=PrivateHTTP(('127.0.0.1',8766),app)
     try:http.serve_forever(poll_interval=.2)
     finally:http.server_close()

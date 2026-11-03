@@ -1,0 +1,10 @@
+{
+  "read_only": true,
+  "expected_architecture": true,
+  "expected_python": true,
+  "cryptography_available": true,
+  "temporary_disk_headroom": true,
+  "existing_mobile_active": true,
+  "no_install_or_service_change": true,
+  "passed": true
+}

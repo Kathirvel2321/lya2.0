@@ -1,0 +1,6 @@
+test_reactivation_success_publishes_one_owner_and_fences_old_writer (test_memory_publication_reactivation.PublicationReactivationChecks.test_reactivation_success_publishes_one_owner_and_fences_old_writer) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 24.964s
+
+OK

@@ -1,0 +1,21 @@
+{
+  "selected_sources_match_head": {
+    "desktop/experience.py": true,
+    "desktop/app.py": true,
+    "audio/voice.py": true,
+    "audio/nvidia_asr.py": true,
+    "brain/workflow.py": true,
+    "cloud/mobile.py": true,
+    "cloud/mobile.html": true,
+    "storage/store.py": true,
+    "cloud/answering.py": true,
+    "cloud/web_research.py": true,
+    "cloud/job_runner.py": true,
+    "brain/memory_recovery.py": true,
+    "brain/memory_custody.py": true,
+    "brain/memory_repository.py": true,
+    "brain/memory_authority.py": true,
+    "brain/memory_network_authority.py": true
+  },
+  "passed": true
+}

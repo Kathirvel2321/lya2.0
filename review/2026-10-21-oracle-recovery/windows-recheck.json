@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "tests_run": 1,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "case_names": [
+    "test_transfer_source_loss_preserves_owner_mapping_and_requires_fresh_reactivation"
+  ],
+  "platform": "win32",
+  "source_hashes_match_before_after": true,
+  "reviewed_sources": 48,
+  "fake_data_only": true,
+  "real_enrollment": false,
+  "production_connected": false,
+  "cloud_or_vault_access": false
+}

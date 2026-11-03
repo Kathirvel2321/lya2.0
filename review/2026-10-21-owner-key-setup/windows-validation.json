@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "tests_run": 10,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "case_names": [
+    "test_owner_keys_confirm_requires_both_retrieved_copies_and_separate_action",
+    "test_owner_keys_corrupt_missing_and_oversized_records_never_recreate",
+    "test_owner_keys_exact_proof_expiry_and_role_are_required",
+    "test_owner_keys_no_plaintext_fallback_or_incomplete_preflight_directory",
+    "test_owner_keys_prepare_resume_and_encrypted_boundaries",
+    "test_owner_keys_revocation_and_credential_change_cannot_claim_existing_keys",
+    "test_owner_keys_revoked_during_protection_leaves_only_protected_pending_state",
+    "test_owner_keys_ui_signed_confirm_records_acknowledgement_and_keeps_production_off",
+    "test_owner_keys_ui_signed_prepare_masks_secret_and_clears_on_close",
+    "test_owner_keys_ui_wrong_proof_and_dependency_check_never_read_real_data"
+  ],
+  "native_windows_dpapi": true,
+  "signed_fake_passkeys": true,
+  "qt_offscreen": true,
+  "reviewed_sources": 63,
+  "source_hashes_match_before_after": true,
+  "real_key_enrollment_executed": false,
+  "real_owner_store_or_vault_read": false,
+  "production_connected": false,
+  "network_provider_access": false
+}

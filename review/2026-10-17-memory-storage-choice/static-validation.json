@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-17",
+  "task": "documentation-only storage recommendation",
+  "files": [
+    "review/2026-10-17-memory-storage-choice/README.md",
+    "docs/README.md",
+    "docs/guides/LYA_MEMORY_RECOVERY_PACK.md",
+    "lya-project-brain.md"
+  ],
+  "local_links_checked": 310,
+  "missing_local_links": [],
+  "trailing_whitespace": [],
+  "runtime_tests_rerun": false,
+  "cloud_accounts_or_transfer_tested": false,
+  "source_sha256": {
+    "review/2026-10-17-memory-storage-choice/README.md": "dc33cae873f81b8db9e27523daf7513c1fc27d80e8beda02b52f41f55777a4b9",
+    "docs/README.md": "af41144032ea5d757184786056f52c5fc8fe3fd28ee7a781a326176e9d7fb9a5",
+    "docs/guides/LYA_MEMORY_RECOVERY_PACK.md": "96ad4c0b4ad20fe3895c2bf5ec39c53e38b83c2a6bf53c9dbef184b2b313cc41",
+    "lya-project-brain.md": "9fd33bdde498c488285b6184110bb964019ae11f49cf294deff39ac29e3f4738"
+  }
+}

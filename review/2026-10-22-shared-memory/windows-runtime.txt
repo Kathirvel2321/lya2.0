@@ -1,0 +1,6 @@
+test_shared_native_pinned_transport_and_control_binding_use_one_authority (test_shared_memory.SharedMemoryChecks.test_shared_native_pinned_transport_and_control_binding_use_one_authority) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.210s
+
+OK

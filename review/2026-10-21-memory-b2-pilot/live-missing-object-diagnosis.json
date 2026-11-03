@@ -1,0 +1,18 @@
+{
+  "read_only": true,
+  "upload_requested": false,
+  "objects": {
+    "backup.enc": {
+      "http_status": 404,
+      "documented_not_found": true
+    },
+    "checkpoint.enc": {
+      "http_status": 404,
+      "documented_not_found": true
+    },
+    "keys.enc": {
+      "http_status": 404,
+      "documented_not_found": true
+    }
+  }
+}

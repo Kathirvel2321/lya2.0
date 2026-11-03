@@ -68,7 +68,7 @@ class Answer:
 
 class Brain:
     def __init__(self, session=None, *, approve=None, client=None, local_client=None,
-                 researcher=None, db_path=None, clock=time.time, archive=None):
+                 researcher=None, db_path=None, clock=time.time, archive=None, shared_memory=None):
         self.session = session or Session(id="guest")
         from security.approval import ApprovalGate
         self.approve = approve if approve is not None else ApprovalGate(wall_clock=clock)
@@ -79,6 +79,8 @@ class Brain:
         self.local_client = local_client or (client if isinstance(client, LocalModel) else LocalModel())
         self.researcher = researcher
         self.archive = archive
+        self.shared_memory = shared_memory
+        self._shared_pending = None
         self.db_path, self.clock = db_path, clock
         self.session_notes = {}
         self.history = []
@@ -94,6 +96,7 @@ class Brain:
         with self._context_lock:
             self._context_generation += 1
             self.session_notes.clear()
+            self._shared_pending = None
             self.history.clear()
             self._public_presence = None
             if hasattr(self.approve, 'invalidate'):
@@ -174,6 +177,27 @@ class Brain:
                 self.clear_temporary()
             self.last_activity = now
             low = text.casefold()
+            if re.match(r'^shared memory\b', text, re.I):
+                from brain.shared_memory import parse_command
+                with self._context_lock:
+                    self.history.clear()
+                    self._context_generation += 1
+                if self.private_mode:
+                    return result('Shared memory uses the remote service. Private mode remains local-only.', 'blocked')
+                import secrets
+                packet_id = self._shared_pending[1] if self._shared_pending and self._shared_pending[0] == text else secrets.token_hex(16)
+                _, _, action = parse_command(text, packet_id)
+                if action != 'memory_read' and self._shared_pending and self._shared_pending[0] != text:
+                    return result('A shared write is unconfirmed. Reconcile it and resend its original command before another write.', 'blocked')
+                from cloud.shared_memory import configured_client
+                memory = self.shared_memory if self.shared_memory is not None else configured_client()
+                self._authorize(action, text)
+                check()
+                from brain.conversation import desktop_turn
+                if action != 'memory_read':self._shared_pending = (text, packet_id)
+                reply = memory.respond(desktop_turn(self, {'id': packet_id, 'text': text}, cancelled))
+                if action != 'memory_read':self._shared_pending = None
+                return result(reply['text'], 'shared-memory', reply.get('records', []))
             if matches("help", low):
                 return result(self.capability_help())
             mobile_command=low.rstrip('.!?')

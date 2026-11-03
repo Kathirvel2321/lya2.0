@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-17",
+  "scope": "B2 account-readiness documentation",
+  "files_sha256": {
+    "review/2026-10-17-memory-storage-choice/README.md": "e527fd7a8c5ab8bff4209575751dee0f40c9dce73394b29741ba8fea99b93c0a",
+    "lya-project-brain.md": "81bcb69369491635f57b2792d9d9a3bb9c15cf909b0b1b6a31ed9c46ee67338a"
+  },
+  "local_links_checked": 256,
+  "missing_links": [],
+  "trailing_whitespace": [],
+  "runtime_tests_rerun": false,
+  "account_or_cloud_operations_tested": false,
+  "plugin_search_relevant_result": false
+}

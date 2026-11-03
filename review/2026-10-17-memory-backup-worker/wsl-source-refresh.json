@@ -1,0 +1,12 @@
+{
+  "preceding_hashes_matched": 23,
+  "reviewed_hashes_matched": 25,
+  "allowlisted_copies": [
+    "brain/memory_b2_backup.py",
+    "test_memory_b2_backup.py",
+    "review/2026-10-17-memory-backup-worker/check.py",
+    "review/2026-10-17-memory-backup-worker/source-manifest.json"
+  ],
+  "network_used": false,
+  "installed_dependencies": false
+}
