@@ -25,6 +25,8 @@ The full previous brain, including every earlier finding, owner clarification an
 | Area | Current source / dated evidence | Limits |
 | --- | --- | --- |
 | Routine draft review (2026-10-22) | `cloud/routine_drafts.py`, `desktop/routines.py`, manual desktop tray/command hooks; [guide](docs/guides/LYA_ROUTINE_SETUP.md), [report](review/2026-10-22-routine-drafts/README.md) | Review/save/reopen/remove bounded schedule proposals with explicit missing connections and zero outgoing replies; 243 selected synthetic/offscreen checks pass. Drafts cannot enable jobs, approve private cloud access or connect accounts. General language-to-schedule parsing, real owner activation, worker/timer and account/notifier integrations remain pending. |
+| Development coordination (2026-11-04) | [Blueprint](docs/LYA_BLUEPRINT.md), [feature packet](docs/templates/LYA_FEATURE_PACKET.md) | Maintained map for independent feature branches and coding-assistant handoffs. It classifies implemented/connected/tested/deployed/accepted/pending work and requires explicit integration boundaries, fake-data checks, scope limits and ledger updates. It does not itself qualify runtime behavior. |
+| Advanced master blueprint (2026-11-04) | [Master blueprint](docs/LYA_ADVANCED_MASTER_BLUEPRINT.md) | Evidence-based architecture reference for coding assistants: repository zones, runtime entry points, capability map, data/trust contracts, request flows, security boundaries, tests, deployment limits, feature integration recipe and merge gate. It is a maintained architectural guide, not proof that pending integrations work. |
 | Automation governance foundation (2026-10-16) | `cloud/job_policy.py`, `cloud/job_store.py`, `cloud/job_runner.py`, `cloud/job_adapters.py`; [master strategy](docs/guides/LYA_AUTOMATION_STRATEGY.md), [report](review/2026-10-16-job-strategy/README.md) | Structured daily contracts, exact scoped delegation, cooperative budgets, durable run/action/outbox state and fake-account 18:00/19:00 lab implemented; 228 isolated checks pass. Not wired to speech, real accounts, private production storage, phone push or a server scheduler. Default authority denies. Existing desktop watcher remains unchanged. |
 | Proactive technology updates (2026-10-16) | `cloud/news_sources.py`, `cloud/tech_news.py`, `desktop/news.py`, minimal desktop hooks; [guide](docs/guides/LYA_TECHNOLOGY_UPDATES.md), [report](review/2026-10-16-tech-news/README.md) | Hourly official-source discovery, seven-day opening catch-up, public cache, duplicate-safe notification requests and pause/quiet controls implemented; 187 synthetic/offscreen Qt checks pass. Live endpoints, Windows toast/whole-desktop acceptance, resource measurements and deployment remain pending. No model/search calls in routine polling. |
 | Public web research (2026-10-16) | `cloud/web_research.py`, `cloud/web_reader.py`, desktop/phone research routes; [guide](docs/guides/LYA_WEB_RESEARCH.md), [report](review/2026-10-16-web-research/README.md) | Bounded multi-query/page reading, discovery-based deep planning, strict page-versus-snippet evidence and local search-attempt counter implemented. Synthetic checks only; live provider/model/device acceptance and deployment remain pending. Keyless provider profile is evaluation access, not unlimited free production browsing. |
@@ -80,6 +82,44 @@ Current design and order: [final roadmap](review/2026-10-11-system-architecture/
 The owner requested moving unused/old/failed implementation and lengthy historical explanation into a structured separate folder. `archive/` holds retired source, unsafe old test scripts, unused voice-evaluation sources and historical evidence; `docs/` groups maintained architecture, plans and guides. Archive is reference only and stays outside runtime imports/test discovery. Old instructions inside it must not be followed as current setup/deployment guidance.
 
 Two older review folders remain because current tools reference them: `review/2026-10-03-voice-conversation` and `review/2026-10-05-conversation-design`. `LYA_FOUNDATION_DECISIONS.md` and `LYA_REBUILD_PLAN.md` stay at the root because the desktop reads those exact names. Newer prototypes/current checks remain active. Nothing was classified failed solely by its date or an isolated test failure.
+
+## Work ledger — 2026-11-04 development blueprint and feature packets
+
+Owner requested a practical way to build LYA features in separate sessions and
+merge them safely despite limited daily development time and different coding
+assistants. Added the maintained [development blueprint](docs/LYA_BLUEPRINT.md)
+and reusable [feature packet template](docs/templates/LYA_FEATURE_PACKET.md), and
+indexed both from [docs/README.md](docs/README.md). The blueprint consolidates
+the current reading order, capability-to-source map, preservation rules,
+integration-boundary requirements, multi-device workflow, merge gate and truthful
+status vocabulary. The packet requires each feature to name its allowed scope,
+existing contract, policy/data boundaries, acceptance checks, evidence,
+limitations and rollback.
+
+This is documentation and process only: no runtime source, defaults, voice,
+hearing, UI, startup, authority, dependency, secret, deployment or private data
+changed. The blueprint is an operational guide, not proof that any pending
+feature is connected or production-ready. Next feature work should start from a
+completed packet and a current branch head.
+
+## Work ledger — 2026-11-04 advanced master blueprint
+
+Owner requested a complete advanced blueprint so independent coding assistants
+can understand LYA before building isolated features. Added
+[docs/LYA_ADVANCED_MASTER_BLUEPRINT.md](docs/LYA_ADVANCED_MASTER_BLUEPRINT.md)
+and linked it from the concise blueprint and documentation index. The master
+blueprint maps the active repository zones and source entry points,
+conversation/brain/mobile/desktop flows, capability boundaries, memory and
+authority contracts, data classes, cancellation/retry rules, test/evidence
+requirements, dependency/deployment limits, AI-agent handoff instructions and
+merge gates. It explicitly distinguishes implemented, connected, isolated-tested,
+live-tested, deployed, accepted, pending, blocked, deferred and legacy states.
+
+This is documentation/process work only. No runtime source, default, voice,
+hearing, UI, startup, authority, dependency, secret, enrollment, deployment or
+private data changed. The document is based on current maintained source/docs
+and does not replace fresh tests or dated project-brain evidence. Next feature
+work should use the master blueprint plus a completed feature packet.
 
 ## Work ledger — 2026-10-12 project organization
 
