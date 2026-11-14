@@ -13,7 +13,7 @@ import re
 import threading
 import time
 import urllib.request
-from brain.capabilities import help_text, matches, volume_action
+from brain.capabilities import help_text, matches, system_power, volume_action
 from security.policy import OWNER, Session, require
 from cloud.web_research import research_mode, synthesis_prompt, render_research
 from cloud.answering import GUIDANCE, messages_for, completed_history, needs_current_sources
@@ -213,6 +213,55 @@ class Brain:
                     'Then open '+connection['origin']+' on your connected iPhone and add it to the Home Screen. '
                     'This first connection supports public text conversation; private files and device tools stay locked.',
                     'mobile-pairing',[{'url':connection['url']}])
+            # Wake-word stripped identity claim: owners say "lya its me", and
+            # the Capability matcher anchors at the start - so try both the
+            # raw text and the text with a leading wake word removed.
+            its_me_core = re.sub(r'^(?:hey )?(?:lya|laya|leya)\s+', '', low)
+            if matches('its_me', low) or matches('its_me', its_me_core):
+                # Tier-1 identity claim: the CAMERA decides, never the text.
+                # A successful admin match binds a fresh admin session with a
+                # 10-minute verified window; failure reveals nothing and the
+                # request falls through to a plain reply.
+                check()
+                from brain import admin_recognizer
+                verdict = admin_recognizer.its_me(db_path=self.db_path)
+                if verdict.get('verified') and verdict.get('session'):
+                    from storage import store
+                    person = store.get_person(verdict['person_id'], db_path=self.db_path)
+                    if person and person['active'] and person['role'] == 'admin':
+                        self.bind_session(Session(role='admin', person=verdict['name'],
+                            id='session_' + __import__('secrets').token_urlsafe(18),
+                            person_id=verdict['person_id'],
+                            verified_until=self.clock() + admin_recognizer.SESSION_TTL))
+                        admin_recognizer.end_session(verdict['session'])
+                        # Tier-1 recognition succeeded: tell the phone quietly.
+                        # A silent failure here must never block the greeting.
+                        try:
+                            from skills.reminder import push_notification
+                            push_notification(f"{verdict['name']} verified on the laptop "
+                                              f"at {datetime.now().strftime('%H:%M')}.")
+                        except Exception:
+                            pass
+                        return result(f"Welcome back, {verdict['name']} - I recognise you. "
+                            "You have ten minutes of admin access; say your security word "
+                            "before anything sensitive.", 'identity-ok')
+                if verdict['status'] == 'camera_unavailable':
+                    return result('I could not open the camera to check your face. '
+                        'Close other camera apps and say "lya its me" again.', 'identity-fail')
+                quick_messages = {
+                    'camera_covered_or_dark': 'Your camera looks covered or too dark. Uncover the lens, add some light, and say "lya its me" again.',
+                    'too_blurry': 'The camera view is too blurry to trust a face check. Hold still a moment and try again.',
+                    'no_face_visible': 'I did not see a face in frame - just look at the camera and say "lya its me" again.',
+                    'face_too_small': 'Come a little closer to the camera so I can see your face clearly.',
+                    'face_turned_away': 'Turn towards the camera a bit - I need to see your eyes to check it is you.',
+                    'no_usable_frame': 'The camera did not give me a usable frame. Try again in better light.',
+                }
+                hint = quick_messages.get(verdict['status'])
+                if hint:
+                    return result(hint, 'identity-fail')
+                self.visitors.record('blocked')
+                return result('I looked but did not recognise you as the admin. '
+                    'If this is your first time on this laptop, run "python tools\\enroll_admin_now.py" once.', 'identity-fail')
             if matches('registration_data', low):
                 self._authorize('memory_read', text)
                 check()
@@ -329,6 +378,13 @@ class Brain:
                     return result(report(), "local-device")
                 except OSError:
                     return result("Device status is unavailable. No reading was estimated.", "blocked")
+            power_action = system_power(low)
+            if power_action:
+                # These are the owner's own spoken commands at their own
+                # machine - treat them like volume: direct, no approval gate.
+                from skills.device import system_power as run_power
+                reply = run_power(power_action)
+                return result(reply, "local-device" if not reply.startswith("Could not") else "blocked")
             if matches("time", low):
                 current = datetime.fromtimestamp(self.clock())
                 return result(current.strftime("%I:%M %p · %A, %d %B %Y"), "local-time")

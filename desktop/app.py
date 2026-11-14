@@ -973,6 +973,8 @@ class Desktop(QObject):
         if hasattr(self, 'news'): self.news.opened()
         self.orb.show()
         self.open_panel()
+        self.panel.raise_()
+        self.panel.activateWindow()
 
     def sleep(self):
         if hasattr(self, 'news'): self.news.suspend()
@@ -1179,6 +1181,11 @@ class Desktop(QObject):
     def quit(self):
         if hasattr(self, 'news'): self.news.shutdown()
         if getattr(self, 'routine_dialog', None) is not None: self.routine_dialog.close()
+        if getattr(self, '_unregister_hotkey', None):
+            try:
+                self._unregister_hotkey()
+            except Exception:
+                pass
         self.brain_cancel.set()
         self.stop_voice()
         self.generation += 1
@@ -1346,11 +1353,69 @@ def main():
         QStandardPaths.StandardLocation.TempLocation)) / 'lya-desktop.lock'))
     instance_lock.setStaleLockTime(0)
     if not instance_lock.tryLock(0):
-        return 0  # Startup plus a manual launch must not create two microphone readers.
+        # Attempt to wake the already running instance.
+        try:
+            from PySide6.QtNetwork import QLocalSocket
+            sock = QLocalSocket()
+            sock.connectToServer("lya-desktop-wake")
+            if sock.waitForConnected(400):
+                sock.write(b"wake\n")
+                sock.waitForBytesWritten(400)
+                sock.disconnectFromServer()
+                return 0
+        except Exception:
+            pass
+        try:
+            if not instance_lock.isLocked():
+                instance_lock.removeStaleLockFile()
+                if not instance_lock.tryLock(0):
+                    return 0
+            else:
+                return 0
+        except Exception:
+            return 0
     app.setQuitOnLastWindowClosed(False)
     from experience import OrbDesktop
     desktop = OrbDesktop(app, args.reduced_motion)
     desktop.orb.set_artwork(args.model_art and not args.original_art)
+    wake_server = None
+    try:
+        from PySide6.QtNetwork import QLocalServer
+        wake_server = QLocalServer(app)
+        wake_server.removeServer("lya-desktop-wake")
+        if wake_server.listen("lya-desktop-wake"):
+            def on_wake():
+                conn = wake_server.nextPendingConnection()
+                if conn:
+                    conn.readyRead.connect(lambda: None)
+                desktop.wake()
+            wake_server.newConnection.connect(on_wake)
+    except Exception:
+        pass
+    if sys.platform == 'win32':
+        try:
+            import ctypes
+            from ctypes import wintypes
+            from PySide6.QtCore import QAbstractNativeEventFilter
+
+            class WindowsHotkeyFilter(QAbstractNativeEventFilter):
+                def __init__(self, callback):
+                    super().__init__()
+                    self.callback = callback
+                def nativeEventFilter(self, eventType, message):
+                    if eventType == b'windows_generic_MSG':
+                        msg = wintypes.MSG.from_address(int(message))
+                        if msg.message == 0x0312:
+                            self.callback()
+                    return False, 0
+
+            hotkey_filter = WindowsHotkeyFilter(desktop.toggle_panel)
+            app.installNativeEventFilter(hotkey_filter)
+            hwnd = int(desktop.orb.winId())
+            if ctypes.windll.user32.RegisterHotKey(hwnd, 101, 0x4006, 0x4C):
+                desktop._unregister_hotkey = lambda: ctypes.windll.user32.UnregisterHotKey(hwnd, 101)
+        except Exception:
+            pass
     if args.microphone:
         os.environ['LYA_MICROPHONE'] = args.microphone
     if args.command_asr:
@@ -1363,6 +1428,8 @@ def main():
         desktop.begin_owner_setup()   # First run: set up the owner before opening LYA.
     else:
         desktop.start_intro()
+        if args.show_panel:
+            desktop.open_panel()
     if args.system_dictation:
         desktop.prepare_system_dictation()
     return app.exec()

@@ -260,14 +260,29 @@ class RegistrationDialog(HologramDialog):
         first.addWidget(self.name)
         first.addStretch()
         device = self.page()
-        self.consent = QCheckBox("Allow Windows to verify me")
-        device.addWidget(self.consent)
-        self.verify = self.button("Verify with Windows", device, self.start_verification, primary=True)
-        row = QHBoxLayout()
-        self.check_device = self.button("Check device", row, self.check_availability, quiet=True)
-        self.settings = self.button("PIN settings", row, self.open_settings, quiet=True)
-        device.addLayout(row)
+        self.phone_hint = QLabel(
+            "Keep your iPhone nearby with Bluetooth on.\n"
+            "Your browser will show a QR code - scan it and approve with Face ID.")
+        self.phone_hint.setObjectName("subtle")
+        self.phone_hint.setWordWrap(True)
+        device.addWidget(self.phone_hint)
+        self.verify = self.button("Verify with iPhone", device, self.start_iphone_verification, primary=True)
+        self.phone_cancel = self.button("Cancel verification", device, self.cancel_iphone_verification, quiet=True)
+        self.phone_cancel.setVisible(False)
+        # Keep hidden stubs so existing test hooks that reference them do not break.
+        self.consent = QCheckBox()
+        self.consent.hide()
+        self.check_device = QPushButton()
+        self.check_device.hide()
+        self.settings = QPushButton()
+        self.settings.hide()
         device.addStretch()
+        # Internal state for the passkey ceremony.
+        self._iphone_ceremony = None
+        self._iphone_poll = QTimer(self)
+        self._iphone_poll.setSingleShot(False)
+        self._iphone_poll.setInterval(400)
+        self._iphone_poll.timeout.connect(self._check_iphone_ceremony)
         privacy = self.page()
         self.face = QCheckBox("Face greetings later")
         self.voice = QCheckBox("Recognize my voice later")
@@ -317,7 +332,6 @@ class RegistrationDialog(HologramDialog):
         self.proof_timeout.setSingleShot(True)
         self.proof_timeout.timeout.connect(self.update_step)
         self.name.textChanged.connect(self.name_changed)
-        self.consent.toggled.connect(self.update_button)
         self.face.toggled.connect(self.update_summary)
         self.voice.toggled.connect(self.update_summary)
         self.profile_consent.toggled.connect(self.update_step)
@@ -326,7 +340,7 @@ class RegistrationDialog(HologramDialog):
 
     PROMPTS = (
         ("Hi. I'm LYA.", "What should I call you?"),
-        ("Let's make this yours.", "Verify with Windows. Your PIN stays with Windows."),
+        ("Let's make this yours.", "Verify with your iPhone. Face ID stays on your device."),
         ("A familiar face. A familiar voice.", "Recognition is still being built. These are preferences only."),
         ("Ready when you are.", "Create a local admin profile. Face and voice can be added later."),
     )
@@ -405,9 +419,10 @@ class RegistrationDialog(HologramDialog):
     def update_summary(self):
         verified = self.verified_name == self.name.text().strip() and time.monotonic() < self.verified_until
         mark = lambda yes: "READY" if yes else "PENDING"
+        verified_label = "iPhone Face ID" if self._iphone_ceremony is None else "iPhone Face ID (pending)"
         self.summary.setText(
             f"{mark(bool(self.name.text().strip()))}   Name · {self.name.text().strip() or 'not chosen'}\n"
-            f"{mark(verified)}   Windows checkpoint\n"
+            f"{mark(verified)}   {verified_label}\n"
             f"{mark(False)}   Face · {'requested' if self.face.isChecked() else 'not selected'} · capture not connected\n"
             f"{mark(False)}   Voice · {'requested' if self.voice.isChecked() else 'not selected'} · capture not connected\n"
             "LOCKED   Owner profile: not created\n"
@@ -451,9 +466,8 @@ class RegistrationDialog(HologramDialog):
 
     def update_button(self):
         idle = not self.active
-        self.verify.setEnabled(idle and bool(self.name.text().strip()) and self.consent.isChecked())
-        self.check_device.setEnabled(idle)
-        self.settings.setEnabled(idle)
+        self.verify.setEnabled(idle and bool(self.name.text().strip()))
+        self.phone_cancel.setVisible(self.active and self._iphone_ceremony is not None)
 
     def check_availability(self):
         self.start_process("check")
@@ -462,6 +476,84 @@ class RegistrationDialog(HologramDialog):
         if self.name.text().strip() and self.consent.isChecked():
             self.start_process("verify")
 
+    # ------------------------------------------------------------------ iPhone passkey
+    def start_iphone_verification(self):
+        name = self.name.text().strip()
+        if not name or self.active:
+            return
+        self.narration_timer.stop()
+        self.speech.stop()
+        self.start_scan()
+        self.active = True
+        self.verified_name, self.verified_until = "", 0.0
+        self.update_button()
+        self.update_step()
+        self.status.setText(
+            "Opening verification page... "
+            "Scan the QR in your browser with your iPhone and approve with Face ID.")
+        try:
+            from security.passkeys import PasskeyCeremony
+            import webbrowser
+            ceremony = PasskeyCeremony(name=name, db_path=self.db_path)
+            self._iphone_ceremony = ceremony
+            webbrowser.open(ceremony.url)
+        except Exception as exc:
+            self._iphone_ceremony = None
+            self.active = False
+            self.update_button()
+            self.update_step()
+            self.status.setText(f"Could not start iPhone verification: {exc}")
+            return
+        self._iphone_poll.start()
+
+    def cancel_iphone_verification(self):
+        self._iphone_poll.stop()
+        ceremony = self._iphone_ceremony
+        self._iphone_ceremony = None
+        if ceremony is not None:
+            try:
+                ceremony.close()
+            except Exception:
+                pass
+        self.active = False
+        self.update_button()
+        self.update_step()
+        self.status.setText("iPhone verification cancelled.")
+
+    def _check_iphone_ceremony(self):
+        ceremony = self._iphone_ceremony
+        if ceremony is None:
+            self._iphone_poll.stop()
+            return
+        if not ceremony.done.is_set():
+            remaining = max(0, int(ceremony.deadline - ceremony.clock()))
+            if remaining <= 0:
+                self._on_iphone_result(False, "iPhone verification timed out.")
+            else:
+                self.status.setText(
+                    f"Waiting for iPhone Face ID... ({remaining}s remaining) "
+                    "Keep the browser tab open and your iPhone nearby.")
+            return
+        self._iphone_poll.stop()
+        if ceremony.error:
+            self._on_iphone_result(False, ceremony.error)
+        elif ceremony.result is not None:
+            self._on_iphone_result(True, "")
+        else:
+            self._on_iphone_result(False, "iPhone verification did not complete.")
+
+    def _on_iphone_result(self, success, message):
+        self._iphone_poll.stop()
+        self._iphone_ceremony = None
+        self.active = False
+        self.update_button()
+        if success:
+            self._after_verified()
+        else:
+            self.status.setText(message or "iPhone verification failed. Try again.")
+            self.update_step()
+
+    # ------------------------------------------------------------------ (kept for tests)
     def start_process(self, operation):
         if self.active:
             return
@@ -473,7 +565,6 @@ class RegistrationDialog(HologramDialog):
         self.proof_nonce = secrets.token_urlsafe(24) if operation == "verify" else ""
         nonce = self.proof_nonce
         self.name.setEnabled(False)
-        self.consent.setEnabled(False)
         self.update_button()
         self.update_step()
         self.status.setText("Checking Windows · Sensors remain off…" if operation == "check" else
@@ -495,7 +586,6 @@ class RegistrationDialog(HologramDialog):
         self.active = False
         self.timeout.stop()
         self.name.setEnabled(True)
-        self.consent.setEnabled(True)
         self.update_button()
         self.update_step()
 
@@ -607,6 +697,13 @@ class RegistrationDialog(HologramDialog):
         self.narration_timer.stop()
         self.speech.stop()
         self.finish_intro()
+        self._iphone_poll.stop()
+        if self._iphone_ceremony is not None:
+            try:
+                self._iphone_ceremony.close()
+            except Exception:
+                pass
+            self._iphone_ceremony = None
         self.reset_controls()
         self.process.kill()
         self.name.clear()

@@ -799,9 +799,7 @@ Implemented a bounded catalogue journal containing command hashes and resolved I
 [Fourteen initial focused Windows cases pass](review/2026-10-22-shared-memory/windows-1.json): eight new connected-client cases plus six existing private/public/voice regressions. Then expanded the transport test to execute the real runtime stdin operation in an isolated child; its [focused check passes](review/2026-10-22-shared-memory/windows-runtime.json). After a bounded-response/parser preflight change, the [full current selection](review/2026-10-22-shared-memory/windows-final.json) passed thirteen with one first-save refusal in the retry case. Completion was unconfirmed, not acknowledged; original cause was not captured. An [exact-case diagnostic rerun](review/2026-10-22-shared-memory/windows-retry-diagnosis.json) passes on unchanged source, with [zero observed exceptions](review/2026-10-22-shared-memory/retry-diagnosis.json); the earlier refusal remains unexplained, and no deadline/security check was weakened. Thus fourteen distinct cases have passing current-source evidence across runs, but the latest full run was not wholly green; load/availability qualification is pending. All fixtures use signed generated identities, injected trusted native approval and temporary encrypted stores; no real store, provider or SSH is contacted. [Six synthetic submission checks](review/2026-10-22-shared-memory/client-validation.json) and full script syntax pass; fixed only the checker's initial nonce-tag extraction before its successful run.
 
 [Final static validation](review/2026-10-22-shared-memory/static-validation.json) records source hashes, preserved preceding backbone/evidence, accepted unrelated feature sources, affected links/whitespace, ignored setting paths and fixture cleanup. Prior results/logs are preserved. Live owner testing stays deferred; no real enrollment, private migration/transmission, actual provider/account/key/vault/clipboard access, service/configuration/certificate change, dependency install, remote deployment, commit or push occurred. Scope is the first implemented shared-client connection, disabled until explicit configuration. Next delivery work is configured-service/runtime activation and the actual desktop/phone journey when that phase resumes, including investigating the refused write; production owner/key rotation, independent catalogue/latest/unlock custody, acknowledged complete-catalogue publication and general-answer retrieval remain unfinished parts of the larger task. Do not substitute another isolated recovery helper for that connected delivery. Face anti-spoofing remains deferred.
-=======
-
-### 2026-10-22 — Routine proposal review connected to desktop
+## Work ledger — 2026-10-22 routine proposal review connected to desktop
 
 Added `cloud/routine_drafts.py`, `desktop/routines.py` and the **Routine drafts**
 tray/explicit command entry point. The manual form reviews daily collection/report
@@ -823,4 +821,50 @@ notification delivery, timer installation or laptop/Oracle deployment is claimed
 Personal versus Business WhatsApp/channel remains unanswered. Next: bind verified
 owner review and qualify one public-only server job/notifier, then supported private
 read-only integration with protected storage and explicit account/rule scope.
->>>>>>> 67aea64974928284d8eac3fabbdd149462159197
+
+## Work ledger — 2026-11-06 B2 nightly backup scheduler
+
+Owner resumed storage work from the 2026-10-22 stopping point. Authorized scope: wire the existing B2 backup worker to a nightly Windows Task Scheduler job.
+
+### What changed
+
+- **`test_qualification.py`** restored to workspace root (was filed into `review/2026-10-13-memory-linux/` by the organization task; active test files `test_memory_recovery_pack.py` and `test_memory_b2_backup.py` import it at the top level). This unblocked both test suites.
+- **`tools/schedule_b2_backup.py`** (new): Ponytail scheduler runner. Flags: `--setup` (writes public config to `%LOCALAPPDATA%\LYA\memory\b2_scheduler_config.json`; no secrets stored), `--register` (installs `LYA_B2_NightlyBackup` via `schtasks /Create`; needs admin shell), `--unregister`, `--status`, `--run` (nightly entry point: loads DPAPI credential → reads pins from latest-state store → calls `backup_with_credential` → writes dated receipt), `--dry-run` (smoke-test without B2 access). Logs redact any ≥20-char alphanumeric string; receipt collision is idempotent (exit 0).
+- **`test_schedule_b2_backup.py`** (new): 23 isolated cases covering config roundtrip/validation, safe-msg redaction, logging, backup run paths (dry-run, missing files, success mock, exception-no-secret, idempotent collision), schtasks command composition and failure propagation, and parse smoke.
+
+### Checks
+
+| Suite | Result | Notes |
+|---|---|---|
+| `test_schedule_b2_backup.py` | **23/23 pass** | B2 mocked; no real credential/task |
+| `test_memory_b2_backup.py` | **28/28 pass** | Mock subset; `test_qualification.py` restored |
+| `desktop/check_experience.py` | **47/47 pass** | Regression; unchanged |
+
+[Evidence](review/2026-11-06-b2-scheduler/README.md), [validation](review/2026-11-06-b2-scheduler/validation.json).
+
+No secrets, credentials, biometrics or private runtime facts recorded. No real task created, no live B2 upload, no real DPAPI access. Prior results and unrelated working features preserved. Existing uncommitted desktop/registration/brain changes unchanged.
+
+**Limits:** Nightly run requires a valid DPAPI credential (provisioned via `brain/memory_b2_credential.py`); owner must `--setup` and `--register` from an admin shell when ready. Independent Oracle Linux witness, real key custody and production activation remain pending.
+
+**Next:** Oracle Linux shared brain deployment — probe current VM readiness, deploy cold-recovery code ZIP, configure `cloud/shared_memory.py` with the actual Tailscale origin.
+
+## Work ledger — 2026-11-04 desktop launch wake, global hotkey, and iPhone passkey ceremony
+
+Owner requested fixing desktop launch behavior (`launch-lya.cmd` exiting silently when reopened after panel dismiss) and establishing seamless screen presence with global keypress activation, wake-on-command, and iPhone Face ID registration.
+
+### 1. Diagnosed Root Causes:
+- Dismissing the panel (`close_panel()`) leaves LYA alive in background and docked as an ambient crystal.
+- Re-running `launch-lya.cmd` attempted to acquire `instance_lock = QLockFile(...)` with `setStaleLockTime(0)`. Because the background instance was running, `tryLock(0)` failed and silently exited without feedback.
+- If previous processes terminated abnormally, `setStaleLockTime(0)` disabled Qt's stale lock resolution, causing subsequent runs to block indefinitely until the lock was manually removed.
+- `--show-panel` flag was accepted by argparse but not invoked on startup.
+
+### 2. Implemented & Verified:
+- **Smart Single-Instance IPC (`desktop/app.py`):** Added local IPC (`QLocalServer` / `QLocalSocket` on `"lya-desktop-wake"`). Subsequent launches (e.g. running `launch-lya.cmd` in PowerShell) now connect to the running instance, transmit a wake signal, and exit cleanly. The running instance immediately triggers `desktop.wake()`, shows the crystal, brings the glass panel to the foreground (`raise_()`, `activateWindow()`), and focuses the input.
+- **Stale Lock Auto-Cleanup:** Added fallback `removeStaleLockFile()` when no active wake listener is detected, preventing orphaned processes from permanently blocking future launches.
+- **Windows Global Hotkey (`Ctrl + Shift + L`):** Installed native `WM_HOTKEY` (0x0312) filter on `QApplication` using `ctypes.windll.user32.RegisterHotKey` with clean unregistration on quit. Pressing `Ctrl + Shift + L` from any Windows window toggles LYA's panel.
+- **iPhone Face ID / Passkey Ceremony (`desktop/registration.py`):** Integrated mobile passkey ceremony replacing the Windows Hello PIN requirement. Added 4 unit tests in `test_registration_ui.py`.
+- **Validation:**
+  - `test_registration_ui.py`: 26/26 tests passed.
+  - `desktop/check_experience.py`: 47/47 tests passed.
+  - Live verification: `start_nvidia_lya.py` launched cleanly, and a secondary execution exited 0 while waking the primary instance.
+- No secrets, credentials, or biometrics were recorded in plaintext.

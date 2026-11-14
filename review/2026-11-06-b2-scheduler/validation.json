@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "tests_run": 23,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "b2_calls_mocked": true,
+  "live_credential_loaded": false,
+  "real_task_created": false,
+  "platform": "Windows",
+  "date": "2026-11-06"
+}

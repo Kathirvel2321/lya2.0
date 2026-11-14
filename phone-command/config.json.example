@@ -1,0 +1,13 @@
+{
+  "apps": {
+    "chrome": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "notepad": "C:\\Windows\\System32\\notepad.exe"
+  },
+  "sites": {
+    "github": "https://github.com",
+    "portal": "https://supabase.com"
+  },
+  "scripts": {
+    "backup": "C:\\Users\\kathirvel\\backup.bat"
+  }
+}

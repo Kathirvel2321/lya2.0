@@ -12,8 +12,31 @@ Safety model:
 - Drafts are stored UNACTIVATED (.draft). Lya never executes unreviewed code.
 - On activation the file is syntax-checked (compile) before import.
 - Every forge action is logged to the encrypted action log.
+- PHASE B (2026-11-11): forge is DISABLED BY DEFAULT. The model can direct
+  arbitrary code into files, so the whole skill lives behind an owner-only
+  feature flag (LYA_ENABLE_FORGE). Setting the flag is itself a manual,
+  owner-performed change - never a model-directed one. Even when enabled,
+  generated code is never auto-imported: activation requires an explicit
+  owner confirm on each draft.
 """
 import os, re, importlib, datetime, json
+
+_FORGE_ENABLED = os.environ.get("LYA_ENABLE_FORGE", "").strip().lower() in (
+    "1", "true", "yes")
+
+
+def _disabled_reply():
+    return ("Skill Forge is disabled for security review. The owner can enable "
+            "it manually with the LYA_ENABLE_FORGE flag; I cannot enable it myself.")
+
+
+def _enabled():
+    # Re-read the flag lazily so a restart-picked env change applies without
+    # code modification.
+    global _FORGE_ENABLED
+    _FORGE_ENABLED = os.environ.get("LYA_ENABLE_FORGE", "").strip().lower() in (
+        "1", "true", "yes")
+    return _FORGE_ENABLED
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DRAFT = os.path.join(HERE, "forge_draft.py")
@@ -107,12 +130,17 @@ def current():
 
 # ------------------------------------------------------------- LYA COMMANDS
 def match(text):
+    # Disabled forge stays invisible to the intent router entirely.
+    if not _enabled():
+        return False
     t = text.lower().strip()
     return (t.startswith("create skill") or "show pending skill" in t
             or "confirm skill" in t or "discard skill" in t
             or t.startswith("delete skill") or "current skill" in t)
 
 def reply(text, say=None, ask=None):
+    if not _enabled():
+        return _disabled_reply()
     t = text.lower().strip()
     try:
         if t.startswith("create skill"):

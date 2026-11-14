@@ -1,0 +1,10 @@
+# Secrets and state - never tracked
+.env
+logs/
+config.local.json
+*.state.json
+__pycache__/
+*.pyc
+.venv/
+venv/
+pytest.ini

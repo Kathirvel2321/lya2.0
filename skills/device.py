@@ -110,3 +110,27 @@ HANDS = {
     "open": open_app, "close": close_app, "search": search_web,
     "type": type_text, "screenshot": screenshot, "volume": volume,
 }
+
+# ---- basic system power actions (owner-spoken, safe verbs only) ----
+# "Restart" and "sleep" are the two verbs a person says naturally at their own
+# laptop. Shutdown/hybrid-shutdown are deliberately NOT included: an accidental
+# "shut down" wipes unsaved work everywhere, while restart/sleep are the
+# recoverable pair. Logout is excluded too - it kills the LYA session itself.
+
+def system_power(action):
+    """Execute one fixed power action. `action` comes only from the intent
+    matcher in brain.capabilities - never raw user text."""
+    if action == "restart":
+        try:
+            subprocess.Popen(["shutdown", "/r", "/t", "3"])
+            return "Restarting in 3 seconds - save your work."
+        except OSError as e:
+            return f"Could not restart: {e}"
+    if action == "sleep":
+        try:
+            # rundll32 suspend: the same call Windows' own Start-menu Sleep uses.
+            subprocess.Popen(["rundll32.exe", "powrprof.dll,SetSuspendState", "0,1,0"])
+            return "Going to sleep now - wake me anytime."
+        except OSError as e:
+            return f"Could not sleep: {e}"
+    return "Unknown power action."

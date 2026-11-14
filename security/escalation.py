@@ -21,6 +21,16 @@ import os, sys, time, hashlib, hmac, json, secrets
 # New words get a random 16-byte salt stored beside the hash (see set_security_word).
 _LEGACY_SALT = "lya-escalation-v1"
 
+# Phase B: OWASP guidance for PBKDF2-HMAC-SHA256 is 600,000 iterations
+# (OWASP Password Storage Cheat Sheet, 2024). The legacy 200,000 is below
+# that bar. New words and any re-verification of a legacy word now use the
+# uplifted count; a legacy word is transparently re-hashed on its next
+# successful verify (migration without lockout: the old hash keeps verifying
+# at the old count until the owner re-sets the word, which re-stores at the
+# new count). No behavior change for the owner.
+PBKDF2_ITERATIONS = 600_000
+LEGACY_PBKDF2_ITERATIONS = 200_000
+
 
 def _normalize(text):
     """Lowercase; letters and spaces only; whitespace collapsed.
@@ -33,11 +43,15 @@ def _normalize(text):
     return " ".join(cleaned.split())
 
 
-def _hash_word(phrase, salt=_LEGACY_SALT):
+def _hash_word(phrase, salt=_LEGACY_SALT, iterations=None):
     """Salted, iterated hash (PBKDF2) so rainbow tables & fast GPU brute force
-    are useless even if the file leaks. `phrase` must already be normalized."""
+    are useless even if the file leaks. `phrase` must already be normalized.
+    New records always use the current iteration count; legacy verification
+    passes the old count explicitly."""
+    if iterations is None:
+        iterations = PBKDF2_ITERATIONS
     return hashlib.pbkdf2_hmac("sha256", phrase.encode(),
-                               salt.encode(), 200_000).hex()
+                               salt.encode(), iterations).hex()
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from security import vault
@@ -96,8 +110,9 @@ def set_security_word(word, duress=None):
         raise ValueError("security word must contain at least one letter")
     salt = secrets.token_hex(16)          # unique per install, not a constant
     data = {"salt": salt,
-            "sha256": _hash_word(phrase, salt),
+            "sha256": _hash_word(phrase, salt),          # current iteration count
             "words": len(phrase.split()),
+            "iterations": PBKDF2_ITERATIONS,
             "t": time.time()}
     if duress:
         d_phrase = _normalize(duress)
@@ -154,6 +169,10 @@ def check_security_word(spoken_text):
     if not h or not spoken_text:
         return False
     salt = data.get("salt", _LEGACY_SALT)   # legacy files have no stored salt
+    # Records written before the Phase B uplift have no stored count; they
+    # verify at the legacy count so the owner is never locked out, and the
+    # migration completes the next time the word is re-set.
+    iterations = data.get("iterations", LEGACY_PBKDF2_ITERATIONS)
     toks = _normalize(spoken_text).split()[:MAX_SCAN_TOKENS]
     if not toks:
         return False
@@ -162,8 +181,9 @@ def check_security_word(spoken_text):
         if not target_hash or not (0 < width <= len(toks)):
             return False
         for i in range(len(toks) - width + 1):
-            if hmac.compare_digest(_hash_word(" ".join(toks[i:i + width]), salt),
-                                   target_hash):
+            if hmac.compare_digest(
+                    _hash_word(" ".join(toks[i:i + width]), salt, iterations),
+                    target_hash):
                 return True
         return False
 

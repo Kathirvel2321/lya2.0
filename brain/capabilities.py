@@ -20,6 +20,8 @@ COMMANDS = {
     "time": Capability("what time is it / date", exact=
                        ("time", "what time is it", "date", "what date is it", "day")),
     "identity": Capability("who am i", exact=("who am i",)),
+    "its_me": Capability("lya it's me (face check makes you admin)", "its_me",
+                          prefixes=("its me", "it's me", "it is me", "i am back")),
     "registration_data": Capability("show my saved data / show my registration", "memory_read", exact=
                                      ("show my saved data", "show my registration", "show my profiles")),
     "visitor_photos": Capability("enable visitor photos / disable visitor photos", "memory_write",
@@ -57,6 +59,27 @@ COMMANDS = {
     "council": Capability("council: important question (local model required)", "council",
                           prefixes=("council:",)),
 }
+
+
+def system_power(text: str) -> str | None:
+    """Basic power verbs spoken at the owner's own laptop: restart, sleep.
+    Recognizes the whole explicit request, never a quoted or negated one.
+    Returns the action name for skills.device.system_power, or None."""
+    text = " ".join(re.sub(r"[.,!?]", " ", text.casefold()).split())
+    prefix = (r"(?:(?:hey )?(?:lya|laya|leya) )?(?:please )?"
+              r"(?:(?:can|could|would|will) you )?(?:please )?")
+    restart = (rf"(?:{prefix}(?:restart|reboot)(?: (?:the|my|this) (?:laptop|computer|pc|system))?"
+               rf"(?: now| right now)?(?: for me)?(?: please)?|restart now)")
+    sleep = (rf"(?:{prefix}(?:go to sleep|sleep(?: now)?|take a nap)"
+             rf"(?: for me)?(?: please)?|(?:put the (?:laptop|computer|pc) )?to sleep)")
+    # A quoted or negated mention must never trigger: build a cheap veto first.
+    if re.search(r"(?:n't|not |dont |do not |never |said |quote|tell me about)", text):
+        return None
+    if re.fullmatch(restart, text):
+        return "restart"
+    if re.fullmatch(sleep, text):
+        return "sleep"
+    return None
 
 
 def volume_action(text: str) -> str | None:

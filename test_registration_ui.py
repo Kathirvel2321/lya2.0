@@ -279,6 +279,54 @@ class RegistrationScreenTests(unittest.TestCase):
         self.assertEqual(self.dialog.animation.state(), QAbstractAnimation.State.Stopped)
         self.assertFalse(self.dialog.timeout.isActive())
 
+    def test_iphone_verification_starts_ceremony_and_opens_browser(self):
+        self.dialog.name.setText("Test Owner")
+        mock_ceremony = Mock()
+        mock_ceremony.url = "http://localhost:1234/#token"
+        with patch("security.passkeys.PasskeyCeremony", return_value=mock_ceremony) as mock_cls,              patch("webbrowser.open") as mock_open:
+            self.dialog.start_iphone_verification()
+            mock_cls.assert_called_once_with(name="Test Owner", db_path=self.dialog.db_path)
+            mock_open.assert_called_once_with("http://localhost:1234/#token")
+        self.assertTrue(self.dialog.active)
+        self.assertTrue(self.dialog._iphone_poll.isActive())
+        self.assertIn("Scan the QR", self.dialog.status.text())
+
+    def test_iphone_verification_cancels_cleanly(self):
+        self.dialog.name.setText("Test Owner")
+        mock_ceremony = Mock()
+        with patch("security.passkeys.PasskeyCeremony", return_value=mock_ceremony),              patch("webbrowser.open"):
+            self.dialog.start_iphone_verification()
+            self.dialog.cancel_iphone_verification()
+        mock_ceremony.close.assert_called_once()
+        self.assertFalse(self.dialog.active)
+        self.assertFalse(self.dialog._iphone_poll.isActive())
+        self.assertIn("cancelled", self.dialog.status.text())
+
+    def test_iphone_verification_success_marks_verified(self):
+        self.dialog.name.setText("Test Owner")
+        mock_ceremony = Mock()
+        mock_ceremony.done.is_set.return_value = True
+        mock_ceremony.error = None
+        mock_ceremony.result = Mock()
+        with patch("security.passkeys.PasskeyCeremony", return_value=mock_ceremony),              patch("webbrowser.open"),              patch.object(self.dialog, "_after_verified") as mock_after:
+            self.dialog.start_iphone_verification()
+            self.dialog._check_iphone_ceremony()
+            mock_after.assert_called_once()
+        self.assertFalse(self.dialog.active)
+        self.assertFalse(self.dialog._iphone_poll.isActive())
+
+    def test_iphone_verification_error_shows_message(self):
+        self.dialog.name.setText("Test Owner")
+        mock_ceremony = Mock()
+        mock_ceremony.done.is_set.return_value = True
+        mock_ceremony.error = "Face ID not recognized"
+        mock_ceremony.result = None
+        with patch("security.passkeys.PasskeyCeremony", return_value=mock_ceremony),              patch("webbrowser.open"):
+            self.dialog.start_iphone_verification()
+            self.dialog._check_iphone_ceremony()
+        self.assertIn("Face ID not recognized", self.dialog.status.text())
+        self.assertFalse(self.dialog.active)
+
 
 if __name__ == "__main__":
     unittest.main()

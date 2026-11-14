@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "demo": "C:/code/demo-repo"
+  },
+  "agent_command": ["PLACEHOLDER-AGENT", "--flag"],
+  "task_timeout_seconds": 1200,
+  "rate_limit_per_minute": 10
+}
