@@ -1,4 +1,4 @@
-"""Explicit cloud-voice launch with a hidden, session-only NVIDIA key."""
+"""Explicit cloud-voice launch with session-only Bitwarden/provider credentials."""
 import argparse
 import getpass
 import os
@@ -11,13 +11,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def configured_key():
-    from cloud.probe_models import load_values
     try:
-        values = load_values()
-        return (values.get('NVIDIA_API_KEY') or values.get('NVAPI_KEY') or '').strip()
-    except (ImportError, ValueError):
-        # Malformed optional config retains the existing masked prompt.
-        return ''
+        from security import bitwarden_secrets
+        key = bitwarden_secrets.get_password('NVIDIA_API_KEY')
+        if key:
+            return key
+    except Exception:
+        pass
+    return os.environ.get('NVIDIA_API_KEY', '').strip()
 
 
 def gui_application():
@@ -53,6 +54,58 @@ def gui_key():
         return dialog.textValue().strip() if dialog.exec() else ''
     finally:
         dialog.setTextValue('')
+
+
+def gui_bitwarden_password():
+    from PySide6.QtWidgets import QInputDialog, QLineEdit
+    dialog = QInputDialog()
+    dialog.setWindowTitle('Unlock Bitwarden for LYA')
+    dialog.setLabelText('Enter your Bitwarden master password to unlock the CLI for this LYA session.\n'
+                        'It is not saved. Cancel to use another configured key source.')
+    dialog.setTextEchoMode(QLineEdit.EchoMode.Password)
+    dialog.setOkButtonText('Unlock')
+    dialog.setCancelButtonText('Cancel')
+    dialog.setMinimumWidth(460)
+    try:
+        return dialog.textValue() if dialog.exec() else ''
+    finally:
+        dialog.setTextValue('')
+
+
+def unlock_bitwarden(gui):
+    try:
+        from security import bitwarden_secrets
+        if not bitwarden_secrets.take_environment_session():
+            if bitwarden_secrets.status() != 'locked':
+                return False
+            password = (gui_bitwarden_password() if gui else
+                        getpass.getpass('Bitwarden master password (hidden; this session only): '))
+            if not password:
+                return False
+            try:
+                session = bitwarden_secrets.unlock(password)
+            finally:
+                password = ''
+            if not session:
+                launch_error('Bitwarden could not unlock. Check that the CLI is logged in; '
+                             'LYA can still use the NVIDIA session prompt.', gui)
+                return False
+            bitwarden_secrets.set_session(session)
+        if bitwarden_secrets.sync():
+            return True
+        bitwarden_secrets.clear()
+        launch_error('Bitwarden could not sync. LYA will continue without vault credentials.', gui)
+    except Exception:
+        return False
+    return False
+
+
+def clear_bitwarden_session():
+    try:
+        from security import bitwarden_secrets
+        bitwarden_secrets.clear()
+    except Exception:
+        pass
 
 
 def launch_error(message, gui):
@@ -91,19 +144,21 @@ def main():
         print('Paste at the hidden prompt and press Enter; no characters will appear.')
     try:
         import riva.client
-        key = os.environ.get('NVIDIA_API_KEY', '').strip()
-        if not key:
-            key = configured_key()
+        unlock_bitwarden(args.gui)
+        key = configured_key()
         if not key:
             key = gui_key() if args.gui else getpass.getpass('NVIDIA key (hidden; this session only): ').strip()
     except (KeyboardInterrupt, EOFError):
+        clear_bitwarden_session()
         if not args.gui:
             print('\nCancelled before LYA launch.')
         return 1
     except ImportError:
+        clear_bitwarden_session()
         launch_error('NVIDIA speech client missing. Install requirements-nvidia-speech.txt in .venv-asr.', args.gui)
         return 1
     if not key:
+        clear_bitwarden_session()
         if not args.gui:
             print('Key required. LYA not launched.')
         return 1
@@ -126,6 +181,7 @@ def main():
         return 1
     finally:
         os.environ.pop('NVIDIA_API_KEY', None)
+        clear_bitwarden_session()
     return 0
 
 

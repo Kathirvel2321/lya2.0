@@ -531,13 +531,11 @@ def transcribe(wav_bytes, offline_required=True, *, cloud_provider='groq', cance
                                         cancelled=cancelled, on_model=on_provider)
         if cloud_provider != 'groq':
             raise RuntimeError('Unknown remote speech recognizer. No audio sent.')
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        if not groq_key:
-            try:
-                from brain.mind import get_groq_key
-                groq_key = get_groq_key()
-            except Exception:
-                pass
+        try:
+            from brain.mind import get_groq_key
+            groq_key = get_groq_key()
+        except Exception:
+            groq_key = os.environ.get("GROQ_API_KEY", "").strip()
         if not groq_key:
             raise RuntimeError('Groq speech is not configured. No audio provider was contacted.')
         try:

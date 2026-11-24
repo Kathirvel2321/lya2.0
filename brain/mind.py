@@ -7,9 +7,21 @@ from security import vault
 
 # Brain priority: Groq (free cloud, no GPU needed) → OpenAI → tiny local Ollama model.
 # On a simple laptop, use Groq: their servers do all the thinking for free.
-# Get a free key at https://console.groq.com and set:  setx GROQ_API_KEY "your_key"
+# Provider credentials may come from the session's Bitwarden vault, process
+# environment, or the existing protected Groq store.
+def _bitwarden_password(name: str) -> str:
+    try:
+        from security.bitwarden_secrets import get_password
+        return get_password(name)
+    except Exception:
+        return ""
+
+
 def get_groq_key() -> str:
-    """Retrieve Groq API key from environment or DPAPI-encrypted storage."""
+    """Retrieve Groq API key from Bitwarden, environment, or DPAPI storage."""
+    key = _bitwarden_password("GROQ_API_KEY")
+    if key:
+        return key
     key = os.environ.get("GROQ_API_KEY", "").strip()
     if key:
         return key
@@ -137,7 +149,8 @@ def _memory_block(person_id=None, db_path=None):
 def _chat(messages):
     """Try providers in order of quality; fall back gracefully on a weak laptop."""
     groq_key = get_groq_key()
-    openai_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    openai_key = (_bitwarden_password("OPENAI_API_KEY") or
+                  os.environ.get("OPENAI_API_KEY", "").strip())
     omniroute_url = os.environ.get("OMNIROUTE_URL", "").strip()
     omniroute_key = os.environ.get("OMNIROUTE_KEY", "").strip()
 

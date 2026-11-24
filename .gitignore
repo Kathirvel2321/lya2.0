@@ -83,3 +83,10 @@ models/speech/
 
 # Disposable fake-only cloud transfer fixtures; never production key custody.
 /review/2026-10-17-memory-b2-transfer/.fake-local/
+
+# --- lya_agent local allowlists (never commit)
+lya_agent.local.json
+runner/config.local.json
+data/LYA_KILL
+
+data/lya_agent_audit.jsonl*
