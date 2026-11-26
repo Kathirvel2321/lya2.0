@@ -1,5 +1,31 @@
 # LYA project brain
 
+## Work ledger — 2026-11-26 glass panel integration started
+
+Started a fresh branch from main to carry forward the glass conversation work. The existing faceted desktop panel now uses the earlier prototype's translucent blue gradient and a soft reflection, while retaining its current controls, layout and opaque option. The change is limited to `desktop/app.py`; no voice, authentication or task routing changes were made.
+
+`python -m py_compile desktop/app.py` and `git diff --check` passed. On 2026-11-26 a separate office virtual environment with PySide6-Essentials 6.11.2 rendered an offscreen synthetic light-background preview. Three focused checks passed for keyboard submission, response text and palette behavior. The broader 25-case offscreen UI run had 21 passes, two missing `sounddevice` errors and two failures in worker cancellation and the isolated demo; their causes were not established. Native desktop behavior, real-device readability and owner visual acceptance remain unverified. The old glass PR recorded that its appearance did not meet the owner's reference. This is an initial material change, not a completed integration. Next: resolve or characterize the broader test failures, review the preview and remaining prototype features, and run affected checks before proposing a merge.
+
+## Work ledger — 2026-11-26 refined native conversation panel
+
+Updated `desktop/app.py` and `desktop/experience.py` with a quieter faceted rim, translucent blue surface, clearer typography, persistent keyboard focus, and matched input and Send controls. Compact mode applies its revised margins before sizing. Voice, authentication, and task routing retain their existing paths.
+
+Ten focused PySide6 offscreen checks passed across the native UI and compact experience, including keyboard submission, file rows, layout, and chat controls. A synthetic render check confirmed translucent and opaque pixels, the 100-pixel compact input height, and chat layout at five widths from 320 to 768 pixels. The reviewed preview is `outputs/lya-glass-refined.png` in the surrounding Codex workspace. Actual Windows desktop composition and the earlier broader-suite failures remain outside this check. Owner review is pending.
+
+## Work ledger — 2026-11-26 compact crystal states
+
+Replaced the docked circle drawing with the existing crystal artwork and a subtle halo. The 64-pixel dock retains click, drag and accessibility behavior. Listening expands a cyan ring; thinking and file work move an arc; speaking displays green arcs; approval and error use amber and rose rings. Reduced motion displays static cues. Existing voice phases and task states drive these effects; the speaking cue indicates playback state and is not synchronized to audio amplitude. Animation stops when hidden, reduced motion is enabled, or active states end. `desktop/app.py` and `desktop/experience.py` changed.
+
+Four focused offscreen Qt checks passed for active motion, reduced motion, docking and chat. A synthetic actual-size state sheet is in the surrounding workspace's `outputs/lya-crystal-states.png`. No real microphone, audio, Windows composition or owner-device acceptance was tested. Review appearance and behavior on the owner's device before a final merge.
+
+## Work ledger — 2026-11-26 activity lighting inside the docked crystal
+
+After owner feedback that the thin effects looked broken, `desktop/app.py` replaced the docked rings and arcs with reflections clipped to the approved crystal artwork and a soft background glow. Existing task and voice phases drive color and motion. Reduced motion freezes the reflections. The role treatment from the design study remains a preview.
+
+Six focused offscreen Qt tests passed for docking, chat, activity motion, reduced motion and artwork switching. The surrounding workspace has `outputs/lya-crystal-in-context.png` and `outputs/lya-crystal-in-context.mp4`, rendered from the native widgets with scripted states. Model responses, microphone input, and the actual Windows desktop compositor were not tested.
+
+Owner approved the revised crystal effect for implementation. The desktop guide now explains the docked states and the file cue settles after its initial animation burst. Eight focused offscreen Qt checks passed, including a new rendered-state regression for motion, static reduced motion and transparent corners. The native dock path uses the new renderer on this branch. Live desktop and microphone checks remain pending.
+
 Current continuity summary: 2026-11-24. Read this first, then the relevant source and [LYA_VISION.md](LYA_VISION.md). Recorded test/deployment results are dated evidence, not proof of current behavior.
 
 The full previous brain, including every earlier finding, owner clarification and work-ledger entry, is preserved byte for byte in [archive/history/continuity/project-brain-through-2026-10-12.md](archive/history/continuity/project-brain-through-2026-10-12.md). Consult it when earlier context is needed. [docs/README.md](docs/README.md) indexes maintained explanations; [archive/README.md](archive/README.md) explains historical material and recovery.

@@ -87,9 +87,11 @@ class CompactPanel(GlassPanel):
             visible(layout.itemAt(5), False)
         if mode != 'chat':
             visible(layout.itemAt(4), False)
-        layout.setContentsMargins(30, 22, 30, 24)
-        layout.setSpacing(18)
-        self.title_label.setStyleSheet('font-size: 23px; font-weight: 600; color: #f1f4f3;')
+        if mode == 'input':
+            layout.setContentsMargins(23, 22, 23, 22)
+        else:
+            layout.setContentsMargins(30, 23, 30, 24)
+        layout.activate()
         self.resized_mode.emit()
 
     def show_answer(self, title, message):
@@ -507,6 +509,8 @@ class OrbDesktop(Desktop):
             self.orb.setGeometry(target)
             self.set_circle(1.0)
         self.orb.timer.stop()
+        if self.orb.voice_phase in ('listening', 'hearing', 'thinking', 'speaking') or self.orb.task == 'files':
+            self.orb.animate_briefly()
 
     def panel_target(self):
         screen = self.app.screenAt(self.orb.geometry().center()) or self.app.primaryScreen()
