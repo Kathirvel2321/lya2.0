@@ -1,4 +1,4 @@
-"""Explicit cloud-voice launch with session-only Bitwarden/provider credentials."""
+"""Launch LYA with saved Windows credentials or an explicit session key."""
 import argparse
 import getpass
 import os
@@ -125,6 +125,8 @@ def main():
     parser.add_argument('--show-panel', action='store_true')
     parser.add_argument('--reduced-motion', action='store_true')
     parser.add_argument('--gui', action='store_true', help='Use a native password dialog; suitable for pythonw.')
+    parser.add_argument('--bitwarden', action='store_true',
+                        help='Use the previous Bitwarden unlock flow for this session.')
     args = parser.parse_args()
     if not args.allow_nvidia_questions:
         parser.error('Cloud voice is disabled without explicit session permission.')
@@ -138,16 +140,27 @@ def main():
     sys.path.insert(0, str(ROOT / 'desktop'))
     sys.path.insert(0, str(ROOT))
     application = gui_application() if args.gui else None  # Keep Qt alive through desktop startup.
-    if not args.gui:
-        print('\nLYA ONLINE - PRIMARY MODEL: ' + args.nvidia_model.upper())
-        print('Use the same NVIDIA API key from the successful tests.')
-        print('Paste at the hidden prompt and press Enter; no characters will appear.')
+    from security import provider_credentials
+    saved = ""
+    session_key = ""
     try:
         import riva.client
-        unlock_bitwarden(args.gui)
-        key = configured_key()
-        if not key:
-            key = gui_key() if args.gui else getpass.getpass('NVIDIA key (hidden; this session only): ').strip()
+        if args.bitwarden:
+            unlock_bitwarden(args.gui)
+        else:
+            os.environ.pop('BW_SESSION', None)
+        saved = provider_credentials.read('NVIDIA_API_KEY')
+        if not saved:
+            session_key = configured_key()
+        if not (saved or session_key):
+            if args.gui and not args.bitwarden:
+                from desktop.connections import ConnectionsDialog
+                dialog = ConnectionsDialog(nvidia_model=args.nvidia_model)
+                dialog.exec()
+                saved = provider_credentials.read('NVIDIA_API_KEY')
+            else:
+                session_key = (gui_key() if args.gui else
+                               getpass.getpass('NVIDIA key (hidden; this session only): ').strip())
     except (KeyboardInterrupt, EOFError):
         clear_bitwarden_session()
         if not args.gui:
@@ -157,7 +170,7 @@ def main():
         clear_bitwarden_session()
         launch_error('NVIDIA speech client missing. Install requirements-nvidia-speech.txt in .venv-asr.', args.gui)
         return 1
-    if not key:
+    if not (saved or session_key):
         clear_bitwarden_session()
         if not args.gui:
             print('Key required. LYA not launched.')
@@ -166,9 +179,10 @@ def main():
         print('NVIDIA receives completed questions while private mode is off.')
         print('Turn private mode on BEFORE confidential speech. Wake/stop stay local.')
         print('Close existing LYA first; its single-instance lock prevents duplicate listeners.')
-    os.environ['NVIDIA_API_KEY'] = key
+    # Saved keys are read where used. Only the legacy session fallback uses the environment.
+    if session_key:
+        os.environ['NVIDIA_API_KEY'] = session_key
     os.environ['LYA_NVIDIA_ASR'] = args.nvidia_model
-    # The key is never written to disk or passed as a command-line argument.
     sys.argv = ['app.py', '--cloud-voice', '--cloud-asr', 'nvidia', '--skip-setup']
     if args.show_panel:
         sys.argv.append('--show-panel')

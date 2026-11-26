@@ -1,6 +1,6 @@
 # LYA desktop credentials from Bitwarden
 
-The normal Windows desktop launcher can now read only three provider passwords from the Bitwarden CLI: Groq, OpenAI and NVIDIA. It does not read every vault item or write anything to Bitwarden.
+For automatic startup after a one time setup, use [LYA Connections](LYA_CONNECTIONS.md). The optional Bitwarden session flow reads the configured Groq, OpenAI and NVIDIA Login items and does not write to Bitwarden.
 
 ## Owner setup
 
@@ -14,13 +14,13 @@ The normal Windows desktop launcher can now read only three provider passwords f
    | NVIDIA speech | `LYA NVIDIA_API_KEY` |
 
 3. Use each exact title once; duplicate matches are refused by the CLI.
-4. Start LYA normally. If the CLI is signed in but locked, LYA asks for the Bitwarden master password in a hidden native dialog. The password is passed to the CLI through a temporary child-process environment variable, then discarded. LYA syncs the encrypted vault at startup and retrieves each requested password through `bw get password`.
+4. From PowerShell in the project folder, run `.\launch-lya.cmd --bitwarden`. If the CLI is signed in but locked, this explicit session mode asks for the Bitwarden master password in a hidden native dialog. LYA syncs the encrypted vault and retrieves the requested values.
 
 The CLI must be on `PATH`. The current development machine has it available. The CLI's documented login, unlock, sync and password retrieval commands are described in the [official Bitwarden CLI guide](https://bitwarden.com/help/cli/).
 
 ## Scope and limits
 
-- The default desktop chat path uses Groq and OpenAI; the hosted speech launcher uses NVIDIA. Bitwarden values take priority over process environment values. Existing environment and protected Groq-store fallbacks remain available.
+- The normal desktop chat route uses Oracle or local inference unless you select a saved provider in Connections. Legacy Groq and OpenAI consumers can use the Bitwarden session values; the hosted speech launcher prefers the key saved in Windows.
 - If Bitwarden is not signed in, locked with a failed password, or cannot sync, LYA continues without Bitwarden credentials. NVIDIA keeps its existing hidden session-key prompt; chat uses any existing environment/protected Groq value or its existing local fallback.
 - Credentials are cached only in the running LYA process and forgotten when it exits. No credential or Bitwarden session is written to a project file. LYA does not send vault data to its model provider; provider keys are sent only to their respective API when that route is used.
 - This first connection does not wire Supabase, phone tokens, TLS private keys, Telegram runner credentials, NTFY, or optional Gemini/Jina/You/Hugging Face integrations. Those belong to separate processes or are not part of the default desktop provider route.

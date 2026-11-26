@@ -884,6 +884,9 @@ def wake_loop(on_wake, clap_enabled=False, stop_event=None, offline_required=Tru
         except Exception as error:
             if cloud_only:
                 from audio.nvidia_asr import SpeechUnavailable
+                if isinstance(error, SpeechUnavailable) and error.key_issue:
+                    _note_state('stopped')
+                    raise RuntimeError('Check the NVIDIA hearing key in Connections, then restart Voice wake.') from None
                 if isinstance(error, (SpeechUnavailable, PermissionError)):
                     _note_state('stopped')
                     raise RuntimeError('Online hearing is unavailable or blocked. Use text or restart voice.') from None

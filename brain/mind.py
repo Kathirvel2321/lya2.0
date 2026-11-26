@@ -4,6 +4,7 @@ into every reply so she becomes more 'yours' over time."""
 import os, json, urllib.request
 from brain import memory
 from security import vault
+from security import provider_credentials
 
 # Brain priority: Groq (free cloud, no GPU needed) → OpenAI → tiny local Ollama model.
 # On a simple laptop, use Groq: their servers do all the thinking for free.
@@ -18,8 +19,8 @@ def _bitwarden_password(name: str) -> str:
 
 
 def get_groq_key() -> str:
-    """Retrieve Groq API key from Bitwarden, environment, or DPAPI storage."""
-    key = _bitwarden_password("GROQ_API_KEY")
+    """Retrieve the saved Groq key or use a legacy credential source."""
+    key = provider_credentials.read("GROQ_API_KEY") or _bitwarden_password("GROQ_API_KEY")
     if key:
         return key
     key = os.environ.get("GROQ_API_KEY", "").strip()
@@ -149,7 +150,8 @@ def _memory_block(person_id=None, db_path=None):
 def _chat(messages):
     """Try providers in order of quality; fall back gracefully on a weak laptop."""
     groq_key = get_groq_key()
-    openai_key = (_bitwarden_password("OPENAI_API_KEY") or
+    openai_key = (provider_credentials.read("OPENAI_API_KEY") or
+                  _bitwarden_password("OPENAI_API_KEY") or
                   os.environ.get("OPENAI_API_KEY", "").strip())
     omniroute_url = os.environ.get("OMNIROUTE_URL", "").strip()
     omniroute_key = os.environ.get("OMNIROUTE_KEY", "").strip()

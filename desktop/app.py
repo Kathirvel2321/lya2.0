@@ -748,6 +748,11 @@ class Desktop(QObject):
         from brain.research import default_researcher
         import threading
         self.brain = Brain(researcher=default_researcher())
+        from cloud.desktop_connections import CHAT, CHAT_CHOICE, PublicModel
+        from security import provider_credentials
+        provider = provider_credentials.read(CHAT_CHOICE)
+        if provider in CHAT:
+            self.brain.client = PublicModel(provider)
         from brain.oracle import OracleModel
         if isinstance(self.brain.client, OracleModel):
             self.panel.footnote.setText("CLOUD TEXT  ·  CAMERA & MICROPHONE OFF")
@@ -813,11 +818,18 @@ class Desktop(QObject):
         self.routine_dialog.raise_()
         self.routine_dialog.activateWindow()
 
+    def show_connections(self):
+        from desktop.connections import ConnectionsDialog
+        dialog = ConnectionsDialog()
+        dialog.exec()
+
     def make_menu(self):
         menu = QMenu()
         menu.addAction("Open LYA", self.wake)
         menu.addAction("Technology updates", self.show_technology_updates)
         menu.addAction("Routine drafts", self.show_routine_drafts)
+        if sys.platform == "win32":
+            menu.addAction("Connections…", self.show_connections)
         menu.addAction("Project files", self.show_files)
         menu.addAction("Sign in / register admin", lambda: self.command("register admin"))
         review_visitors = getattr(self, 'review_visitors', None)

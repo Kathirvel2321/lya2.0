@@ -103,23 +103,10 @@ uses current person/face-presence detections, without claiming identity.
 how/why mentions and camera-settings requests do not activate it.
 Reopen LYA to load this follow-up. Live owner retry remains pending.
 
-All provider keys use the existing project-root `.env` file. Put the NVIDIA key
-on its own line as `NVIDIA_API_KEY=...`; LYA reads it at launch, alongside the
-other provider settings. The current process environment still takes precedence.
-The masked key prompt appears only when no key is configured. `.env` is excluded
-from Git; never put keys in source code or the project brain.
-The owner's new preserve-working-features rule is in `AGENTS.md`; no further
-voice, hearing, wake, interface or startup change is authorized by this update.
-See [key storage](../archive/history/reviews/2026-10-05-key-storage/README.md).
-
-Normal launch now uses a native masked NVIDIA key dialog (2026-10-05). Open
-`LYA.lnk` in the project folder for a direct windowed launch; `launch-lya.cmd`
-and `launch-lya.ps1` also use `pythonw` with `--gui`. A `.cmd` shell may briefly
-flash before exiting; the shortcut does not need that shell. The existing owned
-sign-in shortcut has been migrated to the same native prompt. Keys remain
-session-only. Cancel exits before the desktop/listener starts. The console
-launcher command below is retained for manual diagnostics.
-See [native launch review](../archive/history/reviews/2026-10-05-native-launch/README.md).
+The normal Windows launcher reuses the NVIDIA key saved in Windows Credential
+Manager. If a key is needed, LYA opens Connections before starting the desktop
+and listener. Once LYA is running, open Connections from its Windows tray menu.
+See the [Connections setup guide](../docs/guides/LYA_CONNECTIONS.md).
 
 Current conversation and design status (2026-10-05): the normal launcher now uses
 NVIDIA Parakeet questions with a bounded NVIDIA-hosted Whisper backup and hidden
@@ -477,8 +464,8 @@ Visual questions typed in LYA's main command line, such as `can you see my pen?`
 ## Optional NVIDIA hearing (2026-10-05)
 
 Current update: owner selected online-only hearing after fresh local comparison
-failed. `launch-lya.cmd` and the existing project sign-in shortcut now use the
-NVIDIA session launcher with hidden key entry. Default Parakeet TDT has one Whisper
+failed. The desktop launcher now uses the NVIDIA key saved through Connections.
+Default Parakeet TDT has one Whisper
 backup on selected model/service errors; CTC 1.1B is a selectable spare. Private
 mode blocks speech recognition and requests text instead of a local guess. Full
 backup accuracy and integrated reply acceptance are pending. See
@@ -493,7 +480,8 @@ the recognizer alone does not enable remote audio. The session launcher is:
 .\.venv-asr\Scripts\python.exe tools/start_nvidia_lya.py --allow-nvidia-questions
 ```
 
-It asks for the API key locally without saving it. Close existing LYA first. Wake
+The console launcher also accepts a hidden session key when no saved key is
+available. Close existing LYA first. Wake
 and stop remain local; complete questions go to NVIDIA while private mode is off.
 Enable private mode through text **before** confidential speech. Local private
 recognition remains unaccepted. Current speaking voice and security gates remain

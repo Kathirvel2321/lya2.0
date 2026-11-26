@@ -35,9 +35,10 @@ def pcm_audio(data):
 
 
 class SpeechUnavailable(RuntimeError):
-    def __init__(self, message, *, switch_model=False):
+    def __init__(self, message, *, switch_model=False, key_issue=False):
         super().__init__(message)
         self.switch_model = switch_model
+        self.key_issue = key_issue
 
 
 def transcribe(data, *, remote_allowed=False, api_key=None, cancelled=None,
@@ -45,9 +46,12 @@ def transcribe(data, *, remote_allowed=False, api_key=None, cancelled=None,
     allowed = remote_allowed if callable(remote_allowed) else lambda: remote_allowed
     if not allowed():
         raise PermissionError('NVIDIA speech requires explicit permission to send audio.')
-    key = (api_key if api_key is not None else os.environ.get('NVIDIA_API_KEY', '')).strip()
+    if api_key is None:
+        from security import provider_credentials
+        api_key = provider_credentials.read('NVIDIA_API_KEY') or os.environ.get('NVIDIA_API_KEY', '')
+    key = api_key.strip()
     if not key:
-        raise RuntimeError('NVIDIA speech key is not configured. Nothing sent.')
+        raise SpeechUnavailable('NVIDIA speech key is not configured. Nothing sent.', key_issue=True)
     pcm = pcm_audio(data)
     stopped = cancelled if cancelled is not None else threading.Event()
     if stopped.is_set():
@@ -123,7 +127,8 @@ def _recognize(pcm, key, model, stopped):
         # only model retirement or transient service failures try one other model.
         code = error.code().name if isinstance(error, grpc.RpcError) else 'UNKNOWN'
         switch = code in ('NOT_FOUND', 'UNIMPLEMENTED', 'UNAVAILABLE', 'DEADLINE_EXCEEDED', 'INTERNAL')
-        raise SpeechUnavailable('NVIDIA speech unavailable (' + code + ').', switch_model=switch) from None
+        raise SpeechUnavailable('NVIDIA speech unavailable (' + code + ').', switch_model=switch,
+                                key_issue=code in ('UNAUTHENTICATED', 'PERMISSION_DENIED')) from None
     finally:
         if future is not None:
             future.cancel()
