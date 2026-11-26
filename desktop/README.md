@@ -1,5 +1,12 @@
 # LYA crystal desktop milestone
 
+Docked crystal update (2026-11-26): the same curved blue crystal now shrinks
+into the compact dock after the introduction. The glow comes from inside the
+glass. Cyan responds to listening, violet moves while LYA thinks, blue marks
+file activity, and jade shifts while LYA speaks. Amber and rose mark approval
+and error states. Reduced motion keeps the light still. Click the docked
+crystal to open the existing glass panel.
+
 Approved body replacement (2026-10-14): the normal launcher now uses
 `assets/lya-reference-body.png`, the front render of the owner-approved curved
 blue glass model. Its source export is `assets/lya-reference-body.glb`.

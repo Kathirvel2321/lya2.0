@@ -241,59 +241,71 @@ class Crystal(QWidget):
         self.animate_briefly()
         self.update()
 
-    def paint_voice_dots(self, p, side):
-        """A crystal constellation, crossing thought paths, or a spoken wave."""
+    def paint_docked_crystal(self, painter, side):
         phase = self.voice_phase
-        active = phase in ('listening', 'hearing', 'thinking', 'speaking')
-        color = QColor('#b69bff' if phase == 'thinking' else '#ff879b' if phase == 'uncertain'
-                       else '#78e1bf' if phase == 'speaking' else '#68e5f2')
-        radius = side * 0.37
-        p.setPen(QPen(QColor(color.red(), color.green(), color.blue(), 65), 0.8))
-        p.setBrush(QColor(9, 17, 24, 248))
-        p.drawEllipse(QRectF(-radius, -radius, 2 * radius, 2 * radius))
-        # Four small compass cuts connect the circle to the faceted crystal.
-        p.setPen(QPen(QColor(color.red(), color.green(), color.blue(), 150), 1.2))
-        for angle in (0, 90, 180, 270):
-            p.save()
-            p.rotate(angle)
-            p.drawLine(QPointF(0, -radius + side * .02), QPointF(0, -radius + side * .05))
-            p.restore()
-        p.setPen(Qt.PenStyle.NoPen)
-        t = 0.0 if self.reduced_motion or not active else self.phase
-        energy = self.voice_level
-        for strand in range(3):
-            count = 40
-            for index in range(count):
-                u = index / count
-                angle = math.tau * u
-                if phase == 'thinking':
-                    angle += t * .65 + strand * .18
-                    x = math.sin(angle) * side * (.22 + strand * .012)
-                    y = math.sin(2 * angle) * side * (.105 + strand * .012)
-                    brightness = .25 + .75 * ((u + t * .17) % 1) ** 2
-                elif phase == 'speaking':
-                    x = (u - .5) * side * .54
-                    envelope = math.sin(math.pi * u) ** 1.4
-                    y = (math.sin(u * math.tau * 1.8 - t * 2.8 + strand * .6) *
-                         side * .095 * envelope + (strand - 1) * side * .035)
-                    brightness = .45 + .55 * envelope
-                else:
-                    # Sample actual diamond edges, keeping the crystal silhouette.
-                    r = side * (.14 + strand * .055 + energy * .025)
-                    edge = r / (abs(math.cos(angle)) + abs(math.sin(angle)))
-                    x = math.cos(angle) * edge
-                    y = math.sin(angle) * edge * 1.12
-                    brightness = .25 + .75 * ((u - t * .12 + strand * .16) % 1) ** 2
-                dot = side * (.0075 + .002 * brightness)
-                color.setAlpha(round((235 if active else 110) * brightness))
-                p.setBrush(color)
-                p.drawEllipse(QRectF(x - dot, y - dot, dot * 2, dot * 2))
-        color.setAlpha(200)
-        p.setPen(QPen(color, .8))
-        p.setBrush(Qt.BrushStyle.NoBrush)
-        if phase in ('listening', 'hearing', 'standby', 'uncertain'):
-            r = side * .042
-            p.drawPolygon(QPolygonF([QPointF(0, -r), QPointF(r, 0), QPointF(0, r), QPointF(-r, 0)]))
+        if self.task in ('approval', 'error'):
+            cue = self.task
+        elif phase in ('listening', 'hearing', 'thinking', 'speaking', 'uncertain'):
+            cue = phase
+        else:
+            cue = self.task
+        hue = QColor({
+            'listening': '#68e5f2', 'hearing': '#68e5f2',
+            'thinking': '#b69bff', 'speaking': '#78e1bf', 'uncertain': '#ff879b',
+        }.get(cue) or accent(self.person, cue))
+        time_in_state = 0 if self.reduced_motion else self.phase
+        cycle = .5 + .5 * math.sin(time_in_state * 3)
+        source_height = 108 if side <= 128 else 256
+        source_key = self.base.cacheKey(), source_height
+        if getattr(self, '_docked_source_key', None) != source_key:
+            source = self.base
+            if not self.using_model:
+                # The approved render includes transparent margins around the crystal.
+                source = source.copy(round(source.width() * .22), round(source.height() * .04),
+                                     round(source.width() * .56), round(source.height() * .92))
+            self._docked_source = source.scaledToHeight(
+                source_height, Qt.TransformationMode.SmoothTransformation).toImage()
+            self._docked_source_key = source_key
+
+        glow = QRadialGradient(0, 2, side * .46)
+        hue.setAlpha(30 if cue == 'idle' else 55)
+        glow.setColorAt(0, hue)
+        hue.setAlpha(0)
+        glow.setColorAt(1, hue)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(glow)
+        painter.drawEllipse(QRectF(-side / 2, -side / 2, side, side))
+
+        body = self._docked_source.copy()
+        width, height = body.width(), body.height()
+        if cue in ('thinking', 'files'):
+            position = .23 + .54 * (cycle if cue == 'thinking' else 1 - cycle)
+            reflection = QLinearGradient(width * .16, height * (position - .22),
+                                         width * .82, height * (position + .22))
+            peak, strength = .51, 156 if cue == 'thinking' else 146
+        elif cue == 'speaking':
+            reflection = QLinearGradient(0, height * .72, width, height * .28)
+            peak, strength = .25 + .5 * cycle, 166
+        else:
+            reflection = QLinearGradient(0, height * .19, width, height * .82)
+            peak, strength = .51, 72 if cue == 'idle' else 205
+            if cue in ('listening', 'hearing'):
+                strength = round(115 + 90 * max(cycle, min(1, self.voice_level)))
+
+        reflection.setColorAt(0, hue)
+        reflection.setColorAt(1, hue)
+        hue.setAlpha(strength // 4)
+        reflection.setColorAt(peak - .17, hue)
+        reflection.setColorAt(peak + .17, hue)
+        hue.setAlpha(strength)
+        reflection.setColorAt(peak, hue)
+        surface = QPainter(body)
+        surface.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceAtop)
+        surface.fillRect(body.rect(), reflection)
+        surface.end()
+        h = side * .84
+        w = h * width / height
+        painter.drawImage(QRectF(-w / 2, -h / 2, w, h), body, QRectF(body.rect()))
 
     def showEvent(self, event):
         if not self.reduced_motion:
@@ -354,30 +366,8 @@ class Crystal(QWidget):
         if morph:
             p.resetTransform()
             p.setOpacity(morph)
-            side = min(self.width(), self.height())
             p.translate(self.width() / 2, self.height() / 2)
-            halo = QRadialGradient(0, 0, side / 2)
-            tint = QColor(self.color)
-            tint.setAlpha(90)
-            halo.setColorAt(0.35, tint)
-            tint.setAlpha(0)
-            halo.setColorAt(1, tint)
-            p.setPen(Qt.PenStyle.NoPen)
-            p.setBrush(halo)
-            p.drawEllipse(QRectF(-side/2, -side/2, side, side))
-            if self.voice_phase != 'off':
-                self.paint_voice_dots(p, side)
-                p.end()
-                self.paint_samples.append((time.perf_counter() - start) * 1000)
-                self.paint_samples = self.paint_samples[-600:]
-                return
-            p.setBrush(QColor(15, 28, 40, 245))
-            p.setPen(QPen(self.color, 1.5))
-            radius = side * 0.27
-            p.drawEllipse(QRectF(-radius, -radius, radius*2, radius*2))
-            p.setBrush(self.color)
-            p.setPen(Qt.PenStyle.NoPen)
-            p.drawEllipse(QRectF(-3, -3, 6, 6))
+            self.paint_docked_crystal(p, min(self.width(), self.height()))
         p.end()
         self.paint_samples.append((time.perf_counter() - start) * 1000)
         self.paint_samples = self.paint_samples[-600:]
@@ -432,9 +422,8 @@ class ResponseText(QTextBrowser):
         while block.isValid():
             cursor = QTextCursor(block)
             paragraph = QTextBlockFormat()
-            paragraph.setLineHeight(125, QTextBlockFormat.LineHeightTypes.ProportionalHeight.value)
-            paragraph.setLeftMargin(4)
-            paragraph.setRightMargin(4)
+            paragraph.setLineHeight(143, QTextBlockFormat.LineHeightTypes.ProportionalHeight.value)
+            paragraph.setRightMargin(10)
             cursor.setBlockFormat(paragraph)
             line = block.text()
             prefix = next((part for part in ('You asked:', 'You:', 'LYA:') if line.startswith(part)), '')
@@ -467,53 +456,73 @@ class GlassPanel(QWidget):
         self.color = QColor("#9cdfe8")
         self.opaque = False
         self.setStyleSheet("""
-            QWidget { color: #e9eff2; font-family: 'Segoe UI'; font-size: 13px; }
+            /* Hallmark · component: conversation panel · genre: atmospheric · theme: LYA glass
+               Pre-emit critique: P4 H5 E4 S4 R5 V4 */
+            QWidget { color: #eaf1f5; font-family: 'Segoe UI'; font-size: 13px; }
             QLabel { background: transparent; }
-            QPushButton { background: rgba(150,205,220,10); border: 1px solid rgba(190,226,235,45);
-                border-radius: 6px; padding: 10px 14px; color: #cddde4; }
-            QPushButton:hover { background: rgba(120,215,230,35); border-color: #9de4ee; }
-            QPushButton:pressed { background: rgba(90,190,210,65); }
-            QPushButton:focus, QLineEdit:focus, QListWidget:focus { border: 2px solid #9de4ee; }
-            QLineEdit { background: rgba(6,12,18,220); border: 1px solid rgba(150,215,230,68);
-                border-radius: 7px; padding: 13px; selection-background-color: #1d6d8c; }
-            QTextBrowser { background: transparent; border: none; color: #d8e2e8;
-                font-size: 16px; selection-background-color: #296a83; }
-            QListWidget { background: transparent; border: none; outline: 0; }
-            QListWidget::item { background: rgba(175,205,230,12); border: 1px solid rgba(200,225,245,24);
-                border-radius: 12px; padding: 0; margin-bottom: 8px; }
-            QListWidget::item:selected { background: #224153; border: 1px solid #90d7e5; }
-            QScrollBar:vertical { background: transparent; width: 6px; margin: 0; }
-            QScrollBar::handle:vertical { background: #617382; border-radius: 3px; min-height: 24px; }
+            QLabel#panelBrand { color: #f1f7fa; font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+            QLabel#panelStatus, QLabel#panelFootnote, QLabel#panelContext { color: #c4d3dc; font-size: 11px; }
+            QLabel#panelTitle { color: #f1f7fa; font-size: 25px; font-weight: 600; }
+            QPushButton { background: transparent; border: 1px solid transparent;
+                border-radius: 7px; padding: 6px 9px; color: #c4d3dc; }
+            QPushButton:hover { background: rgba(175,216,233,22); color: #f1f7fa; }
+            QPushButton:pressed { background: rgba(175,216,233,38); }
+            QPushButton:disabled { color: #8195a0; }
+            QPushButton#panelClose { padding: 0; font-size: 19px; }
+            QPushButton#panelSend { background: #c4e8f0; color: #102733;
+                border: 1px solid transparent; border-radius: 10px; padding: 0 14px;
+                font-weight: 600; }
+            QPushButton#panelSend:hover { background: #e1f5f8; }
+            QPushButton#panelSend:pressed { background: #a3ccd9; }
+            QPushButton#panelSend:disabled { background: #405560; color: #b7ccd7; }
+            QLineEdit { background: rgba(9,18,26,188); border: 1px solid rgba(178,213,229,66);
+                border-radius: 10px; padding: 0 13px; selection-background-color: #296882;
+                placeholder-text-color: #9fb4c1; }
+            QLineEdit:hover { border-color: #7898a8; }
+            QTextBrowser { background: transparent; border: 1px solid transparent;
+                border-radius: 6px; color: #d8e2e8; font-size: 15px; selection-background-color: #296882; }
+            QListWidget { background: transparent; border: 1px solid transparent; border-radius: 6px; }
+            QListWidget::item { background: rgba(175,216,233,12); border: 1px solid rgba(175,216,233,32);
+                border-radius: 8px; padding: 0; margin-bottom: 8px; }
+            QListWidget::item:hover { background: rgba(175,216,233,22); }
+            QListWidget::item:selected { background: #224153; border-color: #90d7e5; }
+            QPushButton:focus, QPushButton#panelSend:focus, QLineEdit:focus,
+                QTextBrowser:focus, QListWidget:focus { border-color: #a9e3f1; }
+            QPushButton#panelSend:focus { border-color: #284c61; }
+            QScrollBar:vertical { background: transparent; width: 5px; margin: 0; }
+            QScrollBar::handle:vertical { background: #6d8a9a; border-radius: 2px; min-height: 24px; }
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
         """)
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(32, 26, 32, 27)
-        outer.setSpacing(15)
+        outer.setContentsMargins(30, 23, 30, 24)
+        outer.setSpacing(12)
         header = QHBoxLayout()
-        brand = QLabel("L Y A")
-        brand.setStyleSheet("font-size: 14px; font-weight: 600; color: #b7e7eb; letter-spacing: 3px; padding-left: 20px;")
+        header.setSpacing(10)
+        brand = QLabel("LYA")
+        brand.setObjectName("panelBrand")
         header.addWidget(brand)
         header.addStretch()
-        self.state_label = QLabel("CONVERSATION")
-        self.state_label.setStyleSheet("font-size: 10px; color: #9aaeb9; letter-spacing: 1px;")
+        self.state_label = QLabel("Conversation")
+        self.state_label.setObjectName("panelStatus")
         header.addWidget(self.state_label)
         close = QPushButton("×")
+        close.setObjectName("panelClose")
         close.setFixedSize(32, 32)
-        close.setStyleSheet('padding: 0; font-size: 19px; border: none; background: transparent;')
         close.setAccessibleName("Close result panel")
         close.setToolTip("Close panel · Escape")
         close.clicked.connect(self.dismissed)
         header.addWidget(close)
         outer.addLayout(header)
-        self.eyebrow = QLabel("A LITTLE SPACE TO THINK")
-        self.eyebrow.setStyleSheet("color: #91c9d6; font-size: 10px; letter-spacing: 2px;")
+        self.eyebrow = QLabel("Read-only")
+        self.eyebrow.setObjectName("panelContext")
         outer.addWidget(self.eyebrow)
-        self.title_label = QLabel("Right here with you.")
+        self.title_label = QLabel()
         self.title_label.setWordWrap(True)
-        self.title_label.setStyleSheet("font-size: 25px; font-weight: 600; color: #f4f8fc;")
+        self.title_label.setObjectName("panelTitle")
         outer.addWidget(self.title_label)
         self.stack = QStackedWidget()
         self.answer = ResponseText()
+        self.answer.document().setDocumentMargin(1)
         self.answer.setOpenExternalLinks(False)
         self.answer.setOpenLinks(False)
         self.answer.setAccessibleName("LYA response")
@@ -524,6 +533,7 @@ class GlassPanel(QWidget):
         self.stack.addWidget(self.files)
         outer.addWidget(self.stack, 1)
         quick = QHBoxLayout()
+        quick.setSpacing(4)
         show_files = QPushButton("Project files")
         show_files.clicked.connect(self.files_requested)
         quick.addWidget(show_files)
@@ -534,23 +544,26 @@ class GlassPanel(QWidget):
         quick.addStretch()
         outer.addLayout(quick)
         composer = QHBoxLayout()
+        composer.setSpacing(8)
         self.entry = QLineEdit()
-        self.entry.setPlaceholderText("Ask LYA · try “show files”")
+        self.entry.setPlaceholderText("Ask LYA")
         self.entry.setAccessibleName("Type a command to LYA")
         self.entry.setMaxLength(2000)
+        self.entry.setFixedHeight(44)
         self.entry.returnPressed.connect(self.send)
         composer.addWidget(self.entry, 1)
-        send = QPushButton("↑")
+        send = QPushButton("Send")
+        send.setObjectName("panelSend")
         send.setAccessibleName("Send command")
-        send.setFixedSize(42, 42)
+        send.setFixedHeight(44)
         send.clicked.connect(self.send)
         composer.addWidget(send)
         outer.addLayout(composer)
-        self.footnote = QLabel("LOCAL INTERFACE  ·  CAMERA & MICROPHONE OFF")
+        self.footnote = QLabel("Camera and microphone off")
         self.footnote.setWordWrap(True)
-        self.footnote.setStyleSheet("font-size: 10px; color: #9aadb9; letter-spacing: 1px;")
+        self.footnote.setObjectName("panelFootnote")
         outer.addWidget(self.footnote)
-        self.show_answer("Right here with you.", "Your desktop stays yours.\n\nClick Project files to read the saved project plans, or type help.\n\nDrag the crystal to place me. Right-click it to preview person and task colors.")
+        self.show_answer("How can I help?", "Ask LYA a question or open Project files to browse your saved plans.\n\nDrag the crystal to move it. Right-click it for voice, appearance and other controls.")
 
     def send(self):
         text = self.entry.text().strip()
@@ -563,11 +576,11 @@ class GlassPanel(QWidget):
         self.title_label.setTextFormat(Qt.TextFormat.PlainText)
         self.stack.setCurrentWidget(self.answer)
         self.answer.setPlainText(message)
-        self.eyebrow.setText("A LITTLE SPACE TO THINK")
+        self.eyebrow.hide()
 
     def show_documents(self):
-        self.title_label.setText("Your project, close by.")
-        self.eyebrow.setText("PROJECT DOCUMENTS  /  READ ONLY")
+        self.title_label.setText("Project documents")
+        self.eyebrow.show()
         self.files.clear()
         labels = {"LYA_FOUNDATION_DECISIONS.md": "Foundation decisions", "LYA_REBUILD_PLAN.md": "The rebuild plan",
                   "LYA_VISION.md": "The LYA vision", "README.md": "Project guide"}
@@ -600,50 +613,56 @@ class GlassPanel(QWidget):
             p.fillRect(self.rect(), Qt.GlobalColor.transparent)
             p.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
         body = QRectF(self.rect()).adjusted(10, 10, -10, -10)
-        # Faceted native surface; no backdrop capture, blur or added paint timer.
+        # One deeper cut gives the rim the same silhouette on light and dark desktops.
         path = QPainterPath()
-        path.moveTo(body.left() + 22, body.top())
-        path.lineTo(body.right() - 48, body.top())
-        path.lineTo(body.right(), body.top() + 48)
-        path.lineTo(body.right(), body.bottom() - 22)
-        path.lineTo(body.right() - 22, body.bottom())
-        path.lineTo(body.left() + 22, body.bottom())
-        path.lineTo(body.left(), body.bottom() - 22)
-        path.lineTo(body.left(), body.top() + 22)
+        path.moveTo(body.left() + 11, body.top())
+        path.lineTo(body.right() - 24, body.top())
+        path.lineTo(body.right(), body.top() + 24)
+        path.lineTo(body.right(), body.bottom() - 11)
+        path.lineTo(body.right() - 11, body.bottom())
+        path.lineTo(body.left() + 11, body.bottom())
+        path.lineTo(body.left(), body.bottom() - 11)
+        path.lineTo(body.left(), body.top() + 11)
         path.closeSubpath()
         p.setPen(Qt.PenStyle.NoPen)
         p.save()
-        p.translate(0, 4)
-        p.setBrush(QColor(0, 0, 0, 75))
-        p.drawPath(path)
+        p.translate(0, 3)
+        p.setBrush(Qt.BrushStyle.NoBrush)
+        for width, alpha in ((8, 14), (5, 22), (2, 33)):
+            p.setPen(QPen(QColor(2, 9, 17, alpha), width))
+            p.drawPath(path)
         p.restore()
         glass = QLinearGradient(body.topLeft(), body.bottomRight())
-        glass.setColorAt(0.0, QColor(28, 39, 47, 255 if self.opaque else 250))
-        glass.setColorAt(0.45, QColor(14, 24, 31, 255 if self.opaque else 251))
-        glass.setColorAt(1.0, QColor(9, 16, 22, 255 if self.opaque else 252))
+        glass.setColorAt(0.0, QColor(22, 42, 57, 255 if self.opaque else 225))
+        glass.setColorAt(0.52, QColor(12, 26, 39, 255 if self.opaque else 237))
+        glass.setColorAt(1.0, QColor(15, 33, 47, 255 if self.opaque else 231))
         p.setBrush(glass)
-        p.setPen(QPen(QColor(166, 201, 213, 100), 1))
         p.drawPath(path)
         p.save()
         p.setClipPath(path)
-        c = QColor(self.color)
-        c.setAlpha(85)
-        p.setPen(QPen(c, .8))
-        if self.height() > 150:
-            for offset in (0, 9, 18):
-                p.drawLine(QPointF(body.right() - 80 - offset, body.top()),
-                           QPointF(body.right(), body.top() + 80 + offset))
-            # Native mark avoids depending on a font's diamond glyph support.
-            p.drawPolygon(QPolygonF([QPointF(36, 31), QPointF(41, 37),
-                                    QPointF(36, 43), QPointF(31, 37)]))
-            p.setPen(QPen(QColor(190, 213, 225, 22), 1))
-            p.drawLine(QPointF(34, 76), QPointF(self.width() - 34, 76))
-        c.setAlpha(200)
-        p.setPen(QPen(c, 1.6))
-        p.drawLine(QPointF(34, 10), QPointF(min(170, self.width() - 75), 10))
-        p.setPen(QPen(QColor(212, 193, 151, 140), 1.2))
-        p.drawLine(QPointF(body.right() - 22, body.bottom()), QPointF(body.right(), body.bottom() - 22))
+        reflection = QLinearGradient(body.topLeft(), QPointF(body.center().x(), body.bottom()))
+        reflection.setColorAt(0.0, QColor(185, 224, 244, 36))
+        reflection.setColorAt(0.65, QColor(185, 224, 244, 0))
+        p.fillRect(body, reflection)
         p.restore()
+        rim = QLinearGradient(body.topRight(), body.bottomLeft())
+        highlight = QColor(self.color)
+        highlight.setAlpha(200)
+        rim.setColorAt(0.0, highlight)
+        rim.setColorAt(0.21, QColor(187, 220, 236, 133))
+        rim.setColorAt(0.61, QColor(148, 185, 203, 51))
+        rim.setColorAt(1.0, QColor(148, 185, 203, 98))
+        p.setBrush(Qt.BrushStyle.NoBrush)
+        p.setPen(QPen(rim, 1.1))
+        p.drawPath(path)
+        p.setPen(QPen(QColor(199, 230, 245, 42), 1))
+        p.drawLine(QPointF(body.left() + 13, body.top() + 2),
+                   QPointF(body.right() - 25, body.top() + 2))
+        if self.state_label.isVisible():
+            header = self.layout().itemAt(0).layout().geometry()
+            p.setPen(QPen(QColor(187, 220, 236, 40), 1))
+            y = header.bottom() + 5
+            p.drawLine(header.left(), y, header.right(), y)
         p.end()
 
 

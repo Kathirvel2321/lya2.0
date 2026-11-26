@@ -252,6 +252,31 @@ class ExperienceChecks(unittest.TestCase):
         d.on_voice_phase('thinking')
         self.assertFalse(d.orb.timer.isActive())
 
+    def test_docked_crystal_renders_activity_and_honors_reduced_motion(self):
+        d = self.d
+        d.dock(False)
+        d.orb.show()
+        APP.processEvents()
+        idle = d.orb.grab().toImage()
+        d.orb.set_voice_phase('thinking')
+        first = d.orb.grab().toImage()
+        d.orb.phase = 1.0
+        self.assertEqual(first, d.orb.grab().toImage())
+        self.assertNotEqual(idle, first)
+        self.assertEqual(first.pixelColor(0, 0).alpha(), 0)
+
+        d.orb.set_reduced_motion(False)
+        d.orb.phase = 0.0
+        first = d.orb.grab().toImage()
+        d.orb.phase = 0.5
+        self.assertNotEqual(first, d.orb.grab().toImage())
+
+        d.orb.set_voice_phase('off')
+        d.orb.set_state(task='files')
+        d.orb.motion_until = 0
+        d.orb.tick()
+        self.assertFalse(d.orb.timer.isActive())
+
     def test_verified_admin_handoff_updates_brain_without_phone_approval(self):
         from security.policy import Session
         import time
