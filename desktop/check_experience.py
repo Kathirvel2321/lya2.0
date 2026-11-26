@@ -85,7 +85,8 @@ class ExperienceChecks(unittest.TestCase):
              patch.object(self.d, 'ask_brain') as submit:
             for dispatch in (self.d.on_voice, self.d.command):
                 for phrase in ('Register admin.', 'register admijn', 'Lya, register admin!',
-                               'Please open admin registration.', 'sign in.', 'unlock LYA!'):
+                               'Please open admin registration.', 'sign in.', 'unlock LYA!',
+                               "It's me, LYA", "Lya, it's me", 'its me lya', 'it is me'):
                     with self.subTest(dispatch=dispatch.__name__, phrase=phrase):
                         dispatch(phrase)
                         self.assertTrue(hasattr(self.d, 'owner_dialog'))
@@ -100,7 +101,8 @@ class ExperienceChecks(unittest.TestCase):
         from experience import is_owner_access_request
         for phrase in ('Do not register admin.', 'Why should I sign in?',
                        'Explain admin registration', 'register admin and delete my notes',
-                       'Please open camera.', 'Tell me how to unlock lya.'):
+                       'Please open camera.', 'Tell me how to unlock lya.',
+                       "Is it me, LYA?", "it's me and delete my notes"):
             with self.subTest(phrase=phrase):
                 self.assertFalse(is_owner_access_request(phrase))
 

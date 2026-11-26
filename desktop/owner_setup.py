@@ -1,5 +1,6 @@
 """Voice-guided owner setup and exact-action phone approval, with no OS identity prompt."""
 import math
+import os
 import re
 import threading
 import time
@@ -198,6 +199,9 @@ class OwnerSetupDialog(QDialog):
         self.ceremony, self.name, self.stage = None, 'Owner', 'intro'
         self.started, self.closed = False, False
         self.confirm_guided = False
+        self.phone_phase = None
+        self.phone_origin = os.environ.get('LYA_OWNER_PHONE_ORIGIN') if ceremony_factory is None else None
+        self.direct_phone = False
         self.profile_setup = profile_setup and approval is None
         self.listener, self.capture_factory = listener, capture_factory
         self.capture_worker, self.profile_session = None, None
@@ -229,6 +233,18 @@ class OwnerSetupDialog(QDialog):
         layout.setContentsMargins(28, 28, 28, 24)
         self.mark = OwnerMark(reduced_motion, self)
         layout.addWidget(self.mark, 1)
+        self.phone_caption = QLabel(self)
+        self.phone_caption.setTextFormat(Qt.TextFormat.PlainText)
+        self.phone_caption.setWordWrap(True)
+        self.phone_caption.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.phone_caption.setStyleSheet('color:#e2e4ef;font-size:14px;')
+        self.phone_caption.hide()
+        layout.addWidget(self.phone_caption)
+        self.phone_qr = QLabel(self)
+        self.phone_qr.setAccessibleName('Scan this invitation with your phone camera')
+        self.phone_qr.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.phone_qr.hide()
+        layout.addWidget(self.phone_qr)
         self.scan = FaceScan(reduced_motion, self)
         layout.addWidget(self.scan, 1)
         self.fade_effect = QGraphicsOpacityEffect(self.mark)
@@ -253,7 +269,11 @@ class OwnerSetupDialog(QDialog):
         self.next.setDefault(True)
         self.cancel = SetupControl('cancel', 'Cancel setup', self, registration=approval is None)
         self.cancel.clicked.connect(self.reject)
-        for control in (self.repeat, self.next, self.cancel):
+        self.skip_profiles = SetupControl('continue', 'Skip face and voice profiles', self,
+                                          registration=approval is None)
+        self.skip_profiles.clicked.connect(self.finish_without_profiles)
+        self.skip_profiles.hide()
+        for control in (self.repeat, self.next, self.skip_profiles, self.cancel):
             controls.addWidget(control)
         controls.addStretch()
         layout.addLayout(controls)
@@ -321,6 +341,9 @@ class OwnerSetupDialog(QDialog):
             from storage.store import get_owner_passkey
             owner = get_owner_passkey(self.db_path)
             self.returning = owner is not None
+            self.direct_phone = bool(owner.get('origin') if owner else self.phone_origin)
+            if owner and self.direct_phone and owner['origin'] != self.phone_origin:
+                raise PermissionError('Restore the private HTTPS origin enrolled for this owner.')
             if self.approval:
                 self.stage = 'approval'
                 self.set_step('ONE ACTION', 'Review this exact request',
@@ -330,9 +353,15 @@ class OwnerSetupDialog(QDialog):
             elif self.returning:
                 self.stage = 'phone'
                 self.set_step('OWNER PROOF', 'Welcome back.',
-                    'Use the enrolled passkey on your phone. Owner access lasts five minutes; private actions require fresh, separate approval.',
+                    ('Enter your owner passphrase and use your enrolled passkey.' if self.direct_phone else
+                     'Use the enrolled passkey on your phone.') +
+                    ' Owner access lasts five minutes. Private actions require fresh, separate approval.',
                     'Welcome back. Say continue with phone. Your phone verifies you; private actions still need separate approval.',
                     'Continue with phone')
+            elif self.direct_phone:
+                self.set_step('REGISTER OWNER', 'Register admin through phone',
+                    'Scan the QR and create a passkey. Enter your name and choose an owner passphrase on your phone.',
+                    'Register admin through your phone. Start when you have your phone with you.', 'Show registration QR')
             else:
                 profile_prompt = (' After phone verification, I will ask permission to create local face and voice profiles. '
                     'Those profiles stay encrypted here; photos or voices never replace your phone proof.'
@@ -351,6 +380,11 @@ class OwnerSetupDialog(QDialog):
 
     def set_step(self, step, title, body, prompt, button):
         self.show_face_stage(self.stage == 'face')
+        self.skip_profiles.setVisible(self.stage == 'profile_consent')
+        self.phone_qr.hide()
+        self.phone_qr.clear()
+        self.phone_caption.setVisible(self.direct_phone)
+        self.phone_caption.setText(title + '\n' + body if self.direct_phone else '')
         self.step.setText(step)
         self.title.setText(title)
         self.body.setText(body)
@@ -431,6 +465,9 @@ class OwnerSetupDialog(QDialog):
             return
         if self.speech.busy or self.stage in ('blocked', 'waiting', 'done'):
             return
+        if self.stage == 'profile_consent' and low in ('skip', 'skip profiles', 'skip face and voice'):
+            self.finish_without_profiles()
+            return
         if self.stage == 'name':
             match = re.fullmatch(r'(?:my name is|call me) (.{1,80})', text.strip(), re.I)
             if match:
@@ -488,7 +525,9 @@ class OwnerSetupDialog(QDialog):
         if self.private_capture:
             return
         self.speech.stop(keep_warm=True)
-        if self.stage == 'intro':
+        if self.stage == 'intro' and self.direct_phone:
+            self.start_phone()
+        elif self.stage == 'intro':
             self.stage = 'name'
             self.set_step('02 / IDENTITY', 'What should I call you?',
                 'Say “my name is …”. I will read it back for confirmation. Or continue with the name Owner.',
@@ -500,15 +539,57 @@ class OwnerSetupDialog(QDialog):
 
     def start_phone(self):
         try:
+            options = {}
+            if self.direct_phone:
+                if not self.returning and not self.private_capture and self.listener is not None:
+                    self.private_capture = True
+                    self.resume_listener = bool(self.listener.voice_thread and self.listener.voice_thread.is_alive())
+                    self.listener.stop_voice()
+                    self.pause_deadline = time.monotonic() + 12
+                    self.stage = 'phone_pausing'
+                    self.set_step('PRIVATE SETUP', 'Pausing laptop hearing.',
+                                  'Use the phone for registration.', 'I am preparing private phone setup.', 'Please wait')
+                    self.next.setEnabled(False)
+                    self.pause_poll.start()
+                    self.wait_listener()
+                    return
+                import qrcode
+                from security.passkeys import check_phone_proxy
+                check_phone_proxy(self.phone_origin)
+                options['phone_origin'] = self.phone_origin
             if self.ceremony_factory is None:
                 from security.passkeys import PasskeyCeremony
                 factory = PasskeyCeremony
             else:
                 factory = self.ceremony_factory
             self.ceremony = factory(db_path=self.db_path, name=self.name, approval=self.approval,
-                                   approval_valid=self.approval_valid)
+                                   approval_valid=self.approval_valid, **options)
             self.confirm_guided = False
+            self.phone_phase = None
             self.stage = 'waiting'
+            if self.direct_phone:
+                code = self.ceremony.pairing_code
+                body = f'Pairing code: {code}\nThis invitation expires in five minutes.' if code else 'Approve this request on your phone.'
+                self.set_step('PHONE PROOF', 'Scan with your iPhone.', body,
+                              'Scan the QR with your phone. Finish the steps on your phone.', 'Waiting for phone')
+                qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M)
+                qr.add_data(self.ceremony.url)
+                matrix = qr.get_matrix()
+                scale = max(1, 224 // len(matrix))
+                image = QPixmap(len(matrix) * scale, len(matrix) * scale)
+                image.fill(Qt.GlobalColor.white)
+                painter = QPainter(image)
+                for row, modules in enumerate(matrix):
+                    for column, dark in enumerate(modules):
+                        if dark:
+                            painter.fillRect(column * scale, row * scale, scale, scale, Qt.GlobalColor.black)
+                painter.end()
+                self.mark.hide()
+                self.phone_qr.setPixmap(image)
+                self.phone_qr.show()
+                self.next.setEnabled(False)
+                self.poll.start()
+                return
             prompt = ('Verify with your existing phone passkey to continue the paused local profile setup. '
                       'The camera and enrollment microphone remain off while you verify.' if self.resume_samples is not None else
                       'Select the phone symbol in your browser. Choose another device and scan its QR with your iPhone. '
@@ -523,7 +604,9 @@ class OwnerSetupDialog(QDialog):
             if self.open_browser(self.ceremony.url) is False:
                 raise RuntimeError('Browser unavailable.')
         except Exception:
-            self.fail('Could not start phone verification. Use a current Chrome or Edge browser. Existing owner profiles may require trusted migration.')
+            self.fail('Could not start the private phone gate. Check the laptop HTTPS configuration and QR dependency.'
+                      if self.direct_phone else
+                      'Could not start phone verification. Use a current Chrome or Edge browser. Existing owner profiles may require trusted migration.')
 
     def check_result(self):
         if self.ceremony is None:
@@ -532,7 +615,16 @@ class OwnerSetupDialog(QDialog):
             self.fail('Phone verification expired or the setup screen was hidden. Nothing was unlocked.')
             return
         if not self.ceremony.done.is_set():
-            if (getattr(self.ceremony, 'phase', None) == 'confirm'
+            phase = getattr(self.ceremony, 'phase', None)
+            if self.direct_phone and phase != self.phone_phase:
+                self.phone_phase = phase
+                if phase in ('confirm', 'profiles', 'processing_profiles', 'profile_retry', 'profile_failed', 'review_profiles') or (
+                        phase == 'authenticate' and not self.approval):
+                    self.phone_qr.clear()
+                    self.phone_qr.hide()
+                    self.mark.show()
+                    self.phone_caption.setText('Phone connected.\nFinish owner verification on your iPhone.')
+            if (not self.direct_phone and getattr(self.ceremony, 'phase', None) == 'confirm'
                     and not self.confirm_guided and not self.speech.busy):
                 self.confirm_guided = True
                 self.prompt = 'Your passkey was created. Select the phone symbol once more to verify it before I save your owner profile.'
@@ -560,7 +652,7 @@ class OwnerSetupDialog(QDialog):
             self.approved.emit(result)
             self.accept()
             return
-        if self.profile_setup:
+        if self.profile_setup and not self.direct_phone:
             try:
                 from storage import store
                 profiles = store.owner_profiles(result, self.db_path, expected_credential=self.profile_credential)
@@ -583,12 +675,19 @@ class OwnerSetupDialog(QDialog):
                         'then close the camera. Recognition personalizes greetings and limited everyday tools only; it never unlocks private actions. '
                         'Unknown visitor photos are off until you explicitly say enable visitor photos; when enabled, each bounded photo is encrypted locally, alerted neutrally, and reviewed only after owner proof. '
                         'Visitor activity counts stay in RAM until you save or discard them, or quit Lya. A webcam and voice can be copied, '
-                        'so recognition never replaces your phone. Say I agree to start, or cancel.', 'Start local face and voice profiles')
+                        'so recognition never replaces your phone. Say I agree to start, or skip profiles to continue without them.',
+                        'Start local face and voice profiles')
                     return
             except Exception:
                 self.fail('Recognition profiles could not be checked. Access stays locked.')
                 return
         self.finish_owner(result)
+
+    def finish_without_profiles(self):
+        if self.closed or self.stage != 'profile_consent' or self.profile_session is None:
+            return
+        self.speech.stop()
+        self.finish_owner(self.profile_session)
 
     def finish_owner(self, session):
         from storage import store
@@ -641,6 +740,9 @@ class OwnerSetupDialog(QDialog):
                 self.fail('Online hearing did not stop. No biometric capture was started.')
             return
         self.pause_poll.stop()
+        if self.stage == 'phone_pausing':
+            self.start_phone()
+            return
         try:
             from desktop.owner_biometrics import OwnerCapture
             self.capture_worker = (self.capture_factory or OwnerCapture)(self.profile_session, self)
@@ -884,6 +986,8 @@ class OwnerSetupDialog(QDialog):
         self.scan.timer.stop()
         self.scan.image = self.scan.tracking = None
         self.mark.preview = None
+        self.phone_qr.clear()
+        self.phone_caption.clear()
         self.poll.stop()
         self.expire.stop()
         self.watch.stop()

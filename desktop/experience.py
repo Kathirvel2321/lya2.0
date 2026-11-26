@@ -14,7 +14,8 @@ def is_owner_access_request(text):
     return re.fullmatch(
         r'(?:lya[, ]+)?(?:please )?(?:open |start )?'
         r'(?:register (?:admin|administrator|admijn)|(?:admin|administrator) (?:setup|registration)|'
-        r'setup admin|set up admin|sign in|unlock lya)(?: please)?', command) is not None
+        r'setup admin|set up admin|sign in|unlock lya|'
+        r"(?:it['’]?s me|it is me)(?:[, ]+lya)?)(?: please)?", command) is not None
 
 
 class CompactPanel(GlassPanel):

@@ -9,7 +9,7 @@ import tempfile
 import threading
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 sys.path.insert(0, str(Path(__file__).parent / 'desktop'))
@@ -80,6 +80,144 @@ class SyntheticPasskeys:
         return code, body
 
 class PasskeyChecks(SyntheticPasskeys, unittest.TestCase):
+    direct_origin = 'https://laptop.private-test.ts.net'
+    fake_phrase = 'test-only-phrase-for-lya'
+
+    def direct_ceremony(self):
+        return self.ceremony(phone_origin=self.direct_origin, phone_port=0)
+
+    def test_private_phone_proxy_requires_own_hostname_https_and_no_funnel(self):
+        from security.passkeys import check_phone_proxy
+        host = self.direct_origin.removeprefix('https://')
+        node = {'BackendState':'Running', 'Self':{'DNSName':host+'.'}}
+        mapping = {'TCP':{'443':{'HTTPS':True}},
+                   'Web':{host+':443':{'Handlers':{'/':{'Proxy':'http://127.0.0.1:8767'}}}}}
+        def reply(*args, **kwargs):
+            return Mock(stdout=json.dumps(mapping if 'serve' in args[0] else node).encode())
+        with patch('security.passkeys.subprocess.run', side_effect=reply):
+            check_phone_proxy(self.direct_origin)
+            with self.assertRaises(PermissionError):
+                check_phone_proxy('https://other.private-test.ts.net')
+            mapping['AllowFunnel'] = {host+':443':True}
+            with self.assertRaises(PermissionError):
+                check_phone_proxy(self.direct_origin)
+
+    def phone_request(self, c, path='/options', data=None, **headers):
+        return self.request(c, path, data, **({'Host': c.host} | headers))
+
+    def confirm_phone_setup(self, c):
+        rp = c.host
+        self.assertEqual(c.complete(self.response(c, create=True, rp=rp)), {'details': True})
+        self.assertIsNone(c.options_json()['publicKey'])
+        with self.assertRaises(PermissionError):
+            c.complete({})
+        self.assertIsNone(store.get_owner_passkey(self.db))
+        code = c.pairing_code
+        invitation = c.token
+        self.assertEqual(self.phone_request(c, '/details',
+            dict(name='Synthetic direct owner', code=code, phrase=self.fake_phrase))[0], 200)
+        self.assertNotEqual(c.token, invitation)
+        self.assertEqual(self.phone_request(c, **{'X-LYA-Ceremony':invitation})[0], 403)
+        self.assertEqual(c.pairing_code, '')
+        self.assertIsNone(store.get_owner_passkey(self.db))
+        self.assertEqual(c.complete(self.response(c, rp=rp)), {'profiles': True})
+        self.assertIsNone(store.get_owner_passkey(self.db))
+
+    def test_private_phone_enrollment_and_signin_require_distinct_proofs(self):
+        c = self.direct_ceremony()
+        conn = http.client.HTTPConnection('127.0.0.1', c.http.server_port, timeout=3)
+        try:
+            conn.request('GET', '/', headers={'Host': c.host})
+            page = conn.getresponse()
+            self.assertEqual(page.status, 200)
+            self.assertEqual(page.getheader('Cache-Control'), 'no-store')
+            self.assertIn(b'What should LYA call you?', page.read())
+        finally:
+            conn.close()
+        self.confirm_phone_setup(c)
+        self.assertEqual(self.phone_request(c, '/finish', {'skip':False})[0], 400)
+        self.assertIsNone(store.get_owner_passkey(self.db))
+        self.assertEqual(self.phone_request(c, '/finish', {'skip':True})[0], 200)
+        self.assertEqual(c.result.person, 'Synthetic direct owner')
+        owner = store.get_owner_passkey(self.db)
+        self.assertEqual(owner['origin'], self.direct_origin)
+        self.assertNotIn(self.fake_phrase, owner['phrase_verifier'])
+        self.assertNotIn(self.fake_phrase.encode(), self.db.read_bytes())
+        with self.assertRaises(PermissionError):
+            self.ceremony()
+        with self.assertRaises(PermissionError):
+            self.ceremony(phone_origin='https://other.private-test.ts.net', phone_port=0)
+
+        bad = self.direct_ceremony()
+        self.assertEqual(bad.options_json()['phase'], 'unlock')
+        self.assertEqual(self.phone_request(bad, '/details', {'phrase':'synthetic wrong phrase'})[0], 400)
+        self.assertIsNone(bad.result)
+        self.assertEqual(self.phone_request(bad, '/details', {'phrase':self.fake_phrase})[0], 400)
+
+        signin = self.direct_ceremony()
+        self.assertEqual(self.phone_request(signin, '/details', {'phrase':self.fake_phrase})[0], 200)
+        self.assertIsNone(signin.result)
+        self.assertEqual(signin.complete(self.response(signin, rp=signin.host)), {'verified': True})
+        self.assertEqual(signin.result.person_id, c.result.person_id)
+        challenge = Challenge('synthetic-nonce', signin.result, 'memory_read', 'Read one note', time.monotonic()+60)
+        approval = self.ceremony(phone_origin=self.direct_origin, phone_port=0, approval=challenge)
+        self.assertIn('Read one note', approval.options_json()['context'])
+        self.assertEqual(approval.complete(self.response(approval, rp=approval.host)), {'verified': True})
+        self.assertIs(approval.result, challenge)
+
+    def test_private_phone_pairing_code_wrong_origin_and_unsigned_finish(self):
+        c = self.direct_ceremony()
+        self.assertEqual(self.phone_request(c, Origin='http://localhost')[0], 403)
+        self.assertEqual(self.phone_request(c, Host='other.private-test.ts.net')[0], 403)
+        self.assertEqual(self.phone_request(c, **{'X-LYA-Ceremony':'wrong'})[0], 403)
+        c.complete(self.response(c, create=True, rp=c.host))
+        bad_code = '00000000' if c.pairing_code != '00000000' else '99999999'
+        self.assertEqual(self.phone_request(c, '/details',
+            dict(name='Synthetic name', code=bad_code, phrase=self.fake_phrase))[0], 400)
+        with self.assertRaises(PermissionError):
+            c.complete({})
+        self.assertIsNone(store.get_owner_passkey(self.db))
+
+        c = self.direct_ceremony()
+        c.complete(self.response(c, create=True, rp=c.host))
+        self.assertEqual(self.phone_request(c, '/details',
+            dict(name='Synthetic name', code=c.pairing_code, phrase=self.fake_phrase))[0], 200)
+        with self.assertRaises(ValueError):
+            c.complete(self.response(c, rp=c.host, origin='https://other.private-test.ts.net'))
+        self.assertIsNone(store.get_owner_passkey(self.db))
+
+    def test_private_phone_media_requires_proof_and_review_then_commits_vectors_only(self):
+        from security import phone_profiles
+        vectors = {'face': [[1.] + [0.]*127 for _ in range(3)],
+                   'voice': [[1.] + [0.]*255 for _ in range(3)]}
+        c = self.direct_ceremony()
+        def upload(body):
+            conn = http.client.HTTPConnection('127.0.0.1', c.http.server_port, timeout=3)
+            headers = {'Host':c.host, 'Origin':c.origin, 'X-LYA-Ceremony':c.token,
+                       'Content-Type':'application/octet-stream', 'Content-Length':str(phone_profiles.UPLOAD_BYTES)}
+            try:
+                conn.request('POST', '/profiles', body, headers)
+                response = conn.getresponse()
+                return response.status, response.read()
+            finally:
+                conn.close()
+        self.assertEqual(upload(b'')[0], 403)
+        self.assertEqual(self.phone_request(c, '/finish', {'skip':True})[0], 400)
+        self.confirm_phone_setup(c)
+        raw = b'only synthetic media'.ljust(phone_profiles.UPLOAD_BYTES, b'\0')
+        with (patch.object(phone_profiles, 'available', return_value=True),
+              patch.object(phone_profiles, 'process', return_value=vectors) as mocked):
+            self.assertEqual(upload(raw)[0], 200)
+            deadline = time.monotonic() + 3
+            while c.phase == 'processing_profiles' and time.monotonic() < deadline:
+                time.sleep(.01)
+            mocked.assert_called_once()
+            self.assertEqual(c.phase, 'review_profiles')
+            self.assertIsNone(store.get_owner_passkey(self.db))
+            self.assertEqual(self.phone_request(c, '/finish', {'skip':False})[0], 200)
+        self.assertEqual(store.owner_profiles(c.result, self.db), vectors)
+        self.assertNotIn(b'only synthetic media', self.db.read_bytes())
+
     def test_enroll_confirm_signin_encrypted_public_storage(self):
         session = self.enroll()
         record = store.get_owner_passkey(self.db)
@@ -324,6 +462,45 @@ class OwnerUIChecks(SyntheticPasskeys, unittest.TestCase):
         self.assertTrue(d.closed)
         self.assertFalse(d.isVisible())
         self.assertIsNone(store.get_primary_admin(self.db))
+
+    def test_native_private_qr_to_verified_owner_without_laptop_sensors(self):
+        origin = PasskeyChecks.direct_origin
+        listener = Mock()
+        listener.quitting = False
+        listener.voice_thread.is_alive.return_value = True
+        with (patch.dict(os.environ, {'LYA_OWNER_PHONE_ORIGIN':origin}),
+              patch('security.passkeys.check_phone_proxy'),
+              patch('security.passkeys.PasskeyCeremony', side_effect=lambda **kwargs:
+                    PasskeyCeremony(phone_port=0, **kwargs))):
+            d = self.dialog(profile_setup=True, listener=listener,
+                            open_browser=lambda _: self.fail('Desktop browser opened'))
+            self.assertEqual(d.title.text(), 'Register admin through phone')
+            d.advance()
+            self.assertEqual(d.stage, 'phone_pausing')
+            self.assertFalse(d.phone_qr.isVisible())
+            listener.stop_voice.assert_called_once()
+            listener.voice_thread.is_alive.return_value = False
+            d.wait_listener()
+            self.assertEqual(d.stage, 'waiting')
+            self.assertTrue(d.phone_qr.isVisible())
+            self.assertGreater(d.phone_qr.pixmap().width(), 150)
+            c = d.ceremony
+            self.assertIn(c.pairing_code, d.phone_caption.text())
+            results = []
+            d.authenticated.connect(results.append)
+            c.complete(self.response(c, create=True, rp=c.host))
+            c.submit_details(dict(name='Synthetic direct owner', code=c.pairing_code,
+                                  phrase=PasskeyChecks.fake_phrase))
+            d.check_result()
+            self.assertFalse(d.phone_qr.isVisible())
+            c.complete(self.response(c, rp=c.host))
+            d.check_result()
+            self.assertEqual(results, [])
+            c.finish_registration({'skip':True})
+            d.check_result()
+            self.assertEqual(results, [c.result])
+            self.assertIsNone(d.capture_worker)
+            listener.start_voice.assert_called_once_with(listener.cloud_voice)
 
     def test_ui_real_crypto_result_and_closed_sensorless_ceremony(self):
         opened = []

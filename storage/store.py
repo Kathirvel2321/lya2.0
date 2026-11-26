@@ -189,6 +189,12 @@ def _init_schema(db: sqlite3.Connection, *, use_search: bool = True):
             created_at TEXT NOT NULL
         );
 
+        CREATE TABLE IF NOT EXISTS owner_phone_gate (
+            person_id TEXT PRIMARY KEY REFERENCES owner_passkeys(person_id),
+            origin TEXT NOT NULL,
+            phrase_verifier TEXT NOT NULL
+        );
+
         CREATE TABLE IF NOT EXISTS pending_faces (
             pending_id TEXT PRIMARY KEY,
             thumbnail_path TEXT,
@@ -419,16 +425,25 @@ def get_owner_passkey(db_path: Path | None = None) -> dict | None:
                          (owners[0][0],)).fetchone()
         if row is None:
             raise PermissionError("Existing owner has no passkey. Trusted migration is required; nothing was replaced.")
-        return dict(person_id=owners[0][0], display_name=owners[0][1], credential=row[0],
+        result = dict(person_id=owners[0][0], display_name=owners[0][1], credential=row[0],
                     user_handle=row[1], counter=row[2], backup_eligible=bool(row[3]))
+        phone = db.execute("SELECT origin,phrase_verifier FROM owner_phone_gate WHERE person_id=?",
+                           (owners[0][0],)).fetchone()
+        if phone is not None:
+            result.update(origin=phone[0], phrase_verifier=phone[1])
+        return result
 
 
-def register_passkey_owner(display_name, credential, user_handle, counter, backup_eligible, db_path=None):
+def register_passkey_owner(display_name, credential, user_handle, counter, backup_eligible, db_path=None,
+                           *, phone_gate=None, phone_profiles=None, still_current=None):
     """Trusted WebAuthn adapter only: commit after a fresh UV signed assertion."""
     name = display_name.strip()
     if not name or len(name) > 80 or any(ord(c) < 32 for c in name):
         raise ValueError("Use a printable owner name of 1 to 80 characters.")
     _validate_public_passkey(credential, user_handle, counter, backup_eligible)
+    if phone_profiles is not None and phone_gate is None:
+        raise PermissionError('Phone profiles require signed phone enrollment.')
+    profiles = checked_owner_profiles(phone_profiles) if phone_profiles is not None else None
     person_id = 'p_' + secrets.token_urlsafe(12)
     now = datetime.datetime.now().isoformat()
     with store_connection(db_path) as db:
@@ -437,8 +452,14 @@ def register_passkey_owner(display_name, credential, user_handle, counter, backu
         db.execute("INSERT INTO people VALUES(?,?,'admin',?,1)", (person_id, name, now))
         db.execute("INSERT INTO owner_passkeys VALUES(?,?,?,?,?,?)",
                    (person_id, credential, user_handle, counter, int(backup_eligible), now))
+        if phone_gate is not None:
+            db.execute("INSERT INTO owner_phone_gate VALUES(?,?,?)", (person_id, *phone_gate))
+        if profiles is not None:
+            _write_owner_profiles(db, person_id, profiles, now, db_path)
         db.execute("INSERT INTO audit_events(time,action_type,outcome,person_id) VALUES(?,?,?,?)",
                    (now, 'primary_admin_registered', 'phone_passkey_uv', person_id))
+        if still_current is not None:
+            still_current()
     return person_id
 
 
@@ -457,8 +478,12 @@ def accept_passkey_assertion(expected, counter, backup_eligible, db_path=None):
         owners = db.execute("SELECT person_id FROM people WHERE role='admin' AND active=1 LIMIT 2").fetchall()
         row = db.execute("SELECT credential,user_handle,counter,backup_eligible FROM owner_passkeys WHERE person_id=?",
                          (expected['person_id'],)).fetchone()
+        phone = db.execute("SELECT origin,phrase_verifier FROM owner_phone_gate WHERE person_id=?",
+                           (expected['person_id'],)).fetchone()
+        expected_phone = (expected['origin'], expected['phrase_verifier']) if 'origin' in expected else None
         if (owners != [(expected['person_id'],)] or row is None
                 or row != (expected['credential'], expected['user_handle'], expected['counter'], int(expected['backup_eligible']))
+                or phone != expected_phone
                 or backup_eligible != expected['backup_eligible']):
             raise PermissionError("Owner or credential changed during verification.")
         # Synced passkeys commonly use zero counters; fresh challenges still prevent replay.
@@ -512,13 +537,10 @@ def _profile_owner(db, session, expected=None):
     return row[0]
 
 
-def save_owner_profiles(session, expected_credential, profiles, *, consent=False, db_path=None, startup_recognition=False):
-    """Trusted native enrollment only: atomic face+voice save after explicit review."""
+def checked_owner_profiles(profiles):
     from security.owner_profiles import FACE_MODEL, VOICE_MODEL, checked_vector, matches
-    if consent is not True or type(expected_credential) is not str or type(profiles) is not dict or set(profiles) != {'face', 'voice'}:
-        raise PermissionError('Explicit profile consent and signed owner binding required.')
-    if type(startup_recognition) is not bool:
-        raise ValueError('Explicit startup recognition consent required.')
+    if type(profiles) is not dict or set(profiles) != {'face', 'voice'}:
+        raise ValueError('Both owner recognition profiles are required.')
     checked = {}
     for kind, model in (('face', FACE_MODEL), ('voice', VOICE_MODEL)):
         samples = profiles[kind]
@@ -527,10 +549,31 @@ def save_owner_profiles(session, expected_credential, profiles, *, consent=False
         checked[kind] = [checked_vector(v, model) for v in samples]
         if not all(matches(v, [checked[kind][0]], model) for v in checked[kind][1:]):
             raise ValueError('Recognition samples are inconsistent. Nothing was saved.')
-    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    return checked
+
+
+def _write_owner_profiles(db, person_id, checked, now, db_path):
+    from security.owner_profiles import FACE_MODEL, VOICE_MODEL
     target = Path(db_path) if db_path is not None else get_data_dir()/'lya.db.enc'
     if target.parent.is_symlink() or target.parent.is_junction():
         raise PermissionError('Owner profile directory cannot be a link.')
+    from tools.retire_legacy_owner import protect_directory
+    protect_directory(target.parent)
+    for kind, model in (('face', FACE_MODEL), ('voice', VOICE_MODEL)):
+        db.executemany(f'INSERT INTO {kind}_templates(person_id,embedding_enc,model_version,quality,created_at) VALUES(?,?,?,?,?)',
+            [(person_id, vault.encrypt_text(json.dumps(v)), model, 1.0, now) for v in checked[kind]])
+    db.execute('INSERT INTO audit_events(time,action_type,outcome,person_id) VALUES(?,?,?,?)',
+               (now, 'owner_profile_consent', 'local_face_voice_v1', person_id))
+
+
+def save_owner_profiles(session, expected_credential, profiles, *, consent=False, db_path=None, startup_recognition=False):
+    """Trusted native enrollment only: atomic face+voice save after explicit review."""
+    if consent is not True or type(expected_credential) is not str or type(profiles) is not dict or set(profiles) != {'face', 'voice'}:
+        raise PermissionError('Explicit profile consent and signed owner binding required.')
+    if type(startup_recognition) is not bool:
+        raise ValueError('Explicit startup recognition consent required.')
+    checked = checked_owner_profiles(profiles)
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     with store_connection(db_path) as db:
         _profile_owner(db, session, expected_credential)
 
@@ -540,14 +583,7 @@ def save_owner_profiles(session, expected_credential, profiles, *, consent=False
         for kind in checked:
             if db.execute(f'SELECT 1 FROM {kind}_templates WHERE person_id=?', (session.person_id,)).fetchone():
                 raise PermissionError('Owner recognition profiles cannot be overwritten by registration.')
-        from tools.retire_legacy_owner import protect_directory
-        protect_directory(target.parent)
-        for kind, model in (('face', FACE_MODEL), ('voice', VOICE_MODEL)):
-            db.executemany(f'INSERT INTO {kind}_templates(person_id,embedding_enc,model_version,quality,created_at) VALUES(?,?,?,?,?)',
-                [(session.person_id, vault.encrypt_text(json.dumps(v)), model, 1.0, now) for v in checked[kind]])
-        # Quality denotes accepted capture, not a fabricated identity confidence or PAD score.
-        db.execute('INSERT INTO audit_events(time,action_type,outcome,person_id) VALUES(?,?,?,?)',
-                   (now, 'owner_profile_consent', 'local_face_voice_v1', session.person_id))
+        _write_owner_profiles(db, session.person_id, checked, now, db_path)
         _profile_owner(db, session, expected_credential)
 
 

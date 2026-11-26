@@ -194,6 +194,23 @@ class ProfileUIChecks(SyntheticPasskeys, unittest.TestCase):
         self.assertEqual(store.owner_profiles(session, self.db), profiles())
         self.assertTrue(d.closed)
 
+    def test_phone_proof_can_continue_without_laptop_face_or_voice(self):
+        d, listener, session, authenticated = self.prepare()
+        self.assertTrue(d.skip_profiles.isVisible())
+        d.skip_profiles.click()
+        self.assertEqual(authenticated, [session])
+        self.assertTrue(d.closed)
+        self.assertIsNone(d.capture_worker)
+        listener.stop_voice.assert_not_called()
+        self.assertEqual(store.owner_profiles(session, self.db), {'face': [], 'voice': []})
+
+    def test_skip_refuses_expired_phone_proof(self):
+        d, _, session, authenticated = self.prepare()
+        d.profile_session = replace(session, verified_until=time.time() - 1)
+        d.skip_profiles.click()
+        self.assertFalse(authenticated)
+        self.assertEqual(d.stage, 'failed')
+
     def test_online_listener_must_exit_before_models_or_sensors_start(self):
         d, listener, _, authenticated = self.prepare(alive=True)
         d.handle_voice('I agree')

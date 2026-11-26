@@ -2,3 +2,5 @@
 PySide6-Essentials==6.11.2
 # Verified phone passkeys; no laptop biometric model required.
 fido2==2.2.1
+# Local QR rendering for the opt-in private phone gate.
+qrcode==8.2

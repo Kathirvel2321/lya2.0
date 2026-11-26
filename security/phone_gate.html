@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LYA owner access</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui,sans-serif;color:#e7e8ed;background:#0c1119}
+body{margin:0;min-height:100svh;display:grid;place-items:center}
+main{width:min(30rem,calc(100% - 2rem));box-sizing:border-box;padding:2rem 1.4rem;margin:1rem;
+background:linear-gradient(155deg,#21263a,#111925 52%,#10141e);border:1px solid #46516a;border-radius:1.6rem}
+h1{font-size:1.8rem;letter-spacing:-.04em;margin:.5rem 0;line-height:1.1}
+p,label,pre{line-height:1.5}p{color:#c1cce0}
+.brand{color:#b5a8ed;letter-spacing:.2em;font-size:.75rem;margin:0 0 1.1rem}
+form{margin-top:1.3rem}label{display:block;margin:.85rem 0 .3rem}
+input,button{box-sizing:border-box;width:100%;font:inherit;min-height:3rem;border-radius:.7rem}
+input{background:#101523;color:#f6f5fb;border:1px solid #6f7991;padding:.6rem .75rem}
+button{margin-top:.85rem;background:#c4b6f7;color:#18142a;border:1px solid transparent;font-weight:650}
+button:disabled{opacity:.55}button:focus-visible,input:focus-visible{outline:2px solid #ded6ff;outline-offset:3px}
+#cancel,#skip{background:transparent;color:#c1cce0;border-color:#56617a}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid #4e5b73;border-radius:.7rem;padding:1rem}
+video{width:100%;aspect-ratio:4/3;object-fit:cover;transform:scaleX(-1);border-radius:.7rem}
+[hidden]{display:none!important}
+</style>
+<main aria-labelledby="title">
+  <p class="brand">LYA</p>
+  <h1 id="title">Owner access</h1>
+  <p id="status" role="status" aria-live="polite">Checking this invitation…</p>
+  <pre id="context" hidden></pre>
+  <form id="details" autocomplete="off" hidden>
+    <div id="pairing" hidden>
+      <label for="name">What should LYA call you?</label>
+      <input id="name" type="text" maxlength="80">
+      <label for="code">Pairing code shown on your laptop</label>
+      <input id="code" type="password" inputmode="numeric" pattern="[0-9]{8}" maxlength="8">
+    </div>
+    <label id="phrase-label" for="phrase">Owner passphrase</label>
+    <input id="phrase" type="password" minlength="16" maxlength="200" required autocomplete="off">
+    <button id="save" type="submit">Continue</button>
+  </form>
+  <video id="preview" playsinline muted hidden aria-label="Live view from your phone camera"></video>
+  <button id="verify" type="button" hidden></button>
+  <button id="skip" type="button" hidden>Finish without recognition profiles</button>
+  <button id="cancel" type="button" hidden>Cancel</button>
+</main>
+<script nonce="__NONCE__">
+let token = location.hash.slice(1);
+let media, audio, expiry, heartbeat, recordingTimer, frames = [], voices = [], captureActive = false;
+history.replaceState(null, '', location.pathname);
+const $ = id => document.getElementById(id);
+const decode = value => {
+  const encoded = value.replace(/-/g, '+').replace(/_/g, '/');
+  return Uint8Array.from(atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, '=')), c => c.charCodeAt(0));
+};
+const encode = value => btoa(String.fromCharCode(...new Uint8Array(value)))
+  .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const cues = {
+  create: ['Create your phone passkey', 'Use the passkey prompt from your phone to start enrollment.', 'Create passkey'],
+  details: ['Set up your owner profile', 'Enter the code from your laptop and choose a unique passphrase you can keep in your password manager. You will need it for owner sign-in.'],
+  confirm: ['Confirm registration', 'Verify the same passkey again to save your owner name and complete enrollment.', 'Confirm with passkey'],
+  unlock: ['Verify your owner passphrase', 'Enter the owner passphrase to continue to your passkey.'],
+  authenticate: ['Verify your passkey', 'Use the enrolled owner passkey to continue.', 'Verify with passkey']
+};
+async function api(path, data = {}) {
+  const binary = data instanceof Blob;
+  const response = await fetch(path, {method:'POST', cache:'no-store', credentials:'omit',
+    headers:{'Content-Type':binary ? 'application/octet-stream' : 'application/json','X-LYA-Ceremony':token},
+    body:binary ? data : JSON.stringify(data)});
+  if (!response.ok) throw new Error('This attempt was rejected or expired.');
+  return response.json();
+}
+function finish(title, message) {
+  token = '';
+  clearTimeout(expiry);
+  clearCapture();
+  $('details').reset();
+  for (const id of ['details', 'verify', 'cancel', 'context', 'skip']) $(id).hidden = true;
+  $('title').textContent = title;
+  $('status').textContent = message;
+}
+async function fail() {
+  if (token) api('/cancel').catch(() => {});
+  finish('Owner access closed', 'Start a fresh attempt on your laptop.');
+}
+async function showStep() {
+  const step = await api('/options');
+  if (!token) return;
+  clearTimeout(expiry);
+  expiry = setTimeout(() => finish('Invitation expired', 'Start a fresh attempt on your laptop.'), step.remaining);
+  if (!cues[step.phase]) {
+    showProfiles(step);
+    return;
+  }
+  const [title, message, action] = cues[step.phase];
+  const form = step.phase === 'details' || step.phase === 'unlock';
+  $('title').textContent = step.context ? 'Approve one LYA action' : title;
+  $('status').textContent = step.context ? 'Review this exact action before approving.' : message;
+  $('context').textContent = step.context;
+  $('context').hidden = !step.context;
+  $('cancel').hidden = false;
+  $('details').hidden = !form;
+  $('pairing').hidden = step.phase !== 'details';
+  $('name').required = $('code').required = step.phase === 'details';
+  $('phrase').autocomplete = step.phase === 'details' ? 'new-password' : 'current-password';
+  $('save').disabled = false;
+  $('verify').hidden = form;
+  if (form) return;
+  const options = step.publicKey;
+  options.challenge = decode(options.challenge);
+  if (options.user) options.user.id = decode(options.user.id);
+  for (const key of ['allowCredentials', 'excludeCredentials']) {
+    if (options[key]) options[key] = options[key].map(c => ({...c, id:decode(c.id)}));
+  }
+  $('verify').textContent = step.context ? 'Approve with passkey' : action;
+  $('verify').disabled = false;
+  $('verify').onclick = async () => {
+    $('verify').disabled = true;
+    try {
+      const create = step.phase === 'create';
+      const credential = await (create ? navigator.credentials.create({publicKey:options})
+                                       : navigator.credentials.get({publicKey:options}));
+      if (!token) return;
+      const reply = credential.response;
+      const response = {clientDataJSON:encode(reply.clientDataJSON)};
+      if (create) response.attestationObject = encode(reply.attestationObject);
+      else Object.assign(response, {authenticatorData:encode(reply.authenticatorData),
+        signature:encode(reply.signature),userHandle:reply.userHandle ? encode(reply.userHandle) : null});
+      const result = await api('/complete', {id:credential.id, rawId:encode(credential.rawId),
+        type:credential.type, response, clientExtensionResults:credential.getClientExtensionResults()});
+      if (result.details || result.profiles) await showStep();
+      else finish('Owner verified', 'Return to LYA on your laptop.');
+    } catch (_) { fail(); }
+  };
+}
+$('details').onsubmit = async event => {
+  event.preventDefault();
+  $('save').disabled = true;
+  const data = {phrase:$('phrase').value};
+  if (!$('pairing').hidden) Object.assign(data, {name:$('name').value, code:$('code').value});
+  $('details').reset();
+  try {
+    const result = await api('/details', data);
+    if (!token) return;
+    token = result.token;
+    await showStep();
+  }
+  catch (_) { fail(); }
+};
+
+function action(label, handler) {
+  const button = $('verify');
+  button.textContent = label;
+  button.onclick = handler;
+  button.hidden = false;
+  button.disabled = false;
+}
+function stopMedia() {
+  clearTimeout(recordingTimer);
+  media?.getTracks().forEach(track => track.stop());
+  media = null;
+  $('preview').srcObject = null;
+  $('preview').hidden = true;
+  audio?.close().catch(() => {});
+  audio = null;
+}
+function clearCapture() {
+  captureActive = false;
+  clearTimeout(heartbeat);
+  stopMedia();
+  frames.forEach(frame => frame.fill(0));
+  voices.forEach(voice => voice.fill(0));
+  frames = [];
+  voices = [];
+}
+function showProfiles(step) {
+  $('details').hidden = true;
+  $('context').hidden = true;
+  $('verify').hidden = true;
+  $('skip').hidden = step.phase === 'processing_profiles';
+  $('skip').disabled = false;
+  $('title').textContent = 'Face and voice profiles';
+  if (step.phase === 'processing_profiles') {
+    $('status').textContent = 'Checking your samples on the laptop.';
+    setTimeout(() => { if (token) showStep().catch(fail); }, 850);
+  } else if (step.phase === 'review_profiles') {
+    $('title').textContent = 'Save your owner profile';
+    $('status').textContent = 'Three face and three voice samples passed the checks. Save the encrypted recognition profiles to your laptop?';
+    action('Save profiles and finish', () => finalize(false));
+  } else if (step.captureReady && navigator.mediaDevices?.getUserMedia) {
+    const explanation = 'LYA uses your face and voice for recognition. The laptop processes samples in memory and saves encrypted profiles. Owner access still requires your passkey.';
+    $('status').textContent = step.phase === 'profile_retry' ? 'The samples could not be accepted. Try in a well-lit, quiet room. ' + explanation : explanation;
+    action('Agree and open camera', startFace);
+  } else {
+    $('status').textContent = 'Phone capture could not be started or the samples did not pass the checks. You can finish without profiles or cancel.';
+  }
+}
+async function finalize(skip) {
+  $('verify').disabled = true;
+  $('skip').disabled = true;
+  clearCapture();
+  try {
+    await api('/finish', {skip});
+    finish('Owner registered', 'Return to LYA on your laptop.');
+  } catch (_) { fail(); }
+}
+async function startFace() {
+  $('verify').disabled = true;
+  captureActive = true;
+  heartbeat = setTimeout(checkCapture, 1400);
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'user', width:{ideal:640}, height:{ideal:480}}, audio:false
+    });
+    if (!captureActive) { stream.getTracks().forEach(track => track.stop()); return; }
+    media = stream;
+    const video = $('preview');
+    video.srcObject = stream;
+    video.hidden = false;
+    await video.play();
+    if (captureActive) facePrompt();
+  } catch (_) {
+    if (captureActive) captureError('Camera access failed. Check the phone permission and try again.');
+  }
+}
+async function checkCapture() {
+  if (!captureActive) return;
+  heartbeat = setTimeout(fail, 2500);
+  try {
+    const state = await api('/options');
+    clearTimeout(heartbeat);
+    if (!captureActive) return;
+    if (state.phase !== 'profiles' && state.phase !== 'profile_retry') return fail();
+    heartbeat = setTimeout(checkCapture, 1400);
+  } catch (_) { if (captureActive) fail(); }
+}
+function facePrompt() {
+  const direction = ['Look at the camera.', 'Turn your head slightly left.', 'Turn your head slightly right.'];
+  $('title').textContent = 'Face view ' + (frames.length + 1) + ' of 3';
+  $('status').textContent = direction[frames.length] + ' Keep your face centered and well lit.';
+  action('Capture face view', () => {
+    const video = $('preview');
+    if (!video.videoWidth || video.readyState < 2) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 480;
+    const context = canvas.getContext('2d');
+    const width = Math.min(video.videoWidth, video.videoHeight * 4 / 3);
+    const height = width * 3 / 4;
+    context.drawImage(video, (video.videoWidth - width) / 2, (video.videoHeight - height) / 2,
+      width, height, 0, 0, 640, 480);
+    frames.push(context.getImageData(0, 0, 640, 480).data);
+    canvas.width = 0;
+    if (frames.length < 3) facePrompt();
+    else { stopMedia(); voicePrompt(); }
+  });
+}
+function voicePrompt() {
+  $('title').textContent = 'Voice sample ' + (voices.length + 1) + ' of 3';
+  const prompts = [
+    'The morning light came in through the window.',
+    'I take my time and speak in my natural voice.',
+    'Every good question gives us a place to start.'
+  ];
+  $('status').textContent = 'Read this line naturally after tapping record. “' + prompts[voices.length] + '”';
+  action('Record five seconds', recordVoice);
+}
+async function recordVoice() {
+  $('verify').disabled = true;
+  try {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    const context = new Audio();
+    audio = context;
+    const resumed = context.resume().then(() => true, () => false);
+    const stream = await navigator.mediaDevices.getUserMedia({audio:{channelCount:1}, video:false});
+    if (!captureActive) { stream.getTracks().forEach(track => track.stop()); return; }
+    media = stream;
+    if (!await resumed) throw Error('Microphone is unavailable.');
+    if (!captureActive) return;
+    const rate = context.sampleRate;
+    const recording = new Float32Array(Math.round(5 * rate));
+    const source = context.createMediaStreamSource(stream);
+    const processor = context.createScriptProcessor(2048, 1, 1);
+    let written = 0;
+    source.connect(processor);
+    processor.connect(context.destination);
+    recordingTimer = setTimeout(() => captureError('The microphone did not deliver a complete recording.'), 9000);
+    $('title').textContent = 'Recording · Speak now';
+    processor.onaudioprocess = async event => {
+      const samples = event.inputBuffer.getChannelData(0).subarray(0, recording.length - written);
+      recording.set(samples, written);
+      written += samples.length;
+      if (written < recording.length) return;
+      processor.onaudioprocess = null;
+      processor.disconnect();
+      source.disconnect();
+      stopMedia();
+      try {
+        const Offline = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        const offline = new Offline(1, 80000, 16000);
+        const buffer = offline.createBuffer(1, recording.length, rate);
+        buffer.copyToChannel(recording, 0);
+        recording.fill(0);
+        const input = offline.createBufferSource();
+        input.buffer = buffer;
+        input.connect(offline.destination);
+        input.start(0);
+        const channel = (await offline.startRendering()).getChannelData(0);
+        if (!captureActive) return;
+        const bytes = new Uint8Array(160000);
+        const view = new DataView(bytes.buffer);
+        for (let i = 0; i < channel.length; i++) {
+          view.setInt16(i * 2, Math.max(-1, Math.min(1, channel[i])) * 32767, true);
+        }
+        channel.fill(0);
+        voices.push(bytes);
+        if (voices.length < 3) voicePrompt();
+        else {
+          const upload = new Blob([...frames, ...voices], {type:'application/octet-stream'});
+          clearCapture();
+          $('skip').disabled = true;
+          $('status').textContent = 'Sending your samples to the laptop over the private connection.';
+          await api('/profiles', upload);
+          if (token) await showStep();
+        }
+      } catch (_) { captureError('The samples could not be sent or processed. Try again.'); }
+    };
+  } catch (_) {
+    if (captureActive) captureError('Microphone access failed. Check the phone permission and try again.');
+  }
+}
+function captureError(message) {
+  if (!token) return;
+  clearCapture();
+  $('title').textContent = 'Capture paused';
+  $('status').textContent = message;
+  $('skip').disabled = false;
+  action('Return to profile setup', () => showStep().catch(fail));
+}
+$('skip').onclick = () => finalize(true);
+window.addEventListener('pagehide', clearCapture);
+$('cancel').onclick = fail;
+if (token && window.isSecureContext && window.PublicKeyCredential) showStep().catch(fail);
+else finish('Open a fresh invitation', 'Scan the QR from your laptop using your phone browser.');
+</script>
+</html>
