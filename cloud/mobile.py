@@ -1,9 +1,9 @@
 """Private HTTPS proxy target: paired public conversation with opt-in research, no private vault.
 
-Run behind Tailscale Serve on loopback. Public authentication metadata is protected
-by filesystem permissions; conversation/audio/biometrics are never persisted here.
+Run behind Tailscale Serve on loopback. The optional linked-device mode retains
+recent conversation encrypted on the server.
 """
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 import hashlib
 import base64
 import io
@@ -126,12 +126,14 @@ class AuthStore:
 
 
 class Connection:
-    def __init__(self,origin,store,infer,clock=time.time,transcribe=None,speak=None,researcher=None,shared_memory=None):
+    def __init__(self,origin,store,infer,clock=time.time,transcribe=None,speak=None,researcher=None,shared_memory=None,
+                 device_links=None):
         self.origin=checked_origin(origin)
         self.store,self.infer,self.clock=store,infer,clock
         self.transcriber=transcribe
         self.researcher=researcher
         self.shared_memory=shared_memory
+        self.links=device_links
         self.speaker=speak
         self.audio_slots=threading.BoundedSemaphore(1)
         self.rp=urlsplit(origin).hostname
@@ -167,10 +169,13 @@ class Connection:
             if mode=='pair' and self.store.invited(token,now):
                 options,state=self.server.register_begin(dict(id=handle,name='LYA owner',displayName='LYA owner'),
                     resident_key_requirement='required',user_verification='required')
-            elif mode in ('login','owner') and record:
+            elif mode in ('login','owner','link') and record:
+                if mode=='link':
+                    self.link_request(token,record)
                 handle=websafe_decode(record['handle'])
+                challenge=hashlib.sha256(('LYA link\0'+token).encode()+secrets.token_bytes(32)).digest() if mode=='link' else None
                 options,state=self.server.authenticate_begin([AttestedCredentialData(websafe_decode(record['data']))],
-                                                              user_verification='required')
+                                                              user_verification='required',challenge=challenge)
             else:raise PermissionError('Pair on the laptop first or sign in with the paired passkey.')
             ticket=secrets.token_urlsafe(32)
             self.ceremonies[ticket]=dict(mode=mode,token=token,handle=handle,record=record,state=state,until=now+120,
@@ -214,6 +219,9 @@ class Connection:
                 c['record']['counter']=auth.counter
                 c['record']['stamp']=self.store.commit(c['token'],c['record'],self.clock())
             else:self.store.accept(c['record'],auth.counter,eligible)
+            if c['mode']=='link':
+                self.links.approve(c['token'],c['record']['stamp'])
+                return {'linked':True},None
             if c['mode']=='owner':
                 s=self.session(c['session_token'])
                 s['owner_until']=min(s['until'],self.clock()+300)
@@ -239,6 +247,8 @@ class Connection:
                 or record['stamp']!=s['stamp']):
             self.sessions.pop(digest(token),None)
             raise PermissionError('Session expired or revoked; sign in again.')
+        if s.get('device'):
+            self.links.check(s['device'])
         return s
 
     def status(self,token):
@@ -249,7 +259,47 @@ class Connection:
                         owner_expires_in=max(0,int(s['owner_until']-self.clock())),
                         scope='public_chat',voice_available=self.transcriber is not None)
             if self.shared_memory is not None:result['shared_memory_demo']=True
+            if self.links is not None:result['linked_history']=True
             return result
+
+    def link_request(self,link,record=None):
+        record=record or self.store.credential()
+        if self.links is None or not record:
+            raise PermissionError('Set up the service phone passkey first.')
+        row=self.links.request(link,record['stamp'])
+        return {key:row[key] for key in ('name','code')}
+
+    def device_request(self,path,data,bearer=None,phone=None):
+        if self.links is None:
+            raise PermissionError('Device linking is disabled.')
+        with self.lock:
+            if path=='/device/start' and set(data)=={'name'}:
+                record=self.store.credential()
+                if not record:raise PermissionError('Set up the service phone passkey first.')
+                return self.links.start(data['name'],record['stamp'])
+            if path=='/device/preview' and set(data)=={'link'}:
+                return self.link_request(data['link'])
+            if path=='/device/manage' and (not data or set(data)=={'remove'} and type(data['remove']) is str):
+                session=self.session(phone)
+                if self.clock()>=session['owner_until']:raise PermissionError('Verify owner first.')
+                return {'devices':self.links.devices(session['stamp'],data.get('remove'))}
+            if path=='/device/history' and not data:
+                stamp=self.links.check(bearer) if bearer else self.session(phone)['stamp']
+                return {'history':self.links.history(stamp)}
+            if path!='/device/chat' or set(data)!={'id','text'}:
+                raise ValueError('Unknown linked-device operation.')
+            stamp=self.links.check(bearer)
+            if type(data['text']) is not str or re.match(r'^shared memory\b',data['text'].strip(),re.I):
+                raise ValueError('Linked devices can send conversation messages.')
+            record=self.store.credential()
+            if not record or record['stamp']!=stamp:raise PermissionError('Phone credential changed.')
+            token=secrets.token_urlsafe(32)
+            self.sessions[digest(token)]=dict(until=self.clock()+90,credential=record['data'],stamp=stamp,
+                                             active=None,history=[],used=set(),owner_until=0,device=bearer)
+        try:
+            return self.chat(token,data['id'],data['text'])
+        finally:
+            with self.lock:self.sessions.pop(digest(token),None)
 
     @contextmanager
     def audio_job(self):
@@ -318,7 +368,8 @@ class Connection:
             raise ValueError('Use a question of up to 4000 characters.')
         if type(spoken) is not bool:raise ValueError('Invalid voice request.')
         shared=re.match(r'^shared memory\b',text.strip(),re.I) is not None
-        with self.job(token,request_id,shared_digest=digest(text) if shared else None) as (s,cancel):
+        with (self.links.turn() if self.links and not shared else nullcontext(),
+              self.job(token,request_id,shared_digest=digest(text) if shared else None) as (s,cancel)):
             with self.lock:
                 self.session(token)
                 if cancel.is_set():raise InterruptedError('Cancelled.')
@@ -330,7 +381,11 @@ class Connection:
                     system=system.replace('No tools, private memories, files, cameras or web search are connected to this phone route. ',
                         'Public web research is available for routed research requests. No new search was performed on this ordinary chat turn. '
                         'No private memories, files, cameras or device actions are connected. ')
-                messages=[] if shared else messages_for(system,s['history'],text.strip())
+                if self.links and not shared:
+                    self.links.check_turn(s['stamp'],request_id)
+                    history=self.links.history(s['stamp'])
+                else:history=s['history']
+                messages=[] if shared else messages_for(system,history,text.strip())
             mode=None if shared else research_mode(text) or ('smart' if needs_current_sources(text) else None)
             if shared:
                 if self.shared_memory is None:raise ValueError('Shared memory is not configured on this connection.')
@@ -380,7 +435,9 @@ class Connection:
                     if expiry is not None and self.clock()>=expiry:raise PermissionError('Shared memory expired before delivery.')
                 if type(answer) is not str or not answer.strip() or len(answer)>8000:raise ValueError('No usable answer.')
                 if shared:s['history'].clear()
-                else:s['history']=completed_history(s['history'],text.strip(),answer)
+                elif self.links:
+                    self.links.save(s['stamp'],completed_history(history,text.strip(),answer),request_id,s.get('device'))
+                else:s['history']=completed_history(history,text.strip(),answer)
                 return result
 
 
@@ -483,6 +540,13 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(200,app.begin(data['mode'],data.get('token'),self.token() if data['mode']=='owner' else None))
             if self.path=='/auth/complete' and set(data)=={'ticket','response'} and type(data['ticket']) is str:
                 body,cookie=app.complete(data['ticket'],data['response']);return self.send(200,body,cookie=cookie)
+            if self.path.startswith('/device/'):
+                auth=self.headers.get_all('Authorization',[])
+                if auth and (len(auth)!=1 or not auth[0].startswith('Bearer ')):
+                    raise PermissionError('Device credential required.')
+                bearer=auth[0][7:] if auth else None
+                phone=self.token() if self.path=='/device/manage' or self.path=='/device/history' and not auth else None
+                return self.send(200,app.device_request(self.path,data,bearer,phone))
             token=self.token()
             if self.path=='/session' and not data:return self.send(200,app.status(token))
             if self.path=='/chat' and {'id','text'}<=set(data)<= {'id','text','spoken'}:

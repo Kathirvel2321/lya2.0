@@ -19,6 +19,7 @@ oracle_known_hosts.local
 desktop/oracle.local.json
 desktop/mobile.local.json
 desktop/shared-memory.local.json
+/.lya-linked/
 shared-memory.local.json
 security/public-archive-identity.local/
 cloud/provider.json

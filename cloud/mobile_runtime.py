@@ -83,9 +83,13 @@ def main():
         packet=json.loads(raw,object_pairs_hook=_unique)
         print(json.dumps(desktop_request(packet,store,memory)))
         return
+    links=None
+    if config.get('linked_history_key') is not None:
+        from cloud.device_links import DeviceLinks
+        links=DeviceLinks.configured(store,config['linked_history_key'],time.time)
     app=Connection(config['origin'],store,infer,transcribe=transcribe if config.get('speech_enabled') is True else None,
                    speak=speak if config.get('reply_voice_enabled') is True else None,
-                   researcher=configured_researcher(config),shared_memory=memory)
+                   researcher=configured_researcher(config),shared_memory=memory,device_links=links)
     http=PrivateHTTP(('127.0.0.1',8766),app)
     try:http.serve_forever(poll_interval=.2)
     finally:http.server_close()

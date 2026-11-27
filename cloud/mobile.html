@@ -28,7 +28,7 @@ button,input{font:inherit;color:inherit;border:1px solid #bed9e32e;background:#9
 @media(max-height:450px){#chat{max-height:20dvh}}
 </style></head><body data-state="locked"><main>
 <div class="panel">
-<header><h1>LYA</h1><details id="session" hidden><summary aria-label="Connection settings">Connection</summary><div class="session-content"><p id="identity" class="muted">Public conversation.</p><button id="owner" type="button">Verify owner</button><button id="lock" type="button">Lock</button></div></details></header>
+<header><h1>LYA</h1><details id="session" hidden><summary aria-label="Connection settings">Connection</summary><div class="session-content"><p id="identity" class="muted">Public conversation.</p><button id="owner" type="button">Verify owner</button><button id="refresh-chat" type="button" hidden>Refresh synced chat</button><button id="devices" type="button" hidden>Linked devices</button><div id="device-list"></div><button id="lock" type="button">Lock</button></div></details></header>
 <h2 class="heading">Right here with you.</h2>
 <section id="auth"><p>One LYA. Your devices.</p><button id="sign">Sign in with passkey</button><p class="muted">First visit? Say “connect my phone” in the laptop LYA and approve pairing there.</p></section>
 <section id="chat" hidden tabindex="0" aria-label="Current conversation">
@@ -51,6 +51,8 @@ button,input{font:inherit;color:inherit;border:1px solid #bed9e32e;background:#9
 </main><script nonce="__NONCE__">
 'use strict';
 let invite=location.hash.slice(1);history.replaceState(null,'',location.pathname);
+const link=invite.startsWith('link=')?invite.slice(5):'';
+if(link)invite='';
 const $=id=>document.getElementById(id),status=$('status');
 function clearConversation(){$('recent').replaceChildren();$('question').textContent='';$('answer').textContent='';$('text').value='';$('chat').scrollTop=0}
 function archiveExchange(){if(!$('question').textContent||!$('answer').textContent)return;
@@ -73,15 +75,39 @@ function controls(){const live=!$('auth').hidden; $('presence').disabled=live||!
 function cancelTurn(){const id=requestId;generation++;request?.abort();request=null;requestId=null;stopCapture();silence();lastAudio=null;
  if(id)api('/stop',{id}).catch(()=>{});return generation}
 function locked(){conversation=false;typing=false;resumeAfterTyping=false;backgroundResume=false;authenticating=false;cancelTurn();playerContext?.close().catch(()=>{});playerContext=null;clearTimeout(sessionTimer);clearTimeout(ownerTimer);pending=null;sharedRetry=null;available=false;
+ $('device-list').replaceChildren();
  $('auth').hidden=false;$('chat').hidden=true;$('session').hidden=true;$('composer').hidden=true;clearConversation();$('sign').disabled=false;$('sign').textContent=invite?'Pair with phone passkey':'Sign in with passkey';state('locked')}
 function connected(s,auto=true){$('auth').hidden=true;$('chat').hidden=false;$('session').hidden=false;$('composer').hidden=false;
  available=s.voice_available&&!!navigator.mediaDevices?.getUserMedia&&!!window.MediaRecorder&&!!window.AudioContext&&!!window.OfflineAudioContext;
  $('identity').textContent=s.owner_verified?'Owner verified. Private actions still need separate approval.':'Public conversation. Private memory and device actions are not connected.';
  if(s.shared_memory_demo)$('identity').textContent=s.owner_verified?'Owner verified. Shared demo memory is available.':'Verify owner to use shared demo memory. Private memory remains disconnected.';
+ $('refresh-chat').hidden=!s.linked_history;$('devices').hidden=!s.linked_history;
  clearTimeout(sessionTimer);sessionTimer=setTimeout(()=>{locked();status.textContent='Session expired. Sign in again.'},s.expires_in*1000);
  clearTimeout(ownerTimer);if(s.owner_verified)ownerTimer=setTimeout(()=>{$('identity').textContent='Owner verification expired. Public conversation.'},s.owner_expires_in*1000);
- state('ready',available?'I’m here.':'Type below to talk with me. Voice is unavailable.');if(auto&&available&&!typing&&!document.hidden)beginConversation()}
-async function restore(auto=true){if(invite)return;const turn=generation;try{const s=await api('/session',{});if(turn===generation)connected(s,auto)}catch(_){if(turn===generation){locked();status.textContent='Sign in to your private connection.'}}}
+ state('ready',available?'I’m here.':'Type below to talk with me. Voice is unavailable.');
+ if(s.linked_history)refreshChat();
+ if(auto&&available&&!typing&&!document.hidden)beginConversation()}
+async function refreshChat(){
+ const turn=generation;if(request||typing||document.hidden)return;
+ try{const data=await api('/device/history',{});if(turn!==generation||request||typing||document.hidden)return;
+  $('recent').replaceChildren();$('question').textContent='';$('answer').textContent='';
+  for(let i=0;i<data.history.length;i+=2){$('question').textContent=data.history[i].content;$('answer').textContent=data.history[i+1].content;if(i+2<data.history.length)archiveExchange()}
+ }catch(_){if(turn===generation)status.textContent='Synced chat is unavailable.'}
+}
+$('refresh-chat').onclick=refreshChat;
+async function manageDevices(remove){
+ const turn=generation;
+ try{const data=await api('/device/manage',remove?{remove}:{});
+  if(turn!==generation||document.hidden)return;
+  $('device-list').replaceChildren();
+  for(const device of data.devices){const button=document.createElement('button');button.type='button';
+   button.textContent='Unlink '+device.name;button.onclick=()=>{if(confirm('Unlink '+device.name+'?'))manageDevices(device.id)};
+   $('device-list').append(button)}
+  if(!data.devices.length)$('device-list').textContent='No linked laptops.';
+ }catch(_){if(turn===generation)status.textContent='Verify owner to manage linked devices.'}
+}
+$('devices').onclick=()=>manageDevices();
+async function restore(auto=true){if(invite||link)return;const turn=generation;try{const s=await api('/session',{});if(turn===generation)connected(s,auto)}catch(_){if(turn===generation){locked();status.textContent='Sign in to your private connection.'}}}
 async function ensurePlayer(){if(!playerContext||playerContext.state==='closed')playerContext=new AudioContext();const current=playerContext;let timer;try{await Promise.race([current.resume(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Tap the crystal once to enable voice, or type below.')),1500)})]);if(current.state!=='running')throw Error('Tap the crystal once to enable voice, or type below.')}finally{clearTimeout(timer)}}
 async function authenticate(mode){if(authenticating)return;conversation=false;cancelTurn();const turn=generation;authenticating=true;$('sign').disabled=true;controls();
  // Start audio inside the sign-in gesture, before waiting for the passkey/network.
@@ -158,8 +184,31 @@ $('text').onblur=()=>{typing=false;if(resumeAfterTyping&&!$('text').value.trim()
 $('composer').onsubmit=e=>{e.preventDefault();const text=$('text').value.trim();if(!text||text.length>4000)return;$('text').value='';submitQuestion(text,false)};
 $('text').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();$('composer').onsubmit(e)}};
 $('lock').onclick=()=>{const done=api('/logout',{});locked();done.catch(()=>{});status.textContent='Locked.'};
-document.addEventListener('visibilitychange',()=>{if(document.hidden){backgroundResume=conversation||resumeAfterTyping;conversation=false;cancelTurn();authenticating=false;pending=null;$('sign').disabled=false;playerContext?.close().catch(()=>{});playerContext=null;typing=false;resumeAfterTyping=false;$('text').blur();clearConversation();state($('auth').hidden?'paused':'locked','Paused while you’re away.')}else if(!authenticating&&!pending){const auto=backgroundResume;backgroundResume=false;restore(auto)}});
+document.addEventListener('visibilitychange',()=>{if(link)return;if(document.hidden){backgroundResume=conversation||resumeAfterTyping;conversation=false;cancelTurn();authenticating=false;pending=null;$('sign').disabled=false;playerContext?.close().catch(()=>{});playerContext=null;typing=false;resumeAfterTyping=false;$('text').blur();clearConversation();state($('auth').hidden?'paused':'locked','Paused while you’re away.')}else if(!authenticating&&!pending){const auto=backgroundResume;backgroundResume=false;restore(auto)}});
 window.addEventListener('pagehide',()=>{backgroundResume=conversation||resumeAfterTyping;conversation=false;cancelTurn();authenticating=false;pending=null;$('sign').disabled=false;playerContext?.close().catch(()=>{});playerContext=null;clearConversation()});
 window.addEventListener('pageshow',e=>{if(e.persisted){const auto=backgroundResume;backgroundResume=false;restore(auto)}});
-locked();restore();
+async function showLink(){
+ const button=$('sign');button.disabled=true;
+ try{
+  const info=await api('/device/preview',{link});
+  status.textContent='Link '+info.name+' only if the laptop shows code '+info.code+'.';
+  button.textContent='Approve with passkey';
+  const options=await api('/auth/begin',{mode:'link',token:link});
+  button.disabled=false;
+  button.onclick=async()=>{
+   button.disabled=true;
+   try{
+    const o=options.publicKey;o.challenge=dec(o.challenge);
+    o.allowCredentials=o.allowCredentials.map(c=>({...c,id:dec(c.id)}));
+    const c=await navigator.credentials.get({publicKey:o}),r=c.response;
+    await api('/auth/complete',{ticket:options.ticket,response:{
+     id:c.id,rawId:enc(c.rawId),type:c.type,response:{clientDataJSON:enc(r.clientDataJSON),
+     authenticatorData:enc(r.authenticatorData),signature:enc(r.signature),userHandle:r.userHandle?enc(r.userHandle):null}}});
+    status.textContent='Laptop linked. Return to LYA on your laptop.';
+    button.hidden=true;
+   }catch(_){status.textContent='Approval failed. Open a new link from the laptop.'}
+  };
+ }catch(_){status.textContent='This link is unavailable. Start again on the laptop.'}
+}
+locked();if(link)showLink();else restore();
 </script></body></html>

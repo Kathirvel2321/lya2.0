@@ -28,4 +28,6 @@ The [routine setup guide](guides/LYA_ROUTINE_SETUP.md) covers the desktop draft 
 
 The [phone owner gate guide](guides/LYA_PHONE_OWNER_GATE.md) covers the laptop’s private HTTPS setup, first registration from iPhone, and credential storage.
 
+The [linked Windows laptop guide](guides/LYA_LINKED_DESKTOP.md) covers one-time phone approval and continuing a service-hosted conversation.
+
 Add new explanations in the appropriate `docs/` section and new validation evidence in a dated `review/` folder. Keep runtime code, private data and large generated outputs out of the project brain. Append short dated continuity entries with links instead of duplicating entire reports.
