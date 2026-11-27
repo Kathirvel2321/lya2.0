@@ -4,3 +4,5 @@ PySide6-Essentials==6.11.2
 fido2==2.2.1
 # Local QR rendering for the opt-in private phone gate.
 qrcode==8.2
+# Encrypted Web Push to an explicitly paired iPhone Home Screen app.
+pywebpush==2.3.0

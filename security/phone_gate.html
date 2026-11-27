@@ -2,6 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="/owner.webmanifest">
 <title>LYA owner access</title>
 <style>
 :root{color-scheme:dark;font:16px system-ui,sans-serif;color:#e7e8ed;background:#0c1119}
@@ -26,6 +27,11 @@ video{width:100%;aspect-ratio:4/3;object-fit:cover;transform:scaleX(-1);border-r
   <h1 id="title">Owner access</h1>
   <p id="status" role="status" aria-live="polite">Checking this invitation…</p>
   <pre id="context" hidden></pre>
+  <form id="setup-code" autocomplete="off" hidden>
+    <label for="setup-number">Notification setup code from your laptop</label>
+    <input id="setup-number" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" required>
+    <button type="submit">Continue setup</button>
+  </form>
   <form id="details" autocomplete="off" hidden>
     <div id="pairing" hidden>
       <label for="name">What should LYA call you?</label>
@@ -73,7 +79,7 @@ function finish(title, message) {
   clearTimeout(expiry);
   clearCapture();
   $('details').reset();
-  for (const id of ['details', 'verify', 'cancel', 'context', 'skip']) $(id).hidden = true;
+  for (const id of ['setup-code', 'details', 'verify', 'cancel', 'context', 'skip']) $(id).hidden = true;
   $('title').textContent = title;
   $('status').textContent = message;
 }
@@ -86,6 +92,10 @@ async function showStep() {
   if (!token) return;
   clearTimeout(expiry);
   expiry = setTimeout(() => finish('Invitation expired', 'Start a fresh attempt on your laptop.'), step.remaining);
+  if (step.phase === 'notifications') {
+    await prepareNotifications(step.pushKey);
+    return;
+  }
   if (!cues[step.phase]) {
     showProfiles(step);
     return;
@@ -126,7 +136,10 @@ async function showStep() {
         signature:encode(reply.signature),userHandle:reply.userHandle ? encode(reply.userHandle) : null});
       const result = await api('/complete', {id:credential.id, rawId:encode(credential.rawId),
         type:credential.type, response, clientExtensionResults:credential.getClientExtensionResults()});
-      if (result.details || result.profiles) await showStep();
+      if (result.notifications) {
+        token = result.token;
+        await showStep();
+      } else if (result.details || result.profiles) await showStep();
       else finish('Owner verified', 'Return to LYA on your laptop.');
     } catch (_) { fail(); }
   };
@@ -145,6 +158,49 @@ $('details').onsubmit = async event => {
   }
   catch (_) { fail(); }
 };
+
+async function prepareNotifications(key) {
+  $('details').hidden = true;
+  $('title').textContent = 'Enable phone approvals';
+  if (!(matchMedia('(display-mode: standalone)').matches || navigator.standalone)) {
+    $('verify').hidden = true;
+    $('status').textContent = 'Add LYA Owner to your Home Screen. Open it there and start a new notification setup on your laptop.';
+    return;
+  }
+  if (!navigator.serviceWorker || !window.PushManager) {
+    $('verify').hidden = true;
+    $('status').textContent = 'This phone cannot enable LYA notifications.';
+    return;
+  }
+  await navigator.serviceWorker.register('/owner-push.js');
+  const registration = await navigator.serviceWorker.ready;
+  let existing = await registration.pushManager.getSubscription();
+  const expectedKey = decode(key);
+  if (!token) return;
+  $('status').textContent = 'Allow notifications to approve future laptop requests directly on this phone.';
+  action('Allow approval notifications', async () => {
+    $('verify').disabled = true;
+    try {
+      if (existing) {
+        const previousKey = new Uint8Array(existing.options.applicationServerKey || []);
+        if (encode(previousKey) !== encode(expectedKey)) {
+          await existing.unsubscribe();
+          existing = null;
+          $('status').textContent = 'The old phone subscription was cleared. Tap again to connect.';
+          $('verify').disabled = false;
+          return;
+        }
+      }
+      const sub = existing || await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:expectedKey});
+      const {endpoint,keys} = sub.toJSON();
+      await api('/push/subscribe', {endpoint,keys});
+      finish('Phone approvals enabled', 'Return to LYA on your laptop.');
+    } catch (_) {
+      $('status').textContent = 'Notifications could not be enabled. Check LYA’s notification permission and try again.';
+      $('verify').disabled = false;
+    }
+  });
+}
 
 function action(label, handler) {
   const button = $('verify');
@@ -339,6 +395,19 @@ $('skip').onclick = () => finalize(true);
 window.addEventListener('pagehide', clearCapture);
 $('cancel').onclick = fail;
 if (token && window.isSecureContext && window.PublicKeyCredential) showStep().catch(fail);
-else finish('Open a fresh invitation', 'Scan the QR from your laptop using your phone browser.');
+else {
+  finish('LYA Owner', 'Open an approval from a notification, or enter the setup code from your laptop.');
+  $('setup-code').hidden = false;
+  $('setup-code').onsubmit = async event => {
+    event.preventDefault();
+    const code = $('setup-number').value;
+    $('setup-number').value = '';
+    try {
+      token = (await api('/push/claim', {code})).token;
+      $('setup-code').hidden = true;
+      await showStep();
+    } catch (_) { $('status').textContent = 'The code was refused. Check the laptop and try again.'; }
+  };
+}
 </script>
 </html>

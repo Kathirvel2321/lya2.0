@@ -19,10 +19,11 @@ def quiet(owner):
     speech = getattr(owner, 'speech', None)
     if speech is not None and speech.busy: return False
     for name in ('owner_dialog', 'activation_dialog', 'registration_dialog', 'recovery_dialog',
-                 'visitor_review', 'passkey_approval', 'vision_dialog', 'greeting', 'routine_dialog'):
+                 'visitor_review', 'vision_dialog', 'greeting', 'routine_dialog'):
         widget = getattr(owner, name, None)
         if widget is not None and widget.isVisible(): return False
-    return True
+    dialog = getattr(getattr(owner, 'passkey_approval', None), 'dialog', None)
+    return dialog is None or not dialog.isVisible()
 
 
 class NewsDialog(QDialog):

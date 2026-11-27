@@ -195,6 +195,11 @@ def _init_schema(db: sqlite3.Connection, *, use_search: bool = True):
             phrase_verifier TEXT NOT NULL
         );
 
+        CREATE TABLE IF NOT EXISTS owner_push (
+            binding TEXT PRIMARY KEY,
+            payload TEXT NOT NULL
+        );
+
         CREATE TABLE IF NOT EXISTS pending_faces (
             pending_id TEXT PRIMARY KEY,
             thumbnail_path TEXT,

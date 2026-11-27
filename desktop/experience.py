@@ -1,4 +1,5 @@
 """Compact native presentation. No sensors, persistence or inference changes."""
+import os
 import re
 import time
 import wave
@@ -205,6 +206,13 @@ class OrbDesktop(Desktop):
 
     def __init__(self, application, reduced_motion=False):
         super().__init__(application, reduced_motion)
+        try:
+            from storage.store import get_owner_passkey
+            owner = get_owner_passkey(self.brain.db_path)
+        except Exception:
+            owner = None
+        self.brain.request_phone_owner = bool(os.environ.get('LYA_OWNER_PHONE_ORIGIN') or (owner and owner.get('origin')))
+        self.owner_resume = None
         from desktop.setup_speech import SetupSpeech
         self.speech = SetupSpeech(self)
         self.wake_timer = QTimer(self)
@@ -624,7 +632,7 @@ class OrbDesktop(Desktop):
         self.orb.hide()
         self.open_owner_access()
 
-    def open_owner_access(self):
+    def open_owner_access(self, notification_setup=False):
         self.stop_observation()
         from desktop.owner_setup import OwnerSetupDialog
         approval = getattr(self, 'passkey_approval', None)
@@ -634,7 +642,7 @@ class OrbDesktop(Desktop):
         if not hasattr(self, 'owner_dialog') or not self.owner_dialog.isVisible():
             self.owner_dialog = OwnerSetupDialog(
                 reduced_motion=self.orb.reduced_motion, db_path=self.brain.db_path,
-                profile_setup=True, listener=self)
+                profile_setup=True, listener=self, notification_setup=notification_setup)
             self.owner_dialog.speech.speaking.connect(self._speaking_changed)
             self.owner_dialog.authenticated.connect(self.on_passkey_authenticated)
             self.owner_dialog.rejected.connect(self.on_setup_dismissed)
@@ -649,6 +657,9 @@ class OrbDesktop(Desktop):
         self.owner_dialog.show()
         self.owner_dialog.raise_()
         self.owner_dialog.activateWindow()
+        if (self.owner_dialog.stage == 'phone' and self.owner_dialog.direct_phone
+                and not self.owner_dialog.notification_setup and self.brain.request_phone_owner):
+            self.owner_dialog.advance()
 
     def start_voice(self, allow_cloud=False):
         dialog = getattr(self, 'owner_dialog', None)
@@ -666,6 +677,7 @@ class OrbDesktop(Desktop):
 
     def on_setup_dismissed(self):
         """Closing setup leaves a usable guest orb, never a locked window."""
+        self.owner_resume = None
         if not getattr(self, 'first_run_setup', False):
             return
         self.first_run_setup = False
@@ -675,6 +687,7 @@ class OrbDesktop(Desktop):
 
     def on_admin_authenticated(self, session):
         self.brain.bind_session(session)
+        pending, self.owner_resume = getattr(self, 'owner_resume', None), None
         self.orb.set_state(person='admin', task='idle')
         self.greeting.setText(f'LYA online · {session.person}')
         def welcome():
@@ -684,11 +697,16 @@ class OrbDesktop(Desktop):
                     self.orb.show()
                     self.start_intro()
                 self.panel.set_mode('answer')
-                message = (f'Welcome back, {session.person}. Your phone passkey verified owner access for five minutes. '
-                           'Private actions still require separate phone approval of the exact request.')
+                duration = 'for this session' if session.owner_binding else 'for five minutes'
+                message = f'Welcome back, {session.person}. Your phone passkey verified owner access {duration}.'
                 self.panel.show_answer('Owner verified', message)
                 self.open_panel()
-                self.speak_reply(f'Welcome back, {session.person}. I am ready. What shall we work on?')
+                if pending and pending[0] == self.generation and self.brain.session == session:
+                    self.speak_reply(f'Welcome back, {session.person}. I’ll pick up where we left off.')
+                    self.pending_question = pending[1]
+                    self.ask_brain(pending[1])
+                else:
+                    self.speak_reply(f'Welcome back, {session.person}. I’m ready. What shall we work on?')
                 return
             if hasattr(self, 'activation_dialog') and self.activation_dialog.isVisible():
                 return  # The activation's ONLINE act already greets the owner.
@@ -795,6 +813,7 @@ class OrbDesktop(Desktop):
             self._speaking_changed(False)
 
     def close_panel(self):
+        self.end_phone_owner_session()
         self.cancel_vision()
         self.stop_wake_greeting()
         if hasattr(self, 'speech'):
@@ -813,8 +832,25 @@ class OrbDesktop(Desktop):
         if hasattr(self, 'intro_timer'):
             self.dock(False)
 
+    def end_phone_owner_session(self):
+        self.owner_resume = None
+        dialog = getattr(self, 'owner_dialog', None)
+        if dialog is not None and dialog.isVisible():
+            dialog.reject()
+        if self.brain.session.owner_binding:
+            from security.policy import Session
+            self.brain.bind_session(Session(id='guest'))
+            self.passkey_session_id = None
+            self.orb.set_state(person='guest', task='idle')
+            approval = getattr(self, 'passkey_approval', None)
+            if approval is not None:
+                approval.close()
+
     def command(self, text):
         low = ' '.join(text.casefold().split())
+        if low in ('enable phone approvals', 'set up phone notifications'):
+            self.open_owner_access(notification_setup=True)
+            return
         if low in ('visitor review','review visitors',"i'm back",'i am back'):
             self.review_visitors()
             return
@@ -822,6 +858,7 @@ class OrbDesktop(Desktop):
             self.stop_observation()
             self.brain.visitors.end_presence()
             if low=='guest mode':
+                self.end_phone_owner_session()
                 from security.policy import Session
                 self.brain.bind_session(Session(id='guest'))
                 self.transcript.clear()
@@ -893,6 +930,9 @@ class OrbDesktop(Desktop):
                 self.vision_dialog.toggle_live()
             return
         if is_owner_access_request(text):
+            if self.brain.session.owner_binding:
+                self.open_panel()
+                return
             self.close_panel()
             self.open_owner_access()
             return
@@ -1114,6 +1154,11 @@ class OrbDesktop(Desktop):
 
     def on_brain(self, generation, answer):
         valid = generation == self.generation and not self.brain_cancel.is_set()
+        if valid and answer.route == 'owner-sign-in':
+            super().on_brain(generation, answer)
+            self.owner_resume = (generation, self.pending_question)
+            self.open_owner_access()
+            return
         if valid and answer.route=='mobile-pairing':
             from PySide6.QtCore import QUrl
             from PySide6.QtGui import QDesktopServices
@@ -1152,6 +1197,7 @@ class OrbDesktop(Desktop):
 
     def quit(self):
         self.quitting = True
+        self.end_phone_owner_session()
         self.stop_observation()
         self.visitor_expiry.stop()
         self.brain.visitors.discard()

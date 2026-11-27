@@ -26,3 +26,14 @@ The laptop store holds the display name, public passkey, a salted scrypt verifie
 The QR token is carried in the URL fragment, expires, and is replaced after successful pairing. The phone page uses no third-party service to generate codes or process samples. Cancelling before final confirmation leaves the owner vault empty on a fresh installation. During a retry, the iPhone may still list a passkey created by the cancelled attempt.
 
 Keep access to the phone’s passkey manager and your stored passphrase. The current gate has no passphrase reset flow.
+
+## Turn on returning-owner notifications
+
+1. On the laptop that owns the registration, install the updated desktop requirements in the Python environment that starts LYA. Keep its registered private Tailscale HTTPS address and Serve mapping available.
+2. Say or type **Enable phone approvals** and choose the primary control in the setup window. For first use, scan the setup QR to open Safari. Use **Add to Home Screen** and open **LYA Owner** from the iPhone Home Screen.
+3. Enter the eight-digit code shown on the laptop. Enter your existing LYA owner passphrase and verify with your iPhone passkey. Tap **Allow approval notifications**.
+4. In a later LYA session, ask for a saved personal fact or an owner-only task. LYA sends a generic notification to the paired phone. Tap it, review the request, and verify on iPhone. Your phone chooses its verification method, so it can offer a device passcode when Face ID is unavailable.
+
+After notification sign-in, LYA resumes the waiting request and keeps the owner session in memory until you close the LYA panel, enter guest mode, put LYA to sleep, or exit. Routine local note reads, new saves, and task-list commands use that session. Sensitive requests including deletion and supported data export ask for a fresh phone approval and the owner passphrase. The passphrase is entered on the phone.
+
+Both devices need access to the laptop’s private Tailscale address during approval. The laptop must be awake and running LYA. This route uses the laptop’s existing private HTTPS endpoint with encrypted Apple Web Push for delivery. It works independently of the Oracle conversation service. Notification receipt and Face ID behavior need a live iPhone test. If a request expires or push delivery fails, retry from the laptop.

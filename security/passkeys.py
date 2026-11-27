@@ -19,7 +19,7 @@ from fido2.webauthn import (AttestedCredentialData, AuthenticationResponse,
                            RegistrationResponse, PublicKeyCredentialRpEntity)
 
 from security import phone_profiles
-from security.policy import Session
+from security.policy import PROCESS_SESSION_END, Session, owner_passphrase_required
 from storage import store
 
 PHONE_PORT = 8767
@@ -118,7 +118,8 @@ go.onclick=async()=>{go.disabled=true;try{
 class PasskeyCeremony:
     """One bounded loopback backend; credential creation needs signed confirmation."""
     def __init__(self, *, db_path=None, name='Owner', approval=None, clock=time.monotonic,
-                 approval_valid=None, phone_origin=None, phone_port=PHONE_PORT):
+                 approval_valid=None, phone_origin=None, phone_port=PHONE_PORT,
+                 prefer_push=False, notification_setup=False):
         self.db_path, self.name, self.approval, self.clock = db_path, name, approval, clock
         self.approval_valid = approval_valid
         if not isinstance(name, str) or not name.strip() or len(name) > 80 or any(ord(c) < 32 for c in name):
@@ -129,6 +130,20 @@ class PasskeyCeremony:
             raise PermissionError('Restore the private HTTPS origin enrolled for this owner.')
         self.direct = bool(persisted_origin or (phone_origin and not self.owner))
         self.host = phone_host(phone_origin) if self.direct else None
+        self.notification_setup = notification_setup
+        if notification_setup and (not persisted_origin or approval):
+            raise PermissionError('Register your admin passkey on the private phone page first.')
+        self.push_record = None
+        self.push_key = None
+        self.setup_code = f'{secrets.randbelow(10**8):08d}' if notification_setup else ''
+        self.setup_attempts = 0
+        if self.direct and self.owner and (prefer_push or notification_setup):
+            from security import owner_push
+            record = owner_push.load(self.owner, db_path)
+            if notification_setup:
+                self.push_key = owner_push.private_key(record)
+            else:
+                self.push_record = record
         self.pairing_code = f'{secrets.randbelow(10**8):08d}' if self.direct and not self.owner else ''
         self.phone_gate = None
         self.profile_vectors = None
@@ -137,13 +152,19 @@ class PasskeyCeremony:
         if approval is not None and (self.owner is None or self.owner['person_id'] != approval.session.person_id
                 or approval.session.role != 'admin' or time.time() >= approval.session.verified_until):
             raise PermissionError('The pending action has no current passkey owner.')
+        if approval and approval.session.owner_binding:
+            from security.owner_push import binding
+            if not self.push_record or approval.session.owner_binding != binding(self.owner):
+                raise PermissionError('The trusted phone changed. Verify again.')
         self.token, self.script_nonce = secrets.token_urlsafe(32), secrets.token_urlsafe(24)
         self.lock, self.done = threading.RLock(), threading.Event()
         self.result, self.error, self.credential = None, None, None
-        self.deadline = clock() + (300 if self.direct else 180)
+        self.deadline = clock() + (90 if self.push_record else 300 if self.direct else 180)
         if approval:
             self.deadline = min(self.deadline, approval.deadline)
-        self.phase = ('unlock' if self.direct and not approval else 'authenticate') if self.owner else 'create'
+        phrase = self.direct and ((not approval and not self.push_record)
+                                  or approval and self.push_record and owner_passphrase_required(approval.action, approval.parameters))
+        self.phase = ('unlock' if phrase else 'authenticate') if self.owner else 'create'
         self.user_handle = websafe_decode(self.owner['user_handle']) if self.owner else secrets.token_bytes(32)
         if self.owner:
             self.credential = AttestedCredentialData(websafe_decode(self.owner['credential']))
@@ -206,7 +227,41 @@ class PasskeyCeremony:
                         remaining=max(0, int((self.deadline - self.clock()) * 1000)))
             if self.phase in ('profiles', 'profile_retry'):
                 result['captureReady'] = phone_profiles.available()
+            if self.phase == 'notifications':
+                from security import owner_push
+                result['pushKey'] = owner_push.public_key(self.push_key)
             return result
+
+    def claim_setup_code(self, code):
+        with self.lock:
+            self._check_live()
+            self.setup_attempts += 1
+            if (not self.notification_setup or self.phase != 'unlock' or not self.setup_code
+                    or self.setup_attempts > 10 or type(code) is not str or len(code) != 8
+                    or not code.isascii() or not secrets.compare_digest(self.setup_code, code)):
+                raise PermissionError('Invalid setup code.')
+            self.setup_code = ''
+            return {'token': self.token}
+
+    def signed_session(self, name, person_id, persistent):
+        identity = ''
+        if persistent:
+            from security.owner_push import binding
+            identity = binding(self.owner)
+        until = PROCESS_SESSION_END if persistent else time.time() + 300
+        return Session('admin', name, secrets.token_urlsafe(24), person_id, until, identity)
+
+    def subscribe(self, subscription):
+        with self.lock:
+            self._check_live()
+            if self.phase != 'notifications' or not self.notification_setup:
+                raise PermissionError('Verify the owner before connecting notifications.')
+            from security import owner_push
+            owner_push.save(self.owner, self.subscription_session, self.push_key, subscription, self.db_path)
+            self._check_live()
+            self.result = self.signed_session(self.owner['display_name'], self.owner['person_id'], True)
+            self.done.set()
+            return {'verified': True}
 
     def submit_details(self, data):
         with self.lock:
@@ -288,8 +343,13 @@ class PasskeyCeremony:
                     store.accept_passkey_assertion(self.owner, data.counter, eligible, self.db_path)
                     pid, name = self.owner['person_id'], self.owner['display_name']
                 self._check_live()
-                self.result = self.approval if self.approval else Session(
-                    'admin', name, secrets.token_urlsafe(24), pid, time.time() + 300)
+                if self.notification_setup:
+                    self.subscription_session = self.signed_session(name, pid, False)
+                    self.phase = 'notifications'
+                    self.options, self.state = None, None
+                    self.token = secrets.token_urlsafe(32)
+                    return {'notifications': True, 'token': self.token}
+                self.result = self.approval or self.signed_session(name, pid, bool(self.push_record))
                 self.done.set()
                 self.state = None
                 return {'verified': True}
@@ -406,7 +466,7 @@ class PasskeyCeremony:
                 self.send_header('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; "
                     f"script-src 'nonce-{ceremony.script_nonce}'; connect-src 'self'; "
                     + ("media-src 'self' blob:; " if ceremony.direct else "")
-                    + "frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
+                    + "worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
                 camera = '(self)' if ceremony.direct else '()'
                 self.send_header('Permissions-Policy', f'camera={camera}, microphone={camera}')
                 self.send_header('Connection', 'close')
@@ -418,7 +478,18 @@ class PasskeyCeremony:
                 return self.headers.get('Host') == ceremony.host
 
             def do_GET(self):
-                if not self.valid_host() or self.path != '/':
+                if not self.valid_host():
+                    self.send(404, {})
+                    return
+                if ceremony.direct and self.path == '/owner-push.js':
+                    script = Path(__file__).with_name('owner_push.js').read_text(encoding='utf-8')
+                    self.send(200,script,'text/javascript; charset=utf-8')
+                    return
+                if ceremony.direct and self.path == '/owner.webmanifest':
+                    self.send(200,dict(id='/owner', name='LYA Owner', short_name='LYA Owner',
+                                       start_url='/', display='standalone'), 'application/manifest+json')
+                    return
+                if self.path != '/':
                     self.send(404, {})
                     return
                 page = Path(__file__).with_name('phone_gate.html').read_text(encoding='utf-8') if ceremony.direct else PAGE
@@ -427,12 +498,14 @@ class PasskeyCeremony:
             def do_POST(self):
                 token = self.headers.get('X-LYA-Ceremony', '')
                 media = ceremony.direct and self.path == '/profiles'
+                claim = ceremony.notification_setup and self.path == '/push/claim'
                 content = 'application/octet-stream' if media else 'application/json'
                 if (not self.valid_host() or self.headers.get('Origin') != ceremony.origin
-                        or not token or not token.isascii() or not secrets.compare_digest(token, ceremony.token)
+                        or not claim and (not token or not token.isascii() or not secrets.compare_digest(token, ceremony.token))
                         or self.headers.get('Content-Type') != content
                         or self.headers.get('Transfer-Encoding') is not None
-                        or self.path not in ('/options', '/complete', '/cancel', '/details', '/profiles', '/finish')):
+                        or self.path not in ('/options', '/complete', '/cancel', '/details', '/profiles', '/finish',
+                                             '/push/claim', '/push/subscribe')):
                     # Drain only a bounded declared body so Windows can deliver the rejection.
                     declared = self.headers.get('Content-Length', '')
                     if len(declared) <= 5 and declared.isascii() and declared.isdigit() and int(declared) <= 65536:
@@ -478,6 +551,10 @@ class PasskeyCeremony:
                         result = ceremony.submit_details(data)
                     elif self.path == '/finish':
                         result = ceremony.finish_registration(data)
+                    elif self.path == '/push/claim':
+                        result = ceremony.claim_setup_code(data.get('code'))
+                    elif self.path == '/push/subscribe':
+                        result = ceremony.subscribe(data)
                     else:
                         result = ceremony.options_json() if self.path == '/options' else ceremony.complete(data)
                     self.send(200, result)

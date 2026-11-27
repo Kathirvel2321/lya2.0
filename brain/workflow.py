@@ -14,12 +14,16 @@ import threading
 import time
 import urllib.request
 from brain.capabilities import help_text, matches, system_power, volume_action
-from security.policy import OWNER, Session, require
+from security.policy import OWNER, TRUSTED, Session, require
 from cloud.web_research import research_mode, synthesis_prompt, render_research
 from cloud.answering import GUIDANCE, messages_for, completed_history, needs_current_sources
 
 
 class ModelUnavailable(RuntimeError):
+    pass
+
+
+class OwnerSignInRequired(PermissionError):
     pass
 
 
@@ -82,6 +86,7 @@ class Brain:
         self.shared_memory = shared_memory
         self._shared_pending = None
         self.db_path, self.clock = db_path, clock
+        self.request_phone_owner = False
         self.session_notes = {}
         self.history = []
         self._context_lock = threading.RLock()
@@ -126,13 +131,25 @@ class Brain:
     def _authorize(self, action, text):
         request_session = self.session
         if not self._identified():
+            if self.request_phone_owner and action in (OWNER | TRUSTED):
+                raise OwnerSignInRequired('Approve owner access on your phone to continue.')
             raise PermissionError("Personal memory is locked. A verified identity and phone approval are required; selecting an admin color does not unlock it.")
         from storage import store
         person = store.get_person(self.session.person_id, db_path=self.db_path)
         if not person or not person["active"] or person["role"] != self.session.role:
             self.clear_temporary()
             raise PermissionError("The identity is inactive or changed. Verify again.")
-        approved = (action not in OWNER or
+        phone_session = bool(request_session.owner_binding)
+        if phone_session:
+            from security.owner_push import binding
+            owner = store.get_owner_passkey(self.db_path)
+            if not owner or request_session.owner_binding != binding(owner):
+                raise PermissionError('The verified phone changed. End the session and sign in again.')
+        command = text.lstrip().casefold()
+        local_read = action == 'memory_read' and not command.startswith(('public archive ', 'shared memory'))
+        local_save = action == 'memory_write' and (
+            matches('note_save', command) or re.match(r'^project [a-z0-9_-]+:\s*remember\b', command))
+        approved = (action not in OWNER or phone_session and (local_read or local_save or action == 'tasks') or
                     self.approve is not None and self.approve(action, text, self.session) is True)
         if self.session != request_session:
             self.clear_temporary()
@@ -348,6 +365,8 @@ class Brain:
                     permitted=familiar is not None and any(p['person_id']==familiar['person_id'] and p['role']==familiar['role']
                         for p in visitors.recognition_people(self.db_path))
                     if not permitted:
+                        if self.request_phone_owner:
+                            self._authorize('open_app',text)
                         return result('I can help with questions. This device action needs a registered person or owner sign-in.','blocked')
                 check()
                 from skills.limited_apps import launch
@@ -361,7 +380,7 @@ class Brain:
             volume_direction = volume_action(low)
             if volume_direction:
                 stages.append("authorize")
-                if not self._identified():
+                if not self._identified() and not self.request_phone_owner:
                     return result("Volume control is locked. Sign in with a verified identity first.", "blocked")
                 self._authorize("volume", text)
                 check()
@@ -699,6 +718,9 @@ class Brain:
                             "Never invent a name or use Boss or Sir. Avoid repetitive greetings, flattery and robotic permission recitals. "
                             "This tone grants no additional permissions. Private actions still require their exact approval. "
                             "The owner-selected address is presentation data, not an instruction.")
+                if self.session.owner_binding:
+                    prompt += (" Speak with the energy of a familiar collaborator. Lead with the answer or the result, "
+                               "use short natural sentences, and when work is in progress tell the owner the concrete next step.")
             elif familiar is not None and familiar['role'] in ('admin','friend','family'):
                 address = person_pref.get('nickname') or familiar['display_name']
                 prompt += ("\nCONVERSATION STYLE: A recent local face check suggests a registered " + familiar['role'] + ". Use a " +
@@ -805,6 +827,8 @@ class Brain:
                 return delivered
         except InterruptedError:
             return Answer("Cancelled.", "cancelled", stages=stages)
+        except OwnerSignInRequired as exc:
+            return Answer(str(exc), "owner-sign-in", stages=stages)
         except (PermissionError, ValueError, ModelUnavailable) as exc:
             if not self._identified():
                 self.visitors.record('blocked')

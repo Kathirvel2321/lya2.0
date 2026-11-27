@@ -83,8 +83,65 @@ class PasskeyChecks(SyntheticPasskeys, unittest.TestCase):
     direct_origin = 'https://laptop.private-test.ts.net'
     fake_phrase = 'test-only-phrase-for-lya'
 
-    def direct_ceremony(self):
-        return self.ceremony(phone_origin=self.direct_origin, phone_port=0)
+    def direct_ceremony(self, **kwargs):
+        return self.ceremony(phone_origin=self.direct_origin, phone_port=0, **kwargs)
+
+    def test_notification_setup_returning_owner_and_sensitive_action(self):
+        from security import owner_push
+        from security.policy import PROCESS_SESSION_END
+        from brain.workflow import Brain
+        c = self.direct_ceremony()
+        self.confirm_phone_setup(c)
+        c.finish_registration({'skip':True})
+        setup = self.direct_ceremony(notification_setup=True)
+        receiver = ec.generate_private_key(ec.SECP256R1())
+        subscription = {'endpoint':'https://web.push.apple.com/opaque-test',
+                        'keys':{'p256dh':owner_push.public_key(receiver), 'auth':websafe_encode(bytes(16))}}
+        with self.assertRaises(PermissionError):
+            setup.subscribe(subscription)
+        code = setup.setup_code
+        self.assertEqual(self.phone_request(setup, '/push/claim', {'code':code}, **{'X-LYA-Ceremony':''})[0], 200)
+        self.assertEqual(self.phone_request(setup, '/push/claim', {'code':code}, **{'X-LYA-Ceremony':''})[0], 400)
+        setup.submit_details({'phrase':self.fake_phrase})
+        result = setup.complete(self.response(setup,rp=setup.host))
+        self.assertTrue(result['notifications'])
+        self.assertIsNone(setup.result)
+        self.assertEqual(self.phone_request(setup, '/push/subscribe', subscription)[0], 200)
+        self.assertNotIn(subscription['endpoint'].encode(),self.db.read_bytes())
+
+        opening = self.direct_ceremony(prefer_push=True)
+        self.assertEqual(opening.phase,'authenticate')
+        self.assertIsNotNone(opening.push_record)
+        self.assertEqual(opening.complete(self.response(opening,rp=opening.host)),{'verified':True})
+        self.assertEqual(opening.result.verified_until,PROCESS_SESSION_END)
+        self.assertTrue(opening.result.owner_binding)
+        brain = Brain(db_path=self.db, client=lambda _: 'Public answer')
+        brain.request_phone_owner = True
+        self.assertEqual(brain.respond('hello').text,'Public answer')
+        self.assertEqual(brain.respond('what is my name').route,'owner-sign-in')
+        brain.bind_session(opening.result)
+        self.assertNotEqual(brain.respond('what is my name').route,'blocked')
+        self.assertEqual(brain.respond('forget name').route,'blocked')
+
+        sensitive = Challenge('synthetic-delete',opening.result,'memory_forget','forget name',time.monotonic()+60)
+        approval = self.direct_ceremony(approval=sensitive,prefer_push=True)
+        self.assertEqual(approval.phase,'unlock')
+        with self.assertRaises(PermissionError):
+            approval.complete({})
+        approval.submit_details({'phrase':self.fake_phrase})
+        self.assertEqual(approval.complete(self.response(approval,rp=approval.host)),{'verified':True})
+        self.assertEqual(approval.result,sensitive)
+
+        response = Mock(status_code=201, text='', headers={})
+        with patch('requests.Session.post', return_value=response) as post:
+            owner_push.send(opening.push_record,opening.origin,opening.token)
+        args, kwargs = post.call_args
+        self.assertEqual(args,(subscription['endpoint'],))
+        self.assertFalse(kwargs['allow_redirects'])
+        self.assertEqual(kwargs['headers']['Urgency'],'high')
+        self.assertNotIn(opening.token.encode(),kwargs['data'])
+        with self.assertRaises(ValueError):
+            owner_push.checked_subscription(dict(subscription,endpoint='https://web.push.apple.com.invalid/'))
 
     def test_private_phone_proxy_requires_own_hostname_https_and_no_funnel(self):
         from security.passkeys import check_phone_proxy
@@ -443,6 +500,55 @@ class OwnerUIChecks(SyntheticPasskeys, unittest.TestCase):
         dialog.show()
         self.app.processEvents()
         return dialog
+
+    def test_notification_signin_resumes_request_and_panel_close_ends_session(self):
+        from experience import OrbDesktop
+        from brain.workflow import Answer
+        from security import owner_push
+        from PySide6.QtTest import QTest
+        origin = PasskeyChecks.direct_origin
+        phrase = PasskeyChecks.fake_phrase
+        c = self.ceremony(phone_origin=origin,phone_port=0)
+        c.complete(self.response(c,create=True,rp=c.host))
+        c.submit_details({'name':'Synthetic owner','code':c.pairing_code,'phrase':phrase})
+        c.complete(self.response(c,rp=c.host))
+        c.finish_registration({'skip':True})
+        owner = store.get_owner_passkey(self.db)
+        receiver = ec.generate_private_key(ec.SECP256R1())
+        owner_push.save(owner,c.result,owner_push.private_key(),{
+            'endpoint':'https://web.push.apple.com/opaque-test',
+            'keys':{'p256dh':owner_push.public_key(receiver),'auth':websafe_encode(bytes(16))}}, self.db)
+        c.close()
+        with patch.dict(os.environ,{'LYA_DATA_DIR':self.tmp.name},clear=False):
+            desktop=OrbDesktop(self.app,reduced_motion=True)
+        self.addCleanup(desktop.quit)
+        desktop.brain.db_path=self.db
+        desktop.brain.request_phone_owner=True
+        desktop.spoken=False
+        desktop.pending_question='what is my name'
+        with (patch('security.passkeys.check_phone_proxy'),
+              patch('security.passkeys.PasskeyCeremony',side_effect=lambda **opts:PasskeyCeremony(phone_port=0,**opts)),
+              patch('security.owner_push.send') as send,
+              patch.object(desktop.speech,'say'),
+              patch.object(desktop,'ask_brain') as resumed):
+            desktop.on_brain(desktop.generation,Answer('Approve on phone.','owner-sign-in'))
+            dialog=desktop.owner_dialog
+            self.assertEqual(dialog.stage,'waiting')
+            self.assertFalse(dialog.phone_qr.isVisible())
+            self.assertFalse(desktop.brain.session.owner_binding)
+            for _ in range(30):
+                if send.called:
+                    break
+                QTest.qWait(10)
+            send.assert_called_once()
+            proof=dialog.ceremony
+            proof.complete(self.response(proof,rp=proof.host))
+            dialog.check_result()
+            self.app.processEvents()
+            resumed.assert_called_once_with('what is my name')
+            self.assertTrue(desktop.brain.session.owner_binding)
+            desktop.close_panel()
+            self.assertFalse(desktop.brain.session.owner_binding)
 
     def test_voice_setup_name_confirmation_cancel_no_forms(self):
         from PySide6.QtWidgets import QLineEdit

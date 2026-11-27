@@ -9,6 +9,11 @@ class Session:
     id: str = ""
     person_id: str | None = None
     verified_until: float = 0.0
+    owner_binding: str = ""
+
+
+# Notification sessions live in one desktop process and are dropped on close/lock.
+PROCESS_SESSION_END = 253402300799.0
 
 
 PUBLIC = frozenset({"chat", "help", "time", "ui", "theme_preview", "stop"})
@@ -16,6 +21,13 @@ TRUSTED = frozenset({"open_app", "volume", "device_status"})
 OWNER = frozenset({"files", "theme_apply", "memory_read", "memory_write",
                    "memory_forget", "learn", "reminders", "screenshot",
                    "vault", "skill_draft", "council", "memory_backup", "memory_restore", "tasks", "mobile_connect"})
+
+
+def owner_passphrase_required(action, parameters):
+    return (action in {'memory_forget', 'memory_backup', 'memory_restore', 'vault',
+                       'screenshot', 'mobile_connect'}
+            or action == 'memory_write' and parameters.lstrip().casefold().startswith(
+                ('public archive ', 'shared memory')))
 
 
 def allowed(session, action, phone_approved=False):

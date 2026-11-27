@@ -191,11 +191,13 @@ class OwnerSetupDialog(QDialog):
 
     def __init__(self, *, db_path=None, reduced_motion=False, approval=None, parent=None,
                  ceremony_factory=None, open_browser=webbrowser.open, approval_valid=None,
-                 profile_setup=False, listener=None, capture_factory=None):
+                 profile_setup=False, listener=None, capture_factory=None, notification_setup=False):
         super().__init__(parent)
         self.db_path, self.approval = db_path, approval
         self.ceremony_factory, self.open_browser = ceremony_factory, open_browser
         self.approval_valid = approval_valid
+        self.notification_setup = notification_setup
+        self.push_delivery = None
         self.ceremony, self.name, self.stage = None, 'Owner', 'intro'
         self.started, self.closed = False, False
         self.confirm_guided = False
@@ -341,9 +343,13 @@ class OwnerSetupDialog(QDialog):
             from storage.store import get_owner_passkey
             owner = get_owner_passkey(self.db_path)
             self.returning = owner is not None
+            if owner and self.phone_origin is None:
+                self.phone_origin = owner.get('origin')
             self.direct_phone = bool(owner.get('origin') if owner else self.phone_origin)
             if owner and self.direct_phone and owner['origin'] != self.phone_origin:
                 raise PermissionError('Restore the private HTTPS origin enrolled for this owner.')
+            if self.notification_setup and not (owner and self.direct_phone):
+                raise PermissionError('Register admin through your phone first.')
             if self.approval:
                 self.stage = 'approval'
                 self.set_step('ONE ACTION', 'Review this exact request',
@@ -352,7 +358,12 @@ class OwnerSetupDialog(QDialog):
                     'Approve with phone')
             elif self.returning:
                 self.stage = 'phone'
-                self.set_step('OWNER PROOF', 'Welcome back.',
+                if self.notification_setup:
+                    self.set_step('PHONE NOTIFICATIONS', 'Connect phone approvals.',
+                        'Open LYA Owner from your iPhone Home Screen and enter the setup code.',
+                        'Open LYA Owner on your phone to connect notifications.', 'Show setup code')
+                else:
+                    self.set_step('OWNER PROOF', 'Welcome back.',
                     ('Enter your owner passphrase and use your enrolled passkey.' if self.direct_phone else
                      'Use the enrolled passkey on your phone.') +
                     ' Owner access lasts five minutes. Private actions require fresh, separate approval.',
@@ -557,6 +568,8 @@ class OwnerSetupDialog(QDialog):
                 from security.passkeys import check_phone_proxy
                 check_phone_proxy(self.phone_origin)
                 options['phone_origin'] = self.phone_origin
+                options['prefer_push'] = not self.notification_setup
+                options['notification_setup'] = self.notification_setup
             if self.ceremony_factory is None:
                 from security.passkeys import PasskeyCeremony
                 factory = PasskeyCeremony
@@ -566,14 +579,38 @@ class OwnerSetupDialog(QDialog):
                                    approval_valid=self.approval_valid, **options)
             self.confirm_guided = False
             self.phone_phase = None
+            self.push_delivery = None
             self.stage = 'waiting'
             if self.direct_phone:
+                if self.ceremony.push_record:
+                    self.set_step('PHONE PROOF', 'Check your iPhone.',
+                        'Approve the notification from LYA.', 'I’m sending a request to your phone.', 'Waiting for phone')
+                    self.next.setEnabled(False)
+                    self.poll.start()
+                    self.push_delivery = []
+                    from security.owner_push import send
+                    record, origin, token = self.ceremony.push_record, self.ceremony.origin, self.ceremony.token
+                    result = self.push_delivery
+                    def deliver():
+                        try:
+                            send(record, origin, token)
+                            result.append(True)
+                        except Exception:
+                            result.append(False)
+                    threading.Thread(target=deliver, daemon=True, name='LYA-Owner-Push').start()
+                    return
+                if self.notification_setup:
+                    self.set_step('PHONE NOTIFICATIONS', 'Connect phone approvals.',
+                        f'Open LYA Owner on your iPhone and enter {self.ceremony.setup_code}. '
+                        'For first use, scan this QR in Safari and add LYA Owner to your Home Screen.',
+                        'Open the Home Screen app and enter the laptop setup code.', 'Waiting for phone')
                 code = self.ceremony.pairing_code
                 body = f'Pairing code: {code}\nThis invitation expires in five minutes.' if code else 'Approve this request on your phone.'
-                self.set_step('PHONE PROOF', 'Scan with your iPhone.', body,
-                              'Scan the QR with your phone. Finish the steps on your phone.', 'Waiting for phone')
+                if not self.notification_setup:
+                    self.set_step('PHONE PROOF', 'Scan with your iPhone.', body,
+                                  'Scan the QR with your phone. Finish the steps on your phone.', 'Waiting for phone')
                 qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M)
-                qr.add_data(self.ceremony.url)
+                qr.add_data(self.ceremony.origin + '/' if self.notification_setup else self.ceremony.url)
                 matrix = qr.get_matrix()
                 scale = max(1, 224 // len(matrix))
                 image = QPixmap(len(matrix) * scale, len(matrix) * scale)
@@ -610,6 +647,9 @@ class OwnerSetupDialog(QDialog):
 
     def check_result(self):
         if self.ceremony is None:
+            return
+        if self.push_delivery == [False] and not self.ceremony.done.is_set():
+            self.fail('The notification could not be sent. Check your iPhone connection and retry.')
             return
         if not self.isVisible() or time.monotonic() >= self.ceremony.deadline:
             self.fail('Phone verification expired or the setup screen was hidden. Nothing was unlocked.')
@@ -1036,6 +1076,8 @@ class PasskeyApproval(QObject):
         dialog.show()
         dialog.raise_()
         dialog.activateWindow()
+        if challenge.session.owner_binding:
+            QTimer.singleShot(0, dialog.advance)
 
     def close(self):
         if self.dialog is not None:
