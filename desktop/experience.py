@@ -1,11 +1,12 @@
 """Compact native presentation. No sensors, persistence or inference changes."""
 import os
 import re
+import threading
 import time
 import wave
 from PySide6.QtCore import Qt, QEvent, QRect, QPoint, QTimer, QElapsedTimer, QPropertyAnimation, QVariantAnimation, QEasingCurve, Signal, QProcess
 from PySide6.QtGui import QTextCursor, QPixmap
-from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QTextBrowser, QSystemTrayIcon
+from PySide6.QtWidgets import QLabel, QApplication, QDialog, QInputDialog, QLineEdit, QVBoxLayout, QTextBrowser, QSystemTrayIcon
 from app import Desktop, GlassPanel, WINDOW_FLAGS, HERE, DOCUMENTS, read_project_document
 from layout import Box, place_panel
 
@@ -197,6 +198,7 @@ class CompactPanel(GlassPanel):
 
 class OrbDesktop(Desktop):
     panel_type = CompactPanel
+    nvidia_saved = Signal(object, str)
 
     def prepare_system_dictation(self):
         super().prepare_system_dictation()
@@ -213,6 +215,9 @@ class OrbDesktop(Desktop):
             owner = None
         self.brain.request_phone_owner = bool(os.environ.get('LYA_OWNER_PHONE_ORIGIN') or (owner and owner.get('origin')))
         self.owner_resume = None
+        self.credential_dialog = None
+        self.credential_cancel = None
+        self.nvidia_saved.connect(self.finish_nvidia_save)
         from desktop.setup_speech import SetupSpeech
         self.speech = SetupSpeech(self)
         self.wake_timer = QTimer(self)
@@ -580,6 +585,10 @@ class OrbDesktop(Desktop):
 
     def on_voice(self, text, quiet=False):
         low = ' '.join(text.casefold().split())
+        if getattr(self, 'credential_dialog', None) is not None:
+            if low in ('stop', 'cancel', 'close'):
+                self.credential_dialog.reject()
+            return
         phone_approval = getattr(self, 'passkey_approval', None)
         owner_dialog = (phone_approval.dialog if phone_approval and phone_approval.dialog
                         and phone_approval.dialog.isVisible() else getattr(self, 'owner_dialog', None))
@@ -702,6 +711,9 @@ class OrbDesktop(Desktop):
                 self.panel.show_answer('Owner verified', message)
                 self.open_panel()
                 if pending and pending[0] == self.generation and self.brain.session == session:
+                    if pending[1] == 'add nvidia key':
+                        self.open_nvidia_credential(allow_sign_in=False)
+                        return
                     self.speak_reply(f'Welcome back, {session.person}. I’ll pick up where we left off.')
                     self.pending_question = pending[1]
                     self.ask_brain(pending[1])
@@ -834,6 +846,12 @@ class OrbDesktop(Desktop):
 
     def end_phone_owner_session(self):
         self.owner_resume = None
+        credential_dialog = getattr(self, 'credential_dialog', None)
+        if credential_dialog is not None:
+            credential_dialog.reject()
+        credential_cancel = getattr(self, 'credential_cancel', None)
+        if credential_cancel is not None:
+            credential_cancel.set()
         dialog = getattr(self, 'owner_dialog', None)
         if dialog is not None and dialog.isVisible():
             dialog.reject()
@@ -846,8 +864,90 @@ class OrbDesktop(Desktop):
             if approval is not None:
                 approval.close()
 
+    def open_nvidia_credential(self, *, allow_sign_in=True):
+        from security.bitwarden_secrets import has_session
+        if self.brain_busy or self.credential_dialog is not None or self.credential_cancel is not None:
+            return
+        self.speech.stop(keep_warm=True)
+        self.quiet_reply = False
+        self.open_panel()
+        if self.brain.private_mode:
+            self.panel.show_answer('Private mode is on', 'Turn off private mode to save to Bitwarden.')
+            return
+        if not self.brain.session.owner_binding:
+            if allow_sign_in and self.brain.request_phone_owner:
+                self.owner_resume = (self.generation, 'add nvidia key')
+                self.open_owner_access()
+            else:
+                self.panel.show_answer('Phone approval needed', 'Enable phone approvals in LYA before saving a credential.')
+            return
+        if not has_session():
+            self.panel.show_answer('Bitwarden is locked', 'Start LYA with the standard launcher and unlock Bitwarden once for this session.')
+            return
+        dialog = QInputDialog(self.panel)
+        self.credential_dialog = dialog
+        dialog.setWindowTitle('Save a credential')
+        dialog.setLabelText('NVIDIA API key\n\nEnter the key to save or replace the NVIDIA item in Bitwarden.')
+        dialog.setTextEchoMode(QLineEdit.EchoMode.Password)
+        dialog.setOkButtonText('Save')
+        dialog.setCancelButtonText('Cancel')
+        dialog.setMinimumWidth(360)
+        dialog.finished.connect(self.submit_nvidia_credential)
+        dialog.open()
+
+    def submit_nvidia_credential(self, result):
+        dialog, self.credential_dialog = self.credential_dialog, None
+        value = dialog.textValue().strip() if result == QDialog.DialogCode.Accepted else ''
+        dialog.setTextValue('')
+        dialog.deleteLater()
+        if not value:
+            return
+        cancelled = self.credential_cancel = threading.Event()
+        session = self.brain.session
+        self.panel.show_answer('Approve on your phone', 'Approve this save to continue.')
+
+        def save():
+            from security.bitwarden_secrets import save_nvidia_key
+            from security.owner_push import binding
+            from storage.store import get_owner_passkey
+
+            def authorized():
+                if (cancelled.is_set() or self.brain.private_mode or self.brain.session != session
+                        or self.brain.clock() >= session.verified_until):
+                    return False
+                owner = get_owner_passkey(self.brain.db_path)
+                return bool(owner and owner['person_id'] == session.person_id and binding(owner) == session.owner_binding)
+
+            message = 'The credential save was not confirmed.'
+            try:
+                if authorized():
+                    self.brain._authorize('save_nvidia_api_key', 'Save or replace the NVIDIA API key in Bitwarden.')
+                    message = save_nvidia_key(value, authorized=authorized)
+            except PermissionError:
+                message = 'Phone approval was not completed. Open the credential form to try again.'
+            except Exception:
+                pass  # Never display an exception that may include credential data.
+            self.nvidia_saved.emit(cancelled, message)
+
+        threading.Thread(target=save, daemon=True, name='LYA-NVIDIA-Credential').start()
+
+    def finish_nvidia_save(self, cancelled, message):
+        if self.credential_cancel is cancelled:
+            self.credential_cancel = None
+            if not cancelled.is_set():
+                self.panel.show_answer('Bitwarden', message)
+
     def command(self, text):
         low = ' '.join(text.casefold().split())
+        credential_request = re.fullmatch(
+            r'(?:lya[, ]+)?(?:please |i want to )?(?:add|save|store|safely store) '
+            r'(?:a (?:secret(?: key)?|key)|the secret key(?: for you)?|this|(?:(?:the|my) )?nvidia (?:api )?key)[.!?]*', low)
+        if credential_request:
+            self.open_nvidia_credential()
+            return
+        if getattr(self, 'credential_cancel', None) is not None and low not in (
+                'stop', 'cancel', 'close', 'close panel', 'close chat', 'close chat box', 'sleep', 'guest mode', 'quit', 'exit'):
+            return
         if low in ('enable phone approvals', 'set up phone notifications'):
             self.open_owner_access(notification_setup=True)
             return

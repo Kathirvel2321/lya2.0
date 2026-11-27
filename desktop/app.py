@@ -1035,7 +1035,9 @@ class Desktop(QObject):
                     on_wake=lambda text, quiet=False: self.voice_signals.wake_detected.emit(text, quiet),
                     clap_enabled=True,
                     stop_event=self.voice_stop_event,
-                    offline_required=lambda: not allow_cloud or self.brain.private_mode,
+                    offline_required=lambda: (not allow_cloud or self.brain.private_mode
+                        or getattr(self, 'credential_dialog', None) is not None
+                        or getattr(self, 'credential_cancel', None) is not None),
                     cloud_provider=self.cloud_asr,
                     cloud_only=allow_cloud and self.cloud_asr == 'nvidia',
                     on_provider=lambda model, backup: self.voice_signals.status.emit(

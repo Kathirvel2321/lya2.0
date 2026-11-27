@@ -153,6 +153,8 @@ def route_request(packet, config, call, state, clock=time.time, monotonic=time.m
             return {'error': 'cancelled' if cancelled() else 'deadline_exceeded', 'attempts': attempts}
         try:
             result = call(route, min(8, remaining))
+        except TimeoutError:
+            result = {'error': 'provider_timeout'}
         except Exception:
             result = {'error': 'provider_unavailable'}
         if not isinstance(result, dict) or not result.get('error') and (not isinstance(result.get('text'), str) or not result['text'].strip()):
@@ -164,7 +166,7 @@ def route_request(packet, config, call, state, clock=time.time, monotonic=time.m
         if not error:
             return {**result, 'route': route['id'], 'attempts': attempts}
         last_error = error
-        if error not in {'provider_unavailable', 'provider_http_408', 'provider_http_429',
+        if error not in {'provider_timeout', 'provider_unavailable', 'provider_http_408', 'provider_http_429',
                          'provider_http_500', 'provider_http_502', 'provider_http_503', 'provider_http_504', 'invalid_provider_response'}:
             # No retry for refusal, invalid credentials or invalid input.
             return {'error': error, 'attempts': attempts}

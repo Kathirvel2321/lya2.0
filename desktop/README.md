@@ -103,14 +103,9 @@ uses current person/face-presence detections, without claiming identity.
 how/why mentions and camera-settings requests do not activate it.
 Reopen LYA to load this follow-up. Live owner retry remains pending.
 
-All provider keys use the existing project-root `.env` file. Put the NVIDIA key
-on its own line as `NVIDIA_API_KEY=...`; LYA reads it at launch, alongside the
-other provider settings. The current process environment still takes precedence.
-The masked key prompt appears only when no key is configured. `.env` is excluded
-from Git; never put keys in source code or the project brain.
-The owner's new preserve-working-features rule is in `AGENTS.md`; no further
-voice, hearing, wake, interface or startup change is authorized by this update.
-See [key storage](../archive/history/reviews/2026-10-05-key-storage/README.md).
+The standard NVIDIA launcher uses Bitwarden first, then an existing process key
+or its masked session prompt. To save a credential with phone approval, see
+[LYA desktop credentials from Bitwarden](../docs/guides/LYA_BITWARDEN_SECRETS.md).
 
 Normal launch now uses a native masked NVIDIA key dialog (2026-10-05). Open
 `LYA.lnk` in the project folder for a direct windowed launch; `launch-lya.cmd`
@@ -473,6 +468,19 @@ Type `open vision`, `look around`, or `scan room` to open the camera-off lens wi
 Type `open camera`, `look around`, or `scan room` to start a bounded live view. `open vision` opens the same window with camera off. Use Stop live view or close the window to end capture. The worker also ends after 90 seconds. Preview targets up to six frames/s and local object/face analysis at most two/s; actual startup depends on the webcam. Ask about a person or one of the detector's supported objects. LYA gives approximate on-screen position, never identity or permission. Small items such as pens are not in this model and will be reported as unsupported. No camera frame is saved or sent online. See `archive/history/reviews/2026-09-23-vision/README.md` for measured checks and remaining limits.
 
 Visual questions typed in LYA's main command line, such as `can you see my pen?`, route to the Vision window and wait for a current analyzed frame. The lightweight model currently cannot detect pens and will say so. Microphone transcription is still pending.
+
+## Optional Rust microphone telemetry
+
+The desktop can use a small Rust library to calculate peak and RMS for the microphone meter and self-test. The regular launcher loads a matching release build from this checkout. Python uses the existing NumPy calculation when the library is missing or incompatible.
+
+Build and check the release library from the project root with Rust and the Windows C++ build tools available.
+
+```powershell
+cargo build --release --locked --offline --manifest-path audio/native_pcm/Cargo.toml
+python -m unittest test_pcm_metrics
+```
+
+Restart LYA after building so it loads the library. Use the same architecture for Rust and Python. The build uses the Rust standard library and the existing Python `ctypes` interface.
 
 ## Optional NVIDIA hearing (2026-10-05)
 

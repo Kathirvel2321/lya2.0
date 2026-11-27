@@ -145,6 +145,10 @@ def infer(packet, config, opener=None, timeout=18):
         return result
     except (ValueError, KeyError, IndexError, TypeError):
         return {'error': 'invalid_provider_response'}
+    except TimeoutError:
+        return {'error': 'provider_timeout'}
+    except urllib.error.URLError as exc:
+        return {'error': 'provider_timeout' if isinstance(exc.reason, TimeoutError) else 'provider_unavailable'}
     except Exception:
         return {'error': 'provider_unavailable'}
 

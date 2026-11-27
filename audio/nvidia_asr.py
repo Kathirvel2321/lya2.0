@@ -45,7 +45,10 @@ def transcribe(data, *, remote_allowed=False, api_key=None, cancelled=None,
     allowed = remote_allowed if callable(remote_allowed) else lambda: remote_allowed
     if not allowed():
         raise PermissionError('NVIDIA speech requires explicit permission to send audio.')
-    key = (api_key if api_key is not None else os.environ.get('NVIDIA_API_KEY', '')).strip()
+    if api_key is None:
+        from security.bitwarden_secrets import get_password
+        api_key = get_password('NVIDIA_API_KEY') or os.environ.get('NVIDIA_API_KEY', '')
+    key = api_key.strip()
     if not key:
         raise RuntimeError('NVIDIA speech key is not configured. Nothing sent.')
     pcm = pcm_audio(data)

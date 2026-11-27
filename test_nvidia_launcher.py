@@ -26,6 +26,8 @@ class NvidiaLauncherTests(unittest.TestCase):
                         patch.object(sys, 'path', list(sys.path)),
                         patch.dict(sys.modules, {'riva': riva, 'riva.client': riva.client}),
                         patch.dict(os.environ, {'NVIDIA_API_KEY': ''}),
+                        patch.object(launcher, 'unlock_bitwarden'),
+                        patch('security.bitwarden_secrets.get_password', return_value=''),
                         patch.object(launcher, 'configured_key', return_value='')):
             context.start()
             self.addCleanup(context.stop)
@@ -79,9 +81,28 @@ class NvidiaLauncherTests(unittest.TestCase):
 
     def test_existing_session_key_skips_prompt(self):
         with patch.dict(os.environ, {'NVIDIA_API_KEY': 'fake-existing-key'}), \
+             patch.object(launcher, 'configured_key', side_effect=self.read_configured_key), \
              patch.object(launcher, 'gui_key') as prompt:
             self.assertEqual(self.run_launcher(), 0)
             prompt.assert_not_called()
+
+    def test_vault_key_is_used_by_speech_without_becoming_an_environment_value(self):
+        from audio import nvidia_asr
+
+        def desktop(*args, **kwargs):
+            self.assertNotIn('NVIDIA_API_KEY', os.environ)
+            self.assertNotIn('fake-vault-key', sys.argv)
+            with patch.object(nvidia_asr, 'pcm_audio', return_value=b'fixture'), \
+                 patch.object(nvidia_asr, '_recognize', return_value='answer') as recognize:
+                self.assertEqual(nvidia_asr.transcribe(b'', remote_allowed=True), 'answer')
+                self.assertEqual(recognize.call_args.args[1], 'fake-vault-key')
+
+        self.desktop.side_effect = desktop
+        with patch('security.bitwarden_secrets.get_password', return_value='fake-vault-key'), \
+             patch.object(launcher, 'gui_key') as prompt:
+            self.assertEqual(self.run_launcher(), 0)
+            prompt.assert_not_called()
+        self.desktop.assert_called_once()
 
     def test_desktop_error_removes_key_and_does_not_display_exception_payload(self):
         self.desktop.side_effect = RuntimeError('fake-key must not be displayed')

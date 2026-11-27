@@ -1,8 +1,11 @@
-"""Read a small allowlist of LYA provider passwords from the Bitwarden CLI."""
+"""Access LYA's provider items through the Bitwarden CLI."""
+import base64
+import json
 import os
 import shutil
 import subprocess
 import threading
+from uuid import UUID
 
 
 _ITEMS = {
@@ -26,7 +29,7 @@ def _command():
     return []
 
 
-def _run(args, *, session="", extra_env=None, timeout=15):
+def _run(args, *, session="", extra_env=None, timeout=15, stdin=None):
     command = _command()
     if not command:
         return ""
@@ -44,6 +47,8 @@ def _run(args, *, session="", extra_env=None, timeout=15):
         "timeout": timeout,
         "env": env,
     }
+    if stdin is not None:
+        options["input"] = stdin
     if os.name == "nt":
         options["creationflags"] = subprocess.CREATE_NO_WINDOW
     try:
@@ -63,8 +68,6 @@ def take_environment_session():
 
 def status():
     """Return only the CLI's safe status label; never expose account metadata."""
-    import json
-
     raw = _run(["status", "--nointeraction"], timeout=10)
     try:
         return json.loads(raw).get("status", "")
@@ -87,7 +90,14 @@ def unlock(master_password):
 def set_session(session):
     global _session
     with _lock:
-        _session = (session or "").strip()
+        session = (session or "").strip()
+        if _session != session:
+            _cache.clear()
+            _session = session
+
+
+def has_session():
+    return bool(_session)
 
 
 def sync():
@@ -137,6 +147,55 @@ def get_password(name):
         if value:
             _cache[name] = value
         return value
+
+
+def save_nvidia_key(value, *, authorized):
+    """Save one approved NVIDIA credential. CLI responses never leave this adapter."""
+    if not value or len(value) > 2048 or any(char.isspace() or not char.isprintable() for char in value):
+        return 'Enter a valid NVIDIA API key.'
+    name = 'NVIDIA_API_KEY'
+    title = _ITEMS[name]
+    with _lock:
+        if not authorized():
+            return 'The phone approval expired or was cancelled.'
+        if not _session or not sync():
+            return 'Unlock Bitwarden in the LYA launcher and check that the vault can sync.'
+        try:
+            records = json.loads(_run(['list', 'items', '--search', title, '--nointeraction'], session=_session))
+            if not isinstance(records, list) or any(not isinstance(item, dict) for item in records):
+                raise ValueError
+            matches = [item for item in records if item.get('name') == title]
+            if len(matches) > 1:
+                return 'More than one NVIDIA item has the same title. Resolve the duplicates in Bitwarden first.'
+            if matches:
+                item = matches[0]
+                if (item.get('type') != 1 or item.get('organizationId') or item.get('deletedDate')
+                        or not isinstance(item.get('login'), dict)):
+                    return 'Use a personal Bitwarden Login item for NVIDIA.'
+                item_id = str(UUID(item['id']))
+                command = ['edit', 'item', item_id]
+            else:
+                item = json.loads(_run(['get', 'template', 'item', '--nointeraction'], session=_session))
+                login = json.loads(_run(['get', 'template', 'item.login', '--nointeraction'], session=_session))
+                item.update(name=title, type=1, login=login)
+                command = ['create', 'item']
+            item['login']['password'] = value
+            payload = base64.b64encode(json.dumps(item).encode('utf-8')).decode('ascii')
+        except (AttributeError, KeyError, TypeError, ValueError):
+            return 'LYA could not prepare the NVIDIA item in Bitwarden.'
+        if not authorized():
+            return 'The phone approval expired or was cancelled.'
+        _cache.pop(name, None)
+        raw = _run([*command, '--nointeraction'], session=_session, stdin=payload, timeout=30)
+        try:
+            saved = json.loads(raw)
+            if (saved['name'] == title and saved['type'] == 1 and saved['login']['password'] == value
+                    and (not matches or saved['id'] == item_id)):
+                _cache[name] = value
+                return 'NVIDIA API key saved in Bitwarden.'
+        except (KeyError, TypeError, ValueError):
+            pass
+        return 'LYA could not confirm the save. Check the NVIDIA item in Bitwarden before retrying.'
 
 
 def clear():

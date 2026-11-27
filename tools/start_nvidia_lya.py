@@ -11,13 +11,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def configured_key():
-    try:
-        from security import bitwarden_secrets
-        key = bitwarden_secrets.get_password('NVIDIA_API_KEY')
-        if key:
-            return key
-    except Exception:
-        pass
     return os.environ.get('NVIDIA_API_KEY', '').strip()
 
 
@@ -144,9 +137,11 @@ def main():
         print('Paste at the hidden prompt and press Enter; no characters will appear.')
     try:
         import riva.client
+        from security import bitwarden_secrets
         unlock_bitwarden(args.gui)
-        key = configured_key()
-        if not key:
+        from_vault = bool(bitwarden_secrets.get_password('NVIDIA_API_KEY'))
+        key = '' if from_vault else configured_key()
+        if not from_vault and not key:
             key = gui_key() if args.gui else getpass.getpass('NVIDIA key (hidden; this session only): ').strip()
     except (KeyboardInterrupt, EOFError):
         clear_bitwarden_session()
@@ -157,7 +152,7 @@ def main():
         clear_bitwarden_session()
         launch_error('NVIDIA speech client missing. Install requirements-nvidia-speech.txt in .venv-asr.', args.gui)
         return 1
-    if not key:
+    if not from_vault and not key:
         clear_bitwarden_session()
         if not args.gui:
             print('Key required. LYA not launched.')
@@ -166,7 +161,10 @@ def main():
         print('NVIDIA receives completed questions while private mode is off.')
         print('Turn private mode on BEFORE confidential speech. Wake/stop stay local.')
         print('Close existing LYA first; its single-instance lock prevents duplicate listeners.')
-    os.environ['NVIDIA_API_KEY'] = key
+    if from_vault:
+        os.environ.pop('NVIDIA_API_KEY', None)
+    else:
+        os.environ['NVIDIA_API_KEY'] = key
     os.environ['LYA_NVIDIA_ASR'] = args.nvidia_model
     # The key is never written to disk or passed as a command-line argument.
     sys.argv = ['app.py', '--cloud-voice', '--cloud-asr', 'nvidia', '--skip-setup']

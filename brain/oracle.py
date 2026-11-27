@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from brain.diagnostics import provider_issue, safe_attempts
+
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / 'desktop' / 'oracle.local.json'
 
@@ -15,6 +17,7 @@ class OracleModel:
         self.config = config
         self.runner = runner
         self.last_route = None
+        self.last_diagnostic = None
 
     def invoke_cancellable(self, messages, *, cancelled=None, **policy):
         return self.invoke(messages, cancelled=cancelled, **policy)
@@ -26,6 +29,7 @@ class OracleModel:
         from brain.workflow import ModelUnavailable
         try:
             self.last_route = None
+            self.last_diagnostic = None
             if cancelled is not None and cancelled.is_set():
                 raise InterruptedError()
             config = self.config if self.config is not None else json.loads(CONFIG.read_text())
@@ -55,29 +59,34 @@ class OracleModel:
             if cancelled is not None and cancelled.is_set():
                 raise InterruptedError()
             if run.returncode:
-                raise ModelUnavailable('Oracle connection failed. Check SSH access; no provider fallback was attempted.')
+                self.last_diagnostic = provider_issue('oracle_connection')
+                raise ModelUnavailable(self.last_diagnostic.message)
             if len(run.stdout) > 65536:
                 raise ValueError('Oversize response')
             response = json.loads(run.stdout)
+            statuses = safe_attempts(response.get('attempts'))
             if response.get('error'):
-                allowed = {'provider_not_configured', 'provider_http_401', 'provider_http_403',
-                           'provider_http_429', 'provider_unavailable', 'no_eligible_route',
-                           'daily_budget_exhausted', 'daily_token_budget_exhausted', 'deadline_exceeded',
-                           'cancelled', 'cooldown', 'provider_output_length', 'invalid_provider_response'}
-                reason = response['error'] if response['error'] in allowed else 'backend_error'
-                raise ModelUnavailable('Oracle inference unavailable: ' + reason + '. Approved routes could not complete this request.')
+                reason = response['error']
+                if reason == 'cancelled':
+                    raise InterruptedError()
+                self.last_diagnostic = provider_issue(reason if isinstance(reason, str) else '', len(statuses))
+                raise ModelUnavailable(self.last_diagnostic.message)
             answer = response.get('text')
             if not isinstance(answer, str) or not answer.strip():
                 raise ValueError('Invalid response')
-            attempts = response.get('attempts', [])
-            if attempts:
+            if statuses:
                 # Backend config IDs are data; do not expose arbitrary response fields.
                 import re
                 rid = str(response.get('route', ''))
                 if re.fullmatch(r'[a-z0-9_-]{1,40}', rid):
-                    self.last_route = {'route': rid, 'attempts': min(len(attempts), 2)}
+                    self.last_route = {'route': rid, 'attempts': len(statuses)}
+                if len(statuses) == 2 and statuses[1] == 'ok' and statuses[0] != 'ok':
+                    self.last_diagnostic = provider_issue(statuses[0], recovered=True)
             return answer[:8000]
         except (ModelUnavailable, InterruptedError):
             raise
+        except (TimeoutError, subprocess.TimeoutExpired):
+            self.last_diagnostic = provider_issue('oracle_timeout')
+            raise ModelUnavailable(self.last_diagnostic.message) from None
         except Exception:
             raise ModelUnavailable('Oracle inference could not complete. Check configuration or connection; no fallback was attempted.') from None

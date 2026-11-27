@@ -501,11 +501,18 @@ class OwnerUIChecks(SyntheticPasskeys, unittest.TestCase):
         self.app.processEvents()
         return dialog
 
-    def test_notification_signin_resumes_request_and_panel_close_ends_session(self):
+    def wait_for_worker(self, predicate):
+        deadline = time.monotonic() + 10
+        while time.monotonic() < deadline:
+            self.app.processEvents()
+            if predicate():
+                return
+            time.sleep(0.01)
+        self.assertTrue(predicate(), 'Timed out waiting for the Qt worker')
+
+    def notification_desktop(self):
         from experience import OrbDesktop
-        from brain.workflow import Answer
         from security import owner_push
-        from PySide6.QtTest import QTest
         origin = PasskeyChecks.direct_origin
         phrase = PasskeyChecks.fake_phrase
         c = self.ceremony(phone_origin=origin,phone_port=0)
@@ -525,6 +532,12 @@ class OwnerUIChecks(SyntheticPasskeys, unittest.TestCase):
         desktop.brain.db_path=self.db
         desktop.brain.request_phone_owner=True
         desktop.spoken=False
+        return desktop
+
+    def test_notification_signin_resumes_request_and_panel_close_ends_session(self):
+        from brain.workflow import Answer
+        from PySide6.QtTest import QTest
+        desktop = self.notification_desktop()
         desktop.pending_question='what is my name'
         with (patch('security.passkeys.check_phone_proxy'),
               patch('security.passkeys.PasskeyCeremony',side_effect=lambda **opts:PasskeyCeremony(phone_port=0,**opts)),
@@ -549,6 +562,56 @@ class OwnerUIChecks(SyntheticPasskeys, unittest.TestCase):
             self.assertTrue(desktop.brain.session.owner_binding)
             desktop.close_panel()
             self.assertFalse(desktop.brain.session.owner_binding)
+
+    def test_nvidia_key_requires_fresh_phone_proof_and_bypasses_chat(self):
+        from PySide6.QtWidgets import QLineEdit
+        from security import bitwarden_secrets
+        desktop = self.notification_desktop()
+
+        with (patch('security.passkeys.check_phone_proxy'),
+              patch('security.passkeys.PasskeyCeremony', side_effect=lambda **opts: PasskeyCeremony(phone_port=0, **opts)),
+              patch('security.owner_push.send') as send,
+              patch.object(bitwarden_secrets, 'has_session', return_value=True),
+              patch.object(bitwarden_secrets, 'save_nvidia_key', return_value='Fixture saved') as save,
+              patch.object(desktop, 'ask_brain') as model):
+            desktop.brain.private_mode = True
+            desktop.command('Add NVIDIA key')
+            self.assertIn('Turn off private mode', desktop.panel.answer.toPlainText())
+            send.assert_not_called()
+            desktop.brain.private_mode = False
+            desktop.command('I want to safely store this')
+            self.assertIsNone(desktop.credential_dialog)
+            sign_in = desktop.owner_dialog
+            sign_in.ceremony.complete(self.response(sign_in.ceremony, rp=sign_in.ceremony.host))
+            sign_in.check_result()
+            self.wait_for_worker(lambda: desktop.credential_dialog is not None)
+            form = desktop.credential_dialog
+            self.assertEqual(form.textEchoMode(), QLineEdit.EchoMode.Password)
+            form.setTextValue('fake-nvidia-key')
+            form.accept()
+            self.wait_for_worker(lambda: desktop.passkey_approval.dialog is not None and desktop.passkey_approval.dialog.stage == 'waiting')
+            approval = desktop.passkey_approval.dialog
+            proof = approval.ceremony
+            self.assertEqual(proof.approval.action, 'save_nvidia_api_key')
+            self.assertNotIn('fake-nvidia-key', proof.approval.parameters)
+            self.assertIsNotNone(proof.push_record)
+            save.assert_not_called()
+            proof.complete(self.response(proof, rp=proof.host))
+            approval.check_result()
+            self.wait_for_worker(lambda: desktop.credential_cancel is None)
+            save.assert_called_once()
+            self.assertEqual(save.call_args.args[0], 'fake-nvidia-key')
+            self.assertNotIn('fake-nvidia-key', str(send.call_args_list) + str(desktop.transcript))
+            save.reset_mock()
+
+            desktop.command('Add NVIDIA key')
+            desktop.credential_dialog.setTextValue('fake-cancelled-key')
+            desktop.credential_dialog.accept()
+            self.wait_for_worker(lambda: desktop.passkey_approval.dialog is not approval and desktop.passkey_approval.dialog.stage == 'waiting')
+            desktop.close_panel()
+            self.wait_for_worker(lambda: desktop.credential_cancel is None)
+            save.assert_not_called()
+            model.assert_not_called()
 
     def test_voice_setup_name_confirmation_cancel_no_forms(self):
         from PySide6.QtWidgets import QLineEdit
@@ -776,8 +839,8 @@ class OwnerUIChecks(SyntheticPasskeys, unittest.TestCase):
 
     def test_native_worker_exact_approval_memory_and_camera_gate(self):
         from experience import OrbDesktop
-        from PySide6.QtTest import QTest
-        desktop = OrbDesktop(self.app, reduced_motion=True)
+        with patch.dict(os.environ, {'LYA_DATA_DIR': self.tmp.name}):
+            desktop = OrbDesktop(self.app, reduced_motion=True)
         desktop.brain.db_path = self.db
         self.addCleanup(desktop.quit)
         session = self.enroll()
@@ -791,11 +854,7 @@ class OwnerUIChecks(SyntheticPasskeys, unittest.TestCase):
         with patch('desktop.owner_setup.webbrowser.open', return_value=True):
             # Default browser callable is bound at definition; replace start only for test.
             worker.start()
-            for _ in range(80):
-                self.app.processEvents()
-                if desktop.passkey_approval.dialog is not None:
-                    break
-                QTest.qWait(10)
+            self.wait_for_worker(lambda: desktop.passkey_approval.dialog is not None)
             dialog = desktop.passkey_approval.dialog
             self.assertIsNotNone(dialog)
             self.assertIn('remember short Synthetic topic = Synthetic value', dialog.body.text())
@@ -815,11 +874,7 @@ class OwnerUIChecks(SyntheticPasskeys, unittest.TestCase):
         answer.clear()
         worker = threading.Thread(target=lambda: answer.append(desktop.brain.respond('recall Synthetic topic')))
         worker.start()
-        for _ in range(80):
-            self.app.processEvents()
-            if desktop.passkey_approval.dialog is not None:
-                break
-            QTest.qWait(10)
+        self.wait_for_worker(lambda: desktop.passkey_approval.dialog is not None)
         desktop.brain.approve.invalidate()
         desktop.passkey_approval.dialog.check_approval()
         worker.join(timeout=3)

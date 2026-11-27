@@ -12,11 +12,13 @@ import os
 import re
 import threading
 import time
+import urllib.error
 import urllib.request
 from brain.capabilities import help_text, matches, system_power, volume_action
 from security.policy import OWNER, TRUSTED, Session, require
-from cloud.web_research import research_mode, synthesis_prompt, render_research
+from cloud.web_research import research_mode, synthesis_prompt, render_research, private_query
 from cloud.answering import GUIDANCE, messages_for, completed_history, needs_current_sources
+from brain.diagnostics import Diagnosis, provider_issue, runtime_issue, website_task
 
 
 class ModelUnavailable(RuntimeError):
@@ -37,8 +39,10 @@ class LocalModel:
     def __init__(self, model=None, url="http://127.0.0.1:8080/v1/chat/completions"):
         self.model = model if model is not None else os.environ.get("LYA_LOCAL_MODEL", "lya-local")
         self.url = url
+        self.last_diagnostic = None
 
     def __call__(self, messages):
+        self.last_diagnostic = None
         if not self.model:
             raise ModelUnavailable("No local model selected. Configure LYA_LOCAL_MODEL after installing a suitable local model.")
         body = json.dumps({"model": self.model, "messages": messages, "stream": False,
@@ -58,6 +62,12 @@ class LocalModel:
             if not isinstance(answer, str) or not answer.strip():
                 raise ValueError("Empty response")
             return answer[:8000]
+        except (TimeoutError, urllib.error.URLError) as exc:
+            reason = exc.reason if isinstance(exc, urllib.error.URLError) else exc
+            code = 'local_timeout' if isinstance(reason, TimeoutError) else 'local_connection'
+            issue = provider_issue(code)
+            self.last_diagnostic = Diagnosis(issue.message + ' Your request stayed on this computer.', issue.public_evidence)
+            raise ModelUnavailable(self.last_diagnostic.message) from None
         except Exception as exc:
             raise ModelUnavailable("The local model is unavailable. No cloud fallback was attempted.") from exc
 
@@ -89,6 +99,8 @@ class Brain:
         self.request_phone_owner = False
         self.session_notes = {}
         self.history = []
+        self.last_diagnostic = None
+        self.pending_research = None
         self._context_lock = threading.RLock()
         self._context_generation = 0
         self._public_presence = None
@@ -103,6 +115,8 @@ class Brain:
             self.session_notes.clear()
             self._shared_pending = None
             self.history.clear()
+            self.last_diagnostic = None
+            self.pending_research = None
             self._public_presence = None
             if hasattr(self.approve, 'invalidate'):
                 self.approve.invalidate()
@@ -170,6 +184,13 @@ class Brain:
             self.bind_session(Session(id='guest'))
         request_session = self.session
         stages = ["identify", "classify"]
+        diagnostic = None
+        approved_research = False
+        private_request = self.private_mode or text.casefold().startswith(('private:', 'secret:'))
+        context_generation = None
+        pid = None
+        def remember_issue(issue):
+            self.last_diagnostic = Diagnosis(issue.message) if private_request or pid else issue
         def check():
             if self.session != request_session:
                 raise InterruptedError("Identity changed.")
@@ -194,6 +215,35 @@ class Brain:
                 self.clear_temporary()
             self.last_activity = now
             low = text.casefold()
+            command = re.sub(r'^lya[ ,]+', '', low.strip(' .!?'))
+            if re.fullmatch(r'(?:what happened(?: to (?:lya|(?:this|the) (?:request|task)))?|what went wrong|'
+                            r'why did (?:it|this|that|lya) (?:fail|stop|stop working))', command):
+                with self._context_lock:
+                    issue = self.last_diagnostic
+                    self.pending_research = issue.research_request() if issue and not self.private_mode else None
+                    can_research = self.pending_research is not None
+                if not issue:
+                    return result('There’s no recorded problem in this conversation. What were you trying to do, what did you see, and was there an error code? To look it up, start your message with “Research” and describe the public details you can share.', 'diagnostic')
+                offer = ' Want me to research possible causes and fixes?' if can_research else ''
+                return result(issue.message + offer, 'diagnostic')
+            with self._context_lock:
+                pending, self.pending_research = self.pending_research, None
+                issue = self.last_diagnostic
+                pending_generation = self._context_generation
+            confirmation = re.sub(r'[,.!?]+', '', command).strip()
+            if pending and confirmation in ('no', 'no thanks', 'cancel'):
+                return result('Okay. I’ll leave that research on hold.')
+            explicit_research = command in ('research a solution', 'research what happened', 'find a solution', 'find a fix')
+            if explicit_research and not pending:
+                pending = issue.research_request() if issue else None
+                if not pending:
+                    return result('Start your message with “Research,” then describe the public symptom, what you were trying to do, and any error code.', 'diagnostic')
+            if pending and (explicit_research or confirmation in ('yes', 'yes please', 'go ahead', 'research it')):
+                if self.private_mode:
+                    return result('Private mode is active. Public research is paused.', 'blocked')
+                approved_research = True
+                text = pending
+                low = text.casefold()
             if re.match(r'^shared memory\b', text, re.I):
                 from brain.shared_memory import parse_command
                 with self._context_lock:
@@ -525,6 +575,21 @@ class Brain:
                     return result(str(exc), 'blocked')
             if low.startswith("remind me "):
                 return result("Reminders are not connected in this desktop flow. Nothing was saved.", "blocked")
+            website_request = text.split(':',1)[1].strip() if low.startswith(('private:', 'secret:')) else text
+            unsupported = website_task(website_request)
+            if unsupported is not None:
+                if self.private_mode or private_query(text):
+                    return result('The browser task is unavailable. You can ask separately about its public documentation.', 'blocked')
+                host, operation = unsupported
+                if not host:
+                    return result('I need a public site address and an action. Try “Open example.com and find the order status page.”', 'website-scope')
+                with self._context_lock:
+                    check()
+                    self.pending_research = (
+                        f'Research whether official options for {host} support a user who wants to {operation}. '
+                        'Describe the supported workflow, the minimum permissions, any limits, and whether an integration is feasible. '
+                        'Use public documentation. The user asked only for a feasibility check.')
+                return result(f'I don’t have a skill for that task on {host} yet. Want me to check the public documentation for a supported way to do it?', 'website-offer')
             if (re.match(r'^(?:open|launch|run|install|delete|send|upload|post)\b', low)
                     and not re.match(r'^open[- ]source\b', low)):
                 return result("That action is not connected in this brain route. Nothing was changed.", "blocked")
@@ -649,7 +714,6 @@ class Brain:
             requested_research = research_mode(text)
             task = 'research' if requested_research else 'security' if re.search(r'\b(security|vulnerability|pentest|hacking)\b', low) else 'coding' if coding_request else 'research' if (re.search(r'\b(research|source|sources|evidence|investigate)\b', low) or needs_current_sources(text)) else 'general'
             rows = []
-            pid = None
             if serious:
                 self._authorize("council", text)
             use_memory = private_request or serious or re.search(r'\b(saved|memory|memories)\b',low)
@@ -690,8 +754,8 @@ class Brain:
                       "Do not invent performance measurements, free-tier entitlements, download URLs or deployment results. Mark estimates as unmeasured. "
                       "Security examples must use a trusted authenticated session, never treat a caller-supplied identity header as authentication. "
                       "Important decisions need current reliable evidence; ask for missing facts. Never reveal hidden reasoning.\nEVIDENCE DATA:\n" + evidence)
-            familiar = self.visitors.current()
-            if not self._identified():
+            familiar = None if approved_research else self.visitors.current()
+            if not approved_research and not self._identified():
                 # Reuse existing observations; this never opens a sensor or grants identity.
                 pending = self.visitors.pending
                 presence = ('known', familiar['person_id']) if familiar else (
@@ -738,19 +802,27 @@ class Brain:
             research_report = None
             check()
             with self._context_lock:
-                context_generation = self._context_generation
+                context_generation = pending_generation if approved_research else self._context_generation
             def invoke_model(messages, task):
+                nonlocal diagnostic
                 target = self.local_client if pid or private_request else self.client
                 policy = {'task': task, 'sensitivity': 'private' if pid or private_request else 'public'}
-                if hasattr(target, 'invoke_cancellable'):
-                    return target.invoke_cancellable(messages, cancelled=cancelled, **policy)
-                return target.invoke(messages, **policy) if hasattr(target, 'invoke') else target(messages)
+                from brain.oracle import OracleModel
+                try:
+                    if hasattr(target, 'invoke_cancellable'):
+                        return target.invoke_cancellable(messages, cancelled=cancelled, **policy)
+                    return target.invoke(messages, **policy) if hasattr(target, 'invoke') else target(messages)
+                finally:
+                    detail = target.last_diagnostic if isinstance(target, (LocalModel, OracleModel)) else None
+                    if detail:
+                        diagnostic = detail
             def research_check():
                 check()
                 with self._context_lock:
                     if self._context_generation != context_generation:
                         raise InterruptedError('Working context cleared during research.')
             if task == 'research':
+                research_check()
                 if pid or private_request:
                     return result("Research is blocked for private context because the configured research path is external.", "blocked")
                 if self.researcher is None:
@@ -758,11 +830,15 @@ class Brain:
                 if hasattr(self.researcher, 'investigate'):
                     research_report = self.researcher.investigate(
                         text, mode=requested_research or 'smart', max_sources=6, max_bytes=8000,
-                        planner=lambda messages: invoke_model(messages, 'research'), check=research_check)
+                        planner=None if approved_research else lambda messages: invoke_model(messages, 'research'),
+                        check=research_check)
                     research_records = research_report.records
                     prompt = prompt.replace('No web research has occurred. ', '')
                 else:
                     research_records = self.researcher(text, max_sources=6, max_bytes=8000, timeout=8)
+                if approved_research:
+                    prompt += ('\nFor troubleshooting, separate observed symptoms, plausible causes, safe checks, and fixes '
+                               'that depend on what the checks confirm. State when the available sources cannot establish a cause.')
                 if research_report is not None:
                     prompt += '\n' + synthesis_prompt(research_records, research_report)
                 else:
@@ -786,8 +862,20 @@ class Brain:
                 with self._context_lock:
                     check()
                     request = messages_for(prompt, self.history if public_context and task != 'research' else [], text)
-                answer = invoke_model(request, task)
-                if task == 'research':
+                try:
+                    answer = invoke_model(request, task)
+                    if approved_research and (not isinstance(answer, str) or not answer.strip()):
+                        raise ModelUnavailable('The model returned no answer.')
+                except ModelUnavailable:
+                    if not approved_research or task != 'research' or not research_records:
+                        raise
+                    research_check()
+                    answer = ('I found these public sources. The model is unavailable, so the cause and any fix remain unconfirmed.\n\n'
+                              + '\n'.join(f"- {record['url']}" for record in research_records))
+                    route = 'research-evidence'
+                else:
+                    route = "private-local" if pid or private_request else "model"
+                if task == 'research' and route != 'research-evidence':
                     from brain.verification import render_verified_claims
                     answer = render_research(answer, research_report) if research_report is not None else render_verified_claims(answer, research_records)
                     stages.append("verify_sources")
@@ -797,8 +885,6 @@ class Brain:
                     answer = render_unverified_code(answer)
                     stages.append("verify_code_status")
                     route = "proposed-code"
-                else:
-                    route = "private-local" if pid or private_request else "model"
             check()
             if any(r.get('expires_at') is not None and r['expires_at'] <= self.clock() for r in rows):
                 return result("Saved context expired while the answer was being prepared. Please ask again.", "blocked")
@@ -822,17 +908,31 @@ class Brain:
                 if self._context_generation != context_generation:
                     raise InterruptedError('Working context cleared during inference.')
                 delivered = result(answer[:12000], route, research_records or rows)
-                if public_context:
+                if diagnostic and not approved_research:
+                    remember_issue(diagnostic)
+                if public_context and not approved_research:
                     self.history = completed_history(self.history, text, context_answer)
                 return delivered
         except InterruptedError:
             return Answer("Cancelled.", "cancelled", stages=stages)
         except OwnerSignInRequired as exc:
             return Answer(str(exc), "owner-sign-in", stages=stages)
-        except (PermissionError, ValueError, ModelUnavailable) as exc:
+        except ModelUnavailable as exc:
+            with self._context_lock:
+                if (not approved_research and self.session == request_session and not (cancelled and cancelled.is_set())
+                        and context_generation in (None, self._context_generation)):
+                    remember_issue(diagnostic or provider_issue(''))
+            if not self._identified():
+                self.visitors.record('blocked')
+            return Answer(str(exc), 'blocked', stages=stages)
+        except (PermissionError, ValueError) as exc:
             if not self._identified():
                 self.visitors.record('blocked')
             return Answer(str(exc), "blocked", stages=stages)
-        except Exception:
+        except Exception as exc:
+            with self._context_lock:
+                if (not approved_research and self.session == request_session and not (cancelled and cancelled.is_set())
+                        and context_generation in (None, self._context_generation)):
+                    remember_issue(runtime_issue(exc))
             return Answer("The brain could not complete this request. No fallback to another person's memory was attempted.", "error", stages=stages)
 

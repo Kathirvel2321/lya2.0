@@ -9,6 +9,8 @@ import threading
 import time
 import wave
 
+from audio.pcm_metrics import measure_pcm16
+
 WAKE_WORDS=("lya","leya","liya","laya","elya","elia","ilya","leah","lia","lea","leia","aliya","alia","layer")
 # Vosk renders some Laya pronunciations as "layer"; this broad wake alias can
 # also wake on that ordinary word. Waking never grants permission to act.
@@ -127,12 +129,9 @@ def _note_audio(pcm, threshold=None, suppressed=False):
     reported as 0.0. No sample, transcript or file is retained anywhere.
     """
     try:
-        import numpy as np
-        samples=np.frombuffer(pcm[:len(pcm)//2*2],np.int16)
-        if not samples.size:
+        count, peak, rms = measure_pcm16(pcm)
+        if not count:
             return 0.0
-        peak=int(np.abs(samples.astype(np.int32)).max())
-        rms=float(np.sqrt(np.mean(samples.astype(np.float32)**2)))
     except Exception:
         return 0.0
     now=time.monotonic()
@@ -141,14 +140,14 @@ def _note_audio(pcm, threshold=None, suppressed=False):
         active=window is not None and not window["done"]
         limit=threshold if threshold is not None else (window["threshold"] if active else LOUD_PEAK)
         loud=peak>limit
-        _STATS["samples"]+=int(samples.size)
+        _STATS["samples"]+=count
         _STATS["peak"]=max(_STATS["peak"],peak)
         _STATS["loud_blocks"]+=1 if loud else 0
         _STATS["speaking_blocks"]+=1 if suppressed else 0
         _STATS["last_audio"]=now
         _STATS['level'] = 0.65 * _STATS['level'] + 0.35 * min(1.0, rms / 1800.0)
         if active:
-            window["samples"]+=int(samples.size)
+            window["samples"]+=count
             window["blocks"]+=1
             window["peak"]=max(window["peak"],peak)
             window["loud_blocks"]+=1 if loud else 0

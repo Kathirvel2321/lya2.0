@@ -20,7 +20,7 @@ PUBLIC = frozenset({"chat", "help", "time", "ui", "theme_preview", "stop"})
 TRUSTED = frozenset({"open_app", "volume", "device_status"})
 OWNER = frozenset({"files", "theme_apply", "memory_read", "memory_write",
                    "memory_forget", "learn", "reminders", "screenshot",
-                   "vault", "skill_draft", "council", "memory_backup", "memory_restore", "tasks", "mobile_connect"})
+                   "vault", "save_nvidia_api_key", "skill_draft", "council", "memory_backup", "memory_restore", "tasks", "mobile_connect"})
 
 
 def owner_passphrase_required(action, parameters):
